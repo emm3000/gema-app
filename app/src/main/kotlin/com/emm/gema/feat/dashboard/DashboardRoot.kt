@@ -33,15 +33,11 @@ fun DashboardRoot(topNavController: NavController) {
         ) {
 
             composable<DashboardRoutes.Dashboard> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Dashboard")
-                }
+                DashboardScreen()
             }
 
             composable<DashboardRoutes.Courses> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Courses")
-                }
+                CoursesScreen()
             }
 
             composable<DashboardRoutes.Attendance> {
