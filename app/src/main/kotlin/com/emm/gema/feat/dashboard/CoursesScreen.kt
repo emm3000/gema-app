@@ -48,25 +48,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.ui.theme.GemaTheme
 
-data class Course(val id: Int, val name: String, val studentId: Int)
+data class Course(val id: Int, val name: String, val studentId: String)
 
 @Composable
 fun CoursesScreen(
     modifier: Modifier = Modifier,
     createCourse: () -> Unit = {},
+    toStudentList: (courseId: String) -> Unit = {}
 ) {
     val courses = listOf(
-        Course(id = 1, name = "Matemáticas", studentId = 32),
-        Course(id = 2, name = "Historia", studentId = 28),
-        Course(id = 3, name = "Biología", studentId = 25),
-        Course(id = 4, name = "Biología", studentId = 25),
-        Course(id = 5, name = "Biología", studentId = 25),
-        Course(id = 6, name = "Biología", studentId = 25),
-        Course(id = 7, name = "Biología", studentId = 25),
-        Course(id = 8, name = "Biología", studentId = 25),
-        Course(id = 9, name = "Biología", studentId = 25),
-        Course(id = 10, name = "Biología", studentId = 25),
-        Course(id = 11, name = "Biología", studentId = 25),
+        Course(id = 1, name = "Matemáticas", studentId = "32"),
+        Course(id = 2, name = "Historia", studentId = "28"),
+        Course(id = 3, name = "Biología", studentId = "2"),
+        Course(id = 4, name = "Biología", studentId = "25"),
+        Course(id = 5, name = "Biología", studentId = "25"),
+        Course(id = 6, name = "Biología", studentId = "25"),
     )
 
     val menuExpandedState = remember { mutableStateMapOf<Int, Boolean>() }
@@ -95,7 +91,8 @@ fun CoursesScreen(
                     CourseCard(
                         course = curso,
                         isMenuExpanded = menuExpandedState[curso.id] == true,
-                        onMenuAction = { menuExpandedState[curso.id] = it }
+                        onMenuAction = { menuExpandedState[curso.id] = it },
+                        toStudentList = toStudentList
                     )
                 }
 
@@ -142,6 +139,7 @@ fun FloatingActionButtonContent(
 @Composable
 private fun CourseCard(
     course: Course,
+    toStudentList: (String) -> Unit,
     isMenuExpanded: Boolean,
     onMenuAction: (Boolean) -> Unit
 ) {
@@ -235,6 +233,7 @@ private fun CourseCard(
             ) {
                 OutlinedButton(
                     onClick = {
+                        toStudentList(course.studentId)
                     },
                     modifier = Modifier.weight(1f)
                 ) {

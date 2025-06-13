@@ -25,6 +25,9 @@ object GemaRoutes {
 
     @Serializable
     object CreateCourse
+
+    @Serializable
+    data class StudentList(val courseId: String)
 }
 
 sealed interface DashboardRoutes {

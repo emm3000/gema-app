@@ -30,8 +30,8 @@ import com.emm.gema.ui.theme.GemaTheme
 @Composable
 fun DashboardScreen(modifier: Modifier = Modifier) {
     val activeCourses = listOf(
-        Course(id = 1, name = "Matemáticas", studentId = 32),
-        Course(id = 2, name = "Historia", studentId = 28)
+        Course(id = 1, name = "Matemáticas", studentId = "32"),
+        Course(id = 2, name = "Historia", studentId = "28")
     )
     val upcomingEvaluations = listOf(
         Evaluation(name = "Examen Matemáticas", date = "15 Jun", type = ""),

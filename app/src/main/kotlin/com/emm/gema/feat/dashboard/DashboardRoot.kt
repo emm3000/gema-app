@@ -31,7 +31,8 @@ fun DashboardRoot(topNavController: NavController) {
 
             composable<DashboardRoutes.Courses> {
                 CoursesScreen(
-                    createCourse = { topNavController.navigate(GemaRoutes.CreateCourse) }
+                    createCourse = { topNavController.navigate(GemaRoutes.CreateCourse) },
+                    toStudentList = { courseId -> topNavController.navigate(GemaRoutes.StudentList(courseId)) }
                 )
             }
 

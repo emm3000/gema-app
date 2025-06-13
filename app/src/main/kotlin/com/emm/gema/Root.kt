@@ -13,6 +13,7 @@ import androidx.navigation.PopUpToBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.emm.gema.data.auth.DataStore
 import com.emm.gema.feat.auth.LoginScreen
 import com.emm.gema.feat.auth.LoginViewModel
@@ -20,6 +21,7 @@ import com.emm.gema.feat.auth.RegisterScreen
 import com.emm.gema.feat.auth.RegisterViewModel
 import com.emm.gema.feat.dashboard.DashboardRoot
 import com.emm.gema.feat.dashboard.forms.CourseFormScreen
+import com.emm.gema.feat.dashboard.forms.StudentListScreen
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -99,6 +101,14 @@ fun Root(modifier: Modifier = Modifier) {
 
         composable<GemaRoutes.CreateCourse> {
             CourseFormScreen(
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable<GemaRoutes.StudentList> {
+            val param = it.toRoute<GemaRoutes.StudentList>()
+            StudentListScreen(
+                courseId = param.courseId,
                 onBack = { navController.navigateUp() }
             )
         }
