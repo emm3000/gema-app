@@ -19,6 +19,7 @@ import com.emm.gema.feat.auth.LoginViewModel
 import com.emm.gema.feat.auth.RegisterScreen
 import com.emm.gema.feat.auth.RegisterViewModel
 import com.emm.gema.feat.dashboard.DashboardRoot
+import com.emm.gema.feat.dashboard.forms.CourseFormScreen
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -49,7 +50,8 @@ fun Root(modifier: Modifier = Modifier) {
                 }
             }
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ) {
@@ -93,6 +95,12 @@ fun Root(modifier: Modifier = Modifier) {
 
         composable<GemaRoutes.Dashboard> {
             DashboardRoot(navController)
+        }
+
+        composable<GemaRoutes.CreateCourse> {
+            CourseFormScreen(
+                onBack = { navController.navigateUp() }
+            )
         }
     }
 }

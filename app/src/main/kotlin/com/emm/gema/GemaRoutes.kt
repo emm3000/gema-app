@@ -22,6 +22,9 @@ object GemaRoutes {
 
     @Serializable
     object Dashboard
+
+    @Serializable
+    object CreateCourse
 }
 
 sealed interface DashboardRoutes {

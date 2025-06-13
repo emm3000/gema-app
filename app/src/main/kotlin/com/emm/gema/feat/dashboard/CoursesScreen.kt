@@ -51,7 +51,10 @@ import com.emm.gema.ui.theme.GemaTheme
 data class Course(val id: Int, val name: String, val studentId: Int)
 
 @Composable
-fun CoursesScreen(modifier: Modifier = Modifier) {
+fun CoursesScreen(
+    modifier: Modifier = Modifier,
+    createCourse: () -> Unit = {},
+) {
     val courses = listOf(
         Course(id = 1, name = "Matemáticas", studentId = 32),
         Course(id = 2, name = "Historia", studentId = 28),
@@ -105,7 +108,7 @@ fun CoursesScreen(modifier: Modifier = Modifier) {
 
         FloatingActionButtonContent(
             isExtended = showExtendedFab,
-            onClick = {},
+            onClick = createCourse,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
@@ -121,7 +124,7 @@ fun FloatingActionButtonContent(
 ) {
 
     ExtendedFloatingActionButton(
-        onClick = {},
+        onClick = onClick,
         modifier = modifier,
         expanded = isExtended,
         containerColor = MaterialTheme.colorScheme.primary,

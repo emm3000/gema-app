@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.emm.gema.DashboardRoutes
+import com.emm.gema.GemaRoutes
 
 @Composable
 fun DashboardRoot(topNavController: NavController) {
@@ -29,7 +30,9 @@ fun DashboardRoot(topNavController: NavController) {
             }
 
             composable<DashboardRoutes.Courses> {
-                CoursesScreen()
+                CoursesScreen(
+                    createCourse = { topNavController.navigate(GemaRoutes.CreateCourse) }
+                )
             }
 
             composable<DashboardRoutes.Attendance> {
