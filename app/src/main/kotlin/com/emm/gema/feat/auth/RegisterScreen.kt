@@ -140,7 +140,7 @@ private fun SignUpButton(onAction: (RegisterAction) -> Unit, state: RegisterUiSt
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
         AnimatedVisibility(

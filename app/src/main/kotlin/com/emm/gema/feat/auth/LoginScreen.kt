@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -153,8 +154,13 @@ fun LoginScreen(
             }
         }
 
+        val softwareKeyboardController = LocalSoftwareKeyboardController.current
+
         Button(
-            onClick = { onAction(LoginAction.Login) },
+            onClick = {
+                softwareKeyboardController?.hide()
+                onAction(LoginAction.Login)
+            },
             enabled = state.isValidFields && !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -171,7 +177,7 @@ fun LoginScreen(
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 } else {
                     Text(
