@@ -34,9 +34,9 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
         Course(id = 2, name = "Historia", studentId = 28)
     )
     val upcomingEvaluations = listOf(
-        Evaluation(title = "Examen Matemáticas", date = "15 Jun"),
-        Evaluation(title = "Quiz Historia", date = "18 Jun"),
-        Evaluation(title = "Tarea Biología", date = "20 Jun")
+        Evaluation(name = "Examen Matemáticas", date = "15 Jun", type = ""),
+        Evaluation(name = "Quiz Historia", date = "18 Jun", type = ""),
+        Evaluation(name = "Tarea Biología", date = "20 Jun", type = "")
     )
     val courseAttendance = listOf(
         Attendance("Matemáticas", 0.95f),
@@ -99,7 +99,7 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                         Modifier.padding(12.dp),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(evaluacion.title, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
+                        Text(evaluacion.name, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
                         Spacer(Modifier.height(8.dp))
                         Text(evaluacion.date, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
                     }
@@ -146,7 +146,6 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
     }
 }
 
-data class Evaluation(val title: String, val date: String)
 data class Attendance(val course: String, val percentage: Float)
 
 @Preview

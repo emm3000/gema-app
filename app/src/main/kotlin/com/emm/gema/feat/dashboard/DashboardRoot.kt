@@ -45,9 +45,7 @@ fun DashboardRoot(topNavController: NavController) {
             }
 
             composable<DashboardRoutes.Evaluations> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Evaluations")
-                }
+                EvaluationsScreen()
             }
 
             composable<DashboardRoutes.Settings> {
