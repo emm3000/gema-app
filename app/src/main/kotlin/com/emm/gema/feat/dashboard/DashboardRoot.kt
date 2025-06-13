@@ -41,9 +41,7 @@ fun DashboardRoot(topNavController: NavController) {
             }
 
             composable<DashboardRoutes.Attendance> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Attendance")
-                }
+                AttendanceScreen()
             }
 
             composable<DashboardRoutes.Evaluations> {
