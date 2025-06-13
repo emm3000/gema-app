@@ -3,7 +3,6 @@ package com.emm.gema
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -17,6 +16,7 @@ import com.emm.gema.feat.auth.LoginScreen
 import com.emm.gema.feat.auth.LoginViewModel
 import com.emm.gema.feat.auth.RegisterScreen
 import com.emm.gema.feat.auth.RegisterViewModel
+import com.emm.gema.feat.dashboard.DashboardRoot
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -89,7 +89,7 @@ fun Root(modifier: Modifier = Modifier) {
         }
 
         composable<GemaRoutes.Dashboard> {
-            Text("dashboard")
+            DashboardRoot(navController)
         }
     }
 }
