@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "646806619533",
+    "project_id": "gema-95db2",
+    "storage_bucket": "gema-95db2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:646806619533:android:db2eaa031e23ef730229c4",
+        "android_client_info": {
+          "package_name": "com.emm.gema"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR7xwpE2Hv6aoJcWJXxXXWT2RN491BOf0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
