@@ -47,8 +47,8 @@ class RegisterViewModel(private val repository: AuthRepository) : ViewModel() {
             state = state.copy(isLoading = true)
             repository.register(
                 name = state.email,
-                email = state.password,
-                password = state.email
+                email = state.email,
+                password = state.password
             )
             state = state.copy(success = true)
         } catch (e: Exception) {

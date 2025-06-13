@@ -2,6 +2,7 @@ package com.emm.gema.data.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.emm.gema.BuildConfig
 import com.emm.gema.data.auth.DataStore
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -13,7 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-internal fun provideOkHttp(authInterceptor: Interceptor): OkHttpClient {
+internal fun provideOkHttp(authInterceptor: Interceptor, context: Context): OkHttpClient {
 
     val level: HttpLoggingInterceptor.Level = if (BuildConfig.DEBUG) {
         HttpLoggingInterceptor.Level.BODY
@@ -26,6 +27,7 @@ internal fun provideOkHttp(authInterceptor: Interceptor): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(authInterceptor)
+        .addInterceptor(ChuckerInterceptor(context))
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)

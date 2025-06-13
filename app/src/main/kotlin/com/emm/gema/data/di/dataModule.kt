@@ -14,7 +14,7 @@ import retrofit2.Retrofit
 
 val dataModule = module {
     single<Interceptor> { AuthInterceptor(get()) }
-    single<OkHttpClient> { provideOkHttp(get()) }
+    single<OkHttpClient> { provideOkHttp(get(), androidApplication()) }
     single<Retrofit> { provideRetrofit(get()) }
     single<SharedPreferences> { provideSharedPreferences(androidApplication()) }
     single<DataStore> { provideDataStore(get()) }
