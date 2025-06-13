@@ -2,7 +2,6 @@
 
 package com.emm.gema.feat.auth
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -71,7 +70,6 @@ class RegisterViewModel(private val repository: AuthRepository) : ViewModel() {
             isValidConfirmPassword = isValidConfirmPassword,
             isChecked = isChecked,
         )
-        Log.e("aea", isValidFields.toString())
         state = state.copy(isValidFields = isValidFields)
     }
 
