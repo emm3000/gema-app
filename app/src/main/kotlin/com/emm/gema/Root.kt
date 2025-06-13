@@ -3,15 +3,22 @@ package com.emm.gema
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.PopUpToBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.emm.gema.data.auth.DataStore
 import com.emm.gema.feat.auth.LoginScreen
-import kotlinx.coroutines.delay
+import com.emm.gema.feat.auth.LoginViewModel
+import com.emm.gema.feat.auth.RegisterScreen
+import com.emm.gema.feat.auth.RegisterViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun Root(modifier: Modifier = Modifier) {
@@ -25,10 +32,19 @@ fun Root(modifier: Modifier = Modifier) {
     ) {
 
         composable<GemaRoutes.PreLogin> {
+            val dataStore: DataStore = koinInject()
 
             LaunchedEffect(Unit) {
-                delay(1000L)
-                navController.navigate(GemaRoutes.Login)
+                val popUpToBuilder: PopUpToBuilder.() -> Unit = { inclusive = true }
+                if (dataStore.token.isNotBlank()) {
+                    navController.navigate(GemaRoutes.Dashboard) {
+                        popUpTo(GemaRoutes.PreLogin, popUpToBuilder)
+                    }
+                } else {
+                    navController.navigate(GemaRoutes.Login) {
+                        popUpTo(GemaRoutes.PreLogin, popUpToBuilder)
+                    }
+                }
             }
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -39,11 +55,41 @@ fun Root(modifier: Modifier = Modifier) {
         }
 
         composable<GemaRoutes.Login> {
-            LoginScreen()
+            val vm: LoginViewModel = koinViewModel()
+
+            LaunchedEffect(vm.state.successLogin) {
+                if (vm.state.successLogin) {
+                    navController.navigate(GemaRoutes.Dashboard) {
+                        popUpTo(GemaRoutes.Login) {
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+
+            LoginScreen(
+                state = vm.state,
+                onAction = vm::onAction,
+                navigateToRegister = { navController.navigate(GemaRoutes.Register) }
+            )
         }
 
         composable<GemaRoutes.Register> {
-//            RegisterScreen()
+            val vm: RegisterViewModel = koinViewModel()
+
+            LaunchedEffect(vm.state.success) {
+                if (vm.state.success) navController.popBackStack()
+            }
+
+            RegisterScreen(
+                state = vm.state,
+                onAction = vm::onAction,
+                onBack = navController::popBackStack
+            )
+        }
+
+        composable<GemaRoutes.Dashboard> {
+            Text("dashboard")
         }
     }
 }

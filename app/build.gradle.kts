@@ -26,6 +26,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BASE_URL", "\"${keystoreProperties["BASE_URL"]}\"")
     }
 
     signingConfigs {
@@ -52,8 +53,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -77,8 +80,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(platform(libs.firebase.bom))
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material.icons.extended)
@@ -91,6 +94,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.logging.interceptor)
+    implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.library)
     releaseImplementation(libs.library.no.op)

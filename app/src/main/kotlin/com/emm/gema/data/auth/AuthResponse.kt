@@ -1,10 +1,10 @@
-package com.emm.gema.data.api.model
+package com.emm.gema.data.auth
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RegisterResponse(
+data class AuthResponse(
 
     @SerialName("access_token")
     val accessToken: String,

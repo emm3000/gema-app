@@ -1,7 +1,5 @@
-package com.emm.gema.data.api
+package com.emm.gema.data.auth
 
-import com.emm.gema.data.api.model.RegisterRequest
-import com.emm.gema.data.api.model.RegisterResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -9,11 +7,11 @@ interface LoginService {
 
     @POST("auth/login")
     suspend fun login(
-        @Body request: RegisterRequest,
-    ): RegisterResponse
+        @Body request: LoginRequest,
+    ): AuthResponse
 
     @POST("auth/register")
     suspend fun register(
         @Body request: RegisterRequest,
-    ): RegisterResponse
+    ): AuthResponse
 }

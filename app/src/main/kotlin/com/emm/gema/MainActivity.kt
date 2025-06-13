@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.emm.gema.feat.auth.LoginScreen
 import com.emm.gema.ui.theme.GemaTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GemaTheme {
-                LoginScreen()
+                Root()
             }
         }
     }

@@ -12,4 +12,7 @@ object GemaRoutes {
 
     @Serializable
     object Register
+
+    @Serializable
+    object Dashboard
 }

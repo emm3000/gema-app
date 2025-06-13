@@ -1,10 +1,9 @@
-package com.emm.gema.data.api.model
+package com.emm.gema.data.auth
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RegisterRequest(
-    val name: String,
+data class LoginRequest(
     val email: String,
     val password: String,
 )
