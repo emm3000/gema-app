@@ -10,7 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.emm.gema.DashboardRoutes
 import com.emm.gema.GemaRoutes
+import com.emm.gema.feat.dashboard.course.CourseViewModel
 import com.emm.gema.feat.dashboard.course.CoursesScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DashboardRoot(topNavController: NavController) {
@@ -31,7 +33,11 @@ fun DashboardRoot(topNavController: NavController) {
             }
 
             composable<DashboardRoutes.Courses> {
+                val vm: CourseViewModel = koinViewModel()
+
                 CoursesScreen(
+                    state = vm.state,
+                    retryFetchCourses = { vm.fetchCourses() },
                     createCourse = { topNavController.navigate(GemaRoutes.CreateCourse) },
                     toStudentList = { courseId -> topNavController.navigate(GemaRoutes.StudentList(courseId)) }
                 )

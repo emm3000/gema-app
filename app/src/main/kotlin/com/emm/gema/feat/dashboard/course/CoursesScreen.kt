@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -38,67 +39,116 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.emm.gema.data.course.CourseResponse
 import com.emm.gema.ui.theme.GemaTheme
-
-data class Course(val id: Int, val name: String, val studentId: String)
 
 @Composable
 fun CoursesScreen(
     modifier: Modifier = Modifier,
+    state: CourseUiState = CourseUiState(),
+    retryFetchCourses: () -> Unit = {},
     createCourse: () -> Unit = {},
     toStudentList: (courseId: String) -> Unit = {}
 ) {
-    val courses = listOf(
-        Course(id = 1, name = "Matemáticas", studentId = "32"),
-        Course(id = 2, name = "Historia", studentId = "28"),
-        Course(id = 3, name = "Biología", studentId = "2"),
-        Course(id = 4, name = "Biología", studentId = "25"),
-        Course(id = 5, name = "Biología", studentId = "25"),
-        Course(id = 6, name = "Biología", studentId = "25"),
-    )
 
-    val menuExpandedState = remember { mutableStateMapOf<Int, Boolean>() }
     val listState = rememberLazyListState()
     val showExtendedFab by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset < 100
         }
     }
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = "Mis Cursos",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                    .align(Alignment.Start)
             )
 
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(courses, key = { it.id }) { curso ->
-                    CourseCard(
-                        course = curso,
-                        isMenuExpanded = menuExpandedState[curso.id] == true,
-                        onMenuAction = { menuExpandedState[curso.id] = it },
-                        toStudentList = toStudentList
-                    )
+            when {
+                state.error != null -> {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Spacer(Modifier.height(50.dp))
+                        Text(
+                            text = state.error,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Light,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(15.dp))
+                        OutlinedButton(
+                            onClick = retryFetchCourses
+                        ) {
+                            Text("Reintentar")
+                        }
+                    }
                 }
 
-                item {
-                    Spacer(Modifier.height(80.dp))
+                state.isLoading -> {
+                    Spacer(Modifier.height(50.dp))
+                    CircularProgressIndicator()
+                }
+
+                state.courses.isEmpty() -> {
+                    Spacer(Modifier.height(50.dp))
+                    Text(
+                        text = "No tienes cursos, crea uno.",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Light,
+                    )
+                    Spacer(Modifier.height(15.dp))
+                    OutlinedButton(
+                        onClick = createCourse
+                    ) {
+                        Text("Crear curso")
+                    }
+                }
+
+                else -> {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+
+                        items(state.courses, key = CourseResponse::id) { course ->
+                            CourseCard(
+                                course = course,
+                                toStudentList = toStudentList,
+                            )
+                        }
+
+                        item {
+                            Spacer(Modifier.height(80.dp))
+                        }
+                    }
                 }
             }
 
@@ -139,11 +189,10 @@ fun FloatingActionButtonContent(
 
 @Composable
 private fun CourseCard(
-    course: Course,
+    course: CourseResponse,
     toStudentList: (String) -> Unit,
-    isMenuExpanded: Boolean,
-    onMenuAction: (Boolean) -> Unit
 ) {
+
     var isMenuExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -157,7 +206,7 @@ private fun CourseCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp) // Main content padding
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -165,7 +214,7 @@ private fun CourseCard(
             ) {
                 Text(
                     text = course.name,
-                    style = MaterialTheme.typography.headlineSmall, // Slightly larger and bolder for more prominence
+                    style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f)
                 )
@@ -184,10 +233,9 @@ private fun CourseCard(
                                     Icons.Filled.Edit,
                                     contentDescription = null
                                 )
-                            }, // contentDescription for leadingIcon can often be null if redundant
+                            },
                             onClick = {
                                 isMenuExpanded = false
-//                                onEditCourse(curso)
                             }
                         )
                         DropdownMenuItem(
@@ -195,7 +243,6 @@ private fun CourseCard(
                             leadingIcon = { Icon(Icons.Filled.Delete, contentDescription = null) },
                             onClick = {
                                 isMenuExpanded = false
-//                                onDeleteCourse(curso)
                             }
                         )
                     }
@@ -220,7 +267,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "${course.studentId} estudiantes",
+                    text = "0 estudiantes",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -234,7 +281,7 @@ private fun CourseCard(
             ) {
                 OutlinedButton(
                     onClick = {
-                        toStudentList(course.studentId)
+                        toStudentList(course.id)
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -260,7 +307,7 @@ private fun CourseCard(
     }
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun CoursesScreenPreview() {
     GemaTheme {

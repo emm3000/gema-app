@@ -35,10 +35,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,7 +56,7 @@ fun CourseFormScreen(
 ) {
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(state.success) {
         if (state.success) {
@@ -70,13 +70,19 @@ fun CourseFormScreen(
                 SnackbarResult.ActionPerformed -> {
                     onBack()
                 }
+
                 SnackbarResult.Dismissed -> {}
             }
         }
     }
 
     Scaffold(
-        topBar = { CourseFormTopAppBar(null, onBack) },
+        topBar = {
+            CourseFormTopAppBar(null, {
+                keyboardController?.hide()
+                onBack()
+            })
+        },
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
         Column(

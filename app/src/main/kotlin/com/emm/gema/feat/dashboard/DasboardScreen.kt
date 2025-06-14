@@ -25,14 +25,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.emm.gema.feat.dashboard.course.Course
+import com.emm.gema.data.course.CourseResponse
 import com.emm.gema.ui.theme.GemaTheme
 
 @Composable
 fun DashboardScreen(modifier: Modifier = Modifier) {
     val activeCourses = listOf(
-        Course(id = 1, name = "Matemáticas", studentId = "32"),
-        Course(id = 2, name = "Historia", studentId = "28")
+        CourseResponse(
+            id = "dolores",
+            name = "Numbers Berger",
+            grade = "movet",
+            section = "an",
+            level = "nonumy",
+            shift = "singulis",
+            academicYear = 2014
+        ),
     )
     val upcomingEvaluations = listOf(
         Evaluation(name = "Examen Matemáticas", date = "15 Jun", type = ""),
@@ -75,9 +82,9 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(curso.name, style = MaterialTheme.typography.bodyLarge)
-                            Text("Estudiantes: ${curso.studentId}", style = MaterialTheme.typography.bodySmall)
+                            Text("Estudiantes: ${0}", style = MaterialTheme.typography.bodySmall)
                         }
-                        Button(onClick = {  }) {
+                        Button(onClick = { }) {
                             Text("Ver")
                         }
                     }
@@ -125,7 +132,11 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(asistencia.course, style = MaterialTheme.typography.bodyLarge)
-                            Text("Asistencia del día", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary)
+                            Text(
+                                "Asistencia del día",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
                         }
                         Spacer(Modifier.width(16.dp))
                         CircularProgressIndicator(
