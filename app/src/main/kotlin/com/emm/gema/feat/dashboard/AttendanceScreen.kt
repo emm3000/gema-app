@@ -173,7 +173,8 @@ fun AttendanceScreen(modifier: Modifier = Modifier) {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .height(50.dp)
+                    .padding(horizontal = 16.dp)
             ) {
                 Text("Guardar Asistencia")
             }

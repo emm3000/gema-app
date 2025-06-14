@@ -1,10 +1,12 @@
 package com.emm.gema.data.di
 
 import android.content.SharedPreferences
+import com.emm.gema.data.auth.AuthApi
 import com.emm.gema.data.auth.AuthInterceptor
 import com.emm.gema.data.auth.AuthRepository
 import com.emm.gema.data.auth.DataStore
-import com.emm.gema.data.auth.LoginService
+import com.emm.gema.data.course.CourseApi
+import com.emm.gema.data.course.CourseRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
@@ -18,9 +20,11 @@ val dataModule = module {
     single<Retrofit> { provideRetrofit(get()) }
     single<SharedPreferences> { provideSharedPreferences(androidApplication()) }
     single<DataStore> { provideDataStore(get()) }
-    single<LoginService> { provideApi<LoginService>(get()) }
+    single<AuthApi> { provideApi<AuthApi>(get()) }
+    single<CourseApi> { provideApi<CourseApi>(get()) }
 
     factoryOf(::AuthRepository)
+    factoryOf(::CourseRepository)
 }
 
 inline fun <reified T> provideApi(retrofit: Retrofit): T {

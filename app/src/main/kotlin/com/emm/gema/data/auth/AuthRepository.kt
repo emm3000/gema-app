@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AuthRepository(
-    private val loginService: LoginService,
+    private val authApi: AuthApi,
     private val dataStore: DataStore,
 ) {
 
@@ -14,7 +14,7 @@ class AuthRepository(
             email = email,
             password = password,
         )
-        val response: AuthResponse = loginService.register(registerRequest)
+        val response: AuthResponse = authApi.register(registerRequest)
         dataStore.storeToken(response.accessToken)
     }
 
@@ -23,7 +23,7 @@ class AuthRepository(
             email = email,
             password = password,
         )
-        val response: AuthResponse = loginService.login(registerRequest)
+        val response: AuthResponse = authApi.login(registerRequest)
         dataStore.storeToken(response.accessToken)
     }
 }

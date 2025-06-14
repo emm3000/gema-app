@@ -3,7 +3,7 @@ package com.emm.gema.data.auth
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface LoginService {
+interface AuthApi {
 
     @POST("auth/login")
     suspend fun login(
