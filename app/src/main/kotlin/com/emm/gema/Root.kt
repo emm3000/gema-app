@@ -20,9 +20,9 @@ import com.emm.gema.feat.auth.LoginViewModel
 import com.emm.gema.feat.auth.RegisterScreen
 import com.emm.gema.feat.auth.RegisterViewModel
 import com.emm.gema.feat.dashboard.DashboardRoot
+import com.emm.gema.feat.dashboard.course.CourseFormScreen
+import com.emm.gema.feat.dashboard.course.CourseFormViewModel
 import com.emm.gema.feat.dashboard.forms.StudentListScreen
-import com.emm.gema.feat.dashboard.forms.courseform.CourseFormScreen
-import com.emm.gema.feat.dashboard.forms.courseform.CourseFormViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

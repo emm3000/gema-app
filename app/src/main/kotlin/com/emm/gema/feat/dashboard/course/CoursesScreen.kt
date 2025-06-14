@@ -1,4 +1,4 @@
-package com.emm.gema.feat.dashboard
+package com.emm.gema.feat.dashboard.course
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Group
@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.ui.theme.GemaTheme
@@ -247,12 +248,12 @@ private fun CourseCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
-                        Icons.Filled.Assignment,
+                        Icons.AutoMirrored.Filled.Assignment,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(Modifier.width(6.dp))
-                    Text("Evaluaciones")
+                    Text("Evaluaciones", maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }

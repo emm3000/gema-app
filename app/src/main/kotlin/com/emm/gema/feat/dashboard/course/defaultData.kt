@@ -1,4 +1,4 @@
-package com.emm.gema.feat.dashboard.forms.courseform
+package com.emm.gema.feat.dashboard.course
 
 val gradeOptions: List<String> = listOf("1ro", "2do", "3ro", "4to", "5to")
 

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.emm.gema.DashboardRoutes
 import com.emm.gema.GemaRoutes
+import com.emm.gema.feat.dashboard.course.CoursesScreen
 
 @Composable
 fun DashboardRoot(topNavController: NavController) {

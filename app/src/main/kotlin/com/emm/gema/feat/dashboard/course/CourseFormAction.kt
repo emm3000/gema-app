@@ -1,4 +1,4 @@
-package com.emm.gema.feat.dashboard.forms.courseform
+package com.emm.gema.feat.dashboard.course
 
 sealed interface CourseFormAction {
 
