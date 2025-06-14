@@ -134,7 +134,7 @@ fun CoursesScreen(
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(16.dp),
+                        contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 100.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
 
@@ -143,10 +143,6 @@ fun CoursesScreen(
                                 course = course,
                                 toStudentList = toStudentList,
                             )
-                        }
-
-                        item {
-                            Spacer(Modifier.height(80.dp))
                         }
                     }
                 }
