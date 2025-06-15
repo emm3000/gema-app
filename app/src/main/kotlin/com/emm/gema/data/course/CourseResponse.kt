@@ -11,4 +11,9 @@ data class CourseResponse(
     val level: String,
     val shift: String,
     val academicYear: Int,
-)
+) {
+
+    override fun toString(): String {
+        return name
+    }
+}

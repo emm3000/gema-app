@@ -9,7 +9,9 @@ class CourseRepository(private val courseApi: CourseApi) {
         courseApi.create(request)
     }
 
-    suspend fun all() = withContext(Dispatchers.IO) {
-        courseApi.all()
+    suspend fun all(): List<CourseResponse> {
+        return withContext(Dispatchers.IO) {
+            courseApi.all()
+        }
     }
 }

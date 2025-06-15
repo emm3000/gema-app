@@ -2,6 +2,7 @@ package com.emm.gema.di
 
 import com.emm.gema.feat.auth.LoginViewModel
 import com.emm.gema.feat.auth.RegisterViewModel
+import com.emm.gema.feat.dashboard.attendance.AttendanceViewModel
 import com.emm.gema.feat.dashboard.course.CourseFormViewModel
 import com.emm.gema.feat.dashboard.course.CourseViewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -12,4 +13,5 @@ val viewModelModule = module {
     viewModelOf(::RegisterViewModel)
     viewModelOf(::CourseFormViewModel)
     viewModelOf(::CourseViewModel)
+    viewModelOf(::AttendanceViewModel)
 }

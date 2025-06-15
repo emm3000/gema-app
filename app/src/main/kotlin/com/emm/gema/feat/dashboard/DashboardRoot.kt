@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.emm.gema.DashboardRoutes
 import com.emm.gema.GemaRoutes
+import com.emm.gema.feat.dashboard.attendance.AttendanceScreen
+import com.emm.gema.feat.dashboard.attendance.AttendanceViewModel
 import com.emm.gema.feat.dashboard.course.CourseViewModel
 import com.emm.gema.feat.dashboard.course.CoursesScreen
 import org.koin.androidx.compose.koinViewModel
@@ -44,7 +46,12 @@ fun DashboardRoot(topNavController: NavController) {
             }
 
             composable<DashboardRoutes.Attendance> {
-                AttendanceScreen()
+                val vm: AttendanceViewModel = koinViewModel()
+
+                AttendanceScreen(
+                    state = vm.state,
+                    onAction = vm::onAction,
+                )
             }
 
             composable<DashboardRoutes.Evaluations> {

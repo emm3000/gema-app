@@ -39,6 +39,9 @@ fun <T> GemaDropdown(
             value = itemSelected?.toString().orEmpty(),
             onValueChange = {},
             readOnly = true,
+            placeholder = {
+                Text(textLabel)
+            },
             label = {
                 Text(textLabel)
             },

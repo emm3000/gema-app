@@ -1,6 +1,8 @@
 package com.emm.gema.data.di
 
 import android.content.SharedPreferences
+import com.emm.gema.data.attendance.AttendanceApi
+import com.emm.gema.data.attendance.AttendanceRepository
 import com.emm.gema.data.auth.AuthApi
 import com.emm.gema.data.auth.AuthInterceptor
 import com.emm.gema.data.auth.AuthRepository
@@ -22,9 +24,11 @@ val dataModule = module {
     single<DataStore> { provideDataStore(get()) }
     single<AuthApi> { provideApi<AuthApi>(get()) }
     single<CourseApi> { provideApi<CourseApi>(get()) }
+    single<AttendanceApi> { provideApi<AttendanceApi>(get()) }
 
     factoryOf(::AuthRepository)
     factoryOf(::CourseRepository)
+    factoryOf(::AttendanceRepository)
 }
 
 inline fun <reified T> provideApi(retrofit: Retrofit): T {
