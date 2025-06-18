@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,11 +46,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.data.course.CourseResponse
+import com.emm.gema.feat.dashboard.components.RetryComponent
 import com.emm.gema.feat.dashboard.components.shimmerEffect
 import com.emm.gema.ui.theme.GemaTheme
 
@@ -89,60 +90,15 @@ fun CoursesScreen(
 
             when {
                 state.error != null -> {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Spacer(Modifier.height(50.dp))
-                        Text(
-                            text = state.error,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.Light,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(Modifier.height(15.dp))
-                        OutlinedButton(
-                            onClick = retryFetchCourses
-                        ) {
-                            Text("Reintentar")
-                        }
-                    }
+                    RetryComponent(state.error, retryFetchCourses)
                 }
 
                 state.isLoading -> {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .weight(1f)
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        (1..3).forEach {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .shimmerEffect()
-                            )
-                        }
-                    }
+                    SkeletonLoading()
                 }
 
                 state.courses.isEmpty() -> {
-                    Spacer(Modifier.height(50.dp))
-                    Text(
-                        text = "No tienes cursos, crea uno.",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Light,
-                    )
-                    Spacer(Modifier.height(15.dp))
-                    OutlinedButton(
-                        onClick = createCourse
-                    ) {
-                        Text("Crear curso")
-                    }
+                    EmptyCourses(createCourse)
                 }
 
                 else -> {
@@ -172,6 +128,45 @@ fun CoursesScreen(
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
         )
+    }
+}
+
+@Composable
+private fun EmptyCourses(createCourse: () -> Unit) {
+    Spacer(Modifier.height(50.dp))
+    Text(
+        text = "No tienes cursos, crea uno.",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+        fontWeight = FontWeight.Light,
+    )
+    Spacer(Modifier.height(15.dp))
+    OutlinedButton(
+        onClick = createCourse
+    ) {
+        Text("Crear curso")
+    }
+}
+
+@Composable
+private fun ColumnScope.SkeletonLoading() {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        (1..3).forEach {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
+            )
+        }
     }
 }
 
