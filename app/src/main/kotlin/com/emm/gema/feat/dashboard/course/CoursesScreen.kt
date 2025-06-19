@@ -90,7 +90,7 @@ fun CoursesScreen(
 
             when {
                 state.error != null -> {
-                    RetryComponent(state.error, retryFetchCourses)
+                    RetryComponent(error = state.error, retryFetchCourses = retryFetchCourses)
                 }
 
                 state.isLoading -> {

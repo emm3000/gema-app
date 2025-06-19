@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.emm.gema.data.attendance.StudentResponse
 import com.emm.gema.ui.theme.GemaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,14 +46,7 @@ fun GradeEntryScreen(
     val studentGrades = remember { mutableStateMapOf<String, String>() }
 
     // --- DATA DE EJEMPLO ---
-    val students = listOf(
-        Student(id = "1", name = "Ana García"),
-        Student(id = "2", name = "Luis Fernandez"),
-        Student(id = "3", name = "Carla Rossi"),
-        Student(id = "4", name = "David Martos"),
-        Student(id = "5", name = "Elena Vidal")
-        // ... Cargar más estudiantes
-    )
+    val students = listOf<StudentResponse>()
 
     // --- UI COMPOSITION ---
     Scaffold(
@@ -86,7 +80,7 @@ fun GradeEntryScreen(
         ) {
             items(students, key = { it.id }) { student ->
                 GradeEntryItem(
-                    studentName = student.name,
+                    studentName = student.fullName,
                     grade = studentGrades[student.id] ?: "",
                     onGradeChange = {
                         // Validar que solo sean números y no más de 20

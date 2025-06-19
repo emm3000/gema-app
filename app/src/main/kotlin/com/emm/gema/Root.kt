@@ -25,6 +25,7 @@ import com.emm.gema.feat.dashboard.course.CourseFormViewModel
 import com.emm.gema.feat.dashboard.forms.StudentFormScreen
 import com.emm.gema.feat.dashboard.forms.StudentFormViewModel
 import com.emm.gema.feat.dashboard.forms.StudentListScreen
+import com.emm.gema.feat.dashboard.forms.StudentListViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -115,9 +116,15 @@ fun Root(modifier: Modifier = Modifier) {
 
         composable<GemaRoutes.StudentList> {
             val param = it.toRoute<GemaRoutes.StudentList>()
+
+            val vm: StudentListViewModel = koinViewModel(
+                parameters = { parametersOf(param.courseId) }
+            )
+
             StudentListScreen(
-                courseId = param.courseId,
+                state = vm.state,
                 onAddStudent = { navController.navigate(GemaRoutes.CreateStudent(param.courseId)) },
+                retryFetchStudents = vm::loadStudents,
                 onBack = { navController.navigateUp() }
             )
         }

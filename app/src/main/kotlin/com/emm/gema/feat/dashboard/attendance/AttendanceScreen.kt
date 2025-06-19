@@ -191,7 +191,7 @@ fun AttendanceScreen(
             }
 
             is ScreenState.HttpException -> {
-                RetryComponent(state.screenState.message) {
+                RetryComponent(error = state.screenState.message) {
                     onAction(AttendanceAction.RetryFetchStudents)
                 }
             }

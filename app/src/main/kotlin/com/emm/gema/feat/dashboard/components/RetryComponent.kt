@@ -15,9 +15,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RetryComponent(error: String, retryFetchCourses: () -> Unit) {
+fun RetryComponent(
+    modifier: Modifier = Modifier,
+    error: String,
+    retryFetchCourses: () -> Unit
+) {
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.height(50.dp))
