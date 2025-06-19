@@ -273,7 +273,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "0 estudiantes",
+                    text = "${course.student.size} estudiantes",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

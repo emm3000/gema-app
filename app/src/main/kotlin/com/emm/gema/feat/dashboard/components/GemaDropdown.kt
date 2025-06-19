@@ -21,6 +21,7 @@ import com.emm.gema.ui.theme.GemaTheme
 @Composable
 fun <T> GemaDropdown(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     textLabel: String,
     items: List<T>,
     itemSelected: T?,
@@ -39,6 +40,7 @@ fun <T> GemaDropdown(
             value = itemSelected?.toString().orEmpty(),
             onValueChange = {},
             readOnly = true,
+            enabled = enabled,
             placeholder = {
                 Text(textLabel)
             },

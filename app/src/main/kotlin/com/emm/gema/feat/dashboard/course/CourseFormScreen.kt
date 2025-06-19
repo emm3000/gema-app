@@ -43,6 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.emm.gema.feat.dashboard.components.GemaDropdown
+import com.emm.gema.feat.dashboard.gradeOptions
+import com.emm.gema.feat.dashboard.levelOptions
+import com.emm.gema.feat.dashboard.sectionsOptions
+import com.emm.gema.feat.dashboard.shiftOptions
 import com.emm.gema.ui.theme.GemaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.data.course.CourseResponse
 import com.emm.gema.ui.theme.GemaTheme
+import kotlinx.serialization.json.JsonArray
 
 @Composable
 fun DashboardScreen(modifier: Modifier = Modifier) {
@@ -38,7 +39,8 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
             section = "an",
             level = "nonumy",
             shift = "singulis",
-            academicYear = 2014
+            academicYear = 2014,
+            student = JsonArray(listOf())
         ),
     )
     val upcomingEvaluations = listOf(

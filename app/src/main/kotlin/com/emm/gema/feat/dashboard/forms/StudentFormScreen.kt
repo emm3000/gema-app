@@ -20,31 +20,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.feat.dashboard.components.GemaDropdown
+import com.emm.gema.feat.dashboard.sexOptions
 import com.emm.gema.ui.theme.GemaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentFormScreen(
     modifier: Modifier = Modifier,
-    studentId: String? = null, // Para modo edición
+    state: StudentFormUiState = StudentFormUiState(),
+    onAction: (StudentFormAction) -> Unit = {},
+    studentId: String? = null,
     onBack: () -> Unit = {},
-    onSave: () -> Unit = {}
 ) {
-    // --- STATE MANAGEMENT ---
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var code by remember { mutableStateOf("") }
-
-    var selectedSex by remember { mutableStateOf("") }
-    val sexOptions = listOf("Masculino", "Femenino")
 
     Scaffold(
         topBar = {
@@ -67,20 +58,23 @@ fun StudentFormScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = state.name,
+                enabled = state.isLoading.not(),
+                onValueChange = { onAction(StudentFormAction.NameChanged(it)) },
                 label = { Text("Nombre completo") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = state.email,
+                enabled = state.isLoading.not(),
+                onValueChange = { onAction(StudentFormAction.EmailChanged(it)) },
                 label = { Text("Correo electrónico") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = code,
-                onValueChange = { code = it },
+                value = state.dni,
+                enabled = state.isLoading.not(),
+                onValueChange = { onAction(StudentFormAction.DniChanged(it)) },
                 label = { Text("Dni") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -89,16 +83,34 @@ fun StudentFormScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textLabel = "Sexo",
                 items = sexOptions,
-                itemSelected = selectedSex,
-                onItemSelected = { selectedSex = it }
+                itemSelected = state.sex,
+                onItemSelected = { onAction(StudentFormAction.SexChanged(it)) }
             )
+
+            when {
+                state.isLoading -> {
+                    Text(
+                        text = "Cargando...",
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+                state.error != null -> {
+                    Text(
+                        text = state.error,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = onSave,
+                onClick = { onAction(StudentFormAction.Save) },
                 modifier = Modifier.fillMaxWidth()
-                    .height(50.dp)
+                    .height(50.dp),
+                enabled = state.isFormValid && !state.isLoading
             ) {
                 Text("Guardar")
             }

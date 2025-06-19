@@ -1,6 +1,7 @@
 package com.emm.gema.data.course
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonArray
 
 @Serializable
 data class CourseResponse(
@@ -11,6 +12,7 @@ data class CourseResponse(
     val level: String,
     val shift: String,
     val academicYear: Int,
+    val student: JsonArray,
 ) {
 
     override fun toString(): String {

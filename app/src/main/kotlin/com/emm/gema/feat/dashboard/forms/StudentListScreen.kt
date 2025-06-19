@@ -35,7 +35,7 @@ import com.emm.gema.ui.theme.GemaTheme
 @Composable
 fun StudentListScreen(
     modifier: Modifier = Modifier,
-    courseId: String, // ID del curso para saber a dónde pertenecen los estudiantes
+    courseId: String,
     onAddStudent: () -> Unit = {},
     onStudentClick: (studentId: String) -> Unit = {},
     onBack: () -> Unit = {}

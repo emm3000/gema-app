@@ -43,7 +43,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs["config"]
+            manifestPlaceholders["usesCleartextTraffic"] = "false"
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
         }
     }
     compileOptions {

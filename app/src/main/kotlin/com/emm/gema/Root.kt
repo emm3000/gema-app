@@ -22,9 +22,12 @@ import com.emm.gema.feat.auth.RegisterViewModel
 import com.emm.gema.feat.dashboard.DashboardRoot
 import com.emm.gema.feat.dashboard.course.CourseFormScreen
 import com.emm.gema.feat.dashboard.course.CourseFormViewModel
+import com.emm.gema.feat.dashboard.forms.StudentFormScreen
+import com.emm.gema.feat.dashboard.forms.StudentFormViewModel
 import com.emm.gema.feat.dashboard.forms.StudentListScreen
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun Root(modifier: Modifier = Modifier) {
@@ -114,6 +117,27 @@ fun Root(modifier: Modifier = Modifier) {
             val param = it.toRoute<GemaRoutes.StudentList>()
             StudentListScreen(
                 courseId = param.courseId,
+                onAddStudent = { navController.navigate(GemaRoutes.CreateStudent(param.courseId)) },
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable<GemaRoutes.CreateStudent> {
+            val param: GemaRoutes.CreateStudent = it.toRoute<GemaRoutes.CreateStudent>()
+
+            val vm: StudentFormViewModel = koinViewModel(
+                parameters = { parametersOf(param.courseId) }
+            )
+
+            LaunchedEffect(vm.state.isSuccessful) {
+                if (vm.state.isSuccessful) {
+                    navController.navigateUp()
+                }
+            }
+
+            StudentFormScreen(
+                state = vm.state,
+                onAction = vm::dispatch,
                 onBack = { navController.navigateUp() }
             )
         }
