@@ -8,4 +8,6 @@ interface AttendanceAction {
     class OnDateChange(val date: LocalDate) : AttendanceAction
 
     class OnCourseSelectedChange(val course: CourseResponse): AttendanceAction
+
+    object RetryFetchStudents: AttendanceAction
 }

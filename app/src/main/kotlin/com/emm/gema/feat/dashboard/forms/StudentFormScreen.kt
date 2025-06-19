@@ -5,16 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -27,8 +25,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.emm.gema.feat.dashboard.components.GemaDropdown
 import com.emm.gema.ui.theme.GemaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,17 +43,9 @@ fun StudentFormScreen(
     var email by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
 
-    var isSexDropdownExpanded by remember { mutableStateOf(false) }
     var selectedSex by remember { mutableStateOf("") }
     val sexOptions = listOf("Masculino", "Femenino")
 
-    var isGradeDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedGrade by remember { mutableStateOf("") }
-    val gradeOptions = listOf("1ro", "2do", "3ro", "4to", "5to")
-
-    // TODO: Si studentId no es nulo, cargar los datos del estudiante aquí
-
-    // --- UI COMPOSITION ---
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,77 +81,24 @@ fun StudentFormScreen(
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
-                label = { Text("Código de estudiante") },
+                label = { Text("Dni") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Dropdown para Sexo
-            ExposedDropdownMenuBox(
-                expanded = isSexDropdownExpanded,
-                onExpandedChange = { isSexDropdownExpanded = it }
-            ) {
-                OutlinedTextField(
-                    value = selectedSex,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Sexo") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isSexDropdownExpanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
-                )
-                ExposedDropdownMenu(
-                    expanded = isSexDropdownExpanded,
-                    onDismissRequest = { isSexDropdownExpanded = false }
-                ) {
-                    sexOptions.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                selectedSex = option
-                                isSexDropdownExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Dropdown para Grado
-            ExposedDropdownMenuBox(
-                expanded = isGradeDropdownExpanded,
-                onExpandedChange = { isGradeDropdownExpanded = it }
-            ) {
-                OutlinedTextField(
-                    value = selectedGrade,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Grado") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isGradeDropdownExpanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
-                )
-                ExposedDropdownMenu(
-                    expanded = isGradeDropdownExpanded,
-                    onDismissRequest = { isGradeDropdownExpanded = false }
-                ) {
-                    gradeOptions.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                selectedGrade = option
-                                isGradeDropdownExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            GemaDropdown(
+                modifier = Modifier.fillMaxWidth(),
+                textLabel = "Sexo",
+                items = sexOptions,
+                itemSelected = selectedSex,
+                onItemSelected = { selectedSex = it }
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = onSave,
                 modifier = Modifier.fillMaxWidth()
+                    .height(50.dp)
             ) {
                 Text("Guardar")
             }
@@ -168,8 +106,7 @@ fun StudentFormScreen(
     }
 }
 
-
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun StudentFormScreenNewPreview() {
     GemaTheme {
@@ -177,7 +114,7 @@ private fun StudentFormScreenNewPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun StudentFormScreenEditPreview() {
     GemaTheme {

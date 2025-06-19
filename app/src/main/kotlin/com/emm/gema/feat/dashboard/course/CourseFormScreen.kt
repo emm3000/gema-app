@@ -1,6 +1,5 @@
 package com.emm.gema.feat.dashboard.course
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -149,23 +148,23 @@ fun CourseFormScreen(
 
 
     if (state.isLoading) {
-        CommonDialog(onAction) {
+        CommonDialog(onAction = { onAction(CourseFormAction.ClearErrorDialog) }) {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .size(48.dp)
-                    .animateContentSize()
+                    .size(48.dp),
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
 
     if (state.error != null) {
-        CommonDialog(onAction) {
+        CommonDialog(onAction = { onAction(CourseFormAction.ClearErrorDialog) }) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Error!!", fontWeight = FontWeight.Bold)
+                Text(state.error, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(0.7f),
@@ -184,11 +183,11 @@ fun CourseFormScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun CommonDialog(
-    onAction: (CourseFormAction) -> Unit,
+    onAction: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     BasicAlertDialog(
-        onDismissRequest = { onAction(CourseFormAction.ClearErrorDialog) },
+        onDismissRequest = { onAction() },
         properties = DialogProperties(
             dismissOnBackPress = false,
             dismissOnClickOutside = false,

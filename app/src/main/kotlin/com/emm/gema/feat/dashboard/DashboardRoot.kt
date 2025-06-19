@@ -51,6 +51,7 @@ fun DashboardRoot(topNavController: NavController) {
                 AttendanceScreen(
                     state = vm.state,
                     onAction = vm::onAction,
+                    navigateToCreateCourse = { topNavController.navigate(GemaRoutes.CreateCourse) },
                 )
             }
 
