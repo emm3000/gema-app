@@ -7,7 +7,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.data.attendance.AttendanceRepository
+import com.emm.gema.data.attendance.AttendanceRequest
 import com.emm.gema.data.attendance.AttendanceResponse
+import com.emm.gema.data.attendance.StudentRequest
 import com.emm.gema.data.course.CourseRepository
 import com.emm.gema.data.course.CourseResponse
 import com.emm.gema.feat.shared.normalizeErrorMessage
@@ -33,7 +35,7 @@ data class AttendanceUiState(
     val courses: List<CourseResponse> = emptyList(),
     val courseSelected: CourseResponse? = null,
     val datePicker: LocalDate = LocalDate.now(),
-    val attendance: List<AttendanceResponse> = emptyList(),
+    val attendance: List<Student> = emptyList(),
     val screenState: ScreenState = ScreenState.None,
 )
 
@@ -81,17 +83,52 @@ class AttendanceViewModel(
             is AttendanceAction.OnCourseSelectedChange -> {
                 state = state.copy(courseSelected = action.course)
             }
+
+            is AttendanceAction.OnAttendanceStatusChange -> {
+                state = state.copy(
+                    attendance = state.attendance.map { student ->
+                        if (student == action.student) {
+                            student.copy(attendanceStatus = student.attendanceStatus.not())
+                        } else {
+                            student
+                        }
+                    })
+            }
+
+            AttendanceAction.RetryFetchStudents -> {
+                state.courseSelected?.let { course ->
+                    viewModelScope.launch {
+                        loadAttendance(course, state.datePicker.toString())
+                    }
+                }
+            }
+
+            AttendanceAction.OnSave -> {
+                viewModelScope.launch {
+                    val attendanceRequest = AttendanceRequest(
+                        date = state.datePicker.toString(),
+                        courseId = state.courseSelected?.id ?: "",
+                        students = state.attendance.map {
+                            StudentRequest(
+                                studentId = it.id,
+                                status = it.attendanceStatus.forNetwork
+                            )
+                        }
+                    )
+                    attendanceRepository.create(attendanceRequest)
+                }
+            }
         }
     }
 
-    suspend fun loadAttendance(course: CourseResponse, date: String) {
+    private suspend fun loadAttendance(course: CourseResponse, date: String) {
         state = state.copy(screenState = ScreenState.Loading)
 
         try {
             val attendance = attendanceRepository.all(course.id, date)
 
             state = state.copy(
-                attendance = attendance,
+                attendance = attendance.map(AttendanceResponse::toStudent),
                 screenState = if (attendance.isEmpty()) ScreenState.EmptyStudents("No hay estudiantes disponibles") else ScreenState.None
             )
 

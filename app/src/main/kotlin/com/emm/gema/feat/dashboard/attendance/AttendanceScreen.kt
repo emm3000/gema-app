@@ -50,7 +50,6 @@ import com.emm.gema.feat.dashboard.components.GemaDropdown
 import com.emm.gema.feat.dashboard.components.RetryComponent
 import com.emm.gema.feat.dashboard.components.shimmerEffect
 import com.emm.gema.ui.theme.GemaTheme
-import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -118,14 +117,13 @@ fun AttendanceScreen(
             if (state.courses.isNotEmpty() && state.attendance.isNotEmpty()) {
                 Button(
                     onClick = {
-                        scope.launch {
-                            snackBarHostState.showSnackbar("Asistencia guardada correctamente")
-                        }
+                        onAction(AttendanceAction.OnSave)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    enabled = state.screenState !is ScreenState.Loading
                 ) {
                     Text("Guardar Asistencia")
                 }
@@ -233,10 +231,10 @@ fun AttendanceScreen(
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(studentName.student.fullName, modifier = Modifier.weight(1f))
+                            Text(studentName.fullName, modifier = Modifier.weight(1f))
                             Checkbox(
-                                checked = studentName.status == "PRESENT",
-                                onCheckedChange = { }
+                                checked = studentName.attendanceStatus == AttendanceStatus.Present,
+                                onCheckedChange = { onAction(AttendanceAction.OnAttendanceStatusChange(studentName)) }
                             )
                         }
                     }
