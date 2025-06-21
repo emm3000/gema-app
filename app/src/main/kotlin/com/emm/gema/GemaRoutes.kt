@@ -75,5 +75,4 @@ val hhRoutes: List<DashboardRoutes> = listOf(
     DashboardRoutes.Courses,
     DashboardRoutes.Attendance,
     DashboardRoutes.Evaluations,
-    DashboardRoutes.Settings,
 )

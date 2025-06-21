@@ -62,10 +62,6 @@ fun DashboardRoot(topNavController: NavController) {
             composable<DashboardRoutes.Evaluations> {
                 EvaluationsScreen()
             }
-
-            composable<DashboardRoutes.Settings> {
-                ProfileScreen()
-            }
         }
     }
 }
