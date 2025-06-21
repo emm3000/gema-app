@@ -18,25 +18,19 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.emm.gema.domain.student.Student
+import com.emm.gema.feat.dashboard.components.GemaDropdown
 import com.emm.gema.ui.theme.GemaTheme
 
 data class Evaluation(val name: String, val type: String, val date: String)
@@ -45,7 +39,6 @@ data class Evaluation(val name: String, val type: String, val date: String)
 @Composable
 fun EvaluationsScreen(modifier: Modifier = Modifier) {
 
-    // --- DATA DE EJEMPLO ---
     val courses = listOf("Matemáticas Avanzadas", "Historia del Arte", "Programación Móvil")
     val evaluations = listOf(
         Evaluation("Examen Parcial 1", "Examen", "2024-05-20"),
@@ -53,45 +46,21 @@ fun EvaluationsScreen(modifier: Modifier = Modifier) {
         Evaluation("Quiz de Unidad 3", "Quiz", "2024-06-15")
     )
 
-    // --- STATE MANAGEMENT ---
-    var selectedCourse by remember { mutableStateOf(courses.first()) }
-    var isCourseMenuExpanded by remember { mutableStateOf(false) }
-
     Scaffold(
         modifier = modifier.fillMaxSize().consumeWindowInsets(WindowInsets.navigationBars),
         topBar = {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Mis Evaluaciones", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
 
-                ExposedDropdownMenuBox(
-                    expanded = isCourseMenuExpanded,
-                    onExpandedChange = { isCourseMenuExpanded = it }
-                ) {
-                    OutlinedTextField(
-                        value = selectedCourse,
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Curso") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCourseMenuExpanded) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor()
-                    )
-                    ExposedDropdownMenu(
-                        expanded = isCourseMenuExpanded,
-                        onDismissRequest = { isCourseMenuExpanded = false }
-                    ) {
-                        courses.forEach { course ->
-                            DropdownMenuItem(
-                                text = { Text(course) },
-                                onClick = {
-                                    selectedCourse = course
-                                    isCourseMenuExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                GemaDropdown(
+                    modifier = Modifier.fillMaxWidth(),
+                    textLabel = "Curso",
+                    items = listOf<Student>(),
+                    itemSelected = null,
+                    onItemSelected = {  }
+                )
             }
         },
         floatingActionButton = {
@@ -148,7 +117,7 @@ private fun EvaluationCard(
 }
 
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun EvaluationsScreenPreview() {
     GemaTheme {
