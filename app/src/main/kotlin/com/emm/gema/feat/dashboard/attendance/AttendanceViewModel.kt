@@ -12,9 +12,7 @@ import com.emm.gema.domain.attendance.AttendanceStatusFetcher
 import com.emm.gema.domain.attendance.AttendanceUpdater
 import com.emm.gema.domain.attendance.CreateAttendanceInput
 import com.emm.gema.domain.attendance.StudentAttendance
-import com.emm.gema.domain.attendance.StudentAttendanceStatus
 import com.emm.gema.domain.course.CoursesFetcher
-import com.emm.gema.domain.course.model.Course
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
@@ -23,25 +21,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-
-sealed interface ScreenState {
-
-    data class EmptyCourses(val message: String) : ScreenState
-
-    data class EmptyStudents(val message: String) : ScreenState
-
-    object None : ScreenState
-}
-
-data class AttendanceUiState(
-    val courses: List<Course> = emptyList(),
-    val courseSelected: Course? = null,
-    val datePicker: LocalDate = LocalDate.now(),
-    val isSubmitButtonEnabled: Boolean = false,
-    val attendance: List<StudentAttendanceStatus> = emptyList(),
-    val screenState: ScreenState = ScreenState.None,
-)
 
 class AttendanceViewModel(
     private val coursesFetcher: CoursesFetcher,
