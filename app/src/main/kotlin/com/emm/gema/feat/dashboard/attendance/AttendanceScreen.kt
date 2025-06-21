@@ -2,7 +2,6 @@ package com.emm.gema.feat.dashboard.attendance
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +36,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,8 +46,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.domain.attendance.AttendanceStatus
 import com.emm.gema.feat.dashboard.components.GemaDropdown
-import com.emm.gema.feat.dashboard.components.RetryComponent
-import com.emm.gema.feat.dashboard.components.shimmerEffect
 import com.emm.gema.ui.theme.GemaTheme
 import java.time.Instant
 import java.time.LocalDate
@@ -76,7 +72,6 @@ fun AttendanceScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -124,7 +119,6 @@ fun AttendanceScreen(
                         .fillMaxWidth()
                         .height(50.dp)
                         .padding(horizontal = 16.dp),
-                    enabled = state.screenState !is ScreenState.Loading
                 ) {
                     Text("Guardar Asistencia")
                 }
@@ -189,32 +183,6 @@ fun AttendanceScreen(
 
             }
 
-            is ScreenState.HttpException -> {
-                RetryComponent(error = state.screenState.message) {
-                    onAction(AttendanceAction.RetryFetchStudents)
-                }
-            }
-
-            ScreenState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    (1..3).forEach {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(120.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .shimmerEffect()
-                        )
-                    }
-                }
-            }
-
             ScreenState.None -> {
                 LazyColumn(
                     modifier = Modifier
@@ -232,9 +200,9 @@ fun AttendanceScreen(
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(studentName.fullName, modifier = Modifier.weight(1f))
+                            Text(studentName.student.fullName, modifier = Modifier.weight(1f))
                             Checkbox(
-                                checked = studentName.attendanceStatus == AttendanceStatus.Present,
+                                checked = studentName.status == AttendanceStatus.Present,
                                 onCheckedChange = { onAction(AttendanceAction.OnAttendanceStatusChange(studentName)) }
                             )
                         }

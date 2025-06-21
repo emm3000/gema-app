@@ -8,4 +8,9 @@ data class Course(
     val level: String,
     val shift: String,
     val academicYear: Long,
-)
+) {
+
+    override fun toString(): String {
+        return name
+    }
+}

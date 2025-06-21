@@ -3,7 +3,6 @@ package com.emm.gema.feat.dashboard.attendance
 import com.emm.gema.data.network.attendance.AttendanceResponse
 import com.emm.gema.domain.attendance.AttendanceStatus
 
-
 data class Student(
     val id: String,
     val fullName: String,

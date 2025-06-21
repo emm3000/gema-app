@@ -15,3 +15,7 @@ SELECT * FROM attendance;
 upsertAttendace:
 INSERT OR REPLACE INTO attendance(id, date, status, studentId, courseId)
 VALUES (?, ?, ?, ?, ?);
+
+selectByDateAndCourse:
+SELECT * FROM attendance
+WHERE courseId = ? AND date = ?;
