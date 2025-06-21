@@ -1,17 +1,17 @@
-package com.emm.gema.feat.dashboard.attendance
+package com.emm.gema.domain.attendance
 
 enum class AttendanceStatus(
     val forNetwork: String,
-    val checkboxValue: Boolean,
+    val nativeValue: Boolean,
 ) {
 
     Present(
         forNetwork = "PRESENT",
-        checkboxValue = true,
+        nativeValue = true,
     ),
     Absent(
         forNetwork = "ABSENT",
-        checkboxValue = false,
+        nativeValue = false,
     );
 
     fun not(): AttendanceStatus {

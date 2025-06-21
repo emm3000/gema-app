@@ -1,5 +1,6 @@
 package com.emm.gema.di
 
+import com.emm.gema.domain.attendance.AttendanceUpdater
 import com.emm.gema.domain.course.CourseCreator
 import com.emm.gema.domain.course.CourseStudentAdder
 import com.emm.gema.domain.course.CoursesFetcher
@@ -16,4 +17,5 @@ val domainModule = module {
     factoryOf(::StudentCreator)
     factoryOf(::CourseStudentsFetcher)
     factoryOf(::CourseStudentAdder)
+    factoryOf(::AttendanceUpdater)
 }
