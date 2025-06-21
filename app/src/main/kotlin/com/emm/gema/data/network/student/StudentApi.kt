@@ -1,6 +1,6 @@
-package com.emm.gema.data.student
+package com.emm.gema.data.network.student
 
-import com.emm.gema.data.attendance.StudentResponse
+import com.emm.gema.data.network.attendance.StudentResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

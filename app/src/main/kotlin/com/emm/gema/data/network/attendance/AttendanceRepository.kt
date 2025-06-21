@@ -1,4 +1,4 @@
-package com.emm.gema.data.attendance
+package com.emm.gema.data.network.attendance
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

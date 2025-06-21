@@ -1,8 +1,7 @@
-package com.emm.gema.data.student
+package com.emm.gema.data.network.student
 
-import com.emm.gema.data.attendance.StudentResponse
+import com.emm.gema.data.network.attendance.StudentResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class StudentRepository(private val api: StudentApi) {
@@ -14,7 +13,6 @@ class StudentRepository(private val api: StudentApi) {
     }
 
     suspend fun studentsByCourseId(courseId: String): List<StudentResponse> = withContext(Dispatchers.IO) {
-        delay(2000L)
         api.studentsByCourseId(courseId)
     }
 }

@@ -1,16 +1,16 @@
 package com.emm.gema.data.di
 
 import android.content.SharedPreferences
-import com.emm.gema.data.attendance.AttendanceApi
-import com.emm.gema.data.attendance.AttendanceRepository
-import com.emm.gema.data.auth.AuthApi
-import com.emm.gema.data.auth.AuthInterceptor
-import com.emm.gema.data.auth.AuthRepository
-import com.emm.gema.data.auth.DataStore
-import com.emm.gema.data.course.CourseApi
-import com.emm.gema.data.course.CourseRepository
-import com.emm.gema.data.student.StudentApi
-import com.emm.gema.data.student.StudentRepository
+import com.emm.gema.data.network.attendance.AttendanceApi
+import com.emm.gema.data.network.attendance.AttendanceRepository
+import com.emm.gema.data.network.auth.AuthApi
+import com.emm.gema.data.network.auth.AuthInterceptor
+import com.emm.gema.data.network.auth.AuthRepository
+import com.emm.gema.data.network.auth.DataStore
+import com.emm.gema.data.network.course.CourseApi
+import com.emm.gema.data.network.course.CourseRepository
+import com.emm.gema.data.network.student.StudentApi
+import com.emm.gema.data.network.student.StudentRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication

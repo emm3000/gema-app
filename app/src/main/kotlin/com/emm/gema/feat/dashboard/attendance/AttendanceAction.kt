@@ -1,6 +1,6 @@
 package com.emm.gema.feat.dashboard.attendance
 
-import com.emm.gema.data.course.CourseResponse
+import com.emm.gema.data.network.course.CourseResponse
 import java.time.LocalDate
 
 sealed interface AttendanceAction {

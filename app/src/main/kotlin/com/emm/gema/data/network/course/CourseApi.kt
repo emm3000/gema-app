@@ -1,4 +1,4 @@
-package com.emm.gema.data.course
+package com.emm.gema.data.network.course
 
 import retrofit2.http.Body
 import retrofit2.http.GET

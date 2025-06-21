@@ -1,4 +1,4 @@
-package com.emm.gema.data.auth
+package com.emm.gema.data.network.auth
 
 import retrofit2.http.Body
 import retrofit2.http.POST

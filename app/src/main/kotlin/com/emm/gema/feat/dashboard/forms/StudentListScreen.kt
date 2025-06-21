@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.emm.gema.data.attendance.StudentResponse
+import com.emm.gema.data.network.attendance.StudentResponse
 import com.emm.gema.feat.dashboard.components.RetryComponent
 import com.emm.gema.feat.dashboard.components.shimmerEffect
 import com.emm.gema.ui.theme.GemaTheme

@@ -1,4 +1,4 @@
-package com.emm.gema.data.course
+package com.emm.gema.data.network.course
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

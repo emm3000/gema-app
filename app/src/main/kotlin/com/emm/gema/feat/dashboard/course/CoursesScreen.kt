@@ -49,7 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.emm.gema.data.course.CourseResponse
+import com.emm.gema.data.network.course.CourseResponse
 import com.emm.gema.feat.dashboard.components.RetryComponent
 import com.emm.gema.feat.dashboard.components.shimmerEffect
 import com.emm.gema.ui.theme.GemaTheme

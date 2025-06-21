@@ -8,8 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.student.CreateStudentRequest
-import com.emm.gema.data.student.StudentRepository
+import com.emm.gema.data.network.student.CreateStudentRequest
+import com.emm.gema.data.network.student.StudentRepository
 import com.emm.gema.feat.dashboard.sexOptions
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import com.google.firebase.crashlytics.FirebaseCrashlytics

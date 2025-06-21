@@ -1,4 +1,4 @@
-package com.emm.gema.data.student
+package com.emm.gema.data.network.student
 
 import kotlinx.serialization.Serializable
 

@@ -1,4 +1,4 @@
-package com.emm.gema.data.auth
+package com.emm.gema.data.network.auth
 
 import okhttp3.Interceptor
 import okhttp3.Request

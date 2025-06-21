@@ -14,7 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.emm.gema.data.auth.DataStore
+import com.emm.gema.data.network.auth.DataStore
 import com.emm.gema.feat.auth.LoginScreen
 import com.emm.gema.feat.auth.LoginViewModel
 import com.emm.gema.feat.auth.RegisterScreen

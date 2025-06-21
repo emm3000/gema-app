@@ -1,4 +1,4 @@
-package com.emm.gema.data.attendance
+package com.emm.gema.data.network.attendance
 
 import kotlinx.serialization.json.JsonArray
 import retrofit2.http.Body

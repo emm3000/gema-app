@@ -1,6 +1,7 @@
 package com.emm.gema.feat.dashboard.attendance
 
-import com.emm.gema.data.attendance.AttendanceResponse
+import com.emm.gema.data.network.attendance.AttendanceResponse
+
 
 data class Student(
     val id: String,
