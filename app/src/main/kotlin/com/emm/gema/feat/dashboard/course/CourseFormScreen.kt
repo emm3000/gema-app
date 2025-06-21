@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -140,24 +138,13 @@ fun CourseFormScreen(
 
             Button(
                 onClick = { onAction(CourseFormAction.OnSave) },
-                enabled = state.isValidFields && !state.isLoading,
+                enabled = state.isValidFields,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
                 Text("Guardar", fontWeight = FontWeight.Bold)
             }
-        }
-    }
-
-
-    if (state.isLoading) {
-        CommonDialog(onAction = { onAction(CourseFormAction.ClearErrorDialog) }) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(48.dp),
-                color = MaterialTheme.colorScheme.onSurface
-            )
         }
     }
 

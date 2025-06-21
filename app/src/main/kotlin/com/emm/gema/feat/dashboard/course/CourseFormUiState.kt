@@ -15,6 +15,5 @@ data class CourseFormUiState(
     val year: String = LocalDate.now().year.toString(),
     val error: String? = null,
     val isValidFields: Boolean = false,
-    val isLoading: Boolean = false,
     val success: Boolean = false,
 )

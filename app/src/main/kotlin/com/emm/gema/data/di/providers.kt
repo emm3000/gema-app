@@ -2,8 +2,12 @@ package com.emm.gema.data.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.sqlite.db.SupportSQLiteDatabase
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.emm.gema.BuildConfig
+import com.emm.gema.GemaDb
 import com.emm.gema.data.network.auth.DataStore
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -53,3 +57,20 @@ internal fun provideSharedPreferences(applicationContext: Context): SharedPrefer
 }
 
 internal fun provideDataStore(sharedPreferences: SharedPreferences) = DataStore(sharedPreferences)
+
+fun provideSqlDriver(context: Context): SqlDriver {
+    return AndroidSqliteDriver(
+        schema = GemaDb.Schema,
+        context = context,
+        name = "${BuildConfig.APPLICATION_ID}.db",
+        callback = csm()
+    )
+}
+
+fun csm() = object : AndroidSqliteDriver.Callback(schema = GemaDb.Schema) {
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        db.setForeignKeyConstraintsEnabled(true)
+    }
+}
+
+fun provideDb(sqlDriver: SqlDriver): GemaDb = GemaDb(sqlDriver)

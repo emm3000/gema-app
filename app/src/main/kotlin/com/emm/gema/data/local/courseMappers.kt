@@ -1,6 +1,6 @@
 package com.emm.gema.data.local
 
-import com.emm.gema.domain.course.Course
+import com.emm.gema.domain.course.model.Course
 
 fun CourseEntity.toDomain() = Course(
     id = id,

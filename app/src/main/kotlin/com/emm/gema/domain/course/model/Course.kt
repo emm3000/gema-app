@@ -1,4 +1,4 @@
-package com.emm.gema.domain.course
+package com.emm.gema.domain.course.model
 
 data class Course(
     val id: String,

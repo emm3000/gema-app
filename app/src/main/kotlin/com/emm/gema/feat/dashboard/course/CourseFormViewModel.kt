@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.course.CourseNetworkRepository
-import com.emm.gema.data.network.course.CreateCourseRequest
+import com.emm.gema.domain.course.CourseCreator
+import com.emm.gema.domain.course.model.CreateCourseInput
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.FlowPreview
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-class CourseFormViewModel(private val repository: CourseNetworkRepository) : ViewModel() {
+class CourseFormViewModel(private val courseCreator: CourseCreator) : ViewModel() {
 
     var state by mutableStateOf(CourseFormUiState())
         private set
@@ -45,21 +45,20 @@ class CourseFormViewModel(private val repository: CourseNetworkRepository) : Vie
     private fun save() = viewModelScope.launch { trySaveCourse() }
 
     private suspend fun trySaveCourse() = try {
-        state = state.copy(isLoading = true)
-        val request = createCreateCourseRequest()
-        repository.create(request)
+        val input: CreateCourseInput = createCourseInput()
+        courseCreator.create(input)
         state = CourseFormUiState(success = true)
     } catch (e: Throwable) {
         FirebaseCrashlytics.getInstance().recordException(e)
-        state = state.copy(error = normalizeErrorMessage(e), isLoading = false)
+        state = state.copy(error = normalizeErrorMessage(e))
     }
 
-    private fun createCreateCourseRequest(): CreateCourseRequest = CreateCourseRequest(
-        academicYear = state.year.toInt(),
-        grade = state.grade,
-        level = state.level,
+    private fun createCourseInput() = CreateCourseInput(
         name = state.courseName,
+        grade = state.grade,
         section = state.section,
+        level = state.level,
         shift = state.shift,
+        academicYear = 2025,
     )
 }
