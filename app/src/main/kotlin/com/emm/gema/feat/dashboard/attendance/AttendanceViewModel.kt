@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.attendance.AttendanceRepository
+import com.emm.gema.data.network.attendance.AttendanceNetworkRepository
 import com.emm.gema.data.network.attendance.AttendanceRequest
 import com.emm.gema.data.network.attendance.AttendanceResponse
 import com.emm.gema.data.network.attendance.StudentRequest
-import com.emm.gema.data.network.course.CourseRepository
+import com.emm.gema.data.network.course.CourseNetworkRepository
 import com.emm.gema.data.network.course.CourseResponse
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import kotlinx.coroutines.flow.combine
@@ -40,8 +40,8 @@ data class AttendanceUiState(
 )
 
 class AttendanceViewModel(
-    private val attendanceRepository: AttendanceRepository,
-    private val courseRepository: CourseRepository,
+    private val attendanceNetworkRepository: AttendanceNetworkRepository,
+    private val courseNetworkRepository: CourseNetworkRepository,
 ) : ViewModel() {
 
     var state by mutableStateOf(AttendanceUiState())
@@ -62,7 +62,7 @@ class AttendanceViewModel(
     private fun fetchCourses() = viewModelScope.launch {
         try {
             state = state.copy(screenState = ScreenState.Loading)
-            val coursesResponse = courseRepository.all()
+            val coursesResponse = courseNetworkRepository.all()
             state = state.copy(
                 courses = coursesResponse,
                 screenState = if (coursesResponse.isEmpty()) ScreenState.EmptyCourses("No hay cursos disponibles") else ScreenState.None,
@@ -115,7 +115,7 @@ class AttendanceViewModel(
                             )
                         }
                     )
-                    attendanceRepository.create(attendanceRequest)
+                    attendanceNetworkRepository.create(attendanceRequest)
                 }
             }
         }
@@ -125,7 +125,7 @@ class AttendanceViewModel(
         state = state.copy(screenState = ScreenState.Loading)
 
         try {
-            val attendance = attendanceRepository.all(course.id, date)
+            val attendance = attendanceNetworkRepository.all(course.id, date)
 
             state = state.copy(
                 attendance = attendance.map(AttendanceResponse::toStudent),
@@ -138,6 +138,6 @@ class AttendanceViewModel(
     }
 
     fun attendance(courseId: String, date: String) = viewModelScope.launch {
-        attendanceRepository.all(courseId, date)
+        attendanceNetworkRepository.all(courseId, date)
     }
 }

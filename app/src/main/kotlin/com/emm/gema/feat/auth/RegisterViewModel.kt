@@ -8,13 +8,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.auth.AuthRepository
+import com.emm.gema.data.network.auth.AuthNetworkRepository
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(private val repository: AuthRepository) : ViewModel() {
+class RegisterViewModel(private val repository: AuthNetworkRepository) : ViewModel() {
 
     var state by mutableStateOf(RegisterUiState())
         private set

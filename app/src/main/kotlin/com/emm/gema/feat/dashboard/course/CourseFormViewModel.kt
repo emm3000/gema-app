@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.course.CourseRepository
+import com.emm.gema.data.network.course.CourseNetworkRepository
 import com.emm.gema.data.network.course.CreateCourseRequest
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-class CourseFormViewModel(private val repository: CourseRepository) : ViewModel() {
+class CourseFormViewModel(private val repository: CourseNetworkRepository) : ViewModel() {
 
     var state by mutableStateOf(CourseFormUiState())
         private set

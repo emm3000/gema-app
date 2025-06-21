@@ -4,7 +4,7 @@ import com.emm.gema.data.network.attendance.StudentResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class StudentRepository(private val api: StudentApi) {
+class StudentNetworkRepository(private val api: StudentApi) {
 
     suspend fun createStudentWithCourse(
         request: CreateStudentRequest,

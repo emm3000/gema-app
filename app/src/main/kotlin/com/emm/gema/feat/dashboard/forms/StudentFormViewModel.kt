@@ -9,7 +9,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.data.network.student.CreateStudentRequest
-import com.emm.gema.data.network.student.StudentRepository
+import com.emm.gema.data.network.student.StudentNetworkRepository
 import com.emm.gema.feat.dashboard.sexOptions
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -31,7 +31,7 @@ data class StudentFormUiState(
 )
 
 class StudentFormViewModel(
-    private val repository: StudentRepository,
+    private val repository: StudentNetworkRepository,
     private val courseId: String,
 ) : ViewModel() {
 

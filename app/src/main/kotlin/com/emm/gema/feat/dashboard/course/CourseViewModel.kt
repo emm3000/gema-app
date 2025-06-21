@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.course.CourseRepository
+import com.emm.gema.data.network.course.CourseNetworkRepository
 import com.emm.gema.data.network.course.CourseResponse
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.launch
 
-class CourseViewModel(private val repository: CourseRepository) : ViewModel() {
+class CourseViewModel(private val repository: CourseNetworkRepository) : ViewModel() {
 
     var state by mutableStateOf(CourseUiState())
         private set

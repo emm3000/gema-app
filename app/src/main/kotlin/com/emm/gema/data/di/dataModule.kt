@@ -2,15 +2,15 @@ package com.emm.gema.data.di
 
 import android.content.SharedPreferences
 import com.emm.gema.data.network.attendance.AttendanceApi
-import com.emm.gema.data.network.attendance.AttendanceRepository
+import com.emm.gema.data.network.attendance.AttendanceNetworkRepository
 import com.emm.gema.data.network.auth.AuthApi
 import com.emm.gema.data.network.auth.AuthInterceptor
-import com.emm.gema.data.network.auth.AuthRepository
+import com.emm.gema.data.network.auth.AuthNetworkRepository
 import com.emm.gema.data.network.auth.DataStore
 import com.emm.gema.data.network.course.CourseApi
-import com.emm.gema.data.network.course.CourseRepository
+import com.emm.gema.data.network.course.CourseNetworkRepository
 import com.emm.gema.data.network.student.StudentApi
-import com.emm.gema.data.network.student.StudentRepository
+import com.emm.gema.data.network.student.StudentNetworkRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
@@ -29,10 +29,10 @@ val dataModule = module {
     single<AttendanceApi> { provideApi<AttendanceApi>(get()) }
     single<StudentApi> { provideApi<StudentApi>(get()) }
 
-    factoryOf(::AuthRepository)
-    factoryOf(::CourseRepository)
-    factoryOf(::AttendanceRepository)
-    factoryOf(::StudentRepository)
+    factoryOf(::AuthNetworkRepository)
+    factoryOf(::CourseNetworkRepository)
+    factoryOf(::AttendanceNetworkRepository)
+    factoryOf(::StudentNetworkRepository)
 }
 
 inline fun <reified T> provideApi(retrofit: Retrofit): T {

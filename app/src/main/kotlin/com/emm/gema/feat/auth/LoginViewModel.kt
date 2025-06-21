@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.auth.AuthRepository
+import com.emm.gema.data.network.auth.AuthNetworkRepository
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
+class LoginViewModel(private val authNetworkRepository: AuthNetworkRepository) : ViewModel() {
 
     var state by mutableStateOf(LoginUiState())
         private set
@@ -42,7 +42,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private suspend fun tryLogin() = try {
         state = state.copy(isLoading = true)
-        authRepository.login(state.email, state.password)
+        authNetworkRepository.login(state.email, state.password)
         state = state.copy(successLogin = true)
     } catch (e: Exception) {
         FirebaseCrashlytics.getInstance().recordException(e)
