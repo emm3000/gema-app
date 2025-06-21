@@ -25,8 +25,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -163,116 +161,100 @@ private fun CourseCard(
     course: Course,
     toStudentList: (String) -> Unit,
 ) {
-
     var isMenuExpanded by remember { mutableStateOf(false) }
 
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = course.name,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.weight(1f)
-                )
-                Box {
-                    IconButton(onClick = { isMenuExpanded = true }) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = "Más opciones para ${course.name}")
-                    }
-                    DropdownMenu(
-                        expanded = isMenuExpanded,
-                        onDismissRequest = { isMenuExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Editar") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Filled.Edit,
-                                    contentDescription = null
-                                )
-                            },
-                            onClick = {
-                                isMenuExpanded = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Eliminar") },
-                            leadingIcon = { Icon(Icons.Filled.Delete, contentDescription = null) },
-                            onClick = {
-                                isMenuExpanded = false
-                            }
-                        )
-                    }
+            Text(
+                text = course.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
+            )
+            Box {
+                IconButton(onClick = { isMenuExpanded = true }) {
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        contentDescription = "Más opciones para ${course.name}",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                DropdownMenu(
+                    expanded = isMenuExpanded,
+                    onDismissRequest = { isMenuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Editar") },
+                        leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+                        onClick = { isMenuExpanded = false }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Eliminar") },
+                        leadingIcon = { Icon(Icons.Filled.Delete, contentDescription = null) },
+                        onClick = { isMenuExpanded = false }
+                    )
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 10.dp, vertical = 6.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Group,
+                contentDescription = "Número de estudiantes",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                text = "${0} estudiantes",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedButton(
+                onClick = { toStudentList(course.id) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(Icons.Filled.Group, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Estudiantes")
+            }
+            Button(
+                onClick = { /* TODO: Navigate to evaluations */ },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Group,
-                    contentDescription = "Número de estudiantes",
-                    tint = MaterialTheme.colorScheme.primary
+                    Icons.AutoMirrored.Filled.Assignment,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "${0} estudiantes",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End)
-            ) {
-                OutlinedButton(
-                    onClick = {
-                        toStudentList(course.id)
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(Icons.Filled.Group, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text("Estudiantes")
-                }
-                Button(
-                    onClick = {
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.Assignment,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text("Evaluaciones", maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
+                Spacer(Modifier.width(8.dp))
+                Text("Evaluaciones", maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
     }
@@ -283,7 +265,17 @@ private fun CourseCard(
 private fun CoursesScreenPreview() {
     GemaTheme {
         CoursesScreen(
-            courses = listOf()
+            courses = listOf(
+                Course(
+                    id = "eos",
+                    name = "Joseph Snyder",
+                    grade = "corrumpit",
+                    section = "quem",
+                    level = "laudem",
+                    shift = "instructior",
+                    academicYear = 2019
+                )
+            )
         )
     }
 }
