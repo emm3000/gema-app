@@ -119,6 +119,7 @@ fun AttendanceScreen(
                         .fillMaxWidth()
                         .height(50.dp)
                         .padding(horizontal = 16.dp),
+                    enabled = state.isSubmitButtonEnabled,
                 ) {
                     Text("Guardar Asistencia")
                 }

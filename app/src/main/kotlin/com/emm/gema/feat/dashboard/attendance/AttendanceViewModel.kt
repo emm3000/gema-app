@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
+@file:OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 
 package com.emm.gema.feat.dashboard.attendance
 
@@ -16,7 +16,9 @@ import com.emm.gema.domain.attendance.StudentAttendanceStatus
 import com.emm.gema.domain.course.CoursesFetcher
 import com.emm.gema.domain.course.model.Course
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -36,6 +38,7 @@ data class AttendanceUiState(
     val courses: List<Course> = emptyList(),
     val courseSelected: Course? = null,
     val datePicker: LocalDate = LocalDate.now(),
+    val isSubmitButtonEnabled: Boolean = false,
     val attendance: List<StudentAttendanceStatus> = emptyList(),
     val screenState: ScreenState = ScreenState.None,
 )
@@ -51,8 +54,8 @@ class AttendanceViewModel(
 
     init {
         combine(
-            snapshotFlow { state.courseSelected },
-            snapshotFlow { state.datePicker },
+            snapshotFlow { state.courseSelected }.debounce(200L),
+            snapshotFlow { state.datePicker }.debounce(200L),
             ::Pair
         )
             .flatMapLatest {
@@ -61,6 +64,7 @@ class AttendanceViewModel(
             .onEach {
                 state = state.copy(
                     attendance = it,
+                    isSubmitButtonEnabled = false,
                     screenState = if (it.isEmpty()) ScreenState.EmptyStudents("No hay estudiantes disponibles") else ScreenState.None
                 )
             }
@@ -119,6 +123,8 @@ class AttendanceViewModel(
                 } else {
                     student
                 }
-            })
+            },
+            isSubmitButtonEnabled = true
+        )
     }
 }
