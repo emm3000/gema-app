@@ -1,33 +1,17 @@
 package com.emm.gema.feat.dashboard.course
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.course.CourseNetworkRepository
-import com.emm.gema.data.network.course.CourseResponse
-import com.emm.gema.feat.shared.normalizeErrorMessage
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.coroutines.launch
+import com.emm.gema.domain.course.CoursesFetcher
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
-class CourseViewModel(private val repository: CourseNetworkRepository) : ViewModel() {
+class CourseViewModel(coursesFetcher: CoursesFetcher) : ViewModel() {
 
-    var state by mutableStateOf(CourseUiState())
-        private set
-
-    init {
-        fetchCourses()
-    }
-
-    fun fetchCourses() = viewModelScope.launch { tryFetchCourses() }
-
-    private suspend fun tryFetchCourses() = try {
-        state = state.copy(isLoading = true, error = null)
-        val courseList: List<CourseResponse> = repository.all()
-        state = state.copy(courses = courseList, isLoading = false)
-    } catch (e: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(e)
-        state = state.copy(error = normalizeErrorMessage(e), isLoading = false)
-    }
+    val courses = coursesFetcher.fetchAll()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = emptyList(),
+        )
 }

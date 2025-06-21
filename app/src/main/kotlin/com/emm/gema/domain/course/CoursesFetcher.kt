@@ -5,7 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 class CoursesFetcher(private val courseRepository: CourseRepository) {
 
-    suspend fun fetchAll(): Flow<List<Course>> {
-        return courseRepository.all()
-    }
+    fun fetchAll(): Flow<List<Course>> = courseRepository.all()
 }

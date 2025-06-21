@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,21 +43,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.emm.gema.data.network.course.CourseResponse
-import com.emm.gema.feat.dashboard.components.RetryComponent
-import com.emm.gema.feat.dashboard.components.shimmerEffect
+import com.emm.gema.domain.course.model.Course
 import com.emm.gema.ui.theme.GemaTheme
 
 @Composable
 fun CoursesScreen(
     modifier: Modifier = Modifier,
-    state: CourseUiState = CourseUiState(),
-    retryFetchCourses: () -> Unit = {},
+    courses: List<Course>,
     createCourse: () -> Unit = {},
     toStudentList: (courseId: String) -> Unit = {}
 ) {
@@ -88,28 +83,20 @@ fun CoursesScreen(
                     .align(Alignment.Start)
             )
 
-            when {
-                state.error != null -> {
-                    RetryComponent(error = state.error, retryFetchCourses = retryFetchCourses)
-                }
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
 
-                state.isLoading -> {
-                    SkeletonLoading()
-                }
+                when {
+                    courses.isEmpty() -> item {
+                        EmptyCourses(createCourse)
+                    }
 
-                state.courses.isEmpty() -> {
-                    EmptyCourses(createCourse)
-                }
-
-                else -> {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 100.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-
-                        items(state.courses, key = CourseResponse::id) { course ->
+                    else -> {
+                        items(courses, key = Course::id) { course ->
                             CourseCard(
                                 course = course,
                                 toStudentList = toStudentList,
@@ -149,28 +136,6 @@ private fun EmptyCourses(createCourse: () -> Unit) {
 }
 
 @Composable
-private fun ColumnScope.SkeletonLoading() {
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        (1..3).forEach {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .shimmerEffect()
-            )
-        }
-    }
-}
-
-@Composable
 fun FloatingActionButtonContent(
     isExtended: Boolean,
     onClick: () -> Unit,
@@ -195,7 +160,7 @@ fun FloatingActionButtonContent(
 
 @Composable
 private fun CourseCard(
-    course: CourseResponse,
+    course: Course,
     toStudentList: (String) -> Unit,
 ) {
 
@@ -273,7 +238,7 @@ private fun CourseCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "${course.student.size} estudiantes",
+                    text = "${0} estudiantes",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -317,6 +282,8 @@ private fun CourseCard(
 @Composable
 private fun CoursesScreenPreview() {
     GemaTheme {
-        CoursesScreen()
+        CoursesScreen(
+            courses = listOf()
+        )
     }
 }
