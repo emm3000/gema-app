@@ -8,8 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.data.network.student.CreateStudentRequest
-import com.emm.gema.data.network.student.StudentNetworkRepository
+import com.emm.gema.domain.student.CreateStudentInput
+import com.emm.gema.domain.student.StudentCreator
 import com.emm.gema.feat.dashboard.sexOptions
 import com.emm.gema.feat.shared.normalizeErrorMessage
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -25,13 +25,12 @@ data class StudentFormUiState(
     val dni: String = "",
     val sex: String = sexOptions.firstOrNull().orEmpty(),
     val isFormValid: Boolean = false,
-    val isLoading: Boolean = false,
     val isSuccessful: Boolean = false,
     val error: String? = null
 )
 
 class StudentFormViewModel(
-    private val repository: StudentNetworkRepository,
+    private val studentCreator: StudentCreator,
     private val courseId: String,
 ) : ViewModel() {
 
@@ -64,20 +63,20 @@ class StudentFormViewModel(
     }
 
     private suspend fun saveStudent() = try {
-        state = state.copy(isLoading = true)
-        val request: CreateStudentRequest = createStudentRequest()
-        repository.createStudentWithCourse(request)
+        val input: CreateStudentInput = createStudentInput()
+        studentCreator.create(input)
         state = state.copy(isSuccessful = true)
     } catch (e: Exception) {
         FirebaseCrashlytics.getInstance().recordException(e)
-        state = state.copy(isLoading = false, error = normalizeErrorMessage(e))
+        state = state.copy(error = normalizeErrorMessage(e))
     }
 
-    private fun createStudentRequest() = CreateStudentRequest(
+    private fun createStudentInput() = CreateStudentInput(
         fullName = state.name,
         email = state.email,
         dni = state.dni,
         gender = state.sex,
-        coursesId = listOf(courseId)
+        courseId = courseId,
+        birthDate = "-"
     )
 }

@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface StudentRepository {
 
-    suspend fun create(student: Student): Student
+    suspend fun create(student: CreateStudentInput): StudentId
 
     suspend fun update(studentId: String, student: Student): Student
 
@@ -12,5 +12,7 @@ interface StudentRepository {
 
     suspend fun delete(studentId: String)
 
-    suspend fun all(): Flow<List<Student>>
+    fun all(): Flow<List<Student>>
+
+    fun findByCourseId(courseId: String): Flow<List<Student>>
 }

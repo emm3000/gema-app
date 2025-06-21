@@ -1,0 +1,17 @@
+CREATE TABLE StudentCourse (
+  studentId TEXT NOT NULL,
+  courseId TEXT NOT NULL,
+  PRIMARY KEY (studentId, courseId),
+  FOREIGN KEY (studentId) REFERENCES student(id) ON DELETE CASCADE,
+  FOREIGN KEY (courseId) REFERENCES course(id) ON DELETE CASCADE
+);
+
+insert:
+INSERT OR IGNORE INTO StudentCourse(studentId, courseId)
+VALUES (?, ?);
+
+studentsByCourseId:
+SELECT s.*
+FROM student s
+INNER JOIN StudentCourse sc ON s.id = sc.studentId
+WHERE sc.courseId = ?;

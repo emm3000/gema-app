@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.PopUpToBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +38,7 @@ fun Root(modifier: Modifier = Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = GemaRoutes.PreLogin,
+        startDestination = GemaRoutes.Dashboard,
         modifier = modifier
     ) {
 
@@ -121,10 +122,11 @@ fun Root(modifier: Modifier = Modifier) {
                 parameters = { parametersOf(param.courseId) }
             )
 
+            val students = vm.students.collectAsStateWithLifecycle()
+
             StudentListScreen(
-                state = vm.state,
                 onAddStudent = { navController.navigate(GemaRoutes.CreateStudent(param.courseId)) },
-                retryFetchStudents = vm::loadStudents,
+                students = students.value,
                 onBack = { navController.navigateUp() }
             )
         }

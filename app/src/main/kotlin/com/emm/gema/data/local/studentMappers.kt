@@ -4,10 +4,10 @@ import com.emm.gema.domain.student.Student
 
 fun StudentEntity.toDomain() = Student(
     id = id,
-    fullName = full_name,
+    fullName = fullName,
     dni = dni ?: "-",
     email = email ?: "-",
-    birthDate = birth_date ?: "-",
+    birthDate = birthDate ?: "-",
     gender = gender ?: "-",
 )
 

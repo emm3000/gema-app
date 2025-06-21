@@ -59,21 +59,18 @@ fun StudentFormScreen(
         ) {
             OutlinedTextField(
                 value = state.name,
-                enabled = state.isLoading.not(),
                 onValueChange = { onAction(StudentFormAction.NameChanged(it)) },
                 label = { Text("Nombre completo") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = state.email,
-                enabled = state.isLoading.not(),
                 onValueChange = { onAction(StudentFormAction.EmailChanged(it)) },
                 label = { Text("Correo electrónico") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = state.dni,
-                enabled = state.isLoading.not(),
                 onValueChange = { onAction(StudentFormAction.DniChanged(it)) },
                 label = { Text("Dni") },
                 modifier = Modifier.fillMaxWidth()
@@ -88,13 +85,6 @@ fun StudentFormScreen(
             )
 
             when {
-                state.isLoading -> {
-                    Text(
-                        text = "Cargando...",
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(16.dp)
-                    )
-                }
                 state.error != null -> {
                     Text(
                         text = state.error,
@@ -110,7 +100,7 @@ fun StudentFormScreen(
                 onClick = { onAction(StudentFormAction.Save) },
                 modifier = Modifier.fillMaxWidth()
                     .height(50.dp),
-                enabled = state.isFormValid && !state.isLoading
+                enabled = state.isFormValid
             ) {
                 Text("Guardar")
             }

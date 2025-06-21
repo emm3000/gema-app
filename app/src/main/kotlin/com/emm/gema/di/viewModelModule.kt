@@ -21,14 +21,14 @@ val viewModelModule = module {
     viewModel {
         StudentFormViewModel(
             courseId = it.get(),
-            repository = get()
+            studentCreator = get()
         )
     }
 
     viewModel {
         StudentListViewModel(
             courseId = it.get(),
-            repository = get()
+            courseStudentsFetcher = get()
         )
     }
 }
