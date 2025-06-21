@@ -2,7 +2,8 @@ package com.emm.gema.domain.attendance
 
 import com.emm.gema.domain.student.Student
 import com.emm.gema.domain.student.StudentRepository
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 
 class AttendanceStatusFetcher(
@@ -10,19 +11,21 @@ class AttendanceStatusFetcher(
     private val studentRepository: StudentRepository,
 ) {
 
-    suspend fun fetch(courseId: String, date: LocalDate): List<StudentAttendanceStatus> {
-        val students: List<Student> = studentRepository
+    fun fetch(courseId: String, date: LocalDate): Flow<List<StudentAttendanceStatus>> {
+
+        val students: Flow<List<Student>> = studentRepository
             .findByCourseId(courseId)
-            .firstOrNull()
-            .orEmpty()
-        val attendances: List<Attendance> = repository
+
+        val attendances: Flow<List<Attendance>> = repository
             .selectByDateAndCourse(courseId, date)
-            .firstOrNull()
-            .orEmpty()
 
-        val attendanceMap: Map<String, Attendance> = attendances.associateBy(Attendance::studentId)
-
-        return students.map { student -> mapToAttendanceStatus(attendanceMap, student) }
+        return combine(
+            students,
+            attendances
+        ) { students, attendances ->
+            val attendanceMap: Map<String, Attendance> = attendances.associateBy(Attendance::studentId)
+            students.map { student -> mapToAttendanceStatus(attendanceMap, student) }
+        }
     }
 
     private fun mapToAttendanceStatus(

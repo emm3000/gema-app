@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.emm.gema.feat.dashboard.attendance
 
 import androidx.compose.runtime.getValue
@@ -13,7 +15,9 @@ import com.emm.gema.domain.attendance.StudentAttendance
 import com.emm.gema.domain.attendance.StudentAttendanceStatus
 import com.emm.gema.domain.course.CoursesFetcher
 import com.emm.gema.domain.course.model.Course
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -47,13 +51,20 @@ class AttendanceViewModel(
 
     init {
         combine(
+            snapshotFlow { state.courseSelected },
             snapshotFlow { state.datePicker },
-            snapshotFlow { state.courseSelected }
-        ) { datePicker, courseSelected ->
-            if (courseSelected != null) {
-                loadAttendance(courseSelected, datePicker)
+            ::Pair
+        )
+            .flatMapLatest {
+                attendanceStatusFetcher.fetch(it.first?.id.orEmpty(), it.second)
             }
-        }.launchIn(viewModelScope)
+            .onEach {
+                state = state.copy(
+                    attendance = it,
+                    screenState = if (it.isEmpty()) ScreenState.EmptyStudents("No hay estudiantes disponibles") else ScreenState.None
+                )
+            }
+            .launchIn(viewModelScope)
         fetchCourses()
     }
 
@@ -79,14 +90,7 @@ class AttendanceViewModel(
             }
 
             is AttendanceAction.OnAttendanceStatusChange -> {
-                state = state.copy(
-                    attendance = state.attendance.map { student ->
-                        if (student == action.student) {
-                            student.copy(status = student.status.not())
-                        } else {
-                            student
-                        }
-                    })
+                updateAttendanceStatus(action)
             }
 
             AttendanceAction.OnSave -> {
@@ -107,11 +111,14 @@ class AttendanceViewModel(
         }
     }
 
-    private suspend fun loadAttendance(course: Course, date: LocalDate) {
-        val attendanceStatuses: List<StudentAttendanceStatus> = attendanceStatusFetcher.fetch(course.id, date)
+    private fun updateAttendanceStatus(action: AttendanceAction.OnAttendanceStatusChange) {
         state = state.copy(
-            attendance = attendanceStatuses,
-            screenState = if (attendanceStatuses.isEmpty()) ScreenState.EmptyStudents("No hay estudiantes disponibles") else ScreenState.None
-        )
+            attendance = state.attendance.map { student ->
+                if (student == action.student) {
+                    student.copy(status = student.status.not())
+                } else {
+                    student
+                }
+            })
     }
 }
