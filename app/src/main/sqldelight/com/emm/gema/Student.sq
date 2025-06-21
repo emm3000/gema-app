@@ -1,0 +1,18 @@
+CREATE TABLE student (
+    id TEXT NOT NULL PRIMARY KEY,
+    full_name TEXT NOT NULL,
+    dni TEXT UNIQUE,
+    email TEXT UNIQUE,
+    birth_date TEXT,
+    gender TEXT
+);
+
+all:
+SELECT * FROM student;
+
+create:
+INSERT OR REPLACE INTO student (id, full_name)
+VALUES (?, ?);
+
+delete:
+DELETE FROM student WHERE id = ?;

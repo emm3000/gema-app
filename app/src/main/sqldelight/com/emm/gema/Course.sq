@@ -1,0 +1,18 @@
+CREATE TABLE course (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    grade TEXT NOT NULL,
+    section TEXT NOT NULL,
+    level TEXT NOT NULL,
+    shift TEXT NOT NULL,
+    academic_year INTEGER NOT NULL
+);
+
+findMany:
+SELECT * FROM course;
+
+create:
+INSERT OR REPLACE INTO course VALUES (?, ?, ?, ?, ?, ?, ?);
+
+findUnique:
+SELECT * FROM course WHERE id = ?;

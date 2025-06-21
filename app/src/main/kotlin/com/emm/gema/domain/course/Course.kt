@@ -1,0 +1,11 @@
+package com.emm.gema.domain.course
+
+data class Course(
+    val id: String,
+    val name: String,
+    val grade: String,
+    val section: String,
+    val level: String,
+    val shift: String,
+    val academicYear: Long,
+)

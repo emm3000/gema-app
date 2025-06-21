@@ -1,0 +1,9 @@
+CREATE TABLE grade (
+  id TEXT NOT NULL PRIMARY KEY,
+  score REAL NOT NULL,
+  observation TEXT,
+  student_id TEXT NOT NULL,
+  evaluation_id TEXT NOT NULL,
+  FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE,
+  FOREIGN KEY (evaluation_id) REFERENCES evaluation(id) ON DELETE CASCADE
+);

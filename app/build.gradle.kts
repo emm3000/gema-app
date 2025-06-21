@@ -8,6 +8,7 @@ plugins {
     kotlin("plugin.serialization") version libs.versions.kotlin
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("app.cash.sqldelight") version libs.versions.androidDriver
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -102,4 +103,15 @@ dependencies {
 
     debugImplementation(libs.library)
     releaseImplementation(libs.library.no.op)
+
+    implementation(libs.android.driver)
+    implementation(libs.coroutines.extensions)
+}
+
+sqldelight {
+    databases {
+        create("GemaDb") {
+            packageName.set("com.emm.gema")
+        }
+    }
 }
