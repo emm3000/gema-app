@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -69,6 +71,11 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
     val upcomingEvaluations = listOf(
         Evaluation(id = "1", name = "Examen Parcial 1", date = "25/06/2024", courseId = "1", maxScore = 4922, type = "cum", term = "graece"),
         Evaluation(id = "2", name = "Presentación de Proyecto", date = "28/06/2024", courseId = "2",
+            maxScore = 5881,
+            type = "errem",
+            term = "consetetur"
+        ),
+        Evaluation(id = "3", name = "Presentación de Proyecto", date = "28/06/2024", courseId = "2",
             maxScore = 5881,
             type = "errem",
             term = "consetetur"
@@ -207,9 +214,12 @@ fun UpcomingEvaluationsSection(evaluations: List<Evaluation>) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
+            val configuration = LocalConfiguration.current
+            val screenWidth = configuration.screenWidthDp.dp
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                modifier = Modifier.requiredWidth(screenWidth)
             ) {
                 items(evaluations) { evaluation ->
                     EvaluationCard(evaluation)
@@ -222,7 +232,7 @@ fun UpcomingEvaluationsSection(evaluations: List<Evaluation>) {
 @Composable
 fun EvaluationCard(evaluation: Evaluation) {
     Card(
-        modifier = Modifier.width(220.dp),
+        modifier = Modifier.width(220.dp).height(150.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
@@ -250,7 +260,7 @@ fun EvaluationCard(evaluation: Evaluation) {
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "Cálculo Avanzado", // Placeholder, ideally from courseId
+                text = "Cálculo Avanzado",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
