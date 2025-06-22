@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,9 +25,10 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -95,14 +97,25 @@ fun AttendanceScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(AttendanceAction.OnSave) },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+            androidx.compose.material3.Button(
+                onClick = {},
+                modifier = Modifier.height(50.dp),
+                shape = MaterialTheme.shapes.medium,
+                enabled = state.isSubmitButtonEnabled,
             ) {
-                Icon(Icons.Default.Save, contentDescription = "Guardar Asistencia")
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = "Guardar Asistencia",
+                    tint = LocalContentColor.current
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = "Guardar Asistencia",
+                    color = LocalContentColor.current
+                )
             }
-        }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
         Column(
             modifier = Modifier
