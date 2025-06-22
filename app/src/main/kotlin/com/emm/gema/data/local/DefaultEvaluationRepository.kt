@@ -22,7 +22,7 @@ class DefaultEvaluationRepository(private val dao: EvaluationQueries): Evaluatio
             name = evaluation.name,
             date = evaluation.date.toString(),
             type = evaluation.type,
-            course_id = evaluation.courseId
+            courseId = evaluation.courseId
         )
     }
 

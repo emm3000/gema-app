@@ -6,10 +6,10 @@ fun EvaluationEntity.toDomain() = Evaluation(
     id = id,
     name = name,
     date = date,
-    maxScore = max_score,
+    maxScore = maxScore,
     type = type,
     term = term.orEmpty(),
-    courseId = course_id
+    courseId = courseId
 )
 
 fun List<EvaluationEntity>.toDomain() = map<EvaluationEntity, Evaluation>(EvaluationEntity::toDomain)

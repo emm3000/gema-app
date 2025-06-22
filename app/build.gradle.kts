@@ -112,6 +112,8 @@ sqldelight {
     databases {
         create("GemaDb") {
             packageName.set("com.emm.gema")
+            schemaOutputDirectory = file("src/main/sqldelight/databases")
+            verifyMigrations = true
         }
     }
 }
