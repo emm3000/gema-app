@@ -29,7 +29,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +63,8 @@ fun EvaluationsScreen(
 ) {
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .consumeWindowInsets(WindowInsets.safeContent),
         topBar = {
             CenterAlignedTopAppBar(
@@ -72,13 +73,13 @@ fun EvaluationsScreen(
         },
         floatingActionButton = {
             if (state.courses.isNotEmpty()) {
-                FloatingActionButton(
+                ExtendedFloatingActionButton(
                     onClick = navigateToCreateEvaluation,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Nueva Evaluación")
-                }
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    text = { Text("Crear evaluación") },
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Nueva Evaluación") }
+                )
             }
         }
     ) { innerPadding ->
