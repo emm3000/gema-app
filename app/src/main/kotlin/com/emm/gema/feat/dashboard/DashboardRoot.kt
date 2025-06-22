@@ -47,7 +47,7 @@ fun DashboardRoot(topNavController: NavController) {
                 CoursesScreen(
                     courses = courses,
                     createCourse = { topNavController.navigate(GemaRoutes.CreateCourse) },
-                    toStudentList = { courseId -> topNavController.navigate(GemaRoutes.StudentList(courseId)) }
+                    onCourseClicked = { courseId -> topNavController.navigate(GemaRoutes.StudentList(courseId)) },
                 )
             }
 
