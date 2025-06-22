@@ -34,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.data.network.course.CourseResponse
 import com.emm.gema.domain.evaluation.Evaluation
@@ -154,7 +154,7 @@ fun CourseCard(course: CourseResponse) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Row(
             modifier = Modifier
@@ -225,7 +225,7 @@ fun EvaluationCard(evaluation: Evaluation) {
     Card(
         modifier = Modifier.width(220.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -276,7 +276,7 @@ fun AttendanceCard(attendance: Attendance) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(
@@ -309,10 +309,12 @@ fun AttendanceCard(attendance: Attendance) {
 
 data class Attendance(val course: String, val percentage: Float)
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 800)
+@PreviewLightDark
 @Composable
 private fun DashboardScreenPreview() {
     GemaTheme {
-        DashboardScreen()
+        Surface {
+            DashboardScreen()
+        }
     }
 }

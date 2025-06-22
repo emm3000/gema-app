@@ -45,7 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.domain.course.model.Course
 import com.emm.gema.feat.dashboard.components.EmptyCourses
@@ -61,17 +61,16 @@ fun CoursesScreen(
     Scaffold(
         modifier = modifier.fillMaxSize()
             .consumeWindowInsets(WindowInsets.navigationBars),
-        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = createCourse,
                 shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Crear Curso",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    contentDescription = "Crear Curso"
                 )
             }
         }
@@ -125,7 +124,7 @@ fun CourseItem(
             .clickable { onCourseClicked(course.id) },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Row(
             modifier = Modifier
@@ -194,7 +193,7 @@ fun CourseItem(
 }
 
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun CoursesScreenPreview() {
     GemaTheme {
@@ -223,7 +222,7 @@ private fun CoursesScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun CoursesScreenEmptyPreview() {
     GemaTheme {
