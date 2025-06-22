@@ -1,7 +1,8 @@
 package com.emm.gema.feat.dashboard.evaluation
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,23 +11,36 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +48,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.domain.course.model.Course
 import com.emm.gema.domain.evaluation.Evaluation
-import com.emm.gema.feat.dashboard.components.EmptyCourses
 import com.emm.gema.feat.dashboard.components.GemaDropdown
 import com.emm.gema.ui.theme.GemaTheme
 
@@ -46,65 +59,52 @@ fun EvaluationsScreen(
     onCourseSelected: (Course) -> Unit = {},
     navigateToCreateCourse: () -> Unit = {},
     navigateToCreateEvaluation: () -> Unit = {},
+    onEvaluationClicked: (String) -> Unit = {}
 ) {
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .consumeWindowInsets(WindowInsets.navigationBars),
+        modifier = modifier.fillMaxSize()
+            .consumeWindowInsets(WindowInsets.safeContent),
         topBar = {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Mis Evaluaciones", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (state.courses.isNotEmpty()) {
-                    GemaDropdown(
-                        modifier = Modifier.fillMaxWidth(),
-                        textLabel = "Curso",
-                        items = state.courses,
-                        itemSelected = state.courseSelected,
-                        onItemSelected = onCourseSelected,
-                    )
-                }
-            }
+            CenterAlignedTopAppBar(
+                title = { Text("Evaluaciones") }
+            )
         },
         floatingActionButton = {
             if (state.courses.isNotEmpty()) {
-                ExtendedFloatingActionButton(
-                    text = { Text("Nueva Evaluación") },
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Nueva evaluación") },
-                    onClick = navigateToCreateEvaluation
-                )
+                FloatingActionButton(
+                    onClick = navigateToCreateEvaluation,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Nueva Evaluación")
+                }
             }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
+            if (state.courses.isNotEmpty()) {
+                GemaDropdown(
+                    modifier = Modifier.fillMaxWidth(),
+                    textLabel = "Curso",
+                    items = state.courses,
+                    itemSelected = state.courseSelected,
+                    onItemSelected = onCourseSelected,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-            when (state.screenState) {
-                is ScreenState.EmptyCourses -> {
-                    EmptyCourses(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        navigateToCreateCourse()
-                    }
-                }
-                is ScreenState.EmptyEvaluations -> {
-                    Text("No hay evaluaciones")
-                }
-                ScreenState.None -> {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(state.evaluations, key = Evaluation::id) { evaluation ->
-                            EvaluationCard(
-                                evaluation = evaluation,
-                                onRegisterGrades = { /* TODO: Navegar a GradeEntryScreen */ }
-                            )
-                        }
-                    }
+            // TODO: Handle empty states
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(state.evaluations, key = Evaluation::id) { evaluation ->
+                    EvaluationItem(
+                        evaluation = evaluation,
+                        onEvaluationClicked = onEvaluationClicked
+                    )
                 }
             }
         }
@@ -112,81 +112,115 @@ fun EvaluationsScreen(
 }
 
 @Composable
-private fun EvaluationCard(
+private fun EvaluationItem(
     evaluation: Evaluation,
-    onRegisterGrades: () -> Unit
+    onEvaluationClicked: (String) -> Unit
 ) {
-    Column(
+    var isMenuExpanded by remember { mutableStateOf(false) }
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = MaterialTheme.shapes.large
-            )
-            .padding(16.dp)
+            .clickable { onEvaluationClicked(evaluation.id) },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
-        Text(
-            text = evaluation.name,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Tipo de evaluación",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = evaluation.type,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Fecha de evaluación",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = evaluation.date,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onRegisterGrades,
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium
+        Row(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Registrar notas")
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = evaluation.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = evaluation.date,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    AssistChip(
+                        onClick = {},
+                        label = {
+                            Text(text = evaluation.type, style = MaterialTheme.typography.labelSmall)
+                        }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Box {
+                IconButton(onClick = { isMenuExpanded = true }) {
+                    Icon(Icons.Filled.MoreVert, contentDescription = "Más opciones")
+                }
+                DropdownMenu(
+                    expanded = isMenuExpanded,
+                    onDismissRequest = { isMenuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Editar") },
+                        leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+                        onClick = { isMenuExpanded = false /* TODO */ }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Eliminar") },
+                        leadingIcon = { Icon(Icons.Filled.Delete, contentDescription = null) },
+                        onClick = { isMenuExpanded = false /* TODO */ }
+                    )
+                }
+            }
         }
     }
 }
-
 
 @PreviewLightDark
 @Composable
 private fun EvaluationsScreenPreview() {
+    val sampleEvaluations = listOf(
+        Evaluation(
+            id = "1",
+            name = "Examen Parcial I",
+            date = "20/06/2024",
+            type = "Examen",
+            courseId = "",
+            maxScore = 3426,
+            term = "gubergren"
+        ),
+        Evaluation(
+            id = "2",
+            name = "Práctica Calificada 2",
+            date = "28/06/2024",
+            type = "Práctica",
+            courseId = "",
+            maxScore = 5617,
+            term = "dolores"
+        ),
+    )
     GemaTheme {
-        EvaluationsScreen()
-    }
-}
-
-@PreviewLightDark
-@Composable
-private fun EvaluationsScreenEmptyPreview() {
-    GemaTheme {
-        EvaluationsScreen(
-            state = EvaluationsUiState(
-                screenState = ScreenState.EmptyCourses("gaaa")
+        Surface {
+            EvaluationsScreen(
+                state = EvaluationsUiState(
+                    evaluations = sampleEvaluations,
+                    courses = listOf(
+                        Course(
+                            id = "1",
+                            name = "Cálculo Avanzado",
+                            grade = "ne",
+                            section = "lacinia",
+                            level = "mandamus",
+                            shift = "class",
+                            academicYear = 1984
+                        )
+                    )
+                )
             )
-        )
+        }
     }
 }
