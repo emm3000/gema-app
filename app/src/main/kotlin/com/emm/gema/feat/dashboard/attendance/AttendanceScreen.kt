@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -98,8 +99,8 @@ fun AttendanceScreen(
             )
         },
         floatingActionButton = {
-            androidx.compose.material3.Button(
-                onClick = {},
+            Button(
+                onClick = { onAction(AttendanceAction.OnSave) },
                 modifier = Modifier.height(50.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
@@ -141,7 +142,7 @@ fun AttendanceScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(state.attendance) { studentAttendance ->
+                items(state.attendance, key = StudentAttendanceStatus::studentId) { studentAttendance ->
                     StudentAttendanceItem(
                         student = studentAttendance.student,
                         status = studentAttendance.status,
@@ -240,7 +241,7 @@ private fun AttendanceScreenPreview() {
                 email = "stevie.sloan@example.com",
                 birthDate = "facilisi",
                 gender = "mnesarchum"
-            ), status = AttendanceStatus.Present
+            ), status = AttendanceStatus.Present, studentId = "ga"
 
         )
     )

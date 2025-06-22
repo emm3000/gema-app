@@ -89,6 +89,7 @@ class AttendanceViewModel(
                         }
                     )
                     attendanceUpdater.update(input)
+                    state = state.copy(isSubmitButtonEnabled = false)
                 }
             }
         }

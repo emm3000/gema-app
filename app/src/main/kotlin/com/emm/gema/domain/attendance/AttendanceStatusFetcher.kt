@@ -34,6 +34,7 @@ class AttendanceStatusFetcher(
     ): StudentAttendanceStatus {
         val status = attendanceMap[student.id]?.status ?: AttendanceStatus.Absent
         return StudentAttendanceStatus(
+            studentId = student.id,
             student = student,
             status = status,
         )
