@@ -1,6 +1,6 @@
 @file:OptIn(FlowPreview::class)
 
-package com.emm.gema.feat.dashboard.forms
+package com.emm.gema.feat.dashboard.student
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

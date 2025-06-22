@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.data.network.course.CourseResponse
+import com.emm.gema.domain.evaluation.Evaluation
 import com.emm.gema.ui.theme.GemaTheme
 import kotlinx.serialization.json.JsonArray
 
@@ -43,11 +44,7 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
             student = JsonArray(listOf())
         ),
     )
-    val upcomingEvaluations = listOf(
-        Evaluation(name = "Examen Matemáticas", date = "15 Jun", type = ""),
-        Evaluation(name = "Quiz Historia", date = "18 Jun", type = ""),
-        Evaluation(name = "Tarea Biología", date = "20 Jun", type = "")
-    )
+    val upcomingEvaluations = listOf<Evaluation>()
     val courseAttendance = listOf(
         Attendance("Matemáticas", 0.95f),
         Attendance("Historia", 0.88f)

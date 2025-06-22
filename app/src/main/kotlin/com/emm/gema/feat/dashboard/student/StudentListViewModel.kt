@@ -1,4 +1,4 @@
-package com.emm.gema.feat.dashboard.forms
+package com.emm.gema.feat.dashboard.student
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

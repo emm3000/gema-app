@@ -5,6 +5,7 @@ import com.emm.gema.domain.attendance.AttendanceUpdater
 import com.emm.gema.domain.course.CourseCreator
 import com.emm.gema.domain.course.CourseStudentAdder
 import com.emm.gema.domain.course.CoursesFetcher
+import com.emm.gema.domain.evaluation.CourseEvaluationsFetcher
 import com.emm.gema.domain.student.CourseStudentsFetcher
 import com.emm.gema.domain.student.StudentCreator
 import org.koin.core.module.dsl.factoryOf
@@ -21,4 +22,5 @@ val domainModule = module {
     factoryOf(::AttendanceUpdater)
 
     factoryOf(::AttendanceStatusFetcher)
+    factoryOf(::CourseEvaluationsFetcher)
 }

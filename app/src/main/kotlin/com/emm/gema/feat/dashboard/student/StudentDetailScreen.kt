@@ -1,4 +1,4 @@
-package com.emm.gema.feat.dashboard.forms
+package com.emm.gema.feat.dashboard.student
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

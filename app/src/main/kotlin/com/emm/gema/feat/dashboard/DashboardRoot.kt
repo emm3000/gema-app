@@ -17,6 +17,8 @@ import com.emm.gema.feat.dashboard.attendance.AttendanceScreen
 import com.emm.gema.feat.dashboard.attendance.AttendanceViewModel
 import com.emm.gema.feat.dashboard.course.CourseViewModel
 import com.emm.gema.feat.dashboard.course.CoursesScreen
+import com.emm.gema.feat.dashboard.evaluation.EvaluationsScreen
+import com.emm.gema.feat.dashboard.evaluation.EvaluationsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -60,7 +62,13 @@ fun DashboardRoot(topNavController: NavController) {
             }
 
             composable<DashboardRoutes.Evaluations> {
-                EvaluationsScreen()
+                val vm: EvaluationsViewModel = koinViewModel()
+
+                EvaluationsScreen(
+                    state = vm.state,
+                    onCourseSelected = vm::onCourseSelected,
+                    navigateToCreateEvaluation = { topNavController.navigate(GemaRoutes.CreateEvaluation) }
+                )
             }
         }
     }

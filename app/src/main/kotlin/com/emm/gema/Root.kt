@@ -23,10 +23,11 @@ import com.emm.gema.feat.auth.RegisterViewModel
 import com.emm.gema.feat.dashboard.DashboardRoot
 import com.emm.gema.feat.dashboard.course.CourseFormScreen
 import com.emm.gema.feat.dashboard.course.CourseFormViewModel
-import com.emm.gema.feat.dashboard.forms.StudentFormScreen
-import com.emm.gema.feat.dashboard.forms.StudentFormViewModel
-import com.emm.gema.feat.dashboard.forms.StudentListScreen
-import com.emm.gema.feat.dashboard.forms.StudentListViewModel
+import com.emm.gema.feat.dashboard.evaluation.EvaluationFormScreen
+import com.emm.gema.feat.dashboard.student.StudentFormScreen
+import com.emm.gema.feat.dashboard.student.StudentFormViewModel
+import com.emm.gema.feat.dashboard.student.StudentListScreen
+import com.emm.gema.feat.dashboard.student.StudentListViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -148,6 +149,13 @@ fun Root(modifier: Modifier = Modifier) {
                 state = vm.state,
                 onAction = vm::dispatch,
                 onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable<GemaRoutes.CreateEvaluation> {
+            EvaluationFormScreen(
+                courseId = it.arguments?.getString("courseId") ?: "",
+                evaluationId = it.arguments?.getString("evaluationId")
             )
         }
     }

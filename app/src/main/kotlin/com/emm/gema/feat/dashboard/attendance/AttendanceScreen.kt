@@ -3,6 +3,7 @@ package com.emm.gema.feat.dashboard.attendance
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.domain.attendance.AttendanceStatus
+import com.emm.gema.feat.dashboard.components.EmptyCourses
 import com.emm.gema.feat.dashboard.components.GemaDropdown
 import com.emm.gema.ui.theme.GemaTheme
 import java.time.Instant
@@ -128,60 +130,11 @@ fun AttendanceScreen(
     ) { innerPadding ->
         when (state.screenState) {
             is ScreenState.EmptyCourses -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Spacer(Modifier.height(50.dp))
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "No tienes cursos creados",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Light,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(Modifier.height(15.dp))
-                    OutlinedButton(
-                        onClick = {
-                            navigateToCreateCourse()
-                        }
-                    ) {
-                        Text("Crear curso")
-                    }
-                }
+                EmptyCourses(Modifier.padding(innerPadding), navigateToCreateCourse)
             }
 
             is ScreenState.EmptyStudents -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Spacer(Modifier.height(50.dp))
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "No tienes estudiantes registrados en este curso o fecha",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Light,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(Modifier.height(15.dp))
-                    OutlinedButton(
-                        onClick = {
-                            // onAction(AttendanceAction.RetryFetchStudents)
-                        }
-                    ) {
-                        Text("Añadir estudiante")
-                    }
-                }
-
+                EmptyStudents(innerPadding)
             }
 
             ScreenState.None -> {
@@ -259,10 +212,51 @@ fun AttendanceScreen(
     }
 }
 
+@Composable
+private fun EmptyStudents(innerPadding: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(Modifier.height(50.dp))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "No tienes estudiantes registrados en este curso o fecha",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Light,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(15.dp))
+        OutlinedButton(
+            onClick = {
+                // onAction(AttendanceAction.RetryFetchStudents)
+            }
+        ) {
+            Text("Añadir estudiante")
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun AttendanceScreenPreview() {
     GemaTheme {
         AttendanceScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttendanceScreenEmptyPreview() {
+    GemaTheme {
+        AttendanceScreen(
+            state = AttendanceUiState(
+                screenState = ScreenState.EmptyCourses("gaaa")
+            )
+        )
     }
 }

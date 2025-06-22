@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.domain.course.model.Course
+import com.emm.gema.feat.dashboard.components.EmptyCourses
 import com.emm.gema.ui.theme.GemaTheme
 
 @Composable
@@ -90,7 +91,7 @@ fun CoursesScreen(
 
                 when {
                     courses.isEmpty() -> item {
-                        EmptyCourses(createCourse)
+                        EmptyCourses(Modifier, createCourse)
                     }
 
                     else -> {
@@ -113,23 +114,6 @@ fun CoursesScreen(
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
         )
-    }
-}
-
-@Composable
-private fun EmptyCourses(createCourse: () -> Unit) {
-    Spacer(Modifier.height(50.dp))
-    Text(
-        text = "No tienes cursos, crea uno.",
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-        fontWeight = FontWeight.Light,
-    )
-    Spacer(Modifier.height(15.dp))
-    OutlinedButton(
-        onClick = createCourse
-    ) {
-        Text("Crear curso")
     }
 }
 
@@ -241,7 +225,11 @@ private fun CourseCard(
             ) {
                 Icon(Icons.Filled.Group, contentDescription = null, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Estudiantes")
+                Text(
+                    text = "Estudiantes",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
             Button(
                 onClick = { /* TODO: Navigate to evaluations */ },
@@ -276,6 +264,16 @@ private fun CoursesScreenPreview() {
                     academicYear = 2019
                 )
             )
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CoursesScreenEmptyPreview() {
+    GemaTheme {
+        CoursesScreen(
+            courses = listOf()
         )
     }
 }
