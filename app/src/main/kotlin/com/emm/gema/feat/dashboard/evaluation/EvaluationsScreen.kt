@@ -44,6 +44,7 @@ fun EvaluationsScreen(
     modifier: Modifier = Modifier,
     state: EvaluationsUiState = EvaluationsUiState(),
     onCourseSelected: (Course) -> Unit = {},
+    navigateToCreateCourse: () -> Unit = {},
     navigateToCreateEvaluation: () -> Unit = {},
 ) {
 
@@ -69,11 +70,13 @@ fun EvaluationsScreen(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text("Nueva Evaluación") },
-                icon = { Icon(Icons.Default.Add, contentDescription = "Nueva evaluación") },
-                onClick = navigateToCreateEvaluation
-            )
+            if (state.courses.isNotEmpty()) {
+                ExtendedFloatingActionButton(
+                    text = { Text("Nueva Evaluación") },
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Nueva evaluación") },
+                    onClick = navigateToCreateEvaluation
+                )
+            }
         }
     ) { innerPadding ->
         Column(
@@ -86,7 +89,9 @@ fun EvaluationsScreen(
                 is ScreenState.EmptyCourses -> {
                     EmptyCourses(
                         modifier = Modifier.fillMaxSize(),
-                    ) {  }
+                    ) {
+                        navigateToCreateCourse()
+                    }
                 }
                 is ScreenState.EmptyEvaluations -> {
                     Text("No hay evaluaciones")

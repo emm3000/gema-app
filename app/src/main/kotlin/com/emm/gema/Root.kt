@@ -24,6 +24,7 @@ import com.emm.gema.feat.dashboard.DashboardRoot
 import com.emm.gema.feat.dashboard.course.CourseFormScreen
 import com.emm.gema.feat.dashboard.course.CourseFormViewModel
 import com.emm.gema.feat.dashboard.evaluation.EvaluationFormScreen
+import com.emm.gema.feat.dashboard.evaluation.EvaluationFormViewModel
 import com.emm.gema.feat.dashboard.student.StudentFormScreen
 import com.emm.gema.feat.dashboard.student.StudentFormViewModel
 import com.emm.gema.feat.dashboard.student.StudentListScreen
@@ -153,9 +154,12 @@ fun Root(modifier: Modifier = Modifier) {
         }
 
         composable<GemaRoutes.CreateEvaluation> {
+            val vm: EvaluationFormViewModel = koinViewModel()
+
             EvaluationFormScreen(
-                courseId = it.arguments?.getString("courseId") ?: "",
-                evaluationId = it.arguments?.getString("evaluationId")
+                state = vm.state,
+                onAction = vm::onAction,
+                onBack = { navController.navigateUp() }
             )
         }
     }

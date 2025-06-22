@@ -67,6 +67,7 @@ fun DashboardRoot(topNavController: NavController) {
                 EvaluationsScreen(
                     state = vm.state,
                     onCourseSelected = vm::onCourseSelected,
+                    navigateToCreateCourse = { topNavController.navigate(GemaRoutes.CreateCourse) },
                     navigateToCreateEvaluation = { topNavController.navigate(GemaRoutes.CreateEvaluation) }
                 )
             }

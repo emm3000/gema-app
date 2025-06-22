@@ -23,7 +23,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,36 +31,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emm.gema.feat.dashboard.components.GemaDropdown
+import com.emm.gema.feat.dashboard.examTypes
 import com.emm.gema.ui.theme.GemaTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.time.Instant
+import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EvaluationFormScreen(
     modifier: Modifier = Modifier,
-    courseId: String, // Para saber a qué curso pertenece
-    evaluationId: String? = null, // Para modo edición
+    state: EvaluationFormUiState = EvaluationFormUiState(),
+    onAction: (EvaluationFormAction) -> Unit = {},
     onBack: () -> Unit = {},
-    onSave: () -> Unit = {}
 ) {
-
-    var title by remember { mutableStateOf("") }
-
-    val typeOptions = listOf("Examen", "Tarea", "Proyecto", "Quiz")
 
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
-    val selectedDate by remember { derivedStateOf { datePickerState.selectedDateMillis } }
 
-    // TODO: Si evaluationId no es nulo, cargar los datos de la evaluación aquí
-
-    // --- UI COMPOSITION ---
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (evaluationId == null) "Nueva Evaluación" else "Editar Evaluación") },
+                title = { Text("Nueva Evaluación") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
@@ -77,9 +67,18 @@ fun EvaluationFormScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            GemaDropdown(
+                modifier = Modifier.fillMaxWidth(),
+                textLabel = "Curso",
+                items = state.courses,
+                itemSelected = state.selectedCourse,
+                onItemSelected = { onAction(EvaluationFormAction.CourseSelected(it)) }
+            )
+
             OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
+                value = state.title,
+                onValueChange = { onAction(EvaluationFormAction.TitleChanged(it)) },
                 label = { Text("Título de la evaluación") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -87,13 +86,13 @@ fun EvaluationFormScreen(
             GemaDropdown(
                 modifier = Modifier.fillMaxWidth(),
                 textLabel = "Tipo",
-                items = typeOptions,
-                itemSelected = typeOptions.firstOrNull(),
-                onItemSelected = {  }
+                items = examTypes,
+                itemSelected = state.type,
+                onItemSelected = { onAction(EvaluationFormAction.TypeChanged(it)) }
             )
 
             OutlinedTextField(
-                value = selectedDate.formatDate(),
+                value = state.date.toString(),
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Fecha") },
@@ -104,8 +103,12 @@ fun EvaluationFormScreen(
             )
 
             Button(
-                onClick = onSave,
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    onAction(EvaluationFormAction.Save)
+                    onBack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
                     .height(50.dp)
             ) {
                 Text("Guardar")
@@ -117,7 +120,15 @@ fun EvaluationFormScreen(
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(onClick = { showDatePicker = false }) {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        val localDate = Instant.ofEpochMilli(it)
+                            .atZone(ZoneOffset.UTC)
+                            .toLocalDate()
+                        onAction(EvaluationFormAction.DateChanged(localDate))
+                    }
+                    showDatePicker = false
+                }) {
                     Text("Aceptar")
                 }
             },
@@ -132,16 +143,10 @@ fun EvaluationFormScreen(
     }
 }
 
-private fun Long?.formatDate(): String {
-    if (this == null) return ""
-    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return sdf.format(Date(this))
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun EvaluationFormScreenPreview() {
     GemaTheme {
-        EvaluationFormScreen(courseId = "1")
+        EvaluationFormScreen()
     }
 }

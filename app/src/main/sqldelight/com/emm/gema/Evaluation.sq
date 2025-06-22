@@ -10,8 +10,8 @@ CREATE TABLE evaluation (
 );
 
 insert:
-INSERT INTO evaluation (id, name, date, type, course_id)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO evaluation (id, name, date, type, course_id, max_score)
+VALUES (?, ?, ?, ?, ?, 20);
 
 findByCourse:
 SELECT * FROM evaluation WHERE course_id = ?;

@@ -5,6 +5,7 @@ import com.emm.gema.feat.auth.RegisterViewModel
 import com.emm.gema.feat.dashboard.attendance.AttendanceViewModel
 import com.emm.gema.feat.dashboard.course.CourseFormViewModel
 import com.emm.gema.feat.dashboard.course.CourseViewModel
+import com.emm.gema.feat.dashboard.evaluation.EvaluationFormViewModel
 import com.emm.gema.feat.dashboard.evaluation.EvaluationsViewModel
 import com.emm.gema.feat.dashboard.student.StudentFormViewModel
 import com.emm.gema.feat.dashboard.student.StudentListViewModel
@@ -20,6 +21,7 @@ val viewModelModule = module {
     viewModelOf(::AttendanceViewModel)
 
     viewModelOf(::EvaluationsViewModel)
+    viewModelOf(::EvaluationFormViewModel)
 
     viewModel {
         StudentFormViewModel(
