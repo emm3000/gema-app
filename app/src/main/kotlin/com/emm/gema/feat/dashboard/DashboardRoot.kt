@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.emm.gema.DashboardRoutes
 import com.emm.gema.GemaRoutes
 import com.emm.gema.domain.course.model.Course
+import com.emm.gema.domain.dashboard.Dashboard
 import com.emm.gema.feat.dashboard.attendance.AttendanceScreen
 import com.emm.gema.feat.dashboard.attendance.AttendanceViewModel
 import com.emm.gema.feat.dashboard.course.CourseViewModel
@@ -36,7 +37,11 @@ fun DashboardRoot(topNavController: NavController) {
         ) {
 
             composable<DashboardRoutes.Dashboard> {
-                DashboardScreen()
+                val vm: DashboardViewModel = koinViewModel()
+
+                val dashboard: Dashboard by vm.state.collectAsStateWithLifecycle()
+
+                DashboardScreen(dashboard = dashboard)
             }
 
             composable<DashboardRoutes.Courses> {

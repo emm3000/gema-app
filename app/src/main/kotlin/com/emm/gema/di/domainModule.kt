@@ -5,6 +5,7 @@ import com.emm.gema.domain.attendance.AttendanceUpdater
 import com.emm.gema.domain.course.CourseCreator
 import com.emm.gema.domain.course.CourseStudentAdder
 import com.emm.gema.domain.course.CoursesFetcher
+import com.emm.gema.domain.dashboard.DashboardFetcher
 import com.emm.gema.domain.evaluation.CourseEvaluationsFetcher
 import com.emm.gema.domain.evaluation.EvaluationCreator
 import com.emm.gema.domain.student.CourseStudentsFetcher
@@ -25,4 +26,5 @@ val domainModule = module {
     factoryOf(::AttendanceStatusFetcher)
     factoryOf(::CourseEvaluationsFetcher)
     factoryOf(::EvaluationCreator)
+    factoryOf(::DashboardFetcher)
 }

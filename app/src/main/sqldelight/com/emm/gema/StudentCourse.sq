@@ -15,3 +15,18 @@ SELECT s.*
 FROM student s
 INNER JOIN StudentCourse sc ON s.id = sc.studentId
 WHERE sc.courseId = ?;
+
+attendanceToday:
+SELECT
+  c.id AS courseId,
+  c.name AS courseName,
+  COUNT(DISTINCT sc.studentId) AS totalStudents,
+  COUNT(DISTINCT a.studentId) AS presentToday
+FROM course c
+JOIN StudentCourse sc ON sc.courseId = c.id
+LEFT JOIN attendance a ON a.courseId = c.id
+  AND a.studentId = sc.studentId
+  AND a.date = :todayDate
+  AND a.status = 'Present'
+GROUP BY c.id
+HAVING totalStudents > 0;

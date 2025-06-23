@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,53 +39,17 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.emm.gema.data.network.course.CourseResponse
+import com.emm.gema.domain.course.model.Course
+import com.emm.gema.domain.dashboard.AttendanceToday
+import com.emm.gema.domain.dashboard.Dashboard
 import com.emm.gema.domain.evaluation.Evaluation
 import com.emm.gema.ui.theme.GemaTheme
-import kotlinx.serialization.json.JsonArray
 
 @Composable
-fun DashboardScreen(modifier: Modifier = Modifier) {
-    // Sample data
-    val activeCourses = listOf(
-        CourseResponse(
-            id = "1",
-            name = "Cálculo Avanzado",
-            grade = "5to",
-            section = "A",
-            level = "Secundaria",
-            shift = "Mañana",
-            academicYear = 2024,
-            student = JsonArray(listOf())
-        ),
-        CourseResponse(
-            id = "2",
-            name = "Historia Universal",
-            grade = "5to",
-            section = "A",
-            level = "Secundaria",
-            shift = "Mañana",
-            academicYear = 2024,
-            student = JsonArray(listOf())
-        )
-    )
-    val upcomingEvaluations = listOf(
-        Evaluation(id = "1", name = "Examen Parcial 1", date = "25/06/2024", courseId = "1", maxScore = 4922, type = "cum", term = "graece"),
-        Evaluation(id = "2", name = "Presentación de Proyecto", date = "28/06/2024", courseId = "2",
-            maxScore = 5881,
-            type = "errem",
-            term = "consetetur"
-        ),
-        Evaluation(id = "3", name = "Presentación de Proyecto", date = "28/06/2024", courseId = "2",
-            maxScore = 5881,
-            type = "errem",
-            term = "consetetur"
-        )
-    )
-    val courseAttendance = listOf(
-        Attendance("Cálculo Avanzado", 0.95f),
-        Attendance("Historia Universal", 0.88f)
-    )
+fun DashboardScreen(
+    modifier: Modifier = Modifier,
+    dashboard: Dashboard,
+) {
 
     LazyColumn(
         modifier = modifier
@@ -93,17 +58,19 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        item { 
-            Header() 
+        item {
+            Header()
         }
         item {
-            ActiveCoursesSection(activeCourses)
+            ActiveCoursesSection(dashboard.courses)
+        }
+        if (dashboard.evaluations.isNotEmpty()) {
+            item {
+                UpcomingEvaluationsSection(dashboard.evaluations)
+            }
         }
         item {
-            UpcomingEvaluationsSection(upcomingEvaluations)
-        }
-        item {
-            AttendanceSection(courseAttendance)
+            AttendanceSection(dashboard.attendance)
         }
         item {
             Spacer(modifier = Modifier.height(16.dp))
@@ -143,19 +110,21 @@ fun SectionHeader(title: String) {
 }
 
 @Composable
-fun ActiveCoursesSection(courses: List<CourseResponse>) {
+fun ActiveCoursesSection(courses: List<Course>) {
     Column {
         SectionHeader("Cursos Activos")
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             courses.forEach { course ->
-                CourseCard(course)
+                key(course.id) {
+                    CourseCard(course)
+                }
             }
         }
     }
 }
 
 @Composable
-fun CourseCard(course: CourseResponse) {
+fun CourseCard(course: Course) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -232,7 +201,9 @@ fun UpcomingEvaluationsSection(evaluations: List<Evaluation>) {
 @Composable
 fun EvaluationCard(evaluation: Evaluation) {
     Card(
-        modifier = Modifier.width(220.dp).height(150.dp),
+        modifier = Modifier
+            .width(220.dp)
+            .height(150.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
@@ -269,7 +240,7 @@ fun EvaluationCard(evaluation: Evaluation) {
 }
 
 @Composable
-fun AttendanceSection(attendanceList: List<Attendance>) {
+fun AttendanceSection(attendanceList: List<AttendanceToday>) {
     Column {
         SectionHeader("Asistencia del Día")
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -281,7 +252,7 @@ fun AttendanceSection(attendanceList: List<Attendance>) {
 }
 
 @Composable
-fun AttendanceCard(attendance: Attendance) {
+fun AttendanceCard(attendance: AttendanceToday) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -293,9 +264,9 @@ fun AttendanceCard(attendance: Attendance) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(attendance.course, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                Text(attendance.courseName, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                 Text(
-                    text = "${(attendance.percentage * 100).toInt()}%",
+                    text = "${(attendance.attendancePercentage * 100).toInt()}%",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -303,7 +274,7 @@ fun AttendanceCard(attendance: Attendance) {
             }
             Spacer(Modifier.height(8.dp))
             LinearProgressIndicator(
-                progress = { attendance.percentage },
+                progress = { attendance.attendancePercentage },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -315,15 +286,14 @@ fun AttendanceCard(attendance: Attendance) {
     }
 }
 
-
-data class Attendance(val course: String, val percentage: Float)
-
 @PreviewLightDark
 @Composable
 private fun DashboardScreenPreview() {
     GemaTheme {
         Surface {
-            DashboardScreen()
+            DashboardScreen(
+                dashboard = Dashboard.Empty
+            )
         }
     }
 }

@@ -16,6 +16,8 @@ import java.util.UUID
 
 typealias StudentEntity = com.emm.gema.Student
 
+typealias AttendanceTodayEntity = com.emm.gema.AttendanceToday
+
 class DefaultStudentRepository(
     private val dao: StudentQueries,
     private val studentCourseDao: StudentCourseQueries,

@@ -7,4 +7,6 @@ interface EvaluationRepository {
     suspend fun create(evaluation: CreateEvaluationInput)
 
     fun findByCourseId(courseId: String): Flow<List<Evaluation>>
+
+    fun fetchAll(): Flow<List<Evaluation>>
 }

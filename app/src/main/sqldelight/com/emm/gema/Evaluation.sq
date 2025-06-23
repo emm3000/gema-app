@@ -15,3 +15,6 @@ VALUES (?, ?, ?, ?, ?, 20);
 
 findByCourse:
 SELECT * FROM evaluation WHERE courseId = ?;
+
+fetchAll:
+SELECT * FROM evaluation;

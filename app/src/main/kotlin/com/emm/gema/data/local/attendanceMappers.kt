@@ -2,6 +2,7 @@ package com.emm.gema.data.local
 
 import com.emm.gema.domain.attendance.Attendance
 import com.emm.gema.domain.attendance.AttendanceStatus
+import com.emm.gema.domain.dashboard.AttendanceToday
 import java.time.LocalDate
 
 fun AttendanceEntity.toDomain() = Attendance(
@@ -12,4 +13,13 @@ fun AttendanceEntity.toDomain() = Attendance(
     courseId = courseId,
 )
 
-fun List<AttendanceEntity>.toDomain() = map<AttendanceEntity, Attendance>(AttendanceEntity::toDomain)
+fun List<AttendanceEntity>.toAttendanceDomainList(): List<Attendance> = map(AttendanceEntity::toDomain)
+
+fun AttendanceTodayEntity.toDomain() = AttendanceToday(
+    courseId = courseId,
+    courseName = courseName,
+    totalStudents = totalStudents,
+    presentToday = presentToday,
+)
+
+fun List<AttendanceTodayEntity>.toAttendanceTodayDomainList() = map(AttendanceTodayEntity::toDomain)

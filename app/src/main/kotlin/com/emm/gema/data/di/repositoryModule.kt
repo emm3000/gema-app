@@ -38,7 +38,8 @@ val repositoryModule = module {
 
     factory<AttendanceRepository> {
         DefaultAttendanceRepository(
-            get<GemaDb>().attendanceQueries
+            get<GemaDb>().attendanceQueries,
+            get<GemaDb>().studentCourseQueries
         )
     }
 
