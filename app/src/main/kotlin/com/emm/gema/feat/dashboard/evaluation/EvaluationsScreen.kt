@@ -1,6 +1,5 @@
 package com.emm.gema.feat.dashboard.evaluation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,16 +12,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AssistChip
+import androidx.compose.material.icons.filled.NoteAdd
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -88,24 +90,27 @@ fun EvaluationsScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            if (state.courses.isNotEmpty()) {
-                GemaDropdown(
-                    modifier = Modifier.fillMaxWidth(),
-                    textLabel = "Curso",
-                    items = state.courses,
-                    itemSelected = state.courseSelected,
-                    onItemSelected = onCourseSelected,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            GemaDropdown(
+                modifier = Modifier.fillMaxWidth(),
+                textLabel = "Curso",
+                items = state.courses,
+                itemSelected = state.courseSelected,
+                onItemSelected = onCourseSelected
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // TODO: Handle empty states
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(state.evaluations, key = Evaluation::id) { evaluation ->
-                    EvaluationItem(
-                        evaluation = evaluation,
-                        onEvaluationClicked = onEvaluationClicked
-                    )
+            if (state.evaluations.isEmpty()) {
+                EmptyState(navigateToCreateEvaluation)
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(state.evaluations, key = { it.id }) {
+                        EvaluationItem(
+                            evaluation = it,
+                            onEvaluationClicked = onEvaluationClicked
+                        )
+                    }
                 }
             }
         }
@@ -121,9 +126,9 @@ private fun EvaluationItem(
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onEvaluationClicked(evaluation.id) },
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
+        onClick = { onEvaluationClicked(evaluation.id) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Row(
@@ -132,29 +137,31 @@ private fun EvaluationItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Assignment,
+                contentDescription = "Evaluation Type",
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = evaluation.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text(
-                        text = evaluation.date,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    AssistChip(
-                        onClick = {},
-                        label = {
-                            Text(text = evaluation.type, style = MaterialTheme.typography.labelSmall)
-                        }
-                    )
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Fecha: ${evaluation.date}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Tipo: ${evaluation.type}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Spacer(modifier = Modifier.width(8.dp))
             Box {
@@ -176,6 +183,33 @@ private fun EvaluationItem(
                         onClick = { isMenuExpanded = false /* TODO */ }
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyState(onCreateEvaluation: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.NoteAdd,
+                contentDescription = "No evaluations",
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+            Text(
+                text = "No hay evaluaciones todavía",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Button(onClick = onCreateEvaluation) {
+                Text("Crear primera evaluación")
             }
         }
     }
@@ -209,6 +243,31 @@ private fun EvaluationsScreenPreview() {
             EvaluationsScreen(
                 state = EvaluationsUiState(
                     evaluations = sampleEvaluations,
+                    courses = listOf(
+                        Course(
+                            id = "1",
+                            name = "Cálculo Avanzado",
+                            grade = "ne",
+                            section = "lacinia",
+                            level = "mandamus",
+                            shift = "class",
+                            academicYear = 1984
+                        )
+                    )
+                )
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun EvaluationsScreenEmptyPreview() {
+    GemaTheme {
+        Surface {
+            EvaluationsScreen(
+                state = EvaluationsUiState(
+                    evaluations = emptyList(),
                     courses = listOf(
                         Course(
                             id = "1",

@@ -141,7 +141,7 @@ fun AttendanceScreen(
                 itemSelected = state.selectedCourse,
                 onItemSelected = { onAction(AttendanceAction.OnCourseSelected(it)) }
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             if (state.attendance.isEmpty()) {

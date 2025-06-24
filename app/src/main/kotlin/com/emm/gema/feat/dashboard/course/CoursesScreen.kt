@@ -1,6 +1,5 @@
 package com.emm.gema.feat.dashboard.course
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -122,8 +121,8 @@ fun CourseItem(
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCourseClicked(course.id) },
+            .fillMaxWidth(),
+        onClick = { onCourseClicked(course.id) },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
