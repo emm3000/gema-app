@@ -37,4 +37,10 @@ class DefaultEvaluationRepository(private val dao: EvaluationQueries): Evaluatio
         .asFlow()
         .mapToList(Dispatchers.IO)
         .map(List<EvaluationEntity>::toDomain)
+
+    override fun fetchSoon(): Flow<List<Evaluation>> = dao
+        .fetchSoon()
+        .asFlow()
+        .mapToList(Dispatchers.IO)
+        .map(List<EvaluationEntity>::toDomain)
 }

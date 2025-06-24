@@ -9,4 +9,6 @@ interface EvaluationRepository {
     fun findByCourseId(courseId: String): Flow<List<Evaluation>>
 
     fun fetchAll(): Flow<List<Evaluation>>
+
+    fun fetchSoon(): Flow<List<Evaluation>>
 }

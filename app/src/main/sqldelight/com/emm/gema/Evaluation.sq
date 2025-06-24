@@ -18,3 +18,8 @@ SELECT * FROM evaluation WHERE courseId = ?;
 
 fetchAll:
 SELECT * FROM evaluation;
+
+fetchSoon:
+SELECT * FROM evaluation
+WHERE date >= date('now')
+ORDER BY date ASC;

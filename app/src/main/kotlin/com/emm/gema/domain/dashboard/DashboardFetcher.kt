@@ -17,7 +17,7 @@ class DashboardFetcher(
 
     fun fetch(): Flow<Dashboard> {
         val courses: Flow<List<Course>> = coursesFetcher.fetchAll()
-        val evaluations: Flow<List<Evaluation>> = evaluationRepository.fetchAll()
+        val evaluations: Flow<List<Evaluation>> = evaluationRepository.fetchSoon()
         val attendance: Flow<List<AttendanceToday>> = attendanceRepository.attendanceToday(LocalDate.now())
 
         return combine(
@@ -26,7 +26,7 @@ class DashboardFetcher(
             attendance
         ) { courses, evaluations, attendance ->
             Dashboard(
-                courses = courses,
+                courses = courses.take(3),
                 evaluations = evaluations,
                 attendance = attendance
             )
