@@ -153,8 +153,9 @@ fun CourseItem(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+                val sectionText = if (course.section == "Sin sección") "" else course.section
                 Text(
-                    text = "${course.grade} ${course.section} - ${course.level}",
+                    text = "${course.grade} $sectionText - ${course.level}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
