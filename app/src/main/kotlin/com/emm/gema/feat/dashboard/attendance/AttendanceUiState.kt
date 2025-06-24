@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 data class AttendanceUiState(
     val courses: List<Course> = emptyList(),
-    val courseSelected: Course? = null,
+    val selectedCourse: Course? = null,
     val datePicker: LocalDate = LocalDate.now(),
     val isSubmitButtonEnabled: Boolean = false,
     val attendance: List<StudentAttendanceStatus> = emptyList(),

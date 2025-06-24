@@ -33,7 +33,7 @@ class AttendanceViewModel(
 
     init {
         combine(
-            snapshotFlow { state.courseSelected }.debounce(200L),
+            snapshotFlow { state.selectedCourse }.debounce(200L),
             snapshotFlow { state.datePicker }.debounce(200L),
             ::Pair
         )
@@ -57,7 +57,7 @@ class AttendanceViewModel(
                 state = state.copy(
                     courses = courses,
                     screenState = if (courses.isEmpty()) ScreenState.EmptyCourses("No hay cursos disponibles") else ScreenState.None,
-                    courseSelected = courses.firstOrNull()
+                    selectedCourse = courses.firstOrNull()
                 )
             }.launchIn(viewModelScope)
     }
@@ -68,11 +68,11 @@ class AttendanceViewModel(
                 state = state.copy(datePicker = action.date)
             }
 
-            is AttendanceAction.OnCourseSelectedChange -> {
-                state = state.copy(courseSelected = action.course)
+            is AttendanceAction.OnCourseSelected -> {
+                state = state.copy(selectedCourse = action.course)
             }
 
-            is AttendanceAction.OnAttendanceStatusChange -> {
+            is AttendanceAction.OnStatusChange -> {
                 updateAttendanceStatus(action)
             }
 
@@ -80,7 +80,7 @@ class AttendanceViewModel(
                 viewModelScope.launch {
                     val input = CreateAttendanceInput(
                         date = state.datePicker,
-                        courseId = state.courseSelected?.id ?: "",
+                        courseId = state.selectedCourse?.id ?: "",
                         students = state.attendance.map {
                             StudentAttendance(
                                 studentId = it.student.id,
@@ -95,7 +95,7 @@ class AttendanceViewModel(
         }
     }
 
-    private fun updateAttendanceStatus(action: AttendanceAction.OnAttendanceStatusChange) {
+    private fun updateAttendanceStatus(action: AttendanceAction.OnStatusChange) {
         state = state.copy(
             attendance = state.attendance.map { student ->
                 if (student == action.student) {

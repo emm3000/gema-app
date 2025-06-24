@@ -8,9 +8,9 @@ sealed interface AttendanceAction {
 
     class OnDateChange(val date: LocalDate) : AttendanceAction
 
-    class OnCourseSelectedChange(val course: Course): AttendanceAction
+    class OnCourseSelected(val course: Course): AttendanceAction
 
-    class OnAttendanceStatusChange(val student: StudentAttendanceStatus) : AttendanceAction
+    class OnStatusChange(val student: StudentAttendanceStatus) : AttendanceAction
 
     object OnSave: AttendanceAction
 }
