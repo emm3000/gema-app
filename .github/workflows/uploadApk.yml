@@ -49,5 +49,5 @@ jobs:
         with:
           appId: ${{secrets.FIREBASE_DEV_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          groups: BETSY
+          groups: EMM
           file: ${{ steps.devDebugPath.outputs.devDebug }}
