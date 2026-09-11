@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -84,13 +85,15 @@ fun GBanner(
 
 @Composable
 private fun containerColorOf(tone: GBannerTone): Color = when (tone) {
-    GBannerTone.INFO, GBannerTone.WARNING -> MaterialTheme.colorScheme.surfaceVariant
+    GBannerTone.INFO -> MaterialTheme.colorScheme.surfaceVariant
+    GBannerTone.WARNING -> GemaAccents.warningContainer
     GBannerTone.ERROR -> MaterialTheme.colorScheme.errorContainer
 }
 
 @Composable
 private fun contentColorOf(tone: GBannerTone): Color = when (tone) {
-    GBannerTone.INFO, GBannerTone.WARNING -> MaterialTheme.colorScheme.onSurfaceVariant
+    GBannerTone.INFO -> MaterialTheme.colorScheme.onSurfaceVariant
+    GBannerTone.WARNING -> GemaAccents.onWarningContainer
     GBannerTone.ERROR -> MaterialTheme.colorScheme.onErrorContainer
 }
 
