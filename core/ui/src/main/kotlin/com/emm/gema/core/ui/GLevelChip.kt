@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -32,7 +34,44 @@ private const val INCOMPLETE_DESCRIPTION: String = "En inicio sin conclusión de
 private const val UNWORKED_COMMENT_DESCRIPTION: String = "Competencia no evaluada"
 private const val EMPTY_DESCRIPTION: String = "Sin nivel"
 
-enum class GLevelChipSize { GRID, INLINE }
+enum class GLevelChipSize { GRID, INLINE, EVIDENCE }
+
+private data class GLevelChipMetrics(
+    val width: Dp,
+    val height: Dp,
+    val shape: Shape,
+    val labelStyle: TextStyle,
+)
+
+@Composable
+private fun GLevelChipSize.metrics(): GLevelChipMetrics = when (this) {
+    GLevelChipSize.GRID -> GLevelChipMetrics(
+        width = GemaSpacing.gridCellWidth,
+        height = GemaSpacing.gridChipHeight,
+        shape = GemaShapes.control,
+        labelStyle = MaterialTheme.typography.labelSmall,
+    )
+    GLevelChipSize.INLINE -> GLevelChipMetrics(
+        width = GemaSpacing.minimumTouchTarget,
+        height = GemaSpacing.minimumTouchTarget,
+        shape = GemaShapes.control,
+        labelStyle = MaterialTheme.typography.labelLarge,
+    )
+    GLevelChipSize.EVIDENCE -> GLevelChipMetrics(
+        width = GemaSpacing.evidenceChipWidth,
+        height = GemaSpacing.evidenceChipHeight,
+        shape = GemaShapes.chip,
+        labelStyle = MaterialTheme.typography.labelSmall,
+    )
+}
+
+@Composable
+private fun borderColor(size: GLevelChipSize, isIncomplete: Boolean, isCurrent: Boolean): Color = when {
+    isIncomplete -> MaterialTheme.colorScheme.error
+    isCurrent -> MaterialTheme.colorScheme.primary
+    size == GLevelChipSize.EVIDENCE -> MaterialTheme.colorScheme.outlineVariant
+    else -> MaterialTheme.colorScheme.outline
+}
 
 @Composable
 fun GLevelChip(
@@ -44,38 +83,28 @@ fun GLevelChip(
     size: GLevelChipSize = GLevelChipSize.INLINE,
     onClick: (() -> Unit)? = null,
 ) {
-    val width: Dp = when (size) {
-        GLevelChipSize.GRID -> GemaSpacing.gridCellWidth
-        GLevelChipSize.INLINE -> GemaSpacing.minimumTouchTarget
-    }
-    val height: Dp = when (size) {
-        GLevelChipSize.GRID -> GemaSpacing.gridChipHeight
-        GLevelChipSize.INLINE -> GemaSpacing.minimumTouchTarget
+    val metrics: GLevelChipMetrics = size.metrics()
+    val backgroundColor: Color = when (size) {
+        GLevelChipSize.EVIDENCE -> MaterialTheme.colorScheme.surface
+        else -> MaterialTheme.colorScheme.surfaceVariant
     }
     val markerColor: Color = MaterialTheme.colorScheme.error
     val border = BorderStroke(
         width = if (isCurrent) GemaSpacing.indicatorStroke else GemaBorder.hairline,
-        color = when {
-            isIncomplete -> markerColor
-            isCurrent -> MaterialTheme.colorScheme.primary
-            else -> MaterialTheme.colorScheme.outline
-        },
+        color = borderColor(size, isIncomplete, isCurrent),
     )
     val content: @Composable () -> Unit = {
         Row(
             modifier = Modifier
-                .width(width)
-                .height(height)
+                .width(metrics.width)
+                .height(metrics.height)
                 .semantics { contentDescription = describe(letter, hasUnworkedComment, isIncomplete) },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = label(letter, hasUnworkedComment),
-                style = when (size) {
-                    GLevelChipSize.GRID -> MaterialTheme.typography.labelSmall
-                    GLevelChipSize.INLINE -> MaterialTheme.typography.labelLarge
-                },
+                style = metrics.labelStyle,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -94,8 +123,8 @@ fun GLevelChip(
     if (onClick == null) {
         Surface(
             modifier = modifier,
-            shape = GemaShapes.control,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = metrics.shape,
+            color = backgroundColor,
             border = border,
             content = content,
         )
@@ -103,8 +132,8 @@ fun GLevelChip(
         Surface(
             onClick = onClick,
             modifier = modifier,
-            shape = GemaShapes.control,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = metrics.shape,
+            color = backgroundColor,
             border = border,
             content = content,
         )
