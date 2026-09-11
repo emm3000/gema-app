@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.UnworkedComment
 import com.emm.gema.core.theme.GemaSpacing
+import com.emm.gema.core.theme.asDayMonth
 import com.emm.gema.core.ui.GBottomSheet
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GLevelChip
@@ -22,9 +23,6 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.feature.evaluation.R
-import java.time.format.DateTimeFormatter
-
-private val evidenceDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
 @Composable
 fun PeriodLevelSheet(
@@ -102,7 +100,7 @@ private fun EvidenceListRow(evidence: EvidenceRow) {
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
         GText(
-            text = evidence.date.format(evidenceDateFormatter),
+            text = evidence.date.asDayMonth(),
             style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

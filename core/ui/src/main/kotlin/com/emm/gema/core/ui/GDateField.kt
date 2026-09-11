@@ -25,12 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.asDayMonthYear
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-
-private val gDateFieldFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
@@ -62,7 +60,7 @@ fun GDateField(
         }
     }
 
-    val displayValue: String = value?.format(gDateFieldFormatter).orEmpty()
+    val displayValue: String = value?.asDayMonthYear().orEmpty()
     val supportingContent: (@Composable () -> Unit)? = errorText?.let { text ->
         {
             Text(text = text, color = MaterialTheme.colorScheme.error)

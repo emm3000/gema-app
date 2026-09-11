@@ -17,6 +17,7 @@ import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.asDayMonth
 import com.emm.gema.core.ui.GDateChip
 import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GEmptyState
@@ -27,9 +28,6 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.activities.R
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
 @Composable
 fun ActivitiesScreen(
@@ -82,7 +80,7 @@ fun ActivitiesScreen(
                     items(state.activities, key = { it.id.value }) { row ->
                         GListItem(
                             title = row.name,
-                            titleLeading = { GDateChip(text = row.date.format(dateFormatter)) },
+                            titleLeading = { GDateChip(text = row.date.asDayMonth()) },
                             subtitle = row.subtitle(),
                             subtitleColor = if (row.isFullyCovered) {
                                 MaterialTheme.colorScheme.onPrimaryContainer

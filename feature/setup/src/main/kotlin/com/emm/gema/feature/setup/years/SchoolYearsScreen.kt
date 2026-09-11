@@ -18,12 +18,12 @@ import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.numericRangeLabel
 import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.ui.GYearCard
 import com.emm.gema.feature.setup.R
-import com.emm.gema.feature.setup.numericRangeLabel
 import com.emm.gema.feature.setup.periodCountPlural
 import java.time.LocalDate
 
