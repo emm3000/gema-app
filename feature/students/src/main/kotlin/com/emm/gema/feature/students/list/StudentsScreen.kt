@@ -18,9 +18,11 @@ import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GEmptyState
+import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
-import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GSearchField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.students.asDayMonthYear
 
@@ -35,21 +37,22 @@ fun StudentsScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = "Alumnos",
-                subtitle = state.sectionTitle,
+                title = "Alumnos · ${state.sectionTitle}",
+                subtitle = "${state.activeStudents.size} activos · ${state.withdrawnStudents.size} retirados",
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
                 actions = {
                     GButton(
                         text = "Importar",
                         onClick = { onIntent(StudentsUiIntent.ImportClicked) },
-                        variant = GButtonVariant.TEXT,
-                    )
-                    GButton(
-                        text = "Agregar",
-                        onClick = { onIntent(StudentsUiIntent.AddStudentClicked) },
-                        variant = GButtonVariant.TEXT,
+                        variant = GButtonVariant.SECONDARY,
                     )
                 },
+            )
+        },
+        floatingAction = {
+            GExtendedFab(
+                text = "Agregar alumno",
+                onClick = { onIntent(StudentsUiIntent.AddStudentClicked) },
             )
         },
         modifier = modifier,
@@ -73,7 +76,12 @@ fun StudentsScreen(
                 }
             }
             item {
-                SearchField(query = state.query, onIntent = onIntent)
+                GSearchField(
+                    query = state.query,
+                    onQueryChange = { onIntent(StudentsUiIntent.QueryChanged(it)) },
+                    placeholder = "Buscar",
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
             if (state.isEmpty) {
                 item {
@@ -97,9 +105,9 @@ fun StudentsScreen(
             }
             if (state.withdrawnStudents.isNotEmpty()) {
                 item {
-                    GListItem(
-                        title = "Retirados (${state.withdrawnStudents.size})",
-                        modifier = Modifier.fillMaxWidth(),
+                    WithdrawnSectionHeader(
+                        count = state.withdrawnStudents.size,
+                        isExpanded = state.isWithdrawnExpanded,
                         onClick = { onIntent(StudentsUiIntent.WithdrawnSectionToggled) },
                     )
                 }
@@ -114,12 +122,20 @@ fun StudentsScreen(
 }
 
 @Composable
-private fun SearchField(query: String, onIntent: (StudentsUiIntent) -> Unit, modifier: Modifier = Modifier) {
-    GTextField(
-        value = query,
-        onValueChange = { onIntent(StudentsUiIntent.QueryChanged(it)) },
-        label = "Buscar",
+private fun WithdrawnSectionHeader(
+    count: Int,
+    isExpanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    GListItem(
+        title = "RETIRADOS ($count)",
         modifier = modifier.fillMaxWidth(),
+        titleStyle = GTextStyle.LABEL_SMALL_EMPHASIS,
+        isEmphasized = true,
+        isExpanded = isExpanded,
+        showDivider = false,
+        onClick = onClick,
     )
 }
 
