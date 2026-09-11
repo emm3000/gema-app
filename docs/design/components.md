@@ -56,16 +56,17 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GDialog` | `AlertDialog` | delete section, restore backup, apply import | built |
 | `GBottomSheet` | `ModalBottomSheet` | period level sheet | built |
 | `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors, export period | built |
-| `GSearchField` | `OutlinedTextField` | students | planned |
-| `GExtendedFab` | `ExtendedFloatingActionButton` | school years | built |
+| `GSearchField` | `OutlinedTextField` | students | built |
+| `GExtendedFab` | `ExtendedFloatingActionButton` | students, sections, school years, activities | built |
+| `GGroupHeader` | `Surface` + `Text` | students | built |
 | `GYearCard` | `Surface` + `Text` | school years | built |
 | `GBadge` | `Surface` + `Text` | school years | built |
 | `GTableHeaderBand` | `Surface` + `HorizontalDivider` | attendance month | built |
 | `GTableRow` | `Box` + `HorizontalDivider` | attendance month | built |
 | `GMonthPickerDialog` | `AlertDialog` (`GDialog`) + `Surface` month chips | attendance month | built |
 
-(Twenty-seven rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
-rather than widgets, which is why the working widget set is twenty-three.
+(Twenty-eight rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
+rather than widgets, which is why the working widget set is twenty-four.
 `GTableHeaderBand`/`GTableRow` currently back one screen; the period levels
 grid drifts on the same shape and is its own migration ticket.)
 
@@ -752,7 +753,7 @@ Periods, twelve months — which is exactly where `GSegmentedPicker` stops fitti
 `badge` carries "ACTUAL" on the current Period so the Teacher is never guessing
 which one they are editing (US 5).
 
-### GSearchField (planned)
+### GSearchField
 
 ```kotlin
 @Composable
@@ -765,11 +766,32 @@ fun GSearchField(
 ```
 
 Wraps `OutlinedTextField` with a leading search icon and a clear action. Tokens:
-`GemaShapes.pill`, inherited field tokens.
+`GemaShapes.pill`, `surfaceVariant` fill, inherited field tokens.
 
 It is a separate component from `GTextField` only because the clear affordance
 and the pill shape are search conventions, and because filtering is local and
 instant — there is no debounce parameter, since there is no query to throttle.
+
+---
+
+### GExtendedFab
+
+```kotlin
+@Composable
+fun GExtendedFab(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+)
+```
+
+Wraps `ExtendedFloatingActionButton`. The primary creation action for a list
+screen (Students, Sections, School Years, Activities) — floats bottom-end via
+`GScreen`'s `fab` slot instead of sitting in the top bar. `fab` and
+`bottomAction` are mutually exclusive on `GScreen`. Tokens:
+`GemaSpacing.fabHeight`, `GemaShapes.container`, `primaryContainer` /
+`onPrimaryContainer`.
 
 ---
 
