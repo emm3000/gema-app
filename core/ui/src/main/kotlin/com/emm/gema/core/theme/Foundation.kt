@@ -48,4 +48,10 @@ object GemaAccents {
 
     val onUnmarkedSurface: Color
         @Composable get() = if (isSystemInDarkTheme()) onUnmarkedDark else onUnmarkedLight
+
+    val warningContainer: Color
+        @Composable get() = if (isSystemInDarkTheme()) warningContainerDark else warningContainerLight
+
+    val onWarningContainer: Color
+        @Composable get() = if (isSystemInDarkTheme()) onWarningContainerDark else onWarningContainerLight
 }
