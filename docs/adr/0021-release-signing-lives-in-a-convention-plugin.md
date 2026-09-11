@@ -48,10 +48,27 @@ added here: Koin resolves through lambdas rather than reflection, SQLDelight
 generates ordinary Kotlin, Compose ships consumer rules, and the SIAGIE
 workbook code reaches `javax.xml`, which lives in the platform and is not
 shrunk. R8 produced no `missing_rules.txt`, and a minified, signed build
-installed on an API 37 emulator walked both setup steps — Koin injection,
-Compose, the domain layer and the SQLDelight read and write path — with no
-`FATAL` in logcat. A `-keep` added without that evidence only hides the
-breakage it is meant to prevent and silently grows the APK.
+installed on an API 37 emulator ran every flow that touches `java.util.zip`,
+the DOM parser or a file provider: SIAGIE import, SIAGIE grades export,
+monthly attendance export, and backup with restore, plus the setup steps that
+exercise Koin, Compose and the SQLDelight read and write path. Logcat showed
+no `FATAL EXCEPTION`, `ClassNotFoundException` or `NoSuchMethodError`.
+`docs/release.md` records that walkthrough so the next release repeats it. A
+`-keep` added without that evidence only hides the breakage it is meant to
+prevent and silently grows the APK.
+
+## The launcher icon is adaptive only
+
+`minSdk` is 26, the first level with adaptive icons, so every device this app
+installs on resolves `mipmap-anydpi-v26`. The density-bucket `ic_launcher.webp`
+files could never be reached and were deleted rather than regenerated from the
+brand assets.
+
+`android:roundIcon` went with them. It exists for pre-26 launchers that wanted
+a circular raster; an adaptive icon already supplies every mask the launcher
+asks for, including the round one, from the same foreground and background
+layers. Keeping a second entry point would mean maintaining two icons that can
+drift apart while only one of them is ever used.
 
 ## Publishing stays outside the build
 
