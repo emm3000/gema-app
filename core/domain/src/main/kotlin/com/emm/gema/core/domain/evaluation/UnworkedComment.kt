@@ -11,5 +11,7 @@ enum class UnworkedComment(val siagieOrdinal: Int, val label: String, val offici
         "Evidencia insuficiente",
         "Comentario 2. No se cuenta con evidencia suficiente para determinar nivel de logro.",
     ),
-    OTHER(3, "Otro", "Comentario 3. Otro."),
+    OTHER(3, "Otro", "Comentario 3. Otro.");
+
+    val siagieValue: String get() = "Comentario $siagieOrdinal"
 }
