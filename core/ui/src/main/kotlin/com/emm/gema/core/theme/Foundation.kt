@@ -26,6 +26,8 @@ object GemaSpacing {
     val leadingLabelWidth: Dp = 28.dp
     val fabHeight: Dp = 56.dp
     val activeBorder: Dp = 2.dp
+    val narrowCellWidth: Dp = 36.dp
+    val compactRowHeight: Dp = 52.dp
 }
 
 object GemaShapes {

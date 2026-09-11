@@ -215,7 +215,8 @@ fun GIconButton(
 ```
 
 Wraps `IconButton`. Tokens: `GemaSpacing.minTouchTarget`,
-`colorScheme.onSurfaceVariant`, `onSurface` when enabled and prominent.
+`colorScheme.onSurfaceVariant`, `onSurface` when enabled and prominent,
+`colorScheme.outlineVariant` when `isEnabled` is false.
 
 `contentDescription` is required, not nullable: an icon-only control with no
 label is the one place where a missing description makes the app unusable with
