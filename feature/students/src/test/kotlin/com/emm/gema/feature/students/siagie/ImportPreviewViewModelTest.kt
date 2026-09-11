@@ -1,9 +1,12 @@
 package com.emm.gema.feature.students.siagie
 
 import app.cash.turbine.test
+import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.core.domain.section.GetSectionUseCase
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
 import com.emm.gema.core.domain.siagie.PreviewSiagieImportUseCase
 import com.emm.gema.core.domain.siagie.SiagieImportPlanner
@@ -11,13 +14,13 @@ import com.emm.gema.core.domain.siagie.SiagieRoster
 import com.emm.gema.core.domain.siagie.SiagieRosterStudent
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.students.FakeSectionRepository
 import com.emm.gema.feature.students.FakeSiagieDocuments
 import com.emm.gema.feature.students.FakeSiagieImportStore
 import com.emm.gema.feature.students.FakeSiagieRosterReader
 import com.emm.gema.feature.students.FakeStudentRepository
 import com.emm.gema.feature.students.MainDispatcherRule
-import com.emm.gema.core.domain.id.IdGenerator
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.Instant
@@ -27,7 +30,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private const val URI: String = "content://documents/6-primaria.xlsx"
 private const val FILE_NAME: String = "6 Primaria EBR.xlsx"
 private const val FIRST_CODE: String = "10000000000001"
@@ -38,7 +41,7 @@ class ImportPreviewViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section(id = SECTION_ID, schoolYearId = "2026", grade = Grade.SIXTH, name = "A")
+    private val section = Section(id = sectionId, schoolYearId = SchoolYearId("2026"), grade = Grade.SIXTH, name = "A")
     private val sections = FakeSectionRepository(listOf(section))
     private val students = FakeStudentRepository()
     private val store = FakeSiagieImportStore(students)
@@ -101,7 +104,7 @@ class ImportPreviewViewModelTest {
             assertThat(awaitItem()).isInstanceOf(ImportPreviewUiEffect.ShowMessage::class.java)
             assertThat(awaitItem()).isEqualTo(ImportPreviewUiEffect.NavigateBack)
         }
-        assertThat(students.listBySection(SECTION_ID).map { it.fullName })
+        assertThat(students.listBySection(sectionId).map { it.fullName })
             .containsExactly("ALVARADO QUISPE, MARIA")
     }
 
@@ -111,10 +114,10 @@ class ImportPreviewViewModelTest {
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
         val viewModel: ImportPreviewViewModel = viewModel()
 
-        viewModel.onIntent(ImportPreviewUiIntent.WithdrawalToggled("student-1", isSelected = false))
+        viewModel.onIntent(ImportPreviewUiIntent.WithdrawalToggled(StudentId("student-1"), isSelected = false))
         viewModel.onIntent(ImportPreviewUiIntent.ApplyClicked)
 
-        assertThat(requireNotNull(students.findById("student-1")).withdrawalDate).isNull()
+        assertThat(requireNotNull(students.findById(StudentId("student-1"))).withdrawalDate).isNull()
     }
 
     @Test
@@ -125,7 +128,7 @@ class ImportPreviewViewModelTest {
 
         viewModel.onIntent(ImportPreviewUiIntent.ApplyClicked)
 
-        assertThat(requireNotNull(students.findById("student-1")).withdrawalDate)
+        assertThat(requireNotNull(students.findById(StudentId("student-1"))).withdrawalDate)
             .isEqualTo(LocalDate.of(2026, 9, 10))
     }
 
@@ -144,7 +147,7 @@ class ImportPreviewViewModelTest {
     private fun viewModel(): ImportPreviewViewModel {
         val planner = SiagieImportPlanner(sections, students, documents, reader)
         return ImportPreviewViewModel(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             uri = URI,
             getSection = GetSectionUseCase(sections),
             previewImport = PreviewSiagieImportUseCase(planner),
@@ -166,8 +169,8 @@ class ImportPreviewViewModelTest {
         SiagieRosterStudent(siagieId = "1001", code = StudentCode(code), fullName = fullName)
 
     private fun enrolled(id: String, code: String, fullName: String): Student = Student(
-        id = id,
-        sectionId = SECTION_ID,
+        id = StudentId(id),
+        sectionId = sectionId,
         code = StudentCode(code),
         fullName = fullName,
     )

@@ -5,28 +5,31 @@ import com.emm.gema.core.domain.attendance.AttendanceRecord
 import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.attendance.ExportMonthlyAttendanceUseCase
 import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.AttendanceExportEntry
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.attendance.FakeAttendanceRepository
 import com.emm.gema.feature.attendance.FakeSectionRepository
 import com.emm.gema.feature.attendance.FakeStudentRepository
 import com.emm.gema.feature.attendance.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneOffset
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
-private const val sectionId: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private val today: LocalDate = LocalDate.of(2026, 9, 10)
 private val september: YearMonth = YearMonth.of(2026, 9)
 
@@ -35,7 +38,7 @@ class AttendanceMonthViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section(sectionId, "2026", Grade.THIRD, "A")
+    private val section = Section(SectionId(sectionId.value), SchoolYearId("2026"), Grade.THIRD, "A")
     private val luz = student("student-1", "12345678901234", "ACOSTA RIVERA, Luz Maria")
 
     private val sectionRepository = FakeSectionRepository(listOf(section))
@@ -45,7 +48,7 @@ class AttendanceMonthViewModelTest {
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
     private fun viewModel(initialMonth: YearMonth? = null): AttendanceMonthViewModel = AttendanceMonthViewModel(
-        sectionId = sectionId,
+        sectionId = SectionId(sectionId.value),
         initialMonth = initialMonth,
         getSection = GetSectionUseCase(sectionRepository),
         getMonthlySummary = GetMonthlyAttendanceSummaryUseCase(studentRepository, attendanceRepository),
@@ -66,7 +69,7 @@ class AttendanceMonthViewModelTest {
     @Test
     fun `a recorded day turns counts and export on`() = runTest {
         attendanceRepository.records.value = listOf(
-            AttendanceRecord(sectionId, luz.id, september.atDay(1), AttendanceStatus.LATE),
+            AttendanceRecord(SectionId(sectionId.value), luz.id, september.atDay(1), AttendanceStatus.LATE),
         )
         val state: AttendanceMonthUiState = viewModel().state.value
 
@@ -78,7 +81,12 @@ class AttendanceMonthViewModelTest {
     @Test
     fun `stepping to the previous month reads that month's own records`() {
         attendanceRepository.records.value = listOf(
-            AttendanceRecord(sectionId, luz.id, september.minusMonths(1).atDay(5), AttendanceStatus.ABSENT),
+            AttendanceRecord(
+                SectionId(sectionId.value),
+                luz.id,
+                september.minusMonths(1).atDay(5),
+                AttendanceStatus.ABSENT,
+            ),
         )
         val viewModel: AttendanceMonthViewModel = viewModel(initialMonth = september)
 
@@ -91,7 +99,7 @@ class AttendanceMonthViewModelTest {
     @Test
     fun `export opens the document picker then shares the resulting file`() = runTest {
         attendanceRepository.records.value = listOf(
-            AttendanceRecord(sectionId, luz.id, september.atDay(1), AttendanceStatus.PRESENT),
+            AttendanceRecord(SectionId(sectionId.value), luz.id, september.atDay(1), AttendanceStatus.PRESENT),
         )
         val viewModel: AttendanceMonthViewModel = viewModel(initialMonth = september)
 
@@ -120,8 +128,8 @@ class AttendanceMonthViewModelTest {
     }
 
     private fun student(id: String, code: String, fullName: String): Student = Student(
-        id = id,
-        sectionId = sectionId,
+        id = StudentId(id),
+        sectionId = SectionId(sectionId.value),
         code = StudentCode(code),
         fullName = fullName,
     )

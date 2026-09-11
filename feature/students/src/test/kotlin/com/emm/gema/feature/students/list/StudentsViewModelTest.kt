@@ -1,30 +1,33 @@
 package com.emm.gema.feature.students.list
 
 import app.cash.turbine.test
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.students.FakeSectionRepository
 import com.emm.gema.feature.students.FakeStudentRepository
 import com.emm.gema.feature.students.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 
 class StudentsViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section(SECTION_ID, "2026", Grade.THIRD, "A")
+    private val section = Section(sectionId, SchoolYearId("2026"), Grade.THIRD, "A")
     private val luz = student("student-1", "12345678901234", "ACOSTA RIVERA, Luz Maria")
     private val jose = student("student-2", "12345678901235", "BAUTISTA QUISPE, Jose")
     private val rosa = student(
@@ -38,7 +41,7 @@ class StudentsViewModelTest {
     private val sectionRepository = FakeSectionRepository(listOf(section))
 
     private fun viewModel(): StudentsViewModel = StudentsViewModel(
-        sectionId = SECTION_ID,
+        sectionId = sectionId,
         getSection = GetSectionUseCase(sectionRepository),
         getStudents = GetStudentsUseCase(studentRepository),
         reactivateStudent = ReactivateStudentUseCase(studentRepository),
@@ -57,7 +60,7 @@ class StudentsViewModelTest {
             assertThat(picker).isInstanceOf(StudentsUiEffect.OpenDocumentPicker::class.java)
             assertThat((picker as StudentsUiEffect.OpenDocumentPicker).mimeTypes).isNotEmpty()
             assertThat(awaitItem()).isEqualTo(
-                StudentsUiEffect.NavigateToImportPreview(SECTION_ID, "content://documents/6.xlsx")
+                StudentsUiEffect.NavigateToImportPreview(sectionId, "content://documents/6.xlsx")
             )
         }
     }
@@ -89,7 +92,7 @@ class StudentsViewModelTest {
     @Test
     fun `an empty section is only empty while nothing is searched`() {
         val viewModel: StudentsViewModel = StudentsViewModel(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             getSection = GetSectionUseCase(sectionRepository),
             getStudents = GetStudentsUseCase(FakeStudentRepository()),
             reactivateStudent = ReactivateStudentUseCase(studentRepository),
@@ -142,10 +145,10 @@ class StudentsViewModelTest {
 
         viewModel.effects.test {
             viewModel.onIntent(StudentsUiIntent.AddStudentClicked)
-            assertThat(awaitItem()).isEqualTo(StudentsUiEffect.NavigateToStudentForm(SECTION_ID, null))
+            assertThat(awaitItem()).isEqualTo(StudentsUiEffect.NavigateToStudentForm(sectionId, null))
 
             viewModel.onIntent(StudentsUiIntent.StudentClicked(luz.id))
-            assertThat(awaitItem()).isEqualTo(StudentsUiEffect.NavigateToStudentForm(SECTION_ID, luz.id))
+            assertThat(awaitItem()).isEqualTo(StudentsUiEffect.NavigateToStudentForm(sectionId, luz.id))
         }
     }
 }
@@ -156,8 +159,8 @@ private fun student(
     fullName: String,
     withdrawalDate: LocalDate? = null,
 ): Student = Student(
-    id = id,
-    sectionId = SECTION_ID,
+    id = StudentId(id),
+    sectionId = sectionId,
     code = StudentCode(code),
     fullName = fullName,
     withdrawalDate = withdrawalDate,

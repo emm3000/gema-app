@@ -1,5 +1,6 @@
 package com.emm.gema.feature.students
 
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieDocuments
@@ -28,17 +29,17 @@ class FakeSiagieRosterReader : SiagieRosterReader {
 
 class FakeSiagieImportStore(private val students: FakeStudentRepository) : SiagieImportStore {
 
-    private val templates: MutableMap<String, ImportedTemplate> = mutableMapOf()
+    private val templates: MutableMap<SectionId, ImportedTemplate> = mutableMapOf()
 
     override suspend fun apply(students: List<Student>, template: ImportedTemplate) {
         students.forEach { this.students.save(it) }
         templates[template.sectionId] = template
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         templates.remove(sectionId)
     }
 
-    override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
+    override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
         templates[sectionId]?.takeIf { it.kind == kind }
 }

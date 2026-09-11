@@ -10,15 +10,16 @@ import com.emm.gema.core.domain.backup.ValidateBackupUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
 class BackupViewModelTest {
 
@@ -31,7 +32,7 @@ class BackupViewModelTest {
     private val settings = FakeBackupSettingsRepository()
     private val schoolYears = FakeSchoolYearRepository(
         SchoolYear(
-            id = "the-year",
+            id = SchoolYearId("the-year"),
             label = "2026",
             startDate = LocalDate.of(2026, 3, 2),
             endDate = LocalDate.of(2026, 12, 18),

@@ -1,7 +1,9 @@
 package com.emm.gema.feature.evaluation.levels
 
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
@@ -12,15 +14,19 @@ import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.evaluation.FakeCompetencyRepository
 import com.emm.gema.feature.evaluation.FakeEvidenceLevelRepository
 import com.emm.gema.feature.evaluation.FakePeriodLevelRepository
@@ -32,17 +38,17 @@ import com.emm.gema.feature.evaluation.FakeStudentRepository
 import com.emm.gema.feature.evaluation.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.evaluation.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
+import java.time.Clock
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.Clock
-import java.time.LocalDate
-import java.time.ZoneId
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-2"
-private const val SCHOOL_YEAR_ID: String = "year-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-2")
+private val schoolYearId: SchoolYearId = SchoolYearId("year-1")
 
 class PeriodLevelsViewModelTest {
 
@@ -57,21 +63,22 @@ class PeriodLevelsViewModelTest {
 
     @Test
     fun `the grid opens on the current period and the first active area`() = runTest {
-        work(firstCompetency, secondCompetency)
+        work(firstCompetency)
+        work(secondCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
         val state: PeriodLevelsUiState = viewModel.state.value
 
         assertThat(state.isLoading).isFalse()
         assertThat(state.sectionTitle).isEqualTo("3° A")
-        assertThat(state.selectedPeriodId).isEqualTo(PERIOD_ID)
+        assertThat(state.selectedPeriodId).isEqualTo(periodId)
         assertThat(state.selectedArea).isEqualTo(Area.COMU)
         assertThat(state.periods.single { it.isCurrent }.label).isEqualTo("II Bimestre")
     }
 
     @Test
     fun `a hidden area never becomes a grid option`() = runTest {
-        sectionAreaRepository.setAreaHidden(SECTION_ID, Area.COMU, isHidden = true)
+        sectionAreaRepository.setAreaHidden(sectionId, Area.COMU, isHidden = true)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
         assertThat(viewModel.state.value.areas.map { it.area }).doesNotContain(Area.COMU)
@@ -96,7 +103,8 @@ class PeriodLevelsViewModelTest {
 
     @Test
     fun `the missing count starts at one cell per student and column`() = runTest {
-        work(firstCompetency, secondCompetency)
+        work(firstCompetency)
+        work(secondCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
         assertThat(viewModel.state.value.missingCount).isEqualTo(4)
@@ -107,7 +115,7 @@ class PeriodLevelsViewModelTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.AD))
 
         assertThat(viewModel.state.value.missingCount).isEqualTo(1)
@@ -119,11 +127,11 @@ class PeriodLevelsViewModelTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.C))
 
         assertThat(viewModel.state.value.sheet?.isConclusionRequiredForExport).isTrue()
-        assertThat(viewModel.cell("student-1", firstCompetency).isIncomplete).isTrue()
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).isIncomplete).isTrue()
     }
 
     @Test
@@ -131,12 +139,12 @@ class PeriodLevelsViewModelTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.C))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetDescriptiveConclusionChanged("Necesita apoyo"))
 
-        assertThat(viewModel.cell("student-1", firstCompetency).isIncomplete).isFalse()
-        assertThat(viewModel.cell("student-1", firstCompetency).hasDescriptiveConclusion).isTrue()
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).isIncomplete).isFalse()
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).hasDescriptiveConclusion).isTrue()
     }
 
     @Test
@@ -144,12 +152,12 @@ class PeriodLevelsViewModelTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.B))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetUnworkedCommentSelected(UnworkedComment.OTHER))
 
-        assertThat(viewModel.cell("student-1", firstCompetency).achievementLevel).isNull()
-        assertThat(viewModel.cell("student-1", firstCompetency).unworkedComment).isEqualTo(UnworkedComment.OTHER)
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).achievementLevel).isNull()
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).unworkedComment).isEqualTo(UnworkedComment.OTHER)
     }
 
     @Test
@@ -157,11 +165,11 @@ class PeriodLevelsViewModelTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.B))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(null))
 
-        assertThat(viewModel.cell("student-1", firstCompetency).isRecorded).isFalse()
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).isRecorded).isFalse()
         assertThat(viewModel.state.value.missingCount).isEqualTo(2)
     }
 
@@ -169,12 +177,12 @@ class PeriodLevelsViewModelTest {
     fun `the missing filter keeps only the rows with an empty cell`() = runTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.A))
 
         viewModel.onIntent(PeriodLevelsUiIntent.MissingFilterToggled)
 
-        assertThat(viewModel.state.value.visibleRows.map { it.studentId }).containsExactly("student-2")
+        assertThat(viewModel.state.value.visibleRows.map { it.studentId }).containsExactly(secondStudentId)
     }
 
     @Test
@@ -184,9 +192,7 @@ class PeriodLevelsViewModelTest {
         viewModel.onIntent(PeriodLevelsUiIntent.WorkedCompetenciesClicked)
 
         val effect: PeriodLevelsUiEffect = viewModel.effects.first()
-        assertThat(effect).isEqualTo(
-            PeriodLevelsUiEffect.NavigateToWorkedCompetencies(SECTION_ID, PERIOD_ID, Area.COMU),
-        )
+        assertThat(effect).isEqualTo(PeriodLevelsUiEffect.NavigateToWorkedCompetencies(sectionId, periodId, Area.COMU))
     }
 
     @Test
@@ -199,7 +205,7 @@ class PeriodLevelsViewModelTest {
         val state: PeriodLevelsUiState = viewModel.state.value
         assertThat(state.columnMode?.competencyId).isEqualTo(firstCompetency)
         assertThat(state.columnMode?.currentStudentIndex).isEqualTo(0)
-        assertThat(state.columnModeStudent?.studentId).isEqualTo("student-1")
+        assertThat(state.columnModeStudent?.studentId).isEqualTo(firstStudentId)
         assertThat(state.columnModeColumn?.name).isEqualTo("Se comunica oralmente en lengua materna")
     }
 
@@ -211,8 +217,8 @@ class PeriodLevelsViewModelTest {
 
         viewModel.onIntent(PeriodLevelsUiIntent.PickLevelForCurrent(AchievementLevel.A))
 
-        assertThat(viewModel.cell("student-1", firstCompetency).achievementLevel).isEqualTo(AchievementLevel.A)
-        assertThat(viewModel.state.value.columnModeStudent?.studentId).isEqualTo("student-2")
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).achievementLevel).isEqualTo(AchievementLevel.A)
+        assertThat(viewModel.state.value.columnModeStudent?.studentId).isEqualTo(secondStudentId)
         assertThat(viewModel.state.value.columnMode?.currentStudentIndex).isEqualTo(1)
     }
 
@@ -237,8 +243,8 @@ class PeriodLevelsViewModelTest {
 
         viewModel.onIntent(PeriodLevelsUiIntent.PickLevelForCurrent(null))
 
-        assertThat(viewModel.cell("student-1", firstCompetency).isRecorded).isFalse()
-        assertThat(viewModel.state.value.columnModeStudent?.studentId).isEqualTo("student-2")
+        assertThat(viewModel.cell(firstStudentId, firstCompetency).isRecorded).isFalse()
+        assertThat(viewModel.state.value.columnModeStudent?.studentId).isEqualTo(secondStudentId)
     }
 
     @Test
@@ -247,17 +253,17 @@ class PeriodLevelsViewModelTest {
         val viewModel: PeriodLevelsViewModel = createViewModel()
         viewModel.onIntent(PeriodLevelsUiIntent.EnterColumnMode(firstCompetency))
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-2", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(secondStudentId, firstCompetency)))
 
         assertThat(viewModel.state.value.columnMode).isNull()
-        assertThat(viewModel.state.value.sheet?.studentId).isEqualTo("student-2")
+        assertThat(viewModel.state.value.sheet?.studentId).isEqualTo(secondStudentId)
     }
 
     @Test
     fun `opening a cell loads its evidence read-only`() = runTest {
         work(firstCompetency)
         val evidence = EvidenceRecord(
-            activityId = "activity-1",
+            activityId = ActivityId("activity-1"),
             activityName = "Debate del aula",
             date = LocalDate.of(2026, 6, 10),
             achievementLevel = AchievementLevel.B,
@@ -265,10 +271,10 @@ class PeriodLevelsViewModelTest {
         val viewModel: PeriodLevelsViewModel =
             createViewModel(evidenceLevelRepository = FakeEvidenceLevelRepository(listOf(evidence)))
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-2", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(secondStudentId, firstCompetency)))
 
         assertThat(viewModel.state.value.sheet?.evidence).containsExactly(
-            EvidenceRow("activity-1", "Debate del aula", LocalDate.of(2026, 6, 10), AchievementLevel.B),
+            EvidenceRow(ActivityId("activity-1"), "Debate del aula", LocalDate.of(2026, 6, 10), AchievementLevel.B),
         )
     }
 
@@ -286,7 +292,7 @@ class PeriodLevelsViewModelTest {
     @Test
     fun `changing the area reloads the columns`() = runTest {
         work(firstCompetency)
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, mathCompetency, isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(mathCompetency.value), isWorked = true)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
         viewModel.onIntent(PeriodLevelsUiIntent.AreaSelected(Area.MATE))
@@ -300,7 +306,7 @@ class PeriodLevelsViewModelTest {
         val viewModel: PeriodLevelsViewModel = createViewModel()
         periodLevelRepository.failsOnce = true
 
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-1", firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.A))
 
         assertThat(viewModel.effects.first())
@@ -310,15 +316,15 @@ class PeriodLevelsViewModelTest {
     @Test
     fun `an incoming cell opens its area and its sheet`() = runTest {
         work(firstCompetency)
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, mathCompetency, isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(mathCompetency.value), isWorked = true)
 
         val viewModel: PeriodLevelsViewModel = createViewModel(
-            PeriodLevelCellKey(studentId = "student-2", competencyId = mathCompetency),
+            PeriodLevelCellKey(studentId = secondStudentId, competencyId = CompetencyId(mathCompetency.value)),
         )
 
         assertThat(viewModel.state.value.selectedArea).isEqualTo(Area.MATE)
         val sheet: PeriodLevelSheetUiState = requireNotNull(viewModel.state.value.sheet)
-        assertThat(sheet.studentId).isEqualTo("student-2")
+        assertThat(sheet.studentId).isEqualTo(secondStudentId)
         assertThat(sheet.competencyId).isEqualTo(mathCompetency)
     }
 
@@ -331,15 +337,15 @@ class PeriodLevelsViewModelTest {
         assertThat(viewModel.state.value.sheet).isNull()
     }
 
-    private suspend fun work(vararg competencyIds: String) {
-        competencyIds.forEach { workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, it, isWorked = true) }
+    private suspend fun work(competencyId: CompetencyId) {
+        workedCompetencyRepository.setWorked(sectionId, periodId, competencyId, isWorked = true)
     }
 
     private fun createViewModel(
         initialCell: PeriodLevelCellKey? = null,
         evidenceLevelRepository: FakeEvidenceLevelRepository = FakeEvidenceLevelRepository(),
     ): PeriodLevelsViewModel = PeriodLevelsViewModel(
-        sectionId = SECTION_ID,
+        sectionId = sectionId,
         initialCell = initialCell,
         getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
         getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
@@ -351,43 +357,38 @@ class PeriodLevelsViewModelTest {
             studentRepository = studentRepository,
             periodLevelRepository = periodLevelRepository,
         ),
-        getPeriodLevelSheetContext = GetPeriodLevelSheetContextUseCase(
-            periodLevelRepository,
-            evidenceLevelRepository,
-        ),
+        getPeriodLevelSheetContext = GetPeriodLevelSheetContextUseCase(periodLevelRepository, evidenceLevelRepository),
         savePeriodLevel = SavePeriodLevelUseCase(periodLevelRepository),
     )
 
-    private fun PeriodLevelsViewModel.cell(studentId: String, competencyId: String): PeriodLevelCell = state.value
+    private fun PeriodLevelsViewModel.cell(
+        studentId: StudentId,
+        competencyId: CompetencyId,
+    ): PeriodLevelCell = state.value
         .rows
         .single { it.studentId == studentId }
         .cells
         .single { it.competencyId == competencyId }
 
     private val schoolYear: SchoolYear = SchoolYear(
-        id = SCHOOL_YEAR_ID,
+        id = schoolYearId,
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
         periodKind = PeriodKind.BIMESTER,
     )
-    private val section: Section = Section(
-        id = SECTION_ID,
-        schoolYearId = SCHOOL_YEAR_ID,
-        grade = Grade.THIRD,
-        name = "A",
-    )
+    private val section: Section = Section(id = sectionId, schoolYearId = schoolYearId, grade = Grade.THIRD, name = "A")
     private val periods: List<Period> = listOf(
         Period(
-            id = "period-1",
-            schoolYearId = SCHOOL_YEAR_ID,
+            id = PeriodId("period-1"),
+            schoolYearId = schoolYearId,
             number = 1,
             startDate = LocalDate.of(2026, 3, 2),
             endDate = LocalDate.of(2026, 5, 8),
         ),
         Period(
-            id = PERIOD_ID,
-            schoolYearId = SCHOOL_YEAR_ID,
+            id = periodId,
+            schoolYearId = schoolYearId,
             number = 2,
             startDate = LocalDate.of(2026, 5, 11),
             endDate = LocalDate.of(2026, 7, 24),
@@ -397,21 +398,25 @@ class PeriodLevelsViewModelTest {
         LocalDate.of(2026, 6, 1).atStartOfDay(ZoneId.of("America/Lima")).toInstant(),
         ZoneId.of("America/Lima"),
     )
-    private val firstCompetency: String = Competency.idOf(Area.COMU, 1)
-    private val secondCompetency: String = Competency.idOf(Area.COMU, 2)
-    private val mathCompetency: String = Competency.idOf(Area.MATE, 1)
+    private val firstCompetency: CompetencyId = Competency.idOf(Area.COMU, 1)
+    private val secondCompetency: CompetencyId = Competency.idOf(Area.COMU, 2)
+    private val mathCompetency: CompetencyId = Competency.idOf(Area.MATE, 1)
 }
+
+private val firstStudentId: StudentId = StudentId("student-1")
+
+private val secondStudentId: StudentId = StudentId("student-2")
 
 private val students: List<Student> = listOf(
     Student(
-        id = "student-1",
-        sectionId = SECTION_ID,
+        id = firstStudentId,
+        sectionId = sectionId,
         code = StudentCode("12345678901231"),
         fullName = "ACOSTA RIVERA, Luz Maria",
     ),
     Student(
-        id = "student-2",
-        sectionId = SECTION_ID,
+        id = secondStudentId,
+        sectionId = sectionId,
         code = StudentCode("12345678901232"),
         fullName = "BAUTISTA QUISPE, Jose",
     ),

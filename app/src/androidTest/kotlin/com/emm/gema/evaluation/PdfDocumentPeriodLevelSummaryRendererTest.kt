@@ -9,9 +9,12 @@ import com.emm.gema.core.domain.evaluation.PeriodLevelGrid
 import com.emm.gema.core.domain.evaluation.PeriodLevelGridRow
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.evaluation.PeriodLevelSummary
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -66,7 +69,7 @@ class PdfDocumentPeriodLevelSummaryRendererTest {
                 PeriodLevelGridRow(
                     student = student("student-1", "ACOSTA RIVERA, Luz"),
                     cells = listOf(
-                        PeriodLevel(PeriodLevelKey("section-1", "period-1", "student-1", column.id))
+                        PeriodLevel(PeriodLevelKey(SectionId("section-1"), PeriodId("period-1"), StudentId("student-1"), column.id))
                             .withAchievementLevel(AchievementLevel.C)
                             .withDescriptiveConclusion("Necesita apoyo"),
                     ),
@@ -92,7 +95,7 @@ class PdfDocumentPeriodLevelSummaryRendererTest {
             PeriodLevelGridRow(
                 student = student("student-$index", "ESTUDIANTE $index"),
                 cells = listOf(
-                    PeriodLevel(PeriodLevelKey("section-1", "period-1", "student-$index", column.id))
+                    PeriodLevel(PeriodLevelKey(SectionId("section-1"), PeriodId("period-1"), StudentId("student-$index"), column.id))
                         .withAchievementLevel(AchievementLevel.AD),
                 ),
             )
@@ -104,8 +107,8 @@ class PdfDocumentPeriodLevelSummaryRendererTest {
         Competency(id = Competency.idOf(area, siagieOrdinal), area = area, siagieOrdinal = siagieOrdinal, name = "Comp")
 
     private fun student(id: String, fullName: String): Student = Student(
-        id = id,
-        sectionId = "section-1",
+        id = StudentId(id),
+        sectionId = SectionId("section-1"),
         code = StudentCode(id.filter(Char::isDigit).padStart(14, '0')),
         fullName = fullName,
     )

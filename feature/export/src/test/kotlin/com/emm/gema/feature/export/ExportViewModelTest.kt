@@ -2,6 +2,7 @@ package com.emm.gema.feature.export
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.ExportPeriodLevelSummaryUseCase
@@ -17,19 +18,23 @@ import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.Instant
@@ -39,8 +44,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-1")
 private const val TEMPLATE_NAME: String = "6 Primaria EBR.xlsx"
 
 class ExportViewModelTest {
@@ -48,9 +53,14 @@ class ExportViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section(id = SECTION_ID, schoolYearId = "year-1", grade = Grade.SIXTH, name = "A")
+    private val section = Section(
+        id = sectionId,
+        schoolYearId = SchoolYearId("year-1"),
+        grade = Grade.SIXTH,
+        name = "A",
+    )
     private val schoolYear = SchoolYear(
-        id = "year-1",
+        id = SchoolYearId("year-1"),
         label = "2026",
         startDate = LocalDate.of(2026, 3, 1),
         endDate = LocalDate.of(2026, 12, 20),
@@ -58,8 +68,8 @@ class ExportViewModelTest {
     )
     private val periods: List<Period> = listOf(
         Period(
-            id = PERIOD_ID,
-            schoolYearId = "year-1",
+            id = periodId,
+            schoolYearId = SchoolYearId("year-1"),
             number = 1,
             startDate = LocalDate.of(2026, 3, 1),
             endDate = LocalDate.of(2026, 5, 31),
@@ -95,9 +105,9 @@ class ExportViewModelTest {
         val blocked = viewModel.state.value.gradesExportState as GradesExportUiState.Blocked
         assertThat(blocked.gaps).containsExactly(
             ExportGapRow(
-                studentId = "student-1",
+                studentId = StudentId("student-1"),
                 studentName = "ALVARADO QUISPE, MARIA",
-                competencyId = "COMU-1",
+                competencyId = CompetencyId("COMU-1"),
                 competencyLabel = "Comunicación - 01",
             ),
         )
@@ -133,9 +143,9 @@ class ExportViewModelTest {
 
             assertThat(awaitItem()).isEqualTo(
                 ExportUiEffect.NavigateToPeriodLevelCell(
-                    sectionId = SECTION_ID,
-                    studentId = "student-1",
-                    competencyId = "COMU-1",
+                    sectionId = sectionId,
+                    studentId = StudentId("student-1"),
+                    competencyId = CompetencyId("COMU-1"),
                 ),
             )
         }
@@ -171,7 +181,7 @@ class ExportViewModelTest {
 
         val viewModel: ExportViewModel = viewModel()
 
-        assertThat(viewModel.state.value.selectedPeriodId).isEqualTo(PERIOD_ID)
+        assertThat(viewModel.state.value.selectedPeriodId).isEqualTo(periodId)
         assertThat(viewModel.state.value.periods.single().label).isEqualTo("I Bimestre")
         assertThat(viewModel.state.value.sectionTitle).isEqualTo("6° A")
     }
@@ -226,7 +236,7 @@ class ExportViewModelTest {
         )
 
         return ExportViewModel(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             getSection = GetSectionUseCase(FakeSectionRepository(section)),
             getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(schoolYear)),
             getPeriods = GetPeriodsUseCase(FakePeriodRepository(periods)),
@@ -260,20 +270,20 @@ class ExportViewModelTest {
     private suspend fun seedSection() {
         students.save(
             Student(
-                id = "student-1",
-                sectionId = SECTION_ID,
+                id = StudentId("student-1"),
+                sectionId = sectionId,
                 code = StudentCode("10000000000001"),
                 fullName = "ALVARADO QUISPE, MARIA",
             ),
         )
-        worked.setWorked(SECTION_ID, PERIOD_ID, competency.id, true)
+        worked.setWorked(sectionId, periodId, competency.id, true)
     }
 
     private suspend fun storeTemplate() {
         importStore.apply(
             students = emptyList(),
             template = ImportedTemplate(
-                sectionId = SECTION_ID,
+                sectionId = sectionId,
                 kind = ImportedTemplateKind.GRADES,
                 fileName = TEMPLATE_NAME,
                 content = byteArrayOf(1),
@@ -285,7 +295,7 @@ class ExportViewModelTest {
     private suspend fun record(level: AchievementLevel, conclusion: String) {
         levels.save(
             PeriodLevel(
-                key = PeriodLevelKey(SECTION_ID, PERIOD_ID, "student-1", competency.id),
+                key = PeriodLevelKey(sectionId, periodId, StudentId("student-1"), competency.id),
                 achievementLevel = level,
                 descriptiveConclusion = conclusion,
             ),

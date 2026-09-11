@@ -4,48 +4,51 @@ import app.cash.turbine.test
 import com.emm.gema.core.domain.attendance.AttendanceRecord
 import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
-import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
+import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.core.domain.student.Student
-import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
+import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.sections.FakeActivityRepository
 import com.emm.gema.feature.sections.FakeAttendanceRepository
 import com.emm.gema.feature.sections.FakeEvidenceLevelRepository
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeSectionCascade
-import com.emm.gema.feature.sections.FakeSiagieImportStore
-import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
+import com.emm.gema.feature.sections.FakeSiagieImportStore
 import com.emm.gema.feature.sections.FakeStudentRepository
+import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
 class SectionFormViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val existing = Section("section-1", "2026", Grade.THIRD, "A")
+    private val existing = Section(SectionId("section-1"), SchoolYearId("2026"), Grade.THIRD, "A")
     private val sectionRepository = FakeSectionRepository(listOf(existing))
     private val sectionAreaRepository = FakeSectionAreaRepository()
     private val studentRepository = FakeStudentRepository()
     private val periodLevelRepository = FakePeriodLevelRepository()
     private val attendanceRepository = FakeAttendanceRepository()
 
-    private fun viewModelFor(sectionId: String?): SectionFormViewModel = SectionFormViewModel(
-        schoolYearId = "2026",
+    private fun viewModelFor(sectionId: SectionId?): SectionFormViewModel = SectionFormViewModel(
+        schoolYearId = SchoolYearId("2026"),
         sectionId = sectionId,
         getSection = GetSectionUseCase(sectionRepository),
         createSection = CreateSectionUseCase(sectionRepository, IdGenerator { "section-2" }),
@@ -145,11 +148,11 @@ class SectionFormViewModelTest {
     @Test
     fun `the confirmation counts the students that would be lost`() = runTest {
         studentRepository.students.value = listOf(
-            Student("student-1", existing.id, StudentCode("12345678901234"), "ACOSTA RIVERA, Luz Maria"),
-            Student("student-2", existing.id, StudentCode("12345678901235"), "BAUTISTA QUISPE, Jose"),
+            Student(StudentId("student-1"), existing.id, StudentCode("12345678901234"), "ACOSTA RIVERA, Luz Maria"),
+            Student(StudentId("student-2"), existing.id, StudentCode("12345678901235"), "BAUTISTA QUISPE, Jose"),
         )
         attendanceRepository.record(
-            AttendanceRecord(existing.id, "student-1", LocalDate.of(2026, 9, 10), AttendanceStatus.ABSENT),
+            AttendanceRecord(existing.id, StudentId("student-1"), LocalDate.of(2026, 9, 10), AttendanceStatus.ABSENT),
         )
         val viewModel: SectionFormViewModel = viewModelFor(existing.id)
 

@@ -2,18 +2,22 @@ package com.emm.gema.feature.evaluation.worked
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
 import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.feature.evaluation.FakeCompetencyRepository
 import com.emm.gema.feature.evaluation.FakePeriodLevelRepository
 import com.emm.gema.feature.evaluation.FakePeriodRepository
@@ -22,14 +26,14 @@ import com.emm.gema.feature.evaluation.FakeSectionRepository
 import com.emm.gema.feature.evaluation.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.evaluation.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-2"
-private const val SCHOOL_YEAR_ID: String = "year-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-2")
+private val schoolYearId: SchoolYearId = SchoolYearId("year-1")
 
 class WorkedCompetenciesViewModelTest {
 
@@ -37,21 +41,16 @@ class WorkedCompetenciesViewModelTest {
     val mainDispatcherRule: MainDispatcherRule = MainDispatcherRule()
 
     private val schoolYear: SchoolYear = SchoolYear(
-        id = SCHOOL_YEAR_ID,
+        id = schoolYearId,
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
         periodKind = PeriodKind.BIMESTER,
     )
-    private val section: Section = Section(
-        id = SECTION_ID,
-        schoolYearId = SCHOOL_YEAR_ID,
-        grade = Grade.THIRD,
-        name = "A",
-    )
+    private val section: Section = Section(id = sectionId, schoolYearId = schoolYearId, grade = Grade.THIRD, name = "A")
     private val period: Period = Period(
-        id = PERIOD_ID,
-        schoolYearId = SCHOOL_YEAR_ID,
+        id = periodId,
+        schoolYearId = schoolYearId,
         number = 2,
         startDate = LocalDate.of(2026, 5, 11),
         endDate = LocalDate.of(2026, 7, 24),
@@ -81,23 +80,23 @@ class WorkedCompetenciesViewModelTest {
     @Test
     fun `marking a competency persists it and counts it`() = runTest {
         val viewModel: WorkedCompetenciesViewModel = viewModel()
-        val target: String = Competency.idOf(Area.PPSS, 2)
+        val target: CompetencyId = Competency.idOf(Area.PPSS, 2)
 
-        viewModel.onIntent(WorkedCompetenciesUiIntent.CompetencyToggled(target, isWorked = true))
+        viewModel.onIntent(WorkedCompetenciesUiIntent.CompetencyToggled(CompetencyId(target.value), isWorked = true))
 
         val state: WorkedCompetenciesUiState = viewModel.state.value
         assertThat(state.competencies.single { it.id == target }.isWorked).isTrue()
         assertThat(state.selectedCount).isEqualTo(1)
-        assertThat(workedCompetencyRepository.rows.value).containsExactly(Triple(SECTION_ID, PERIOD_ID, target))
+        assertThat(workedCompetencyRepository.rows.value).containsExactly(Triple(sectionId, periodId, target))
     }
 
     @Test
     fun `unmarking a competency drops it again`() = runTest {
         val viewModel: WorkedCompetenciesViewModel = viewModel()
-        val target: String = Competency.idOf(Area.PPSS, 2)
+        val target: CompetencyId = Competency.idOf(Area.PPSS, 2)
 
-        viewModel.onIntent(WorkedCompetenciesUiIntent.CompetencyToggled(target, isWorked = true))
-        viewModel.onIntent(WorkedCompetenciesUiIntent.CompetencyToggled(target, isWorked = false))
+        viewModel.onIntent(WorkedCompetenciesUiIntent.CompetencyToggled(CompetencyId(target.value), isWorked = true))
+        viewModel.onIntent(WorkedCompetenciesUiIntent.CompetencyToggled(CompetencyId(target.value), isWorked = false))
 
         assertThat(viewModel.state.value.selectedCount).isEqualTo(0)
         assertThat(workedCompetencyRepository.rows.value).isEmpty()
@@ -129,8 +128,8 @@ class WorkedCompetenciesViewModelTest {
     }
 
     private fun viewModel(area: Area = Area.PPSS): WorkedCompetenciesViewModel = WorkedCompetenciesViewModel(
-        sectionId = SECTION_ID,
-        periodId = PERIOD_ID,
+        sectionId = sectionId,
+        periodId = periodId,
         area = area,
         getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
         getPeriod = GetPeriodUseCase(FakePeriodRepository(listOf(period))),

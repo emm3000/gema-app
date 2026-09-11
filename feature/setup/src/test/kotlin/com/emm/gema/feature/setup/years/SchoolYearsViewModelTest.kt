@@ -6,20 +6,22 @@ import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
 import com.emm.gema.core.domain.section.GetSectionCountsUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.feature.setup.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
 class SchoolYearsViewModelTest {
 
@@ -27,14 +29,14 @@ class SchoolYearsViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val olderYear = SchoolYear(
-        id = "2025",
+        id = SchoolYearId("2025"),
         label = "2025",
         startDate = LocalDate.of(2025, 3, 3),
         endDate = LocalDate.of(2025, 12, 19),
         periodKind = PeriodKind.TRIMESTER,
     )
     private val currentYear = SchoolYear(
-        id = "2026",
+        id = SchoolYearId("2026"),
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
@@ -43,9 +45,9 @@ class SchoolYearsViewModelTest {
     private val schoolYearRepository = FakeSchoolYearRepository(listOf(currentYear, olderYear))
     private val sectionRepository = FakeSectionRepository(
         listOf(
-            Section("a", currentYear.id, com.emm.gema.core.domain.section.Grade.FIRST, "A"),
-            Section("b", currentYear.id, com.emm.gema.core.domain.section.Grade.SECOND, "B"),
-            Section("c", olderYear.id, com.emm.gema.core.domain.section.Grade.THIRD, "C"),
+            Section(SectionId("a"), currentYear.id, com.emm.gema.core.domain.section.Grade.FIRST, "A"),
+            Section(SectionId("b"), currentYear.id, com.emm.gema.core.domain.section.Grade.SECOND, "B"),
+            Section(SectionId("c"), olderYear.id, com.emm.gema.core.domain.section.Grade.THIRD, "C"),
         )
     )
     private val activeSchoolYearRepository = FakeActiveSchoolYearRepository(currentYear.id)
@@ -63,10 +65,10 @@ class SchoolYearsViewModelTest {
         val state: SchoolYearsUiState = viewModel.state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.years.map { it.id }).containsExactly("2026", "2025").inOrder()
+        assertThat(state.years.map { it.id }).containsExactly(SchoolYearId("2026"), SchoolYearId("2025")).inOrder()
         assertThat(state.years.first().sectionCount).isEqualTo(2)
         assertThat(state.years.last().sectionCount).isEqualTo(1)
-        assertThat(state.years.single { it.isActive }.id).isEqualTo("2026")
+        assertThat(state.years.single { it.isActive }.id).isEqualTo(SchoolYearId("2026"))
     }
 
     @Test
@@ -79,19 +81,19 @@ class SchoolYearsViewModelTest {
 
     @Test
     fun `choosing a school year switches to it without losing the other one`() {
-        viewModel.onIntent(SchoolYearsUiIntent.YearClicked("2025"))
+        viewModel.onIntent(SchoolYearsUiIntent.YearClicked(SchoolYearId("2025")))
 
         val state: SchoolYearsUiState = viewModel.state.value
-        assertThat(state.years.single { it.isActive }.id).isEqualTo("2025")
-        assertThat(state.years.map { it.id }).containsExactly("2026", "2025").inOrder()
+        assertThat(state.years.single { it.isActive }.id).isEqualTo(SchoolYearId("2025"))
+        assertThat(state.years.map { it.id }).containsExactly(SchoolYearId("2026"), SchoolYearId("2025")).inOrder()
     }
 
     @Test
     fun `the periods of a school year are one tap away`() = runTest {
         viewModel.effects.test {
-            viewModel.onIntent(SchoolYearsUiIntent.PeriodsClicked("2025"))
+            viewModel.onIntent(SchoolYearsUiIntent.PeriodsClicked(SchoolYearId("2025")))
 
-            assertThat(awaitItem()).isEqualTo(SchoolYearsUiEffect.NavigateToPeriods("2025"))
+            assertThat(awaitItem()).isEqualTo(SchoolYearsUiEffect.NavigateToPeriods(SchoolYearId("2025")))
         }
     }
 
@@ -119,7 +121,7 @@ class SchoolYearsViewModelTest {
 
         override fun observeAll(): Flow<List<SchoolYear>> = schoolYears
 
-        override suspend fun findById(id: String): SchoolYear? = schoolYears.value.find { it.id == id }
+        override suspend fun findById(id: SchoolYearId): SchoolYear? = schoolYears.value.find { it.id == id }
 
         override suspend fun save(schoolYear: SchoolYear) = Unit
     }
@@ -128,26 +130,26 @@ class SchoolYearsViewModelTest {
 
         private val sections: MutableStateFlow<List<Section>> = MutableStateFlow(initial)
 
-        override fun observeBySchoolYear(schoolYearId: String): Flow<List<Section>> = sections
+        override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Section>> = sections
             .map { stored -> stored.filter { it.schoolYearId == schoolYearId } }
 
-        override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = sections
+        override fun observeCountsBySchoolYear(): Flow<Map<SchoolYearId, Int>> = sections
             .map { stored -> stored.groupingBy { it.schoolYearId }.eachCount() }
 
-        override suspend fun findById(id: String): Section? = sections.value.find { it.id == id }
+        override suspend fun findById(id: SectionId): Section? = sections.value.find { it.id == id }
 
         override suspend fun save(section: Section) = Unit
 
-        override suspend fun delete(id: String) = Unit
+        override suspend fun delete(id: SectionId) = Unit
     }
 
-    private class FakeActiveSchoolYearRepository(initial: String?) : ActiveSchoolYearRepository {
+    private class FakeActiveSchoolYearRepository(initial: SchoolYearId?) : ActiveSchoolYearRepository {
 
-        private val activeId: MutableStateFlow<String?> = MutableStateFlow(initial)
+        private val activeId: MutableStateFlow<SchoolYearId?> = MutableStateFlow(initial)
 
-        override fun observeActiveId(): Flow<String?> = activeId
+        override fun observeActiveId(): Flow<SchoolYearId?> = activeId
 
-        override suspend fun activate(schoolYearId: String) {
+        override suspend fun activate(schoolYearId: SchoolYearId) {
             activeId.value = schoolYearId
         }
     }
