@@ -18,6 +18,11 @@ import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionRepository
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
+import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentRepository
+import com.emm.gema.core.domain.student.orderedByName
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,6 +65,13 @@ class HomeViewModelTest {
         )
     )
     private val activeSchoolYearRepository = FakeActiveSchoolYearRepository(schoolYear.id)
+    private val studentRepository = FakeStudentRepository(
+        listOf(
+            student("student-1", "section-1", "12345678901234"),
+            student("student-2", "section-1", "12345678901235"),
+            student("student-3", "section-2", "12345678901236"),
+        )
+    )
 
     @Test
     fun `the active school year, its current period and its sections are shown`() {
@@ -69,6 +81,7 @@ class HomeViewModelTest {
         assertThat(state.schoolYearLabel).isEqualTo("2026")
         assertThat(state.currentPeriodLabel).isEqualTo("II Bimestre")
         assertThat(state.sections.map { it.title }).containsExactly("3° A", "4° B").inOrder()
+        assertThat(state.sections.map { it.studentCount }).containsExactly(2, 1).inOrder()
     }
 
     @Test
@@ -77,14 +90,13 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `opening a section goes to its form`() = runTest {
+    fun `opening a section goes to its hub`() = runTest {
         val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
 
         viewModel.effects.test {
             viewModel.onIntent(HomeUiIntent.SectionClicked("section-1"))
 
-            assertThat(awaitItem())
-                .isEqualTo(HomeUiEffect.NavigateToSectionForm(schoolYear.id, "section-1"))
+            assertThat(awaitItem()).isEqualTo(HomeUiEffect.NavigateToSectionDetail("section-1"))
         }
     }
 
@@ -156,6 +168,7 @@ class HomeViewModelTest {
                 repository = periodRepository,
                 clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC")),
             ),
+            getStudentCounts = GetStudentCountsUseCase(studentRepository),
             observeBackupStatus = ObserveBackupStatusUseCase(settings, backupClock),
         )
     }
@@ -217,6 +230,26 @@ class HomeViewModelTest {
         override suspend fun delete(id: String) = Unit
     }
 
+    private class FakeStudentRepository(initial: List<Student>) : StudentRepository {
+
+        private val students: MutableStateFlow<List<Student>> = MutableStateFlow(initial)
+
+        override fun observeBySection(sectionId: String): Flow<List<Student>> = students
+            .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
+
+        override fun observeCountsBySection(): Flow<Map<String, Int>> = students
+            .map { stored -> stored.filterNot { it.isWithdrawn }.groupingBy { it.sectionId }.eachCount() }
+
+        override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
+
+        override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
+            .find { it.sectionId == sectionId && it.code == code }
+
+        override suspend fun save(student: Student) = Unit
+
+        override suspend fun deleteBySection(sectionId: String) = Unit
+    }
+
     private class FakeActiveSchoolYearRepository(initial: String?) : ActiveSchoolYearRepository {
 
         private val activeId: MutableStateFlow<String?> = MutableStateFlow(initial)
@@ -228,3 +261,10 @@ class HomeViewModelTest {
         }
     }
 }
+
+private fun student(id: String, sectionId: String, code: String): Student = Student(
+    id = id,
+    sectionId = sectionId,
+    code = StudentCode(code),
+    fullName = "ACOSTA RIVERA, Luz Maria",
+)

@@ -9,6 +9,7 @@ import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.emm.gema.feature.setup.label
 import com.emm.gema.feature.setup.labelFor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -28,6 +30,7 @@ class HomeViewModel(
     getActiveSchoolYear: GetActiveSchoolYearUseCase,
     private val getSections: GetSectionsUseCase,
     private val getCurrentPeriod: GetCurrentPeriodUseCase,
+    private val getStudentCounts: GetStudentCountsUseCase,
     private val observeBackupStatus: ObserveBackupStatusUseCase,
 ) : ViewModel() {
 
@@ -50,10 +53,7 @@ class HomeViewModel(
 
     fun onIntent(intent: HomeUiIntent) {
         when (intent) {
-            is HomeUiIntent.SectionClicked -> withSchoolYear {
-                HomeUiEffect.NavigateToSectionForm(it, intent.id)
-            }
-            is HomeUiIntent.SectionAreasClicked -> emit(HomeUiEffect.NavigateToSectionAreas(intent.id))
+            is HomeUiIntent.SectionClicked -> emit(HomeUiEffect.NavigateToSectionDetail(intent.id))
             HomeUiIntent.AddSectionClicked -> withSchoolYear { HomeUiEffect.NavigateToSectionForm(it, null) }
             HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
             HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }
@@ -67,13 +67,13 @@ class HomeViewModel(
         val currentPeriodLabel: String? = getCurrentPeriod(schoolYear.id)
             ?.let { period -> schoolYear.periodKind.labelFor(period.number) }
 
-        return getSections(schoolYear.id).map { sections ->
+        return combine(getSections(schoolYear.id), getStudentCounts()) { sections, studentCounts ->
             HomeUiState(
                 isLoading = false,
                 schoolYearId = schoolYear.id,
                 schoolYearLabel = schoolYear.label,
                 currentPeriodLabel = currentPeriodLabel,
-                sections = sections.map { it.toRow() },
+                sections = sections.map { it.toRow(studentCounts[it.id] ?: 0) },
             )
         }
     }
@@ -102,5 +102,9 @@ class HomeViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun Section.toRow(): SectionRow = SectionRow(id = id, title = "${grade.label()} $name")
+    private fun Section.toRow(studentCount: Int): SectionRow = SectionRow(
+        id = id,
+        title = "${grade.label()} $name",
+        studentCount = studentCount,
+    )
 }

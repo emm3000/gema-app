@@ -12,6 +12,7 @@ data class HomeUiState(
 data class SectionRow(
     val id: String,
     val title: String,
+    val studentCount: Int,
 )
 
 data class BackupReminder(
