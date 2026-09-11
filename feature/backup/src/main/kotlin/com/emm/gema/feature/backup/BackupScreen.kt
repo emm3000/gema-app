@@ -25,6 +25,7 @@ import com.emm.gema.core.domain.backup.MAXIMUM_REMINDER_THRESHOLD_DAYS
 import com.emm.gema.core.domain.backup.MINIMUM_REMINDER_THRESHOLD_DAYS
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.asDayMonthYear
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
@@ -37,9 +38,6 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
-import java.time.format.DateTimeFormatter
-
-private val lastBackupDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 @Composable
 fun BackupScreen(
@@ -203,7 +201,7 @@ private fun RestoreDialog(confirmation: RestoreConfirmation, onIntent: (BackupUi
 @Composable
 private fun lastBackupLabel(state: BackupUiState): String {
     val days: Int = state.daysSinceLastBackup ?: return stringResource(R.string.backup_last_never)
-    val date: String = state.lastBackupDate?.format(lastBackupDateFormat).orEmpty()
+    val date: String = state.lastBackupDate?.asDayMonthYear().orEmpty()
     val elapsed: String = if (days == 0) {
         stringResource(R.string.backup_last_today)
     } else {
@@ -221,7 +219,7 @@ private fun overdueBackupTitle(state: BackupUiState): String {
 
 @Composable
 private fun overdueBackupSubtitle(state: BackupUiState): String {
-    val date: String = state.lastBackupDate?.format(lastBackupDateFormat).orEmpty()
+    val date: String = state.lastBackupDate?.asDayMonthYear().orEmpty()
     return stringResource(R.string.backup_overdue_subtitle, date, state.reminderThresholdDays)
 }
 

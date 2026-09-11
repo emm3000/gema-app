@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.asDayMonthYear
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
@@ -29,7 +30,6 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSearchField
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.students.R
-import com.emm.gema.feature.students.asDayMonthYear
 
 @Composable
 fun StudentsScreen(

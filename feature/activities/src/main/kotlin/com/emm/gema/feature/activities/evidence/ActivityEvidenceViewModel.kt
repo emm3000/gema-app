@@ -25,7 +25,7 @@ import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.orderedByName
-import java.time.format.DateTimeFormatter
+import com.emm.gema.core.theme.asDayMonthYear
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -38,8 +38,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-
-private val activityDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 class ActivityEvidenceViewModel(
     private val activityId: ActivityId,
@@ -96,7 +94,7 @@ class ActivityEvidenceViewModel(
             isLoading = false,
             sectionId = loadedActivity.sectionId,
             activityName = loadedActivity.name,
-            activityDateLabel = loadedActivity.date.format(activityDateFormatter),
+            activityDateLabel = loadedActivity.date.asDayMonthYear(),
             periodLabel = schoolYear.periodKind.labelFor(period.number),
             competencies = competencies.map { it.toColumn() },
             selectedCompetencyId = competencies.firstOrNull()?.id,

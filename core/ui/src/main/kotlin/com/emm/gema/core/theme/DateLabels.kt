@@ -7,6 +7,10 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+
+private val dayMonthFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
+private val dayMonthYearFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 @Composable
 fun DayOfWeek.label(): String {
@@ -40,3 +44,10 @@ fun LocalDate.label(): String = "${dayOfWeek.abbreviatedLabel()} $dayOfMonth ${m
 
 @Composable
 fun LocalDate.fullLabel(): String = "${dayOfWeek.label()} $dayOfMonth de ${month.label()}"
+
+fun LocalDate.asDayMonth(): String = format(dayMonthFormat)
+
+fun LocalDate.asDayMonthYear(): String = format(dayMonthYearFormat)
+
+fun numericRangeLabel(startDate: LocalDate, endDate: LocalDate): String =
+    "${startDate.asDayMonth()} – ${endDate.asDayMonth()}"
