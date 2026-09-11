@@ -4,5 +4,5 @@ class GetSectionUseCase(
     private val repository: SectionRepository,
 ) {
 
-    suspend operator fun invoke(sectionId: String): Section? = repository.findById(sectionId)
+    suspend operator fun invoke(sectionId: SectionId): Section? = repository.findById(sectionId)
 }

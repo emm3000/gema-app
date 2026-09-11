@@ -7,7 +7,7 @@ class GetSectionAreasUseCase(
     private val repository: SectionAreaRepository,
 ) {
 
-    operator fun invoke(sectionId: String): Flow<List<SectionArea>> = repository
+    operator fun invoke(sectionId: SectionId): Flow<List<SectionArea>> = repository
         .observeHiddenAreas(sectionId)
         .map { hidden -> Area.entries.map { SectionArea(area = it, isActive = it !in hidden) } }
 }

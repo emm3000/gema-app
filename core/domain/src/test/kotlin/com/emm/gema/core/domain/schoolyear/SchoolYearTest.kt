@@ -36,7 +36,7 @@ class SchoolYearTest {
         endDate: LocalDate = LocalDate.of(2026, 12, 18),
         periodKind: PeriodKind = PeriodKind.BIMESTER,
     ): SchoolYear = SchoolYear(
-        id = id,
+        id = SchoolYearId(id),
         label = label,
         startDate = startDate,
         endDate = endDate,

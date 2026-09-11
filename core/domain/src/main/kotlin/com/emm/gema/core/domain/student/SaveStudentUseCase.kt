@@ -1,6 +1,7 @@
 package com.emm.gema.core.domain.student
 
 import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.section.SectionId
 
 class SaveStudentUseCase(
     private val repository: StudentRepository,
@@ -8,8 +9,8 @@ class SaveStudentUseCase(
 ) {
 
     suspend operator fun invoke(
-        sectionId: String,
-        studentId: String?,
+        sectionId: SectionId,
+        studentId: StudentId?,
         code: String,
         fullName: String,
     ): StudentSaveResult {
@@ -22,7 +23,7 @@ class SaveStudentUseCase(
         val student: Student = existing(studentId)
             ?.copy(code = studentCode, fullName = name)
             ?: Student(
-                id = idGenerator.newId(),
+                id = StudentId(idGenerator.newId()),
                 sectionId = sectionId,
                 code = studentCode,
                 fullName = name,
@@ -31,13 +32,13 @@ class SaveStudentUseCase(
         return StudentSaveResult.Saved(student)
     }
 
-    private suspend fun isTaken(sectionId: String, studentId: String?, code: StudentCode): Boolean {
+    private suspend fun isTaken(sectionId: SectionId, studentId: StudentId?, code: StudentCode): Boolean {
         val owner: Student = repository.findByCode(sectionId, code) ?: return false
         return owner.id != studentId
     }
 
-    private suspend fun existing(studentId: String?): Student? {
+    private suspend fun existing(studentId: StudentId?): Student? {
         if (studentId == null) return null
-        return requireNotNull(repository.findById(studentId)) { "There is no student $studentId" }
+        return requireNotNull(repository.findById(studentId)) { "There is no student ${studentId.value}" }
     }
 }

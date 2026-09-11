@@ -17,7 +17,7 @@ class InMemoryCompetencyRepository : CompetencyRepository {
     override suspend fun seed(competencies: List<Competency>, curriculumVersion: Int) {
         seedCallCount += 1
         seededVersion = curriculumVersion
-        competencies.forEach { rows[it.id] = it }
+        competencies.forEach { rows[it.id.value] = it }
     }
 
     override suspend fun findByArea(area: Area): List<Competency> = rows.values

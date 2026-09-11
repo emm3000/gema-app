@@ -6,6 +6,6 @@ class GetPeriodsUseCase(
     private val repository: PeriodRepository,
 ) {
 
-    operator fun invoke(schoolYearId: String): Flow<List<Period>> =
+    operator fun invoke(schoolYearId: SchoolYearId): Flow<List<Period>> =
         repository.observeBySchoolYear(schoolYearId)
 }

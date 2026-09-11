@@ -1,17 +1,18 @@
 package com.emm.gema.core.domain.attendance
 
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentRepository
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import java.time.LocalDate
 
 class GetAttendanceDayUseCase(
     private val studentRepository: StudentRepository,
     private val attendanceRepository: AttendanceRepository,
 ) {
 
-    operator fun invoke(sectionId: String, date: LocalDate): Flow<List<AttendanceEntry>> = combine(
+    operator fun invoke(sectionId: SectionId, date: LocalDate): Flow<List<AttendanceEntry>> = combine(
         studentRepository.observeBySection(sectionId),
         attendanceRepository.observeBySectionAndDate(sectionId, date),
     ) { students: List<Student>, records: List<AttendanceRecord> ->

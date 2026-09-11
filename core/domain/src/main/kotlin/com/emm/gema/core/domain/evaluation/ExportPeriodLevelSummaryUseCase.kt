@@ -1,7 +1,9 @@
 package com.emm.gema.core.domain.evaluation
 
-import kotlinx.coroutines.flow.first
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
 import java.nio.charset.StandardCharsets
+import kotlinx.coroutines.flow.first
 
 class ExportPeriodLevelSummaryUseCase(
     private val getSummary: GetPeriodLevelSummaryUseCase,
@@ -10,8 +12,8 @@ class ExportPeriodLevelSummaryUseCase(
 ) {
 
     suspend operator fun invoke(
-        sectionId: String,
-        periodId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
         sectionTitle: String,
         periodLabel: String,
         format: SummaryFormat,

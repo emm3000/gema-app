@@ -8,7 +8,7 @@ class GetCurrentPeriodUseCase(
     private val clock: Clock,
 ) {
 
-    suspend operator fun invoke(schoolYearId: String): Period? {
+    suspend operator fun invoke(schoolYearId: SchoolYearId): Period? {
         val today: LocalDate = LocalDate.now(clock)
         return repository.findBySchoolYear(schoolYearId).find { it.contains(today) }
     }

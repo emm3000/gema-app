@@ -1,6 +1,7 @@
 package com.emm.gema.core.domain.siagie
 
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 
 data class SiagieImportPlan(
     val fileName: String,
@@ -11,13 +12,13 @@ data class SiagieImportPlan(
 )
 
 data class SiagieImportEntry(
-    val studentId: String?,
+    val studentId: StudentId?,
     val code: StudentCode,
     val fullName: String,
     val siagieId: String?,
 )
 
 data class SiagieImportMissing(
-    val studentId: String,
+    val studentId: StudentId,
     val fullName: String,
 )

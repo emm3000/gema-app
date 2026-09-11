@@ -4,7 +4,7 @@ class DeleteSectionUseCase(
     private val sectionCascade: SectionCascade,
 ) {
 
-    suspend operator fun invoke(sectionId: String) {
+    suspend operator fun invoke(sectionId: SectionId) {
         sectionCascade.deleteSection(sectionId)
     }
 }

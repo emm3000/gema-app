@@ -1,5 +1,9 @@
 package com.emm.gema.core.domain.evaluation
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -17,11 +21,7 @@ class PeriodLevelTest {
     @Test
     fun `an achievement level and an unworked comment never coexist`() {
         val failure: IllegalArgumentException = kotlin.runCatching {
-            PeriodLevel(
-                key = key,
-                achievementLevel = AchievementLevel.A,
-                unworkedComment = UnworkedComment.OTHER,
-            )
+            PeriodLevel(key = key, achievementLevel = AchievementLevel.A, unworkedComment = UnworkedComment.OTHER)
         }.exceptionOrNull() as IllegalArgumentException
 
         assertThat(failure).hasMessageThat().contains("never both")
@@ -84,9 +84,13 @@ class PeriodLevelTest {
     }
 
     private val key: PeriodLevelKey = PeriodLevelKey(
-        sectionId = "section-1",
-        periodId = "period-1",
-        studentId = "student-1",
-        competencyId = "PPSS-1",
+        sectionId = SectionId("section-1"),
+        periodId = PeriodId("period-1"),
+        studentId = firstStudentId,
+        competencyId = firstPpssId,
     )
 }
+
+private val firstStudentId: StudentId = StudentId("student-1")
+
+private val firstPpssId: CompetencyId = CompetencyId("PPSS-1")

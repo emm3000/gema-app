@@ -7,6 +7,7 @@ import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
 import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionCascade
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.StudentRepository
@@ -23,7 +24,7 @@ class InMemorySectionCascade(
     private val evidenceLevelRepository: EvidenceLevelRepository,
 ) : SectionCascade {
 
-    override suspend fun deleteSection(sectionId: String) {
+    override suspend fun deleteSection(sectionId: SectionId) {
         sectionRepository.delete(sectionId)
         sectionAreaRepository.clearSection(sectionId)
         workedCompetencyRepository.clearSection(sectionId)

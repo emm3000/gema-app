@@ -25,9 +25,7 @@ class ValidateBackupUseCaseTest {
     fun `a database written by a newer app is refused`() {
         val validation: BackupValidation = validate(sqliteContent(schemaVersion = 9))
 
-        assertThat(validation).isEqualTo(
-            BackupValidation.FromANewerApp(schemaVersion = 9, supportedSchemaVersion = 3),
-        )
+        assertThat(validation).isEqualTo(BackupValidation.FromANewerApp(schemaVersion = 9, supportedSchemaVersion = 3))
     }
 
     @Test

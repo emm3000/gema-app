@@ -1,7 +1,9 @@
 package com.emm.gema.core.domain.fake
 
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
 import kotlinx.coroutines.flow.Flow
@@ -12,26 +14,26 @@ class InMemoryStudentRepository(initial: List<Student> = emptyList()) : StudentR
 
     private val students: MutableStateFlow<List<Student>> = MutableStateFlow(initial)
 
-    override fun observeBySection(sectionId: String): Flow<List<Student>> = students
+    override fun observeBySection(sectionId: SectionId): Flow<List<Student>> = students
         .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
 
-    override fun observeCountsBySection(): Flow<Map<String, Int>> = students
+    override fun observeCountsBySection(): Flow<Map<SectionId, Int>> = students
         .map { stored -> stored.filterNot { it.isWithdrawn }.groupingBy { it.sectionId }.eachCount() }
 
-    override suspend fun listBySection(sectionId: String): List<Student> = students.value
+    override suspend fun listBySection(sectionId: SectionId): List<Student> = students.value
         .filter { it.sectionId == sectionId }
         .orderedByName()
 
-    override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
+    override suspend fun findById(id: StudentId): Student? = students.value.find { it.id == id }
 
-    override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
+    override suspend fun findByCode(sectionId: SectionId, code: StudentCode): Student? = students.value
         .find { it.sectionId == sectionId && it.code == code }
 
     override suspend fun save(student: Student) {
         students.value = students.value.filterNot { it.id == student.id } + student
     }
 
-    override suspend fun deleteBySection(sectionId: String) {
+    override suspend fun deleteBySection(sectionId: SectionId) {
         students.value = students.value.filterNot { it.sectionId == sectionId }
     }
 }

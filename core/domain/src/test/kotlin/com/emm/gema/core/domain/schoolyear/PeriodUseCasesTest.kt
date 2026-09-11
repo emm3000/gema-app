@@ -15,7 +15,7 @@ import java.time.ZoneOffset
 class PeriodUseCasesTest {
 
     private val schoolYear = SchoolYear(
-        id = "2026",
+        id = SchoolYearId("2026"),
         label = "2026",
         startDate = LocalDate.of(2026, 1, 1),
         endDate = LocalDate.of(2026, 12, 31),
@@ -32,7 +32,7 @@ class PeriodUseCasesTest {
         periodRepository.saveAll(
             PeriodKind.BIMESTER.divide(schoolYear.startDate, schoolYear.endDate).map { dates ->
                 Period(
-                    id = "period-${dates.number}",
+                    id = PeriodId("period-${dates.number}"),
                     schoolYearId = schoolYear.id,
                     number = dates.number,
                     startDate = dates.startDate,
@@ -110,7 +110,7 @@ class PeriodUseCasesTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `editing a school year that does not exist is rejected`() = runTest {
-        updatePeriods(schoolYearId = "missing", periodDates = emptyList())
+        updatePeriods(schoolYearId = SchoolYearId("missing"), periodDates = emptyList())
     }
 
     private fun clockAt(date: LocalDate): Clock = Clock.fixed(

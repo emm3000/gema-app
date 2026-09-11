@@ -9,7 +9,7 @@ data class EvidenceLevel(
 )
 
 data class EvidenceRecord(
-    val activityId: String,
+    val activityId: ActivityId,
     val activityName: String,
     val date: LocalDate,
     val achievementLevel: AchievementLevel,

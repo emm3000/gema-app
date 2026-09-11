@@ -4,9 +4,9 @@ class ReactivateStudentUseCase(
     private val repository: StudentRepository,
 ) {
 
-    suspend operator fun invoke(studentId: String) {
+    suspend operator fun invoke(studentId: StudentId) {
         val student: Student = requireNotNull(repository.findById(studentId)) {
-            "There is no student $studentId"
+            "There is no student ${studentId.value}"
         }
         repository.save(student.copy(withdrawalDate = null))
     }

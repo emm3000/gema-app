@@ -1,7 +1,9 @@
 package com.emm.gema.core.domain.attendance
 
+import com.emm.gema.core.domain.student.StudentId
+
 data class StudentAttendanceMonthCount(
-    val studentId: String,
+    val studentId: StudentId,
     val displayName: String,
     val countsByStatus: Map<AttendanceStatus, Int>,
 )

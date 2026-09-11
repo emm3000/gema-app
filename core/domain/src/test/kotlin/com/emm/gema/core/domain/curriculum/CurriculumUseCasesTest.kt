@@ -3,14 +3,16 @@ package com.emm.gema.core.domain.curriculum
 import com.emm.gema.core.domain.fake.InMemoryCompetencyRepository
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
 import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-1")
 
 class CurriculumUseCasesTest {
 
@@ -52,7 +54,7 @@ class CurriculumUseCasesTest {
     fun `an area starts with no worked competency`() = runTest {
         seedCurriculum()
 
-        val competencies: List<PeriodCompetency> = getPeriodCompetencies(SECTION_ID, PERIOD_ID, Area.PPSS).first()
+        val competencies: List<PeriodCompetency> = getPeriodCompetencies(sectionId, periodId, Area.PPSS).first()
 
         assertThat(competencies).hasSize(5)
         assertThat(competencies.none { it.isWorked }).isTrue()
@@ -61,11 +63,11 @@ class CurriculumUseCasesTest {
     @Test
     fun `marking a competency makes it worked for that section and period`() = runTest {
         seedCurriculum()
-        val target: String = Competency.idOf(Area.PPSS, 2)
+        val target: CompetencyId = Competency.idOf(Area.PPSS, 2)
 
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
+        setCompetencyWorked(sectionId, periodId, target, isWorked = true)
 
-        val worked: List<String> = getPeriodCompetencies(SECTION_ID, PERIOD_ID, Area.PPSS).first()
+        val worked: List<CompetencyId> = getPeriodCompetencies(sectionId, periodId, Area.PPSS).first()
             .filter { it.isWorked }
             .map { it.competency.id }
         assertThat(worked).containsExactly(target)
@@ -74,45 +76,46 @@ class CurriculumUseCasesTest {
     @Test
     fun `unmarking a competency drops it from the worked ones`() = runTest {
         seedCurriculum()
-        val target: String = Competency.idOf(Area.PPSS, 2)
+        val target: CompetencyId = Competency.idOf(Area.PPSS, 2)
 
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, target, isWorked = false)
+        setCompetencyWorked(sectionId, periodId, target, isWorked = true)
+        setCompetencyWorked(sectionId, periodId, target, isWorked = false)
 
-        val competencies: List<PeriodCompetency> = getPeriodCompetencies(SECTION_ID, PERIOD_ID, Area.PPSS).first()
+        val competencies: List<PeriodCompetency> = getPeriodCompetencies(sectionId, periodId, Area.PPSS).first()
         assertThat(competencies.none { it.isWorked }).isTrue()
     }
 
     @Test
     fun `a worked competency belongs to one period only`() = runTest {
         seedCurriculum()
-        val target: String = Competency.idOf(Area.MATE, 1)
+        val target: CompetencyId = Competency.idOf(Area.MATE, 1)
 
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
+        setCompetencyWorked(sectionId, periodId, target, isWorked = true)
 
-        val other: List<PeriodCompetency> = getPeriodCompetencies(SECTION_ID, "period-2", Area.MATE).first()
+        val other: List<PeriodCompetency> = getPeriodCompetencies(sectionId, PeriodId("period-2"), Area.MATE).first()
         assertThat(other.none { it.isWorked }).isTrue()
     }
 
     @Test
     fun `deleting a section clears its worked competencies`() = runTest {
         seedCurriculum()
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.MATE, 1), isWorked = true)
-        setCompetencyWorked("section-2", PERIOD_ID, Competency.idOf(Area.MATE, 1), isWorked = true)
+        setCompetencyWorked(sectionId, periodId, Competency.idOf(Area.MATE, 1), isWorked = true)
+        setCompetencyWorked(SectionId("section-2"), periodId, Competency.idOf(Area.MATE, 1), isWorked = true)
 
-        workedCompetencyRepository.clearSection(SECTION_ID)
+        workedCompetencyRepository.clearSection(sectionId)
 
-        assertThat(getPeriodCompetencies(SECTION_ID, PERIOD_ID, Area.MATE).first().none { it.isWorked }).isTrue()
-        assertThat(getPeriodCompetencies("section-2", PERIOD_ID, Area.MATE).first().count { it.isWorked }).isEqualTo(1)
+        assertThat(getPeriodCompetencies(sectionId, periodId, Area.MATE).first().none { it.isWorked }).isTrue()
+        val other: List<PeriodCompetency> = getPeriodCompetencies(SectionId("section-2"), periodId, Area.MATE).first()
+        assertThat(other.count { it.isWorked }).isEqualTo(1)
     }
 
     @Test
     fun `worked competencies span every area`() = runTest {
         seedCurriculum()
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.PPSS, 1), isWorked = true)
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.MATE, 1), isWorked = true)
+        setCompetencyWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), isWorked = true)
+        setCompetencyWorked(sectionId, periodId, Competency.idOf(Area.MATE, 1), isWorked = true)
 
-        val worked: List<Competency> = getWorkedCompetencies(SECTION_ID, PERIOD_ID).first()
+        val worked: List<Competency> = getWorkedCompetencies(sectionId, periodId).first()
 
         assertThat(worked.map { it.area }).containsExactly(Area.PPSS, Area.MATE)
     }
@@ -120,10 +123,10 @@ class CurriculumUseCasesTest {
     @Test
     fun `a hidden area drops its worked competencies`() = runTest {
         seedCurriculum()
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.PPSS, 1), isWorked = true)
-        sectionAreaRepository.setAreaHidden(SECTION_ID, Area.PPSS, isHidden = true)
+        setCompetencyWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), isWorked = true)
+        sectionAreaRepository.setAreaHidden(sectionId, Area.PPSS, isHidden = true)
 
-        val worked: List<Competency> = getWorkedCompetencies(SECTION_ID, PERIOD_ID).first()
+        val worked: List<Competency> = getWorkedCompetencies(sectionId, periodId).first()
 
         assertThat(worked).isEmpty()
     }

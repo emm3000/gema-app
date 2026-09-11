@@ -6,7 +6,7 @@ interface SchoolYearRepository {
 
     fun observeAll(): Flow<List<SchoolYear>>
 
-    suspend fun findById(id: String): SchoolYear?
+    suspend fun findById(id: SchoolYearId): SchoolYear?
 
     suspend fun save(schoolYear: SchoolYear)
 }

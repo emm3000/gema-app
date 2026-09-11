@@ -4,5 +4,5 @@ class GetSchoolYearUseCase(
     private val repository: SchoolYearRepository,
 ) {
 
-    suspend operator fun invoke(schoolYearId: String): SchoolYear? = repository.findById(schoolYearId)
+    suspend operator fun invoke(schoolYearId: SchoolYearId): SchoolYear? = repository.findById(schoolYearId)
 }

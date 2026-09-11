@@ -1,9 +1,11 @@
 package com.emm.gema.core.domain.siagie
 
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 
 internal sealed interface PlannedImport {
@@ -20,9 +22,9 @@ class SiagieImportPlanner(
     private val reader: SiagieRosterReader,
 ) {
 
-    internal suspend fun plan(sectionId: String, uri: String): PlannedImport {
+    internal suspend fun plan(sectionId: SectionId, uri: String): PlannedImport {
         val section: Section = requireNotNull(sections.findById(sectionId)) {
-            "There is no section $sectionId"
+            "There is no section ${sectionId.value}"
         }
         val fileName: String = documents.nameOf(uri)
         val content: ByteArray = documents.readContent(uri)
@@ -72,7 +74,7 @@ class SiagieImportPlanner(
         return asEntry(studentId = enrolled.id)
     }
 
-    private fun SiagieRosterStudent.asEntry(studentId: String?): SiagieImportEntry = SiagieImportEntry(
+    private fun SiagieRosterStudent.asEntry(studentId: StudentId?): SiagieImportEntry = SiagieImportEntry(
         studentId = studentId,
         code = code,
         fullName = fullName,

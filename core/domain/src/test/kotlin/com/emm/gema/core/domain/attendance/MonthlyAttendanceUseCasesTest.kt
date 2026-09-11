@@ -2,19 +2,21 @@ package com.emm.gema.core.domain.attendance
 
 import com.emm.gema.core.domain.fake.InMemoryAttendanceRepository
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.AttendanceExportEntry
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
+import java.time.YearMonth
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.time.LocalDate
-import java.time.YearMonth
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private val september: YearMonth = YearMonth.of(2026, 9)
 
 class MonthlyAttendanceUseCasesTest {
@@ -34,7 +36,7 @@ class MonthlyAttendanceUseCasesTest {
         attendanceRepository.record(record(jose.id, september.atDay(1), AttendanceStatus.ABSENT))
         attendanceRepository.record(record(jose.id, september.atDay(2), AttendanceStatus.JUSTIFIED))
 
-        val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
 
         assertThat(summary.recordedDayCount).isEqualTo(2)
         val luzCounts: StudentAttendanceMonthCount = summary.rows.single { it.studentId == luz.id }
@@ -47,7 +49,7 @@ class MonthlyAttendanceUseCasesTest {
 
     @Test
     fun `an unmarked day contributes no count to any status`() = runTest {
-        val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
 
         assertThat(summary.recordedDayCount).isEqualTo(0)
         assertThat(summary.rows.map { it.countsByStatus.values.sum() }).containsExactly(0, 0)
@@ -57,7 +59,7 @@ class MonthlyAttendanceUseCasesTest {
 
     @Test
     fun `rows are ordered by surname like every other roster`() = runTest {
-        val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
 
         assertThat(summary.rows.map { it.displayName })
             .containsExactly("ACOSTA RIVERA, Luz Maria", "BAUTISTA QUISPE, Jose").inOrder()
@@ -67,7 +69,7 @@ class MonthlyAttendanceUseCasesTest {
     fun `a student withdrawn before the month is left out of the summary`() = runTest {
         studentRepository.save(jose.copy(withdrawalDate = september.atDay(1).minusDays(1)))
 
-        val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
 
         assertThat(summary.rows.map { it.studentId }).containsExactly(luz.id)
     }
@@ -77,7 +79,7 @@ class MonthlyAttendanceUseCasesTest {
         attendanceRepository.record(record(luz.id, september.atDay(1), AttendanceStatus.ABSENT))
         attendanceRepository.record(record(luz.id, september.minusMonths(1).atDay(1), AttendanceStatus.LATE))
 
-        val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
 
         val luzCounts: Map<AttendanceStatus, Int> = summary.rows.single { it.studentId == luz.id }.countsByStatus
         assertThat(luzCounts[AttendanceStatus.ABSENT]).isEqualTo(1)
@@ -91,7 +93,7 @@ class MonthlyAttendanceUseCasesTest {
         val exporter = RecordingMonthlyAttendanceExporter()
         val exportMonthlyAttendance = ExportMonthlyAttendanceUseCase(studentRepository, attendanceRepository, exporter)
 
-        val file: AttendanceExportFile = exportMonthlyAttendance(SECTION_ID, september, "content://attendance.xlsx")
+        val file: AttendanceExportFile = exportMonthlyAttendance(sectionId, september, "content://attendance.xlsx")
 
         assertThat(file).isEqualTo(AttendanceExportFile("exported.xlsx", "/tmp/exported.xlsx"))
         assertThat(exporter.receivedUri).isEqualTo("content://attendance.xlsx")
@@ -102,12 +104,12 @@ class MonthlyAttendanceUseCasesTest {
         assertThat(joseEntry.statusesByDate).containsEntry(september.atDay(1), AttendanceStatus.ABSENT)
     }
 
-    private fun record(studentId: String, date: LocalDate, status: AttendanceStatus): AttendanceRecord =
-        AttendanceRecord(sectionId = SECTION_ID, studentId = studentId, date = date, status = status)
+    private fun record(studentId: StudentId, date: LocalDate, status: AttendanceStatus): AttendanceRecord =
+        AttendanceRecord(sectionId = sectionId, studentId = studentId, date = date, status = status)
 
     private fun student(id: String, code: String, fullName: String): Student = Student(
-        id = id,
-        sectionId = SECTION_ID,
+        id = StudentId(id),
+        sectionId = sectionId,
         code = StudentCode(code),
         fullName = fullName,
     )

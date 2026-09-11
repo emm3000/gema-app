@@ -1,10 +1,13 @@
 package com.emm.gema.core.domain.evaluation
 
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
@@ -19,12 +22,12 @@ class GetPeriodLevelSummaryUseCase(
     private val periodLevelRepository: PeriodLevelRepository,
 ) {
 
-    operator fun invoke(sectionId: String, periodId: String): Flow<PeriodLevelSummary> = combine(
+    operator fun invoke(sectionId: SectionId, periodId: PeriodId): Flow<PeriodLevelSummary> = combine(
         sectionAreaRepository.observeHiddenAreas(sectionId),
         workedCompetencyRepository.observeWorked(sectionId = sectionId, periodId = periodId),
         studentRepository.observeBySection(sectionId),
         periodLevelRepository.observeByPeriod(sectionId = sectionId, periodId = periodId),
-    ) { hidden: Set<Area>, worked: Set<String>, students: List<Student>, levels: List<PeriodLevel> ->
+    ) { hidden: Set<Area>, worked: Set<CompetencyId>, students: List<Student>, levels: List<PeriodLevel> ->
         val recorded: Map<PeriodLevelKey, PeriodLevel> = levels.associateBy { it.key }
         val activeStudents: List<Student> = students.filter { !it.isWithdrawn }.orderedByName()
 

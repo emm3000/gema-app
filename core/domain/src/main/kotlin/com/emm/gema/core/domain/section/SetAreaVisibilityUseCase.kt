@@ -4,7 +4,7 @@ class SetAreaVisibilityUseCase(
     private val repository: SectionAreaRepository,
 ) {
 
-    suspend operator fun invoke(sectionId: String, area: Area, isActive: Boolean) {
+    suspend operator fun invoke(sectionId: SectionId, area: Area, isActive: Boolean) {
         repository.setAreaHidden(sectionId = sectionId, area = area, isHidden = !isActive)
     }
 }

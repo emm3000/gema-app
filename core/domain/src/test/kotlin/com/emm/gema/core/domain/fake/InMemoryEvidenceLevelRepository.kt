@@ -1,10 +1,15 @@
 package com.emm.gema.core.domain.fake
 
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
 import com.emm.gema.core.domain.activity.EvidenceLevelRepository
 import com.emm.gema.core.domain.activity.EvidenceRecord
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -16,12 +21,15 @@ class InMemoryEvidenceLevelRepository(
 
     private val levels: MutableStateFlow<List<EvidenceLevel>> = MutableStateFlow(emptyList())
 
-    override fun observeByActivity(activityId: String): Flow<List<EvidenceLevel>> = levels
+    override fun observeByActivity(activityId: ActivityId): Flow<List<EvidenceLevel>> = levels
         .map { stored -> stored.filter { it.key.activityId == activityId } }
 
-    override fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
+    override fun observeRecordedStudentCountsByPeriod(
+        sectionId: SectionId,
+        periodId: PeriodId,
+    ): Flow<Map<ActivityId, Int>> =
         combine(levels, activityRepository.observeByPeriod(sectionId, periodId)) { stored, activities ->
-            val activityIds: Set<String> = activities.map(Activity::id).toSet()
+            val activityIds: Set<ActivityId> = activities.map(Activity::id).toSet()
             stored
                 .filter { it.key.activityId in activityIds }
                 .groupBy { it.key.activityId }
@@ -29,15 +37,15 @@ class InMemoryEvidenceLevelRepository(
         }
 
     override fun observeForStudentAndCompetency(
-        sectionId: String,
-        periodId: String,
-        studentId: String,
-        competencyId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
+        studentId: StudentId,
+        competencyId: CompetencyId,
     ): Flow<List<EvidenceRecord>> = combine(
         levels,
         activityRepository.observeByPeriod(sectionId, periodId),
     ) { stored, activities ->
-        val activitiesById: Map<String, Activity> = activities.associateBy(Activity::id)
+        val activitiesById: Map<ActivityId, Activity> = activities.associateBy(Activity::id)
 
         stored
             .filter { it.key.studentId == studentId && it.key.competencyId == competencyId }
@@ -61,12 +69,14 @@ class InMemoryEvidenceLevelRepository(
         levels.value = levels.value.filterNot { it.key == key }
     }
 
-    override suspend fun deleteByActivity(activityId: String) {
+    override suspend fun deleteByActivity(activityId: ActivityId) {
         levels.value = levels.value.filterNot { it.key.activityId == activityId }
     }
 
-    override suspend fun clearSection(sectionId: String) {
-        val sectionActivityIds: Set<String> = activityRepository.findAllBySection(sectionId).map(Activity::id).toSet()
+    override suspend fun clearSection(sectionId: SectionId) {
+        val sectionActivityIds: Set<ActivityId> = activityRepository.findAllBySection(sectionId)
+            .map(Activity::id)
+            .toSet()
         levels.value = levels.value.filterNot { it.key.activityId in sectionActivityIds }
     }
 }

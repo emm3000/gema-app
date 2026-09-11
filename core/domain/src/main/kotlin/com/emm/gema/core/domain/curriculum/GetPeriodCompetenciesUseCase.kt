@@ -1,6 +1,8 @@
 package com.emm.gema.core.domain.curriculum
 
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -11,7 +13,7 @@ class GetPeriodCompetenciesUseCase(
     private val workedCompetencyRepository: WorkedCompetencyRepository,
 ) {
 
-    operator fun invoke(sectionId: String, periodId: String, area: Area): Flow<List<PeriodCompetency>> = flow {
+    operator fun invoke(sectionId: SectionId, periodId: PeriodId, area: Area): Flow<List<PeriodCompetency>> = flow {
         val competencies: List<Competency> = competencyRepository.findByArea(area)
 
         emitAll(

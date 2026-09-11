@@ -35,9 +35,7 @@ class RestoreBackupUseCaseTest {
         val result: RestoreResult = restore("content://picked")
 
         assertThat(result).isEqualTo(
-            RestoreResult.Rejected(
-                BackupValidation.FromANewerApp(schemaVersion = 9, supportedSchemaVersion = 3),
-            ),
+            RestoreResult.Rejected(BackupValidation.FromANewerApp(schemaVersion = 9, supportedSchemaVersion = 3)),
         )
         assertThat(store.replacedWith).isNull()
     }
