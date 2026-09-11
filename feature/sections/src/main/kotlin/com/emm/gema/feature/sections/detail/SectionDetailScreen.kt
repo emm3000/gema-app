@@ -54,6 +54,14 @@ fun SectionDetailScreen(
                 onClick = { onIntent(SectionDetailUiIntent.StudentsClicked) },
             )
             GListItem(
+                title = "Niveles del periodo",
+                modifier = Modifier.fillMaxWidth(),
+                subtitle = state.currentPeriodLabel,
+                trailingText = missingLabel(state.missingPeriodLevelCount),
+                hasChevron = true,
+                onClick = { onIntent(SectionDetailUiIntent.PeriodLevelsClicked) },
+            )
+            GListItem(
                 title = "Áreas",
                 modifier = Modifier.fillMaxWidth(),
                 hasChevron = true,
@@ -63,12 +71,21 @@ fun SectionDetailScreen(
     }
 }
 
+private fun missingLabel(missingPeriodLevelCount: Int): String? =
+    "$missingPeriodLevelCount faltan".takeIf { missingPeriodLevelCount > 0 }
+
 @PreviewLightDark
 @Composable
 private fun SectionDetailScreenPreview() {
     GemaTheme {
         SectionDetailScreen(
-            state = SectionDetailUiState(isLoading = false, sectionTitle = "3° A", studentCount = 30),
+            state = SectionDetailUiState(
+                isLoading = false,
+                sectionTitle = "3° A",
+                studentCount = 30,
+                currentPeriodLabel = "II Bimestre",
+                missingPeriodLevelCount = 12,
+            ),
             onIntent = {},
         )
     }

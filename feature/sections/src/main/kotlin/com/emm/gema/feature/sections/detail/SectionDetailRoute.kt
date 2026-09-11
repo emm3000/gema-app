@@ -13,6 +13,7 @@ import org.koin.core.parameter.parametersOf
 fun SectionDetailRoute(
     sectionId: String,
     onStudents: (String) -> Unit,
+    onPeriodLevels: (String) -> Unit,
     onSectionAreas: (String) -> Unit,
     onSectionForm: (String, String) -> Unit,
     onBack: () -> Unit,
@@ -25,6 +26,7 @@ fun SectionDetailRoute(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is SectionDetailUiEffect.NavigateToStudents -> onStudents(effect.sectionId)
+                is SectionDetailUiEffect.NavigateToPeriodLevels -> onPeriodLevels(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToSectionAreas -> onSectionAreas(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToSectionForm ->
                     onSectionForm(effect.schoolYearId, effect.sectionId)

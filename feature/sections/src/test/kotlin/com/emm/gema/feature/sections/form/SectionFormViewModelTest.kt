@@ -2,6 +2,7 @@ package com.emm.gema.feature.sections.form
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
@@ -11,6 +12,7 @@ import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
+import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeSiagieImportStore
 import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
@@ -31,6 +33,7 @@ class SectionFormViewModelTest {
     private val sectionRepository = FakeSectionRepository(listOf(existing))
     private val sectionAreaRepository = FakeSectionAreaRepository()
     private val studentRepository = FakeStudentRepository()
+    private val periodLevelRepository = FakePeriodLevelRepository()
 
     private fun viewModelFor(sectionId: String?): SectionFormViewModel = SectionFormViewModel(
         schoolYearId = "2026",
@@ -44,8 +47,10 @@ class SectionFormViewModelTest {
             FakeWorkedCompetencyRepository(),
             studentRepository,
             FakeSiagieImportStore(),
+            periodLevelRepository,
         ),
         getStudents = GetStudentsUseCase(studentRepository),
+        getPeriodLevelCount = GetPeriodLevelCountUseCase(periodLevelRepository),
     )
 
     @Test

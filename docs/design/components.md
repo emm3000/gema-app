@@ -341,6 +341,7 @@ fun GLevelChip(
     modifier: Modifier = Modifier,
     hasUnworkedComment: Boolean = false,
     isIncomplete: Boolean = false,
+    isCurrent: Boolean = false,
     size: GLevelChipSize = GLevelChipSize.INLINE,
     onClick: (() -> Unit)? = null,
 )
@@ -362,6 +363,11 @@ Tradeoffs, and this is the one place where the obvious choice is wrong:
   the **letter**, in one neutral surface, at a size that is legible without
   colour. Distinguishing levels is the Teacher's reading job, which they do
   fluently; the app's job is not to editorialise.
+- **`isCurrent` is a border, not a fill.** Column mode (ADR 0013) has to say
+  which cell the bottom picker is bound to. It thickens the border to
+  `GemaSpacing.indicatorStroke` in `colorScheme.primary`, so the letter itself
+  is untouched and the marker survives next to `isIncomplete`, which wins the
+  border colour when both are true.
 - **`isIncomplete` is the only coloured state**, using `colorScheme.error`,
   because that *is* a system state: SIAGIE will reject the file. It renders as a
   marker glyph next to the letter, never as a fill, so it survives a colour-blind

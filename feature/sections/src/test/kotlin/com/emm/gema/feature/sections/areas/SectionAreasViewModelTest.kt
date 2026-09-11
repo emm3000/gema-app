@@ -1,12 +1,14 @@
 package com.emm.gema.feature.sections.areas
 
 import app.cash.turbine.test
+import com.emm.gema.core.domain.evaluation.GetAreaRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
+import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
 import com.emm.gema.feature.sections.MainDispatcherRule
@@ -23,12 +25,14 @@ class SectionAreasViewModelTest {
     private val section = Section("section-1", "2026", Grade.THIRD, "A")
     private val sectionRepository = FakeSectionRepository(listOf(section))
     private val sectionAreaRepository = FakeSectionAreaRepository()
+    private val periodLevelRepository = FakePeriodLevelRepository()
     private val viewModel: SectionAreasViewModel by lazy {
         SectionAreasViewModel(
             sectionId = section.id,
             getSection = GetSectionUseCase(sectionRepository),
             getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository),
             setAreaVisibility = SetAreaVisibilityUseCase(sectionAreaRepository),
+            getAreaRecordedLevelCounts = GetAreaRecordedLevelCountsUseCase(periodLevelRepository),
         )
     }
 

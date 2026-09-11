@@ -1,6 +1,13 @@
 package com.emm.gema.feature.sections
 
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
+import com.emm.gema.core.domain.evaluation.PeriodLevel
+import com.emm.gema.core.domain.evaluation.PeriodLevelKey
+import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
+import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodRepository
+import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionAreaRepository
@@ -128,4 +135,62 @@ class FakeSiagieImportStore : SiagieImportStore {
 
     override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
         templates[sectionId]?.takeIf { it.kind == kind }
+class FakePeriodLevelRepository : PeriodLevelRepository {
+
+    private val levels: MutableStateFlow<List<PeriodLevel>> = MutableStateFlow(emptyList())
+
+    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<PeriodLevel>> = levels
+        .map { stored -> stored.filter { it.key.sectionId == sectionId && it.key.periodId == periodId } }
+
+    override fun observeRecordedCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> = levels
+        .map { stored ->
+            stored
+                .filter { it.key.sectionId == sectionId && it.key.periodId == periodId && it.isRecorded }
+                .groupingBy { it.key.competencyId }
+                .eachCount()
+        }
+
+    override fun observeRecordedCountsBySection(sectionId: String): Flow<Map<String, Int>> = levels
+        .map { stored ->
+            stored
+                .filter { it.key.sectionId == sectionId && it.isRecorded }
+                .groupingBy { it.key.competencyId }
+                .eachCount()
+        }
+
+    override suspend fun find(key: PeriodLevelKey): PeriodLevel? = levels.value.find { it.key == key }
+
+    override suspend fun save(periodLevel: PeriodLevel) {
+        levels.value = levels.value.filterNot { it.key == periodLevel.key } + periodLevel
+    }
+
+    override suspend fun delete(key: PeriodLevelKey) {
+        levels.value = levels.value.filterNot { it.key == key }
+    }
+
+    override suspend fun clearSection(sectionId: String) {
+        levels.value = levels.value.filterNot { it.key.sectionId == sectionId }
+    }
+}
+
+class FakePeriodRepository(private val periods: List<Period> = emptyList()) : PeriodRepository {
+
+    override fun observeBySchoolYear(schoolYearId: String): Flow<List<Period>> =
+        MutableStateFlow(periods.filter { it.schoolYearId == schoolYearId })
+
+    override suspend fun findBySchoolYear(schoolYearId: String): List<Period> =
+        periods.filter { it.schoolYearId == schoolYearId }
+
+    override suspend fun findById(id: String): Period? = periods.find { it.id == id }
+
+    override suspend fun saveAll(periods: List<Period>) = Unit
+}
+
+class FakeSchoolYearRepository(private val schoolYears: List<SchoolYear> = emptyList()) : SchoolYearRepository {
+
+    override fun observeAll(): Flow<List<SchoolYear>> = MutableStateFlow(schoolYears)
+
+    override suspend fun findById(id: String): SchoolYear? = schoolYears.find { it.id == id }
+
+    override suspend fun save(schoolYear: SchoolYear) = Unit
 }

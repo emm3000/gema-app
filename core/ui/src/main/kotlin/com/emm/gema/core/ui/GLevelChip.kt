@@ -2,6 +2,7 @@
 
 package com.emm.gema.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -37,6 +38,7 @@ fun GLevelChip(
     modifier: Modifier = Modifier,
     hasUnworkedComment: Boolean = false,
     isIncomplete: Boolean = false,
+    isCurrent: Boolean = false,
     size: GLevelChipSize = GLevelChipSize.INLINE,
     onClick: (() -> Unit)? = null,
 ) {
@@ -50,9 +52,13 @@ fun GLevelChip(
     }
     val markerColor: Color = MaterialTheme.colorScheme.error
     val shape = GemaShapes.control
-    val border = androidx.compose.foundation.BorderStroke(
-        width = GemaBorder.hairline,
-        color = if (isIncomplete) markerColor else MaterialTheme.colorScheme.outline,
+    val border = BorderStroke(
+        width = if (isCurrent) GemaSpacing.indicatorStroke else GemaBorder.hairline,
+        color = when {
+            isIncomplete -> markerColor
+            isCurrent -> MaterialTheme.colorScheme.primary
+            else -> MaterialTheme.colorScheme.outline
+        },
     )
     val content: @Composable () -> Unit = {
         Row(
@@ -126,6 +132,7 @@ private fun GLevelChipPreview() {
             GLevelChip(level = AchievementLevel.C, isIncomplete = true, size = GLevelChipSize.GRID)
             GLevelChip(level = null, hasUnworkedComment = true, size = GLevelChipSize.GRID)
             GLevelChip(level = null, size = GLevelChipSize.GRID)
+            GLevelChip(level = AchievementLevel.B, isCurrent = true, size = GLevelChipSize.GRID)
         }
     }
 }

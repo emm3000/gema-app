@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.feature.backup.BackupRoute
+import com.emm.gema.feature.evaluation.levels.PeriodLevelsRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
 import com.emm.gema.feature.sections.areas.SectionAreasRoute
 import com.emm.gema.feature.sections.detail.SectionDetailRoute
@@ -109,6 +110,7 @@ fun GemaNavHost(
             SectionDetailRoute(
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
                 onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
+                onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
                 onSectionAreas = { navController.navigate(GemaRoutes.sectionAreasOf(it)) },
                 onSectionForm = { schoolYearId, sectionId ->
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
@@ -166,6 +168,18 @@ fun GemaNavHost(
         ) { entry ->
             SectionAreasRoute(
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.PERIOD_LEVELS,
+            arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
+        ) { entry ->
+            PeriodLevelsRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onWorkedCompetencies = { sectionId, periodId, area ->
+                    navController.navigate(GemaRoutes.workedCompetenciesOf(sectionId, periodId, area))
+                },
                 onBack = { navController.popBackStack() },
             )
         }

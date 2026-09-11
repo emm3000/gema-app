@@ -4,6 +4,8 @@ sealed interface SectionDetailUiIntent {
 
     data object StudentsClicked : SectionDetailUiIntent
 
+    data object PeriodLevelsClicked : SectionDetailUiIntent
+
     data object AreasClicked : SectionDetailUiIntent
 
     data object RenameClicked : SectionDetailUiIntent

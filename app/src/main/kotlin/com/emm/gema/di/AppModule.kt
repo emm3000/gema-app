@@ -10,6 +10,7 @@ import com.emm.gema.core.database.schoolyear.SqlDelightPeriodRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightSchoolYearRepository
 import com.emm.gema.core.database.curriculum.SqlDelightCompetencyRepository
 import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
+import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.setup.SqlDelightSetupRepository
@@ -30,6 +31,14 @@ import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.curriculum.SeedCurriculumUseCase
 import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
+import com.emm.gema.core.domain.evaluation.GetAreaRecordedLevelCountsUseCase
+import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
+import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
+import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
+import com.emm.gema.core.domain.evaluation.SavePeriodLevelUseCase
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
@@ -95,6 +104,7 @@ val appModule: Module = module {
     single<SiagieImportStore> { SqlDelightSiagieImportStore(get()) }
     single<SiagieDocuments> { ContentResolverSiagieDocuments(androidContext().contentResolver) }
     single<SiagieRosterReader> { XlsxSiagieRosterReader() }
+    single<PeriodLevelRepository> { SqlDelightPeriodLevelRepository(get()) }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -119,6 +129,15 @@ val appModule: Module = module {
     factory<SeedCurriculumUseCase> { SeedCurriculumUseCase(get()) }
     factory<GetPeriodCompetenciesUseCase> { GetPeriodCompetenciesUseCase(get(), get()) }
     factory<SetCompetencyWorkedUseCase> { SetCompetencyWorkedUseCase(get()) }
+    factory<GetPeriodLevelGridUseCase> { GetPeriodLevelGridUseCase(get(), get(), get()) }
+    factory<GetPeriodLevelUseCase> { GetPeriodLevelUseCase(get()) }
+    factory<SavePeriodLevelUseCase> { SavePeriodLevelUseCase(get()) }
+    factory<GetRecordedLevelCountsUseCase> { GetRecordedLevelCountsUseCase(get()) }
+    factory<GetAreaRecordedLevelCountsUseCase> { GetAreaRecordedLevelCountsUseCase(get()) }
+    factory<GetPeriodLevelCountUseCase> { GetPeriodLevelCountUseCase(get()) }
+    factory<GetMissingPeriodLevelCountUseCase> {
+        GetMissingPeriodLevelCountUseCase(get(), get(), get(), get())
+    }
     factory<SaveStudentUseCase> { SaveStudentUseCase(get(), get()) }
     factory<SiagieImportPlanner> { SiagieImportPlanner(get(), get(), get(), get()) }
     factory<PreviewSiagieImportUseCase> { PreviewSiagieImportUseCase(get()) }

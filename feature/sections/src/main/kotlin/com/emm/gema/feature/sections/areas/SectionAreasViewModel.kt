@@ -2,6 +2,7 @@ package com.emm.gema.feature.sections.areas
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.evaluation.GetAreaRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -24,6 +26,7 @@ class SectionAreasViewModel(
     private val getSection: GetSectionUseCase,
     private val getSectionAreas: GetSectionAreasUseCase,
     private val setAreaVisibility: SetAreaVisibilityUseCase,
+    private val getAreaRecordedLevelCounts: GetAreaRecordedLevelCountsUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<SectionAreasUiState> = MutableStateFlow(SectionAreasUiState())
@@ -46,13 +49,16 @@ class SectionAreasViewModel(
     private suspend fun load() {
         val section: Section? = getSection(sectionId)
 
-        getSectionAreas(sectionId).collect { areas ->
-            _state.value = _state.value.copy(
+        combine(
+            getSectionAreas(sectionId),
+            getAreaRecordedLevelCounts(sectionId),
+        ) { areas: List<SectionArea>, counts: Map<Area, Int> ->
+            _state.value.copy(
                 isLoading = false,
                 sectionTitle = section?.title().orEmpty(),
-                areas = areas.map { it.toRow() },
+                areas = areas.map { it.toRow(counts[it.area] ?: 0) },
             )
-        }
+        }.collect { _state.value = it }
     }
 
     private fun toggle(area: Area, isActive: Boolean) {
@@ -66,10 +72,10 @@ class SectionAreasViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun SectionArea.toRow(): AreaToggleRow = AreaToggleRow(
+    private fun SectionArea.toRow(recordedLevelCount: Int): AreaToggleRow = AreaToggleRow(
         id = area,
         name = area.officialName,
         isActive = isActive,
-        recordedLevelCount = 0,
+        recordedLevelCount = recordedLevelCount,
     )
 }

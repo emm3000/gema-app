@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
+import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
@@ -14,6 +15,7 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.feature.evaluation.FakeCompetencyRepository
+import com.emm.gema.feature.evaluation.FakePeriodLevelRepository
 import com.emm.gema.feature.evaluation.FakePeriodRepository
 import com.emm.gema.feature.evaluation.FakeSchoolYearRepository
 import com.emm.gema.feature.evaluation.FakeSectionRepository
@@ -55,6 +57,7 @@ class WorkedCompetenciesViewModelTest {
         endDate = LocalDate.of(2026, 7, 24),
     )
     private val workedCompetencyRepository: FakeWorkedCompetencyRepository = FakeWorkedCompetencyRepository()
+    private val periodLevelRepository: FakePeriodLevelRepository = FakePeriodLevelRepository()
 
     @Test
     fun `the screen lists every competency of the area in siagie order`() = runTest {
@@ -137,5 +140,6 @@ class WorkedCompetenciesViewModelTest {
             workedCompetencyRepository = workedCompetencyRepository,
         ),
         setCompetencyWorked = SetCompetencyWorkedUseCase(workedCompetencyRepository),
+        getRecordedLevelCounts = GetRecordedLevelCountsUseCase(periodLevelRepository),
     )
 }
