@@ -28,6 +28,8 @@ import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.abbreviatedLabel
+import java.time.Month
 import java.time.YearMonth
 
 private const val MONTHS_PER_ROW: Int = 3
@@ -107,18 +109,18 @@ private fun MonthGrid(
     onMonthSelected: (YearMonth) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-        MonthNames.short.chunked(MONTHS_PER_ROW).forEachIndexed { rowIndex: Int, rowNames: List<String> ->
+        Month.entries.chunked(MONTHS_PER_ROW).forEachIndexed { rowIndex: Int, rowMonths: List<Month> ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
             ) {
-                rowNames.forEachIndexed { columnIndex: Int, name: String ->
+                rowMonths.forEachIndexed { columnIndex: Int, monthOfYear: Month ->
                     val monthValue: Int = rowIndex * MONTHS_PER_ROW + columnIndex + 1
                     val month: YearMonth = YearMonth.of(year, monthValue)
                     val isInBounds: Boolean = (minimum == null || !month.isBefore(minimum)) &&
                         (maximum == null || !month.isAfter(maximum))
                     MonthChip(
-                        name = name,
+                        name = monthOfYear.abbreviatedLabel(),
                         isSelected = month == selected,
                         isEnabled = isInBounds,
                         onClick = { onMonthSelected(month) },

@@ -19,7 +19,6 @@ import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
-import com.emm.gema.feature.sections.asDayLabel
 import com.emm.gema.feature.sections.attendanceSummaryLabel
 import java.time.Clock
 import java.time.LocalDate
@@ -47,7 +46,6 @@ class SectionDetailViewModel(
     private val _state: MutableStateFlow<SectionDetailUiState> = MutableStateFlow(
         SectionDetailUiState(
             today = today,
-            todayLabel = today.asDayLabel(),
             todayAttendanceSummary = AttendanceDaySummary(0, 0, 0).attendanceSummaryLabel(),
         ),
     )

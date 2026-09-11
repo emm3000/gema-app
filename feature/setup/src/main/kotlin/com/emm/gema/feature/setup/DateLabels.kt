@@ -1,21 +1,20 @@
 package com.emm.gema.feature.setup
 
+import androidx.compose.runtime.Composable
+import com.emm.gema.core.theme.abbreviatedLabel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private val dayMonthYear: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-private val shortMonthNames: List<String> = listOf(
-    "ene", "feb", "mar", "abr", "may", "jun",
-    "jul", "ago", "sep", "oct", "nov", "dic",
-)
-
 fun LocalDate.asDayMonthYear(): String = format(dayMonthYear)
 
-fun LocalDate.asShortDayMonth(): String = "%02d %s".format(dayOfMonth, shortMonthNames[monthValue - 1])
+@Composable
+fun LocalDate.asShortDayMonth(): String = "%02d %s".format(dayOfMonth, month.abbreviatedLabel())
 
 fun rangeLabel(startDate: LocalDate, endDate: LocalDate): String =
     "${startDate.asDayMonthYear()} - ${endDate.asDayMonthYear()}"
 
+@Composable
 fun shortRangeLabel(startDate: LocalDate, endDate: LocalDate): String =
     "${startDate.asShortDayMonth()} – ${endDate.asShortDayMonth()}"

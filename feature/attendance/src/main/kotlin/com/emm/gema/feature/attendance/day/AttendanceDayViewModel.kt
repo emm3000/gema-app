@@ -10,7 +10,6 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.StudentId
-import com.emm.gema.feature.attendance.asDayLabel
 import com.emm.gema.feature.attendance.title
 import java.time.Clock
 import java.time.LocalDate
@@ -105,7 +104,6 @@ class AttendanceDayViewModel(
         return _state.value.copy(
             isLoading = false,
             date = selected,
-            dateLabel = selected.asDayLabel(),
             canGoForward = selected.isBefore(today),
             presentCount = rows.count { it.status == AttendanceStatus.PRESENT },
             totalCount = rows.size,
