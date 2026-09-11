@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.theme.GemaSpacing
@@ -26,6 +27,7 @@ import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.domain.section.label
+import com.emm.gema.feature.sections.R
 
 @Composable
 fun SectionFormScreen(
@@ -38,14 +40,18 @@ fun SectionFormScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = if (state.sectionId == null) "Nueva sección" else "Editar sección",
+                title = if (state.sectionId == null) {
+                    stringResource(R.string.sections_form_title_new)
+                } else {
+                    stringResource(R.string.sections_form_title_edit)
+                },
                 onBackClick = { onIntent(SectionFormUiIntent.BackClicked) },
             )
         },
         modifier = modifier,
         bottomAction = {
             GButton(
-                text = "Guardar",
+                text = stringResource(R.string.sections_form_save),
                 onClick = { onIntent(SectionFormUiIntent.SaveClicked) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = state.canSave,
@@ -64,13 +70,24 @@ fun SectionFormScreen(
                     text = message,
                     modifier = Modifier.fillMaxWidth(),
                     tone = GBannerTone.ERROR,
-                    actionText = "Entendido",
+                    actionText = stringResource(R.string.sections_form_understood),
                     onActionClick = onMessageDismissed,
                 )
             }
             GSegmentedPicker(
-                options = Grade.entries.map {
-                    GSegmentOption(value = it, label = it.label(), contentDescription = "Grado ${it.label()}")
+                options = buildList {
+                    for (grade in Grade.entries) {
+                        add(
+                            GSegmentOption(
+                                value = grade,
+                                label = grade.label(),
+                                contentDescription = stringResource(
+                                    R.string.sections_form_grade_content_description,
+                                    grade.label(),
+                                ),
+                            ),
+                        )
+                    }
                 },
                 selected = state.grade,
                 onSelect = { grade -> grade?.let { onIntent(SectionFormUiIntent.GradeSelected(it)) } },
@@ -79,13 +96,13 @@ fun SectionFormScreen(
             GTextField(
                 value = state.sectionName,
                 onValueChange = { onIntent(SectionFormUiIntent.SectionNameChanged(it)) },
-                label = "Nombre de la sección",
+                label = stringResource(R.string.sections_form_name_label),
                 modifier = Modifier.fillMaxWidth(),
                 errorText = state.sectionNameError,
             )
             if (state.canDelete) {
                 GButton(
-                    text = "Eliminar sección",
+                    text = stringResource(R.string.sections_form_delete_button),
                     onClick = { onIntent(SectionFormUiIntent.DeleteClicked) },
                     variant = GButtonVariant.DESTRUCTIVE,
                 )
@@ -110,18 +127,21 @@ private fun DeleteSectionDialog(
     modifier: Modifier = Modifier,
 ) {
     GDialog(
-        title = "¿Eliminar la sección?",
-        confirmText = "Eliminar",
+        title = stringResource(R.string.sections_form_delete_dialog_title),
+        confirmText = stringResource(R.string.sections_form_delete_confirm),
         onConfirm = onConfirm,
         onDismiss = onDismiss,
         modifier = modifier,
-        dismissText = "Cancelar",
+        dismissText = stringResource(R.string.sections_form_delete_cancel),
         isDestructive = true,
     ) {
         GText(
-            text = "Se perderán ${confirmation.studentCount} estudiantes, " +
-                "${confirmation.attendanceDayCount} días de asistencia y " +
-                "${confirmation.periodLevelCount} niveles de logro.",
+            text = stringResource(
+                R.string.sections_form_delete_message,
+                confirmation.studentCount,
+                confirmation.attendanceDayCount,
+                confirmation.periodLevelCount,
+            ),
             style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

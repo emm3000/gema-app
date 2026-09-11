@@ -1,0 +1,36 @@
+<resources>
+    <string name="sections_detail_rename">Renombrar</string>
+    <string name="sections_detail_take_attendance">Tomar asistencia de hoy</string>
+    <string name="sections_detail_students">Alumnos</string>
+    <string name="sections_detail_attendance">Asistencia</string>
+    <string name="sections_detail_period_levels">Niveles del periodo</string>
+    <string name="sections_detail_export">Entregar</string>
+    <string name="sections_detail_activities">Actividades</string>
+    <string name="sections_detail_areas">Áreas</string>
+
+    <plurals name="sections_detail_missing_levels">
+        <item quantity="one">%d falta</item>
+        <item quantity="other">%d faltan</item>
+    </plurals>
+
+    <string name="sections_areas_title">Áreas</string>
+    <string name="sections_areas_understood">Entendido</string>
+    <string name="sections_areas_hint">Apaga las áreas que no dictas. Nada se borra: puedes volver a encenderlas.</string>
+
+    <plurals name="sections_areas_recorded_levels">
+        <item quantity="one">%d nivel registrado. Queda guardado.</item>
+        <item quantity="other">%d niveles registrados. Quedan guardados.</item>
+    </plurals>
+
+    <string name="sections_form_title_new">Nueva sección</string>
+    <string name="sections_form_title_edit">Editar sección</string>
+    <string name="sections_form_save">Guardar</string>
+    <string name="sections_form_understood">Entendido</string>
+    <string name="sections_form_grade_content_description">Grado %1$s</string>
+    <string name="sections_form_name_label">Nombre de la sección</string>
+    <string name="sections_form_delete_button">Eliminar sección</string>
+    <string name="sections_form_delete_dialog_title">¿Eliminar la sección?</string>
+    <string name="sections_form_delete_confirm">Eliminar</string>
+    <string name="sections_form_delete_cancel">Cancelar</string>
+    <string name="sections_form_delete_message">Se perderán %1$d estudiantes, %2$d días de asistencia y %3$d niveles de logro.</string>
+</resources>

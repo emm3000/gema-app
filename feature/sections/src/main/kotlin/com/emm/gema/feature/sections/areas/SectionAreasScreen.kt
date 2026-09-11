@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.theme.GemaSpacing
@@ -21,6 +23,7 @@ import com.emm.gema.core.ui.GSwitchRow
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.sections.R
 
 @Composable
 fun SectionAreasScreen(
@@ -33,7 +36,7 @@ fun SectionAreasScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = "Áreas",
+                title = stringResource(R.string.sections_areas_title),
                 subtitle = state.sectionTitle,
                 onBackClick = { onIntent(SectionAreasUiIntent.BackClicked) },
             )
@@ -53,14 +56,14 @@ fun SectionAreasScreen(
                         text = message,
                         modifier = Modifier.fillMaxWidth(),
                         tone = GBannerTone.ERROR,
-                        actionText = "Entendido",
+                        actionText = stringResource(R.string.sections_areas_understood),
                         onActionClick = onMessageDismissed,
                     )
                 }
             }
             item {
                 GText(
-                    text = "Apaga las áreas que no dictas. Nada se borra: puedes volver a encenderlas.",
+                    text = stringResource(R.string.sections_areas_hint),
                     style = GTextStyle.BODY_MEDIUM,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -78,8 +81,10 @@ fun SectionAreasScreen(
     }
 }
 
+@Composable
 private fun recordedLevelsLabel(recordedLevelCount: Int): String? =
-    "$recordedLevelCount niveles registrados. Quedan guardados.".takeIf { recordedLevelCount > 0 }
+    pluralStringResource(R.plurals.sections_areas_recorded_levels, recordedLevelCount, recordedLevelCount)
+        .takeIf { recordedLevelCount > 0 }
 
 @PreviewLightDark
 @Composable
