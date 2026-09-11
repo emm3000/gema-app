@@ -83,12 +83,16 @@ class SectionFormViewModelTest {
 
     @Test
     fun `an existing section is loaded into the form`() {
+        studentRepository.students.value = listOf(
+            Student(StudentId("student-1"), existing.id, StudentCode("12345678901234"), "ACOSTA RIVERA, Luz Maria"),
+        )
         val state: SectionFormUiState = viewModelFor(existing.id).state.value
 
         assertThat(state.grade).isEqualTo(Grade.THIRD)
         assertThat(state.sectionName).isEqualTo("A")
         assertThat(state.canSave).isTrue()
         assertThat(state.canDelete).isTrue()
+        assertThat(state.studentCount).isEqualTo(1)
     }
 
     @Test
