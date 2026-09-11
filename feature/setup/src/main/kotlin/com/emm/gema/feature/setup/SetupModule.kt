@@ -1,5 +1,6 @@
 package com.emm.gema.feature.setup
 
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.feature.setup.periods.PeriodsViewModel
 import com.emm.gema.feature.setup.section.SetupSectionViewModel
 import com.emm.gema.feature.setup.year.SchoolYearDraft
@@ -13,6 +14,6 @@ val setupModule: Module = module {
     single<SetupDraftStore> { SetupDraftStore() }
     viewModel { SetupYearViewModel(get()) }
     viewModel { (draft: SchoolYearDraft) -> SetupSectionViewModel(draft, get()) }
-    viewModel { (schoolYearId: String) -> PeriodsViewModel(schoolYearId, get(), get(), get(), get()) }
+    viewModel { (schoolYearId: SchoolYearId) -> PeriodsViewModel(schoolYearId, get(), get(), get(), get()) }
     viewModel { SchoolYearsViewModel(get(), get(), get(), get()) }
 }

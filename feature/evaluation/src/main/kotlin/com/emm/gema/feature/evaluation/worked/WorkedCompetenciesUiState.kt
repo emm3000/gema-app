@@ -1,5 +1,7 @@
 package com.emm.gema.feature.evaluation.worked
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
+
 data class WorkedCompetenciesUiState(
     val isLoading: Boolean = true,
     val areaName: String = "",
@@ -9,7 +11,7 @@ data class WorkedCompetenciesUiState(
 )
 
 data class CompetencyToggleRow(
-    val id: String,
+    val id: CompetencyId,
     val siagieOrdinal: Int,
     val name: String,
     val isWorked: Boolean,

@@ -1,10 +1,11 @@
 package com.emm.gema.feature.students.form
 
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 
 data class StudentFormUiState(
     val isLoading: Boolean = true,
-    val studentId: String? = null,
+    val studentId: StudentId? = null,
     val studentCode: String = "",
     val studentCodeError: StudentCodeError? = null,
     val studentCodeHint: String = "",

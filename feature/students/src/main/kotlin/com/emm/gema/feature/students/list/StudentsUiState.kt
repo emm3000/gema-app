@@ -1,5 +1,6 @@
 package com.emm.gema.feature.students.list
 
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 
 data class StudentsUiState(
@@ -15,7 +16,7 @@ data class StudentsUiState(
 }
 
 data class StudentRow(
-    val id: String,
+    val id: StudentId,
     val displayName: String,
     val studentCode: String,
     val withdrawalDate: LocalDate? = null,

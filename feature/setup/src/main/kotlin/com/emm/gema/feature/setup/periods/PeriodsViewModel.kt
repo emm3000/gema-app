@@ -7,12 +7,15 @@ import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.PeriodDates
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
-import com.emm.gema.feature.setup.PeriodRangeError
-import com.emm.gema.feature.setup.errorWithin
 import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.feature.setup.PeriodRangeError
+import com.emm.gema.feature.setup.errorWithin
+import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +23,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class PeriodsViewModel(
-    private val schoolYearId: String,
+    private val schoolYearId: SchoolYearId,
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getPeriods: GetPeriodsUseCase,
     private val getCurrentPeriod: GetCurrentPeriodUseCase,
@@ -54,7 +56,7 @@ class PeriodsViewModel(
     private suspend fun load() {
         val loaded: SchoolYear = getSchoolYear(schoolYearId) ?: return
         schoolYear = loaded
-        val currentPeriodId: String? = getCurrentPeriod(schoolYearId)?.id
+        val currentPeriodId: PeriodId? = getCurrentPeriod(schoolYearId)?.id
 
         getPeriods(schoolYearId).collect { periods ->
             _state.value = validate(
@@ -68,7 +70,7 @@ class PeriodsViewModel(
         }
     }
 
-    private fun Period.toRow(schoolYear: SchoolYear, currentPeriodId: String?): PeriodRow = PeriodRow(
+    private fun Period.toRow(schoolYear: SchoolYear, currentPeriodId: PeriodId?): PeriodRow = PeriodRow(
         id = id,
         number = number,
         label = schoolYear.periodKind.labelFor(number),
@@ -77,7 +79,7 @@ class PeriodsViewModel(
         isCurrent = id == currentPeriodId,
     )
 
-    private fun editRow(id: String, edit: (PeriodRow) -> PeriodRow) {
+    private fun editRow(id: PeriodId, edit: (PeriodRow) -> PeriodRow) {
         _state.value = validate(
             _state.value.copy(
                 periods = _state.value.periods.map { row -> if (row.id == id) edit(row) else row },

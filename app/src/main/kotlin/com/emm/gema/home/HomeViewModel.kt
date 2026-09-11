@@ -10,11 +10,15 @@ import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.core.domain.student.GetStudentCountsUseCase
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.label
-import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
+import java.time.Clock
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -27,8 +31,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.Clock
-import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
@@ -98,7 +100,7 @@ class HomeViewModel(
         }
     }
 
-    private fun attendanceSummaries(schoolYearId: String): Flow<Map<String, AttendanceDaySummary>> =
+    private fun attendanceSummaries(schoolYearId: SchoolYearId): Flow<Map<SectionId, AttendanceDaySummary>> =
         getSections(schoolYearId).flatMapLatest { sections: List<Section> ->
             if (sections.isEmpty()) return@flatMapLatest flowOf(emptyMap())
 
@@ -124,8 +126,8 @@ class HomeViewModel(
         )
     }
 
-    private fun withSchoolYear(effect: (String) -> HomeUiEffect) {
-        val schoolYearId: String = _state.value.schoolYearId ?: return
+    private fun withSchoolYear(effect: (SchoolYearId) -> HomeUiEffect) {
+        val schoolYearId: SchoolYearId = _state.value.schoolYearId ?: return
         emit(effect(schoolYearId))
     }
 

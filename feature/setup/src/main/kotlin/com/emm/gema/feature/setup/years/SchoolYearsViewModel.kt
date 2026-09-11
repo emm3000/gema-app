@@ -5,9 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
-import com.emm.gema.core.domain.section.GetSectionCountsUseCase
 import com.emm.gema.core.domain.schoolyear.kindLabel
+import com.emm.gema.core.domain.section.GetSectionCountsUseCase
 import com.emm.gema.feature.setup.rangeLabel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -59,7 +60,7 @@ class SchoolYearsViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun SchoolYear.toRow(sectionCounts: Map<String, Int>, activeSchoolYear: SchoolYear?): SchoolYearRow =
+    private fun SchoolYear.toRow(sectionCounts: Map<SchoolYearId, Int>, activeSchoolYear: SchoolYear?): SchoolYearRow =
         SchoolYearRow(
             id = id,
             label = label,

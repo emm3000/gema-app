@@ -1,17 +1,19 @@
 package com.emm.gema.feature.activities.form
 
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import java.time.LocalDate
 
 data class ActivityFormUiState(
     val isLoading: Boolean = true,
-    val activityId: String? = null,
+    val activityId: ActivityId? = null,
     val name: String = "",
     val date: LocalDate? = null,
     val dateError: ActivityFormMessage? = null,
     val resolvedPeriodLabel: String? = null,
     val hasPeriodChangeWarning: Boolean = false,
     val competencyGroups: List<CompetencyGroup> = emptyList(),
-    val selectedCompetencyIds: Set<String> = emptySet(),
+    val selectedCompetencyIds: Set<CompetencyId> = emptySet(),
     val isDeleteConfirmVisible: Boolean = false,
 ) {
     val canSave: Boolean
@@ -27,7 +29,7 @@ data class CompetencyGroup(
 )
 
 data class CompetencyToggleRow(
-    val id: String,
+    val id: CompetencyId,
     val siagieOrdinal: Int,
     val name: String,
 )

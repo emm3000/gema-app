@@ -2,6 +2,7 @@ package com.emm.gema.feature.evaluation.worked
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.curriculum.PeriodCompetency
 import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
@@ -9,11 +10,13 @@ import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +27,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class WorkedCompetenciesViewModel(
-    private val sectionId: String,
-    private val periodId: String,
+    private val sectionId: SectionId,
+    private val periodId: PeriodId,
     private val area: Area,
     private val getSection: GetSectionUseCase,
     private val getPeriod: GetPeriodUseCase,
@@ -59,7 +62,7 @@ class WorkedCompetenciesViewModel(
         combine(
             getPeriodCompetencies(sectionId = sectionId, periodId = periodId, area = area),
             getRecordedLevelCounts(sectionId = sectionId, periodId = periodId),
-        ) { competencies: List<PeriodCompetency>, counts: Map<String, Int> ->
+        ) { competencies: List<PeriodCompetency>, counts: Map<CompetencyId, Int> ->
             _state.value.copy(
                 isLoading = false,
                 areaName = area.officialName,
@@ -78,7 +81,7 @@ class WorkedCompetenciesViewModel(
         return schoolYear.periodKind.labelFor(period.number)
     }
 
-    private fun toggle(competencyId: String, isWorked: Boolean) {
+    private fun toggle(competencyId: CompetencyId, isWorked: Boolean) {
         viewModelScope.launch {
             runCatching {
                 setCompetencyWorked(

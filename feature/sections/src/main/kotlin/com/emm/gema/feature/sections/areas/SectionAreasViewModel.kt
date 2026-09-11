@@ -8,6 +8,7 @@ import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionArea
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.section.title
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class SectionAreasViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val getSection: GetSectionUseCase,
     private val getSectionAreas: GetSectionAreasUseCase,
     private val setAreaVisibility: SetAreaVisibilityUseCase,

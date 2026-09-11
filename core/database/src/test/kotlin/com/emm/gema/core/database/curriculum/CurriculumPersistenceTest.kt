@@ -63,7 +63,7 @@ class CurriculumPersistenceTest {
         seedCurriculum()
         val target: CompetencyId = Competency.idOf(Area.PPSS, 3)
 
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, target, isWorked = true)
 
         assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).containsExactly(target)
     }
@@ -73,8 +73,8 @@ class CurriculumPersistenceTest {
         seedCurriculum()
         val target: CompetencyId = Competency.idOf(Area.PPSS, 3)
 
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, target, isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, target, isWorked = true)
 
         assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).hasSize(1)
     }
@@ -84,10 +84,10 @@ class CurriculumPersistenceTest {
         seedCurriculum()
         val kept: CompetencyId = Competency.idOf(Area.PPSS, 1)
         val dropped: CompetencyId = Competency.idOf(Area.PPSS, 2)
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(kept.value), isWorked = true)
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(dropped.value), isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, kept, isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, dropped, isWorked = true)
 
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(dropped.value), isWorked = false)
+        workedCompetencyRepository.setWorked(sectionId, periodId, dropped, isWorked = false)
 
         assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).containsExactly(kept)
     }
@@ -96,11 +96,11 @@ class CurriculumPersistenceTest {
     fun `clearing a section leaves the other sections alone`() = runTest {
         seedCurriculum()
         val target: CompetencyId = Competency.idOf(Area.MATE, 1)
-        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, target, isWorked = true)
         workedCompetencyRepository.setWorked(
             SectionId("section-2"),
             periodId,
-            CompetencyId(target.value),
+            target,
             isWorked = true,
         )
 

@@ -1,11 +1,12 @@
 package com.emm.gema.feature.attendance.day
 
 import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 
 sealed interface AttendanceDayUiIntent {
 
-    data class StatusSelected(val studentId: String, val status: AttendanceStatus) : AttendanceDayUiIntent
+    data class StatusSelected(val studentId: StudentId, val status: AttendanceStatus) : AttendanceDayUiIntent
 
     data class DatePicked(val value: LocalDate) : AttendanceDayUiIntent
 

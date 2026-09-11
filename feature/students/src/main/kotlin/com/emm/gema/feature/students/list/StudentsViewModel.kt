@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.Student
-import com.emm.gema.core.domain.section.title
+import com.emm.gema.core.domain.student.StudentId
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +24,7 @@ private val siagieMimeTypes: List<String> = listOf(
 )
 
 class StudentsViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val getSection: GetSectionUseCase,
     private val getStudents: GetStudentsUseCase,
     private val reactivateStudent: ReactivateStudentUseCase,
@@ -66,7 +68,7 @@ class StudentsViewModel(
         }
     }
 
-    private fun reactivate(studentId: String) {
+    private fun reactivate(studentId: StudentId) {
         viewModelScope.launch {
             runCatching { reactivateStudent(studentId) }
                 .onFailure { _effects.send(StudentsUiEffect.ShowMessage(StudentsMessage.REACTIVATE_FAILED)) }

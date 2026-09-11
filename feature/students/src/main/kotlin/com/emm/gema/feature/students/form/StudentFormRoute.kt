@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.students.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -17,8 +19,8 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun StudentFormRoute(
-    sectionId: String,
-    studentId: String?,
+    sectionId: SectionId,
+    studentId: StudentId?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

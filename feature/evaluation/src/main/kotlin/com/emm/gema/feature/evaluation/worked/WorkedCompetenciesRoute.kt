@@ -10,7 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.feature.evaluation.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -18,8 +20,8 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun WorkedCompetenciesRoute(
-    sectionId: String,
-    periodId: String,
+    sectionId: SectionId,
+    periodId: PeriodId,
     area: Area,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

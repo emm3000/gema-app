@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.attendance.AttendanceSiagieCode
 import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -175,7 +176,7 @@ private fun AttendanceMonthScreenPreview() {
                 canExport = true,
                 rows = listOf(
                     AttendanceMonthRow(
-                        studentId = "1",
+                        studentId = StudentId("1"),
                         displayName = "ACOSTA RIVERA, Luz M.",
                         countsByStatus = mapOf(
                             AttendanceStatus.PRESENT to 18,
@@ -185,7 +186,7 @@ private fun AttendanceMonthScreenPreview() {
                         ),
                     ),
                     AttendanceMonthRow(
-                        studentId = "2",
+                        studentId = StudentId("2"),
                         displayName = "BAUTISTA QUISPE, Jose",
                         countsByStatus = mapOf(
                             AttendanceStatus.PRESENT to 15,

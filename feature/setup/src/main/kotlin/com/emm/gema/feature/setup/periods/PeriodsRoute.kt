@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.feature.setup.R
 import com.emm.gema.feature.setup.resolve
 import kotlinx.coroutines.flow.collectLatest
@@ -18,7 +19,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun PeriodsRoute(
-    schoolYearId: String,
+    schoolYearId: SchoolYearId,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

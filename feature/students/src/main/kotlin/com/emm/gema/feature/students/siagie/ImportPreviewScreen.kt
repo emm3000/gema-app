@@ -13,6 +13,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -199,7 +200,7 @@ private fun ImportPreviewScreenPreview() {
                 rosterSize = 30,
                 created = listOf(ImportStudentRow("10000000000001", "ALVARADO QUISPE, MARIA")),
                 updated = listOf(ImportStudentRow("10000000000002", "BAUTISTA HUAMAN, JOSE")),
-                proposedWithdrawals = listOf(ImportWithdrawalRow("student-3", "TORRES PINO, LUIS", true)),
+                proposedWithdrawals = listOf(ImportWithdrawalRow(StudentId("student-3"), "TORRES PINO, LUIS", true)),
             ),
             onIntent = {},
         )

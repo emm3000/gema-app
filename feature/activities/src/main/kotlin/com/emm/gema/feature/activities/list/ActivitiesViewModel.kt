@@ -3,18 +3,22 @@ package com.emm.gema.feature.activities.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.GetActivitiesUseCase
 import com.emm.gema.core.domain.activity.GetActivityEvidenceStudentCountsUseCase
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
@@ -32,7 +36,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class ActivitiesViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getPeriods: GetPeriodsUseCase,
@@ -49,7 +53,7 @@ class ActivitiesViewModel(
     private val _effects: Channel<ActivitiesUiEffect> = Channel(Channel.BUFFERED)
     val effects: Flow<ActivitiesUiEffect> = _effects.receiveAsFlow()
 
-    private val selectedPeriodId: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val selectedPeriodId: MutableStateFlow<PeriodId?> = MutableStateFlow(null)
 
     init {
         viewModelScope.launch { load() }
@@ -72,7 +76,7 @@ class ActivitiesViewModel(
         val schoolYear: SchoolYear = getSchoolYear(section.schoolYearId) ?: return
         val periods: List<Period> = getPeriods(section.schoolYearId).first()
         val currentPeriod: Period? = getCurrentPeriod(section.schoolYearId)
-        val selectedId: String? = (currentPeriod ?: periods.firstOrNull())?.id
+        val selectedId: PeriodId? = (currentPeriod ?: periods.firstOrNull())?.id
 
         _state.value = _state.value.copy(
             isLoading = false,
@@ -99,9 +103,9 @@ class ActivitiesViewModel(
                     getWorkedCompetencies(sectionId, periodId),
                     getEvidenceStudentCounts(sectionId, periodId),
                     getStudents(sectionId),
-                ) { activities: List<Activity>, competencies: List<Competency>, counts: Map<String, Int>,
+                ) { activities: List<Activity>, competencies: List<Competency>, counts: Map<ActivityId, Int>,
                     students: List<Student> ->
-                    val competenciesById: Map<String, Competency> = competencies.associateBy { it.id }
+                    val competenciesById: Map<CompetencyId, Competency> = competencies.associateBy { it.id }
                     val studentCount: Int = students.count { !it.isWithdrawn }
 
                     activities.map { activity ->
@@ -112,7 +116,7 @@ class ActivitiesViewModel(
             .collect { rows -> _state.value = _state.value.copy(activities = rows) }
     }
 
-    private fun select(periodId: String) {
+    private fun select(periodId: PeriodId) {
         _state.value = _state.value.copy(selectedPeriodId = periodId)
         selectedPeriodId.value = periodId
     }
@@ -123,7 +127,7 @@ class ActivitiesViewModel(
 }
 
 private fun Activity.toRow(
-    competenciesById: Map<String, Competency>,
+    competenciesById: Map<CompetencyId, Competency>,
     evidenceRecordedCount: Int,
     studentCount: Int,
 ): ActivityRow = ActivityRow(

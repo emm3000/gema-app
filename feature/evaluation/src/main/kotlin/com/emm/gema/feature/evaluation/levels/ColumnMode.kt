@@ -1,6 +1,8 @@
 package com.emm.gema.feature.evaluation.levels
 
-fun PeriodLevelsUiState.enteringColumnMode(competencyId: String): PeriodLevelsUiState {
+import com.emm.gema.core.domain.curriculum.CompetencyId
+
+fun PeriodLevelsUiState.enteringColumnMode(competencyId: CompetencyId): PeriodLevelsUiState {
     if (columns.none { it.id == competencyId } || visibleRows.isEmpty()) return this
 
     return copy(

@@ -1,8 +1,12 @@
 package com.emm.gema.feature.evaluation.levels
 
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.UnworkedComment
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 
 data class PeriodLevelsUiState(
@@ -11,7 +15,7 @@ data class PeriodLevelsUiState(
     val areas: List<AreaOption> = emptyList(),
     val selectedArea: Area? = null,
     val periods: List<PeriodOption> = emptyList(),
-    val selectedPeriodId: String? = null,
+    val selectedPeriodId: PeriodId? = null,
     val columns: List<CompetencyColumn> = emptyList(),
     val rows: List<PeriodLevelRow> = emptyList(),
     val missingCount: Int = 0,
@@ -39,30 +43,30 @@ data class AreaOption(
 )
 
 data class PeriodOption(
-    val id: String,
+    val id: PeriodId,
     val label: String,
     val isCurrent: Boolean,
 )
 
 data class CompetencyColumn(
-    val id: String,
+    val id: CompetencyId,
     val siagieOrdinal: Int,
     val name: String,
 )
 
 data class PeriodLevelRow(
-    val studentId: String,
+    val studentId: StudentId,
     val displayName: String,
     val cells: List<PeriodLevelCell>,
 )
 
 data class PeriodLevelCellKey(
-    val studentId: String,
-    val competencyId: String,
+    val studentId: StudentId,
+    val competencyId: CompetencyId,
 )
 
 data class PeriodLevelCell(
-    val competencyId: String,
+    val competencyId: CompetencyId,
     val achievementLevel: AchievementLevel?,
     val unworkedComment: UnworkedComment?,
     val hasDescriptiveConclusion: Boolean,
@@ -72,8 +76,8 @@ data class PeriodLevelCell(
 }
 
 data class PeriodLevelSheetUiState(
-    val studentId: String,
-    val competencyId: String,
+    val studentId: StudentId,
+    val competencyId: CompetencyId,
     val studentName: String,
     val competencyLabel: String,
     val achievementLevel: AchievementLevel? = null,
@@ -84,13 +88,13 @@ data class PeriodLevelSheetUiState(
 )
 
 data class EvidenceRow(
-    val activityId: String,
+    val activityId: ActivityId,
     val activityName: String,
     val date: LocalDate,
     val achievementLevel: AchievementLevel,
 )
 
 data class ColumnModeUiState(
-    val competencyId: String,
+    val competencyId: CompetencyId,
     val currentStudentIndex: Int,
 )

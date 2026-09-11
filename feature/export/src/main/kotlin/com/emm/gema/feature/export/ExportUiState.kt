@@ -1,10 +1,14 @@
 package com.emm.gema.feature.export
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.student.StudentId
+
 data class ExportUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
     val periods: List<PeriodOption> = emptyList(),
-    val selectedPeriodId: String? = null,
+    val selectedPeriodId: PeriodId? = null,
     val templateFileName: String? = null,
     val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
     val templateMismatch: TemplateMismatchUi? = null,
@@ -24,7 +28,7 @@ data class TemplateMismatchUi(
 )
 
 data class PeriodOption(
-    val id: String,
+    val id: PeriodId,
     val label: String,
     val isCurrent: Boolean,
 )
@@ -39,8 +43,8 @@ sealed interface GradesExportUiState {
 }
 
 data class ExportGapRow(
-    val studentId: String,
+    val studentId: StudentId,
     val studentName: String,
-    val competencyId: String,
+    val competencyId: CompetencyId,
     val competencyLabel: String,
 )

@@ -12,17 +12,19 @@ import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
 import com.emm.gema.core.domain.export.GradesExportPlan
 import com.emm.gema.core.domain.export.GradesExportResult
 import com.emm.gema.core.domain.export.SIAGIE_GRADES_MIME_TYPE
-import com.emm.gema.core.domain.section.Area
-import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
+import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +40,7 @@ import kotlinx.coroutines.launch
 private const val ORDINAL_DIGITS: Int = 2
 
 class ExportViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getPeriods: GetPeriodsUseCase,
@@ -55,7 +57,7 @@ class ExportViewModel(
     private val _effects: Channel<ExportUiEffect> = Channel(Channel.BUFFERED)
     val effects: Flow<ExportUiEffect> = _effects.receiveAsFlow()
 
-    private val selectedPeriod: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val selectedPeriod: MutableStateFlow<PeriodId?> = MutableStateFlow(null)
 
     init {
         viewModelScope.launch { load() }
@@ -85,7 +87,7 @@ class ExportViewModel(
         val schoolYear: SchoolYear = getSchoolYear(section.schoolYearId) ?: return
         val periods: List<Period> = getPeriods(section.schoolYearId).first()
         val currentPeriod: Period? = getCurrentPeriod(section.schoolYearId)
-        val periodId: String? = (currentPeriod ?: periods.firstOrNull())?.id
+        val periodId: PeriodId? = (currentPeriod ?: periods.firstOrNull())?.id
 
         _state.value = _state.value.copy(
             isLoading = false,
@@ -107,7 +109,7 @@ class ExportViewModel(
     private suspend fun observePlan() {
         selectedPeriod
             .filterNotNull()
-            .flatMapLatest { periodId: String -> getGradesExportPlan(sectionId, periodId) }
+            .flatMapLatest { periodId: PeriodId -> getGradesExportPlan(sectionId, periodId) }
             .collect(::render)
     }
 
@@ -121,13 +123,13 @@ class ExportViewModel(
         else -> GradesExportUiState.Blocked(plan.gaps.map { it.toRow() })
     }
 
-    private fun selectPeriod(periodId: String) {
+    private fun selectPeriod(periodId: PeriodId) {
         _state.value = _state.value.copy(selectedPeriodId = periodId)
         selectedPeriod.value = periodId
     }
 
     private fun generateFile() {
-        val periodId: String = _state.value.selectedPeriodId ?: return
+        val periodId: PeriodId = _state.value.selectedPeriodId ?: return
         if (_state.value.activeExport != null) return
 
         viewModelScope.launch {
@@ -165,7 +167,7 @@ class ExportViewModel(
     }
 
     private fun exportSummary(format: SummaryFormat) {
-        val periodId: String = _state.value.selectedPeriodId ?: return
+        val periodId: PeriodId = _state.value.selectedPeriodId ?: return
         val periodLabel: String = _state.value.periods.find { it.id == periodId }?.label.orEmpty()
         if (_state.value.activeExport != null) return
 

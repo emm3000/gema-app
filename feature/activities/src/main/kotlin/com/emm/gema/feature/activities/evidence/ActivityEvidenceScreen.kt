@@ -13,7 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -129,13 +131,13 @@ private fun ActivityEvidenceScreenPreview() {
                 activityName = "Debate del aula",
                 activityDateLabel = "22/06/2026",
                 periodLabel = "II Bimestre",
-                competencies = listOf(CompetencyColumn("PPSS-1", "PPSS 01")),
-                selectedCompetencyId = "PPSS-1",
+                competencies = listOf(CompetencyColumn(CompetencyId("PPSS-1"), "PPSS 01")),
+                selectedCompetencyId = CompetencyId("PPSS-1"),
                 recordedCount = 1,
                 totalCount = 2,
                 rows = listOf(
-                    EvidenceLevelRow("student-1", "ACOSTA RIVERA, Luz Maria", AchievementLevel.B),
-                    EvidenceLevelRow("student-2", "BAUTISTA QUISPE, Jose", null),
+                    EvidenceLevelRow(StudentId("student-1"), "ACOSTA RIVERA, Luz Maria", AchievementLevel.B),
+                    EvidenceLevelRow(StudentId("student-2"), "BAUTISTA QUISPE, Jose", null),
                 ),
             ),
             onIntent = {},

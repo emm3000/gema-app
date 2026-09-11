@@ -1,12 +1,14 @@
 package com.emm.gema.feature.setup.years
 
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+
 data class SchoolYearsUiState(
     val isLoading: Boolean = true,
     val years: List<SchoolYearRow> = emptyList(),
 )
 
 data class SchoolYearRow(
-    val id: String,
+    val id: SchoolYearId,
     val label: String,
     val dateRangeLabel: String,
     val periodKindLabel: String,

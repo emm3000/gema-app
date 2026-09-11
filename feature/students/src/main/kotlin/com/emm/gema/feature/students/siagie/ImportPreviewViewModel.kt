@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
 import com.emm.gema.core.domain.siagie.PreviewSiagieImportUseCase
 import com.emm.gema.core.domain.siagie.SiagieImportEntry
@@ -12,7 +14,7 @@ import com.emm.gema.core.domain.siagie.SiagieImportPlan
 import com.emm.gema.core.domain.siagie.SiagieImportPreview
 import com.emm.gema.core.domain.siagie.SiagieImportRejection
 import com.emm.gema.core.domain.siagie.SiagieImportResult
-import com.emm.gema.core.domain.section.title
+import com.emm.gema.core.domain.student.StudentId
 import java.time.Clock
 import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +26,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class ImportPreviewViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val uri: String,
     private val getSection: GetSectionUseCase,
     private val previewImport: PreviewSiagieImportUseCase,
@@ -88,7 +90,7 @@ class ImportPreviewViewModel(
         _state.value = _state.value.copy(expandedGroup = if (expanded == group) null else group)
     }
 
-    private fun toggleWithdrawal(studentId: String, isSelected: Boolean) {
+    private fun toggleWithdrawal(studentId: StudentId, isSelected: Boolean) {
         val withdrawals: List<ImportWithdrawalRow> = _state.value.proposedWithdrawals
             .map { row -> if (row.studentId == studentId) row.copy(isSelected = isSelected) else row }
         _state.value = _state.value.copy(proposedWithdrawals = withdrawals)
@@ -98,7 +100,7 @@ class ImportPreviewViewModel(
         if (!_state.value.canApply) return
         _state.value = _state.value.copy(isApplying = true)
         viewModelScope.launch {
-            val withdrawals: Set<String> = _state.value.proposedWithdrawals
+            val withdrawals: Set<StudentId> = _state.value.proposedWithdrawals
                 .filter { it.isSelected }
                 .map { it.studentId }
                 .toSet()

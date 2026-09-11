@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.ui.share.shareFile
 import com.emm.gema.feature.attendance.R
 import java.io.File
@@ -25,7 +26,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AttendanceMonthRoute(
-    sectionId: String,
+    sectionId: SectionId,
     month: YearMonth?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

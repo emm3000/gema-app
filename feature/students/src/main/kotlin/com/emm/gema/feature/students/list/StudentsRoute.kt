@@ -13,6 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.students.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -20,8 +22,8 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun StudentsRoute(
-    sectionId: String,
-    onStudentForm: (String, String?) -> Unit,
+    sectionId: SectionId,
+    onStudentForm: (SectionId, StudentId?) -> Unit,
     onImportPreview: (String, String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -39,7 +41,7 @@ fun StudentsRoute(
             when (effect) {
                 is StudentsUiEffect.NavigateToStudentForm -> onStudentForm(effect.sectionId, effect.studentId)
                 is StudentsUiEffect.OpenDocumentPicker -> pickTemplate.launch(effect.mimeTypes.toTypedArray())
-                is StudentsUiEffect.NavigateToImportPreview -> onImportPreview(effect.sectionId, effect.uri)
+                is StudentsUiEffect.NavigateToImportPreview -> onImportPreview(effect.sectionId.value, effect.uri)
                 StudentsUiEffect.NavigateBack -> onBack()
                 is StudentsUiEffect.ShowMessage -> message = messages.getValue(effect.message)
             }

@@ -1,5 +1,7 @@
 package com.emm.gema.feature.students.siagie
 
+import com.emm.gema.core.domain.student.StudentId
+
 data class ImportPreviewUiState(
     val isLoading: Boolean = true,
     val fileName: String = "",
@@ -22,7 +24,7 @@ data class ImportStudentRow(
 )
 
 data class ImportWithdrawalRow(
-    val studentId: String,
+    val studentId: StudentId,
     val displayName: String,
     val isSelected: Boolean,
 )

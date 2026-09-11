@@ -1,12 +1,14 @@
 package com.emm.gema.feature.activities.list
 
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import java.time.LocalDate
 
 data class ActivitiesUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
     val periods: List<PeriodOption> = emptyList(),
-    val selectedPeriodId: String? = null,
+    val selectedPeriodId: PeriodId? = null,
     val activities: List<ActivityRow> = emptyList(),
 ) {
     val periodLabel: String
@@ -14,13 +16,13 @@ data class ActivitiesUiState(
 }
 
 data class PeriodOption(
-    val id: String,
+    val id: PeriodId,
     val label: String,
     val isCurrent: Boolean,
 )
 
 data class ActivityRow(
-    val id: String,
+    val id: ActivityId,
     val name: String,
     val date: LocalDate,
     val competencyLabels: List<String>,

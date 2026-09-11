@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Grade
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.label
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -26,7 +28,6 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
-import com.emm.gema.core.domain.section.label
 import com.emm.gema.feature.sections.R
 
 @Composable
@@ -155,7 +156,7 @@ private fun SectionFormScreenPreview() {
         SectionFormScreen(
             state = SectionFormUiState(
                 isLoading = false,
-                sectionId = "section-1",
+                sectionId = SectionId("section-1"),
                 grade = Grade.THIRD,
                 sectionName = "A",
                 canSave = true,

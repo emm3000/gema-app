@@ -10,7 +10,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.evaluation.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -18,15 +22,15 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun PeriodLevelsRoute(
-    sectionId: String,
-    onWorkedCompetencies: (String, String, Area) -> Unit,
+    sectionId: SectionId,
+    onWorkedCompetencies: (SectionId, PeriodId, Area) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    studentId: String? = null,
-    competencyId: String? = null,
+    studentId: StudentId? = null,
+    competencyId: CompetencyId? = null,
 ) {
     val viewModel: PeriodLevelsViewModel = koinViewModel {
-        parametersOf(sectionId, studentId.orEmpty(), competencyId.orEmpty())
+        parametersOf(sectionId, studentId, competencyId)
     }
     val state: State<PeriodLevelsUiState> = viewModel.state.collectAsStateWithLifecycle()
     var message: String? by remember { mutableStateOf(null) }

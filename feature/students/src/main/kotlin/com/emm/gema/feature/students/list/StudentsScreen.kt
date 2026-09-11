@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -152,8 +153,8 @@ private fun StudentsScreenPreview() {
                 isLoading = false,
                 sectionTitle = "3° A",
                 activeStudents = listOf(
-                    StudentRow("1", "ACOSTA RIVERA, Luz Maria", "12345678901234"),
-                    StudentRow("2", "BAUTISTA QUISPE, Jose", "12345678901235"),
+                    StudentRow(StudentId("1"), "ACOSTA RIVERA, Luz Maria", "12345678901234"),
+                    StudentRow(StudentId("2"), "BAUTISTA QUISPE, Jose", "12345678901235"),
                 ),
             ),
             onIntent = {},

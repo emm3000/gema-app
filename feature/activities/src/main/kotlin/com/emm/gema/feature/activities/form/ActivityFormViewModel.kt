@@ -3,19 +3,25 @@ package com.emm.gema.feature.activities.form
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.DeleteActivityUseCase
 import com.emm.gema.core.domain.activity.GetActivityUseCase
 import com.emm.gema.core.domain.activity.SaveActivityResult
 import com.emm.gema.core.domain.activity.SaveActivityUseCase
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
 import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import java.time.Clock
+import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,12 +30,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.Clock
-import java.time.LocalDate
 
 class ActivityFormViewModel(
-    private val sectionId: String,
-    private val activityId: String?,
+    private val sectionId: SectionId,
+    private val activityId: ActivityId?,
     private val clock: Clock = Clock.systemDefaultZone(),
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
@@ -49,7 +53,7 @@ class ActivityFormViewModel(
 
     private var section: Section? = null
     private var schoolYear: SchoolYear? = null
-    private var originalPeriodId: String? = null
+    private var originalPeriodId: PeriodId? = null
 
     init {
         viewModelScope.launch { load() }
@@ -108,7 +112,7 @@ class ActivityFormViewModel(
         }
 
         val competencies: List<Competency> = getWorkedCompetencies(sectionId, period.id).first()
-        val availableIds: Set<String> = competencies.map { it.id }.toSet()
+        val availableIds: Set<CompetencyId> = competencies.map { it.id }.toSet()
 
         _state.value = _state.value.copy(
             dateError = null,
@@ -119,13 +123,13 @@ class ActivityFormViewModel(
         )
     }
 
-    private fun hasPeriodChanged(resolvedPeriodId: String): Boolean {
-        val original: String = originalPeriodId ?: return false
+    private fun hasPeriodChanged(resolvedPeriodId: PeriodId): Boolean {
+        val original: PeriodId = originalPeriodId ?: return false
         return original != resolvedPeriodId
     }
 
-    private fun toggleCompetency(competencyId: String, isSelected: Boolean) {
-        val current: Set<String> = _state.value.selectedCompetencyIds
+    private fun toggleCompetency(competencyId: CompetencyId, isSelected: Boolean) {
+        val current: Set<CompetencyId> = _state.value.selectedCompetencyIds
         _state.value = _state.value.copy(
             selectedCompetencyIds = if (isSelected) current + competencyId else current - competencyId,
         )
@@ -154,7 +158,7 @@ class ActivityFormViewModel(
     }
 
     private fun delete() {
-        val id: String = activityId ?: return
+        val id: ActivityId = activityId ?: return
 
         viewModelScope.launch {
             runCatching { deleteActivity(id) }

@@ -5,12 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SchoolYearsRoute(
-    onPeriods: (String) -> Unit,
+    onPeriods: (SchoolYearId) -> Unit,
     onAddYear: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

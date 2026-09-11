@@ -1,12 +1,14 @@
 package com.emm.gema.feature.evaluation.levels
 
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 
 sealed interface PeriodLevelsUiEffect {
 
     data class NavigateToWorkedCompetencies(
-        val sectionId: String,
-        val periodId: String,
+        val sectionId: SectionId,
+        val periodId: PeriodId,
         val area: Area,
     ) : PeriodLevelsUiEffect
 

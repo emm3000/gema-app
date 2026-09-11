@@ -5,17 +5,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.section.SectionId
+import java.time.LocalDate
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
-import java.time.LocalDate
 
 @Composable
 fun HomeRoute(
-    onSectionForm: (String, String?) -> Unit,
-    onSectionDetail: (String) -> Unit,
-    onAttendanceDay: (String, LocalDate) -> Unit,
+    onSectionForm: (SchoolYearId, SectionId?) -> Unit,
+    onSectionDetail: (SectionId) -> Unit,
+    onAttendanceDay: (SectionId, LocalDate) -> Unit,
     onSchoolYears: () -> Unit,
-    onPeriods: (String) -> Unit,
+    onPeriods: (SchoolYearId) -> Unit,
     onNavigateToBackup: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),

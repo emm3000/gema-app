@@ -1,5 +1,6 @@
 package com.emm.gema.feature.setup.periods
 
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.feature.setup.PeriodRangeError
 import java.time.LocalDate
 
@@ -13,7 +14,7 @@ data class PeriodsUiState(
 )
 
 data class PeriodRow(
-    val id: String,
+    val id: PeriodId,
     val number: Int,
     val label: String,
     val startDate: LocalDate,

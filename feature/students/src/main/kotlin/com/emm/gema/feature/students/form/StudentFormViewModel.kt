@@ -2,13 +2,17 @@ package com.emm.gema.feature.students.form
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.GetStudentUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentSaveResult
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
+import java.time.Clock
+import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,12 +20,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.Clock
-import java.time.LocalDate
 
 class StudentFormViewModel(
-    private val sectionId: String,
-    private val studentId: String?,
+    private val sectionId: SectionId,
+    private val studentId: StudentId?,
     private val getStudent: GetStudentUseCase,
     private val saveStudent: SaveStudentUseCase,
     private val withdrawStudent: WithdrawStudentUseCase,
