@@ -3,6 +3,11 @@
     <string name="period_levels_sheet_conclusion_hint">Obligatoria para SIAGIE cuando el nivel es C. Puedes guardarla después.</string>
     <string name="period_levels_badge_current">ACTUAL</string>
     <string name="period_levels_column_student">ALUMNO</string>
+    <string name="period_levels_sheet_label_achievement_level">NIVEL DE LOGRO</string>
+    <string name="period_levels_sheet_label_unworked">O NO EVALUADA</string>
+    <string name="period_levels_sheet_label_conclusion">Conclusión descriptiva</string>
+    <string name="period_levels_sheet_label_evidence">EVIDENCIAS DE ESTE PERIODO</string>
+    <string name="period_levels_sheet_button_done">Listo</string>
     <string name="worked_competencies_message_toggle_failed">No se pudo guardar el cambio</string>
     <string name="worked_competencies_hint">Marca solo las competencias que trabajaste. Solo esas se exportan.</string>
     <string name="worked_competencies_understood">Entendido</string>

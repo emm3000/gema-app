@@ -50,6 +50,7 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence | built |
 | `GAttendanceToggle` | `GSegmentedPicker` | attendance day | planned |
 | `GCheckRow` | `Row` + `Checkbox` | worked competencies, activity form, import preview | built |
+| `GRadioRow` | `Row` + `RadioButton` | period level sheet | built |
 | `GSwitchRow` | `Row` + `Switch` | section areas | built |
 | `GBanner` | `Surface` | backup reminder, import rejection, export blocked, period warnings | built |
 | `GEmptyState` | `Column` | students, activities, period levels, sections | built |

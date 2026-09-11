@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,8 +14,10 @@ import com.emm.gema.core.domain.evaluation.UnworkedComment
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.ui.GBottomSheet
 import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GCheckRow
+import com.emm.gema.core.ui.GLevelChip
+import com.emm.gema.core.ui.GLevelChipSize
 import com.emm.gema.core.ui.GLevelPicker
+import com.emm.gema.core.ui.GRadioRow
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
@@ -36,8 +39,8 @@ fun PeriodLevelSheet(
         subtitle = sheet.competencyLabel,
     ) {
         GText(
-            text = "Nivel de logro",
-            style = GTextStyle.LABEL_SMALL,
+            text = stringResource(R.string.period_levels_sheet_label_achievement_level),
+            style = GTextStyle.LABEL_SMALL_EMPHASIS,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GLevelPicker(
@@ -48,19 +51,21 @@ fun PeriodLevelSheet(
             modifier = Modifier.fillMaxWidth(),
         )
         GText(
-            text = "O no evaluada",
-            style = GTextStyle.LABEL_SMALL,
+            text = stringResource(R.string.period_levels_sheet_label_unworked),
+            style = GTextStyle.LABEL_SMALL_EMPHASIS,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
+        Column(
+            modifier = Modifier.selectableGroup(),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
+        ) {
             UnworkedComment.entries.forEach { comment ->
-                GCheckRow(
+                GRadioRow(
                     title = comment.label,
-                    isChecked = sheet.unworkedComment == comment,
-                    onCheckedChange = { isChecked ->
-                        onIntent(
-                            PeriodLevelsUiIntent.SheetUnworkedCommentSelected(comment.takeIf { isChecked }),
-                        )
+                    isSelected = sheet.unworkedComment == comment,
+                    onClick = {
+                        val nextComment: UnworkedComment? = comment.takeIf { sheet.unworkedComment != comment }
+                        onIntent(PeriodLevelsUiIntent.SheetUnworkedCommentSelected(nextComment))
                     },
                 )
             }
@@ -68,15 +73,14 @@ fun PeriodLevelSheet(
         GTextField(
             value = sheet.descriptiveConclusion,
             onValueChange = { onIntent(PeriodLevelsUiIntent.SheetDescriptiveConclusionChanged(it)) },
-            label = "Conclusión descriptiva",
+            label = stringResource(R.string.period_levels_sheet_label_conclusion),
             modifier = Modifier.fillMaxWidth(),
-            supportingText = stringResource(R.string.period_levels_sheet_conclusion_hint)
-                .takeIf { sheet.isConclusionRequiredForExport },
+            supportingText = stringResource(R.string.period_levels_sheet_conclusion_hint),
         )
         if (sheet.evidence.isNotEmpty()) {
             GText(
-                text = "EVIDENCIAS DE ESTE PERIODO",
-                style = GTextStyle.LABEL_SMALL,
+                text = stringResource(R.string.period_levels_sheet_label_evidence),
+                style = GTextStyle.LABEL_SMALL_EMPHASIS,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
@@ -84,7 +88,7 @@ fun PeriodLevelSheet(
             }
         }
         GButton(
-            text = "Listo",
+            text = stringResource(R.string.period_levels_sheet_button_done),
             onClick = { onIntent(PeriodLevelsUiIntent.SheetDismissed) },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -107,9 +111,9 @@ private fun EvidenceListRow(evidence: EvidenceRow) {
             style = GTextStyle.BODY_MEDIUM,
             modifier = Modifier.weight(1f),
         )
-        GText(
-            text = evidence.achievementLevel.name,
-            style = GTextStyle.BODY_MEDIUM,
+        GLevelChip(
+            letter = evidence.achievementLevel.name,
+            size = GLevelChipSize.EVIDENCE,
         )
     }
 }

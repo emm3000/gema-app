@@ -28,6 +28,8 @@ object GemaSpacing {
     val activeBorder: Dp = 2.dp
     val narrowCellWidth: Dp = 36.dp
     val compactRowHeight: Dp = 52.dp
+    val evidenceChipWidth: Dp = 34.dp
+    val evidenceChipHeight: Dp = 26.dp
 }
 
 object GemaShapes {
