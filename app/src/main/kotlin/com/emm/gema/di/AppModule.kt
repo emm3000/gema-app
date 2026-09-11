@@ -1,8 +1,8 @@
 package com.emm.gema.di
 
+import com.emm.gema.core.database.GemaDatabase
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
-import com.emm.gema.core.database.createGemaDb
 import com.emm.gema.core.database.schoolyear.SqlDelightSchoolYearRepository
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.CreateSchoolYearUseCase
@@ -13,7 +13,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val appModule: Module = module {
-    single<GemaDb> { createGemaDb(androidContext()) }
+    single<GemaDatabase> { GemaDatabase(androidContext()) }
+    single<GemaDb> { get<GemaDatabase>().database }
     single<IdGenerator> { UuidIdGenerator() }
     single<SchoolYearRepository> { SqlDelightSchoolYearRepository(get()) }
     factory<CreateSchoolYearUseCase> { CreateSchoolYearUseCase(get(), get()) }
