@@ -13,12 +13,14 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.time.LocalDate
+import java.time.YearMonth
 
 @Composable
 fun AttendanceDayRoute(
     sectionId: String,
     date: LocalDate?,
     onBack: () -> Unit,
+    onMonthlySummary: (String, YearMonth) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: AttendanceDayViewModel = koinViewModel { parametersOf(sectionId, date) }
@@ -29,6 +31,7 @@ fun AttendanceDayRoute(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is AttendanceDayUiEffect.ShowMessage -> message = effect.text
+                is AttendanceDayUiEffect.NavigateToAttendanceMonth -> onMonthlySummary(effect.sectionId, effect.month)
                 AttendanceDayUiEffect.NavigateBack -> onBack()
             }
         }

@@ -93,6 +93,14 @@ fun AttendanceDayScreen(
             items(state.rows, key = { it.studentId }) { row: AttendanceRow ->
                 StudentRow(row = row, onIntent = onIntent)
             }
+            item {
+                GListItem(
+                    title = "Resumen del mes",
+                    modifier = Modifier.fillMaxWidth(),
+                    hasChevron = true,
+                    onClick = { onIntent(AttendanceDayUiIntent.MonthlySummaryClicked) },
+                )
+            }
         }
     }
 }

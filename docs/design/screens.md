@@ -874,10 +874,19 @@ data class AttendanceMonthRow(
 ```
 
 Intents: `PreviousMonthClicked`, `NextMonthClicked`,
-`MonthPicked(value: YearMonth)`, `ExportClicked`, `BackClicked`.
+`MonthPicked(value: YearMonth)`, `ExportClicked`,
+`TemplatePicked(uri: String)`, `BackClicked`.
 
-Effects: `ShareFile(path: String, mimeType: String)`, `NavigateBack`,
+Effects: `OpenDocumentPicker(mimeTypes: List<String>)`,
+`ShareFile(path: String, mimeType: String)`, `NavigateBack`,
 `ShowMessage(text: String)`.
+
+Note (ADR 0019): `canExport` reflects `recordedDayCount > 0`, not a stored
+template — the attendance template is a new file every month, so there is
+nothing to store. `ExportClicked` opens the system document picker
+(`OpenDocumentPicker`); the picked file drives `TemplatePicked`, which fills
+that exact file and hands the result to `ShareFile`. This differs from the
+grades card in `Export` (#20), which reads a template stored at import time.
 
 ---
 

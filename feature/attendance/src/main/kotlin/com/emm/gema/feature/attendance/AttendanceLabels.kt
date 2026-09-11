@@ -4,6 +4,7 @@ import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.ui.GAttendanceOption
 import java.time.LocalDate
+import java.time.YearMonth
 
 private val dayNames: List<String> = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
@@ -11,10 +12,17 @@ private val monthNames: List<String> = listOf(
     "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "set", "oct", "nov", "dic",
 )
 
+private val fullMonthNames: List<String> = listOf(
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "setiembre", "octubre", "noviembre", "diciembre",
+)
+
 fun Section.title(): String = "${grade.number}° $name"
 
 fun LocalDate.asDayLabel(): String =
     "${dayNames[dayOfWeek.value - 1]} $dayOfMonth ${monthNames[monthValue - 1]} $year"
+
+fun YearMonth.asMonthLabel(): String = "${fullMonthNames[monthValue - 1]} $year"
 
 fun AttendanceStatus.asToggleOption(): GAttendanceOption = when (this) {
     AttendanceStatus.PRESENT -> GAttendanceOption.PRESENT

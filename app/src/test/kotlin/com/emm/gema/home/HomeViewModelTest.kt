@@ -37,6 +37,7 @@ import org.junit.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
@@ -294,6 +295,11 @@ class HomeViewModelTest {
 
         override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
             records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
+
+        override fun observeBySectionAndMonth(sectionId: String, month: YearMonth): Flow<List<AttendanceRecord>> =
+            records.map { stored ->
+                stored.filter { it.sectionId == sectionId && YearMonth.from(it.date) == month }
+            }
 
         override suspend fun record(record: AttendanceRecord) {
             records.value = records.value

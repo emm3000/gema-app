@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.LocalDate
+import java.time.YearMonth
 
 private const val FUTURE_DATE_MESSAGE: String = "Todavía no puedes tomar asistencia de un día futuro"
 private const val RECORD_FAILED_MESSAGE: String = "No se pudo guardar la asistencia"
@@ -62,6 +63,9 @@ class AttendanceDayViewModel(
             AttendanceDayUiIntent.PreviousDayClicked -> moveTo(date.value.minusDays(1))
             AttendanceDayUiIntent.NextDayClicked -> moveTo(date.value.plusDays(1))
             AttendanceDayUiIntent.MarkAllPresent -> markAllPresent()
+            AttendanceDayUiIntent.MonthlySummaryClicked -> emit(
+                AttendanceDayUiEffect.NavigateToAttendanceMonth(sectionId, YearMonth.from(date.value)),
+            )
             AttendanceDayUiIntent.BackClicked -> emit(AttendanceDayUiEffect.NavigateBack)
         }
     }

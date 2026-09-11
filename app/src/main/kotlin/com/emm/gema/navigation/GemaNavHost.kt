@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.feature.attendance.day.AttendanceDayRoute
+import com.emm.gema.feature.attendance.month.AttendanceMonthRoute
 import com.emm.gema.feature.backup.BackupRoute
 import com.emm.gema.feature.evaluation.levels.PeriodLevelsRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
@@ -28,6 +29,7 @@ import com.emm.gema.feature.students.siagie.ImportPreviewRoute
 import com.emm.gema.home.HomeRoute
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
+import java.time.YearMonth
 
 @Composable
 fun GemaNavHost(
@@ -141,6 +143,27 @@ fun GemaNavHost(
                 date = entry.arguments?.getString(GemaRoutes.DATE)
                     ?.takeIf { it.isNotEmpty() }
                     ?.let(LocalDate::parse),
+                onBack = { navController.popBackStack() },
+                onMonthlySummary = { sectionId, month ->
+                    navController.navigate(GemaRoutes.attendanceMonthOf(sectionId, month))
+                },
+            )
+        }
+        composable(
+            route = GemaRoutes.ATTENDANCE_MONTH,
+            arguments = listOf(
+                navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType },
+                navArgument(GemaRoutes.MONTH) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { entry ->
+            AttendanceMonthRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                month = entry.arguments?.getString(GemaRoutes.MONTH)
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let(YearMonth::parse),
                 onBack = { navController.popBackStack() },
             )
         }

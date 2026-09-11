@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
+import java.time.YearMonth
 
 class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : AttendanceRepository {
 
@@ -20,6 +21,11 @@ class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : 
 
     override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
         records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
+
+    override fun observeBySectionAndMonth(sectionId: String, month: YearMonth): Flow<List<AttendanceRecord>> =
+        records.map { stored ->
+            stored.filter { it.sectionId == sectionId && YearMonth.from(it.date) == month }
+        }
 
     override suspend fun record(record: AttendanceRecord) {
         failOnce()
