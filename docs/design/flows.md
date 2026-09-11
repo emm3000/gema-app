@@ -56,19 +56,21 @@ Two product rules matter as much as the visual ones:
         +------------+ +------------+ +----------+ +--------+ +----------+
         |  Students  | |AttendanceD | |PeriodLvls| |Activit.| |  Export  |
         +-----+------+ +-----+------+ +----+-----+ +---+----+ +----+-----+
-              |              |             |           |           |
-        +-----+------+       v             v           v           v
-        v            v +------------+ +----------+ +---------+ +----------+
-  +-----------+ +----------+        | |WorkedComp| |ActivityF| |ExportBlk |
-  |StudentForm| |ImportPrev|  Month | +----------+ +----+----+ +----------+
+              |              |             |           |
+        +-----+------+       v             v           v
+        v            v +------------+ +----------+ +---------+
+  +-----------+ +----------+        | |WorkedComp| |ActivityF|
+  |StudentForm| |ImportPrev|  Month | +----------+ +----+----+
   +-----------+ +----------+--------+                   v
                                               +--------------+
                                               |ActivityEvid  |
                                               +--------------+
 
-  SectionDetail also reaches SectionAreas (hide/unhide Areas)
-  and SectionForm (rename). PeriodLevelSheet and ExportBlockers
-  are bottom sheets over their parent screen.
+  SectionDetail also reaches SectionAreas (hide/unhide Areas) and
+  SectionForm (rename). Home's Section card also jumps straight into
+  AttendanceD for today. PeriodLevelSheet is a bottom sheet over
+  PeriodLvls; Export's blocking gaps list inline in its own card instead
+  of a separate screen.
 ```
 
 There is **no bottom navigation bar**. The Section is the working context for
@@ -86,10 +88,13 @@ SetupYear ---> SetupSection ---> Home
    back exits      back returns to SetupYear (nothing committed yet)
 ```
 
-**SetupYear** collects the year label, start and end date, and the Period kind
-(bimester = 4 Periods, trimester = 3). Period start and end dates are pre-filled
-by dividing the year evenly and are editable inline on the same screen — the
-Teacher scrolls, does not navigate. Primary action: *Continue*.
+**SetupYear** collects the year label (pre-filled from the device date), start
+and end date, and the Period kind (bimester = 4 Periods, trimester = 3).
+Periods render as a compact list — one row per Period, its dates computed by
+dividing the year range evenly — with a short reassurance line at the top
+explaining that the dates are computed automatically. Tapping a Period row
+opens a small editor for that one Period instead of exposing eight raw date
+fields on the main screen. Primary action: *Continue*.
 
 **SetupSection** collects Grade (1-6) and Section name. Every primary Area starts
 active; the screen says so and offers "I do not teach every Area" as a secondary
@@ -113,7 +118,10 @@ Teacher to choose a Period by hand except to look at a past one.
 **Home** shows the active School Year, the current Period with days remaining,
 the Backup reminder banner when the last Backup is older than the configured
 threshold (US 59), and the list of Sections. Primary action: a FAB that adds a
-Section. Tapping a Section opens `SectionDetail`.
+Section. Tapping a Section's title opens `SectionDetail`; each card also
+carries an inline *Take attendance today* button that jumps straight into
+`AttendanceDay` for that Section in one tap, without the detour through the
+hub.
 
 **SectionDetail** is a hub, not a dashboard. It shows Grade and name, the Student
 count, whether a SIAGIE Template is stored, and today's attendance state ("not
@@ -182,7 +190,15 @@ present / late / absent / justified. Every Student renders as present and
 **nothing is persisted until the first tap** on that Student, so opening a date
 to look at it does not fabricate records. Each tap writes one row immediately
 (US 31) — no save button, no confirmation dialog, no undo snackbar that could be
-lost with the process.
+lost with the process. A header action, *Todos presentes*, records present for
+every Student that is still unmarked in one tap, for the common case where the
+whole Section showed up. A subtitle under the date stepper states that every
+tap saves automatically, so the Teacher never looks for a save button.
+
+Unmarked rows render visibly distinct — a warm surface colour plus a dashed
+outline, never colour alone — and a header counter reads "N sin marcar" so the
+Teacher can see at a glance who is left before reaching for *Todos presentes*
+or tapping through the rest by hand.
 
 The date changes with a left/right stepper plus a tappable label opening a
 picker. Future dates are unreachable: the forward control disables at today.
@@ -216,11 +232,17 @@ shows an empty state that routes here in one tap.
 column plus a horizontally scrolled band of competency cells**, each cell a
 `GLevelChip` showing AD / A / B / C, an Unworked Comment marker, or an empty
 slot. A row of SIAGIE ordinals (01, 02, 05) sits above the band so the Teacher
-always knows which competency a column is; the full name is one tap away on the
-header.
+always knows which competency a column is.
 
-Tapping a cell opens **PeriodLevelSheet**, a bottom sheet holding everything for
-one Student x one Competency:
+Tapping a column's header instead of a single cell enters **column mode**: a
+bottom picker offers AD / A / B / C / Sin nivel for the current Student only,
+records the pick and advances to the next Student automatically, so grading
+one competency for the whole Section is a straight run of taps instead of
+re-aiming at a cell each time. *Listo*, or picking a level for the last
+Student, exits column mode.
+
+Tapping a single cell, outside column mode, still opens **PeriodLevelSheet**,
+a bottom sheet holding everything for one Student x one Competency:
 
 - the four Achievement Levels as one picker row;
 - the three Unworked Comments as a second, mutually exclusive group — a Period
@@ -259,27 +281,30 @@ first-class option in the picker, not the absence of an action.
 
 Deleting an Activity deletes its Evidence Levels and touches no Period Level.
 
-## 8. Export (US 47-54 — tickets #12, #13, #14)
+## 8. Export, i.e. "Entregar" (US 47-54 — tickets #12, #13, #14)
 
 ```
-SectionDetail ---> Export ---+-- SIAGIE grades -----> validate --+-- ok ---> share sheet
-                             |                                   +-- gaps -> ExportBlockers
-                             +-- SIAGIE attendance (month) -----------------> share sheet
-                             +-- PDF / CSV summary --------------------------> share sheet
+SectionDetail ---> Entregar ---+-- SIAGIE grades -----> validate --+-- ok ---> share sheet
+                               |                                   +-- gaps -> inline rows
+                               +-- SIAGIE attendance (month) -----------------> share sheet
+                               +-- PDF / CSV summary --------------------------> share sheet
 ```
 
-One **Export** screen holds all three outputs for the selected Period, because a
-Teacher thinks "I have to hand in the period", not "I need an xlsx".
+One **Entregar** screen (screen id `Export`) holds all three outputs for the
+selected Period, because a Teacher thinks "I have to hand in the period", not
+"I need an xlsx". The title reads *Entregar*, matching that goal rather than
+the file format.
 
 SIAGIE grades export is offered only when a Template is stored for the Section.
 Without one, that option is visibly disabled with the reason, and the PDF/CSV
 option is promoted (US 53) — the app explains, it does not just hide.
 
 Validation runs in the domain before any file is produced. If any C lacks a
-Descriptive Conclusion, **ExportBlockers** lists every offending
-Student x Competency, each row tapping straight through to the
-`PeriodLevelSheet` that fixes it and returning to `Export`. No partial file is
-ever written (US 49).
+Descriptive Conclusion, the grades card lists every offending
+Student x Competency as a tap-through row inside the card itself — no separate
+bottom sheet — each one opening the `PeriodLevelSheet` that fixes it and
+returning to `Entregar`. *Generar archivo* enables only once nothing is
+pending. No partial file is ever written (US 49).
 
 On success the file keeps its original SIAGIE name and goes to the Android share
 sheet (US 48, 51). Gema owns no "sent" state, does not rename, does not
