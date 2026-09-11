@@ -1,6 +1,7 @@
 package com.emm.gema.core.domain.section
 
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
+import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
 import com.emm.gema.core.domain.fake.InMemorySectionRepository
 import com.emm.gema.core.domain.fake.SequentialIdGenerator
 import com.google.common.truth.Truth.assertThat
@@ -12,9 +13,14 @@ class SectionUseCasesTest {
 
     private val sectionRepository = InMemorySectionRepository()
     private val sectionAreaRepository = InMemorySectionAreaRepository()
+    private val workedCompetencyRepository = InMemoryWorkedCompetencyRepository()
     private val createSection = CreateSectionUseCase(sectionRepository, SequentialIdGenerator("section"))
     private val updateSection = UpdateSectionUseCase(sectionRepository)
-    private val deleteSection = DeleteSectionUseCase(sectionRepository, sectionAreaRepository)
+    private val deleteSection = DeleteSectionUseCase(
+        sectionRepository,
+        sectionAreaRepository,
+        workedCompetencyRepository,
+    )
     private val getSections = GetSectionsUseCase(sectionRepository)
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)
     private val setAreaVisibility = SetAreaVisibilityUseCase(sectionAreaRepository)

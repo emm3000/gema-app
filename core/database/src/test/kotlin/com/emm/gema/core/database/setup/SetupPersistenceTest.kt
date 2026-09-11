@@ -23,6 +23,8 @@ import com.emm.gema.core.domain.schoolyear.PeriodDates
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.CreateSectionUseCase
+import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
+import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
@@ -53,6 +55,8 @@ class SetupPersistenceTest {
     private val periodRepository: PeriodRepository = SqlDelightPeriodRepository(database, dispatcher)
     private val sectionRepository: SectionRepository = SqlDelightSectionRepository(database, dispatcher)
     private val sectionAreaRepository: SectionAreaRepository = SqlDelightSectionAreaRepository(database, dispatcher)
+    private val workedCompetencyRepository: WorkedCompetencyRepository =
+        SqlDelightWorkedCompetencyRepository(database, dispatcher)
     private val activeSchoolYearRepository: ActiveSchoolYearRepository =
         SqlDelightActiveSchoolYearRepository(database, dispatcher)
     private val setupRepository: SetupRepository = SqlDelightSetupRepository(database, dispatcher)
@@ -64,7 +68,11 @@ class SetupPersistenceTest {
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)
     private val setAreaVisibility = SetAreaVisibilityUseCase(sectionAreaRepository)
     private val createSection = CreateSectionUseCase(sectionRepository, UuidIdGenerator())
-    private val deleteSection = DeleteSectionUseCase(sectionRepository, sectionAreaRepository)
+    private val deleteSection = DeleteSectionUseCase(
+        sectionRepository,
+        sectionAreaRepository,
+        workedCompetencyRepository,
+    )
     private val switchSchoolYear = SwitchSchoolYearUseCase(activeSchoolYearRepository)
     private val getActiveSchoolYear = GetActiveSchoolYearUseCase(activeSchoolYearRepository, schoolYearRepository)
     private val updatePeriods = UpdatePeriodsUseCase(periodRepository, schoolYearRepository)

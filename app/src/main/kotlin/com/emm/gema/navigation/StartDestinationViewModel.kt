@@ -2,6 +2,7 @@ package com.emm.gema.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.curriculum.SeedCurriculumUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class StartDestinationViewModel(
     private val getSchoolYears: GetSchoolYearsUseCase,
+    private val seedCurriculum: SeedCurriculumUseCase,
 ) : ViewModel() {
 
     private val _startDestination: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -18,6 +20,7 @@ class StartDestinationViewModel(
 
     init {
         viewModelScope.launch {
+            seedCurriculum()
             val hasSchoolYear: Boolean = getSchoolYears().first().isNotEmpty()
             _startDestination.value = if (hasSchoolYear) GemaRoutes.HOME else GemaRoutes.SETUP_YEAR
         }

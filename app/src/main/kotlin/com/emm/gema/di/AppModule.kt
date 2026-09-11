@@ -8,6 +8,8 @@ import com.emm.gema.core.database.backup.SharedPreferencesBackupSettingsReposito
 import com.emm.gema.core.database.schoolyear.SqlDelightActiveSchoolYearRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightPeriodRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightSchoolYearRepository
+import com.emm.gema.core.database.curriculum.SqlDelightCompetencyRepository
+import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.setup.SqlDelightSetupRepository
@@ -20,10 +22,16 @@ import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.backup.RestoreBackupUseCase
 import com.emm.gema.core.domain.backup.SetReminderThresholdUseCase
 import com.emm.gema.core.domain.backup.ValidateBackupUseCase
+import com.emm.gema.core.domain.curriculum.CompetencyRepository
+import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
+import com.emm.gema.core.domain.curriculum.SeedCurriculumUseCase
+import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
+import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
+import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
@@ -64,6 +72,8 @@ val appModule: Module = module {
     single<SectionAreaRepository> { SqlDelightSectionAreaRepository(get()) }
     single<ActiveSchoolYearRepository> { SqlDelightActiveSchoolYearRepository(get()) }
     single<SetupRepository> { SqlDelightSetupRepository(get()) }
+    single<CompetencyRepository> { SqlDelightCompetencyRepository(get()) }
+    single<WorkedCompetencyRepository> { SqlDelightWorkedCompetencyRepository(get()) }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -73,17 +83,21 @@ val appModule: Module = module {
     factory<GetActiveSchoolYearUseCase> { GetActiveSchoolYearUseCase(get(), get()) }
     factory<SwitchSchoolYearUseCase> { SwitchSchoolYearUseCase(get()) }
     factory<GetPeriodsUseCase> { GetPeriodsUseCase(get()) }
+    factory<GetPeriodUseCase> { GetPeriodUseCase(get()) }
     factory<GetCurrentPeriodUseCase> { GetCurrentPeriodUseCase(get(), get()) }
     factory<UpdatePeriodsUseCase> { UpdatePeriodsUseCase(get(), get()) }
     factory<GetSchoolYearUseCase> { GetSchoolYearUseCase(get()) }
     factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
     factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
-    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get()) }
+    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get(), get()) }
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
     factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }
     factory<GetSectionUseCase> { GetSectionUseCase(get()) }
     factory<SetAreaVisibilityUseCase> { SetAreaVisibilityUseCase(get()) }
+    factory<SeedCurriculumUseCase> { SeedCurriculumUseCase(get()) }
+    factory<GetPeriodCompetenciesUseCase> { GetPeriodCompetenciesUseCase(get(), get()) }
+    factory<SetCompetencyWorkedUseCase> { SetCompetencyWorkedUseCase(get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
     factory<InspectBackupUseCase> { InspectBackupUseCase(get(), get()) }
@@ -91,7 +105,7 @@ val appModule: Module = module {
     factory<ObserveBackupStatusUseCase> { ObserveBackupStatusUseCase(get(), get()) }
     factory<SetReminderThresholdUseCase> { SetReminderThresholdUseCase(get()) }
 
-    viewModel { StartDestinationViewModel(get()) }
+    viewModel { StartDestinationViewModel(get(), get()) }
     viewModelOf(::HomeViewModel)
     viewModelOf(::BackupViewModel)
 }
