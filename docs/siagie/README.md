@@ -35,7 +35,13 @@ Legend block below the data lists competencies by number for that area
 (e.g. PPSS: 01 Construye su identidad, 02 Convive y participa ..., 05 Gestiona
 responsablemente los recursos economicos).
 
-NL dropdown values:
+NL dropdown values (exact Spanish strings from the UGEL San Marcos instructive legend; whether the cell stores the short token or the full sentence is unconfirmed):
+
+- `Comentario 1. No se logró realizar acciones para su desarrollo`
+- `Comentario 2. No se cuenta con evidencia suficiente para determinar nivel de logro.`
+- `Comentario 3. Otro.`
+
+Meaning:
 - `AD`, `A`, `B`, `C` — achievement levels.
 - `Comentario 1` — no actions were carried out for its development.
 - `Comentario 2` — not enough evidence to determine the level.
