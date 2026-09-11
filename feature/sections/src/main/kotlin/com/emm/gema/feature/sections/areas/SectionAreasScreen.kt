@@ -1,23 +1,31 @@
 package com.emm.gema.feature.sections.areas
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.theme.GemaBorder
+import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSwitchRow
 import com.emm.gema.core.ui.GText
@@ -36,8 +44,8 @@ fun SectionAreasScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = stringResource(R.string.sections_areas_title),
-                subtitle = state.sectionTitle,
+                title = stringResource(R.string.sections_areas_title, state.sectionTitle),
+                subtitle = stringResource(R.string.sections_areas_subtitle),
                 onBackClick = { onIntent(SectionAreasUiIntent.BackClicked) },
             )
         },
@@ -47,8 +55,8 @@ fun SectionAreasScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(vertical = GemaSpacing.screenGutter),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+            contentPadding = PaddingValues(top = GemaSpacing.small, bottom = GemaSpacing.screenGutter),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             if (message != null) {
                 item {
@@ -68,13 +76,23 @@ fun SectionAreasScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            items(state.areas, key = { it.id.name }) { row ->
-                GSwitchRow(
-                    title = row.name,
-                    isChecked = row.isActive,
-                    onCheckedChange = { onIntent(SectionAreasUiIntent.AreaToggled(row.id, it)) },
+            item {
+                AreaSwitchList(areas = state.areas, onIntent = onIntent)
+            }
+            items(
+                state.areas.filter { it.recordedLevelCount > 0 },
+                key = { "recorded-${it.id.name}" },
+            ) { row ->
+                GBanner(
+                    text = pluralStringResource(
+                        R.plurals.sections_areas_recorded_levels,
+                        row.recordedLevelCount,
+                        row.name,
+                        row.recordedLevelCount,
+                    ),
                     modifier = Modifier.fillMaxWidth(),
-                    subtitle = recordedLevelsLabel(row.recordedLevelCount),
+                    tone = GBannerTone.WARNING,
+                    icon = Icons.Filled.Warning,
                 )
             }
         }
@@ -82,9 +100,30 @@ fun SectionAreasScreen(
 }
 
 @Composable
-private fun recordedLevelsLabel(recordedLevelCount: Int): String? =
-    pluralStringResource(R.plurals.sections_areas_recorded_levels, recordedLevelCount, recordedLevelCount)
-        .takeIf { recordedLevelCount > 0 }
+private fun AreaSwitchList(
+    areas: List<AreaToggleRow>,
+    onIntent: (SectionAreasUiIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(GemaShapes.container)
+            .border(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant, GemaShapes.container),
+    ) {
+        areas.forEachIndexed { index, row ->
+            GSwitchRow(
+                title = row.name,
+                isChecked = row.isActive,
+                onCheckedChange = { onIntent(SectionAreasUiIntent.AreaToggled(row.id, it)) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (index < areas.lastIndex) {
+                GDivider()
+            }
+        }
+    }
+}
 
 @PreviewLightDark
 @Composable

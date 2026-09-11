@@ -28,7 +28,7 @@ fun GSwitchRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = GemaSpacing.minimumTouchTarget)
+            .heightIn(min = GemaSpacing.compactRowHeight)
             .toggleable(value = isChecked, onValueChange = onCheckedChange, role = Role.Switch)
             .padding(horizontal = GemaSpacing.medium),
         verticalAlignment = Alignment.CenterVertically,
