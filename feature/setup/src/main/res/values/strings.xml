@@ -1,4 +1,9 @@
 <resources>
+    <string name="school_years_title">Años escolares</string>
+    <string name="school_years_subtitle">Toca un año para activarlo</string>
+    <string name="school_years_badge_active">ACTIVO</string>
+    <string name="school_years_periods_label">Periodos</string>
+    <string name="school_years_add_year">Nuevo año</string>
     <string name="setup_year_error_missing_label">Escribe un nombre para el año escolar</string>
     <string name="setup_year_error_invalid_range">El año escolar termina después de empezar</string>
     <string name="setup_year_error_too_short">El año escolar es muy corto para sus periodos</string>
