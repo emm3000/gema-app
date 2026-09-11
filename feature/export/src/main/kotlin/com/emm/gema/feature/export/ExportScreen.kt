@@ -1,0 +1,184 @@
+package com.emm.gema.feature.export
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.theme.GemaSpacing
+import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.ui.GBanner
+import com.emm.gema.core.ui.GBannerTone
+import com.emm.gema.core.ui.GButton
+import com.emm.gema.core.ui.GButtonVariant
+import com.emm.gema.core.ui.GCard
+import com.emm.gema.core.ui.GDropdownPicker
+import com.emm.gema.core.ui.GListItem
+import com.emm.gema.core.ui.GPickerOption
+import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GTopBar
+
+private const val CURRENT_PERIOD_BADGE: String = "Actual"
+
+@Composable
+fun ExportScreen(
+    state: ExportUiState,
+    onIntent: (ExportUiIntent) -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = SnackbarHostState(),
+) {
+    GScreen(
+        modifier = modifier,
+        snackbarHostState = snackbarHostState,
+        topBar = {
+            GTopBar(
+                title = stringResource(R.string.export_title),
+                subtitle = state.sectionTitle,
+                onBackClick = { onIntent(ExportUiIntent.BackClicked) },
+            )
+        },
+    ) { scaffoldPadding ->
+        Column(
+            modifier = Modifier
+                .padding(scaffoldPadding)
+                .padding(GemaSpacing.screenGutter)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
+        ) {
+            GDropdownPicker(
+                options = state.periods.map {
+                    GPickerOption(
+                        value = it.id,
+                        label = it.label,
+                        badge = CURRENT_PERIOD_BADGE.takeIf { _ -> it.isCurrent },
+                    )
+                },
+                selected = state.selectedPeriodId,
+                onSelect = { onIntent(ExportUiIntent.PeriodSelected(it)) },
+                label = stringResource(R.string.export_period_label),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            GradesCard(state = state, onIntent = onIntent)
+            Text(
+                text = stringResource(R.string.export_file_name_note),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+@Composable
+private fun GradesCard(
+    state: ExportUiState,
+    onIntent: (ExportUiIntent) -> Unit,
+) {
+    GCard {
+        Text(
+            text = stringResource(R.string.export_grades_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        when (val grades: GradesExportUiState = state.gradesExportState) {
+            GradesExportUiState.Unavailable -> UnavailableGrades(onIntent = onIntent)
+            GradesExportUiState.Ready -> ReadyGrades(state = state, onIntent = onIntent)
+            is GradesExportUiState.Blocked -> BlockedGrades(state = state, gaps = grades.gaps, onIntent = onIntent)
+        }
+    }
+}
+
+@Composable
+private fun UnavailableGrades(onIntent: (ExportUiIntent) -> Unit) {
+    Text(
+        text = stringResource(R.string.export_grades_unavailable),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+    GButton(
+        text = stringResource(R.string.export_import_template),
+        onClick = { onIntent(ExportUiIntent.ImportTemplateClicked) },
+        modifier = Modifier.fillMaxWidth(),
+        variant = GButtonVariant.SECONDARY,
+    )
+}
+
+@Composable
+private fun ReadyGrades(
+    state: ExportUiState,
+    onIntent: (ExportUiIntent) -> Unit,
+) {
+    TemplateName(state.templateFileName)
+    GButton(
+        text = stringResource(R.string.export_generate_file),
+        onClick = { onIntent(ExportUiIntent.ExportGradesClicked) },
+        modifier = Modifier.fillMaxWidth(),
+        isBusy = state.isExporting,
+    )
+}
+
+@Composable
+private fun BlockedGrades(
+    state: ExportUiState,
+    gaps: List<ExportGapRow>,
+    onIntent: (ExportUiIntent) -> Unit,
+) {
+    TemplateName(state.templateFileName)
+    GBanner(
+        text = stringResource(R.string.export_grades_blocked, gaps.size),
+        tone = GBannerTone.WARNING,
+    )
+    gaps.forEach { gap: ExportGapRow ->
+        GListItem(
+            title = gap.studentName,
+            subtitle = "${gap.areaName} - ${gap.siagieOrdinal.toString().padStart(2, '0')}",
+            hasChevron = true,
+            onClick = { onIntent(ExportUiIntent.GapRowClicked(gap)) },
+        )
+    }
+    GButton(
+        text = stringResource(R.string.export_generate_file),
+        onClick = { onIntent(ExportUiIntent.ExportGradesClicked) },
+        modifier = Modifier.fillMaxWidth(),
+        enabled = false,
+    )
+}
+
+@Composable
+private fun TemplateName(fileName: String?) {
+    if (fileName != null) {
+        Text(text = fileName, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ExportScreenPreview() {
+    GemaTheme {
+        ExportScreen(
+            state = ExportUiState(
+                isLoading = false,
+                sectionTitle = "6° A",
+                periods = listOf(PeriodOption(id = "period-1", label = "II Bimestre", isCurrent = true)),
+                selectedPeriodId = "period-1",
+                templateFileName = "6 Primaria EBR.xlsx",
+                gradesExportState = GradesExportUiState.Blocked(
+                    listOf(
+                        ExportGapRow(
+                            studentId = "student-1",
+                            studentName = "BAUTISTA QUISPE, JOSE",
+                            competencyId = "PPSS-2",
+                            areaName = "Personal Social",
+                            siagieOrdinal = 2,
+                        ),
+                    ),
+                ),
+            ),
+            onIntent = {},
+        )
+    }
+}

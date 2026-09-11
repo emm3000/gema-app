@@ -1,0 +1,13 @@
+<resources>
+    <string name="export_title">Entregar</string>
+    <string name="export_period_label">Periodo</string>
+    <string name="export_grades_title">Notas para SIAGIE</string>
+    <string name="export_grades_unavailable">Esta sección no tiene una plantilla SIAGIE importada. Importa una desde Alumnos, o usa el resumen PDF/CSV.</string>
+    <string name="export_grades_blocked">Faltan %1$d conclusiones descriptivas</string>
+    <string name="export_import_template">Importar plantilla</string>
+    <string name="export_generate_file">Generar archivo</string>
+    <string name="export_file_name_note">El archivo conserva su nombre original.</string>
+    <string name="export_share_title">Compartir notas</string>
+    <string name="export_message_failed">No se pudo generar el archivo</string>
+    <string name="export_message_unavailable">Esta sección no tiene una plantilla SIAGIE importada</string>
+</resources>
