@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -19,10 +20,10 @@ import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.activities.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private const val CURRENT_PERIOD_BADGE: String = "ACTUAL"
 private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
 @Composable
@@ -31,6 +32,7 @@ fun ActivitiesScreen(
     onIntent: (ActivitiesUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currentPeriodBadge: String = stringResource(R.string.activities_list_badge_current)
     GScreen(
         topBar = {
             GTopBar(
@@ -54,7 +56,7 @@ fun ActivitiesScreen(
                     GPickerOption(
                         value = it.id,
                         label = it.label,
-                        badge = CURRENT_PERIOD_BADGE.takeIf { _ -> it.isCurrent },
+                        badge = currentPeriodBadge.takeIf { _ -> it.isCurrent },
                     )
                 },
                 selected = state.selectedPeriodId,

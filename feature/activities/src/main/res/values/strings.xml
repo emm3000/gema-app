@@ -3,4 +3,5 @@
     <string name="activity_form_message_outside_periods">Esa fecha no cae dentro de ningún periodo</string>
     <string name="activity_form_message_save_failed">No se pudo guardar la actividad</string>
     <string name="activity_form_period_change_warning">Esta actividad se moverá a otro periodo.</string>
+    <string name="activities_list_badge_current">ACTUAL</string>
 </resources>

@@ -1,5 +1,7 @@
 <resources>
     <string name="period_levels_message_save_failed">No se pudo guardar el nivel</string>
     <string name="period_levels_sheet_conclusion_hint">Obligatoria para SIAGIE cuando el nivel es C. Puedes guardarla después.</string>
+    <string name="period_levels_badge_current">ACTUAL</string>
+    <string name="period_levels_column_student">ALUMNO</string>
     <string name="worked_competencies_message_toggle_failed">No se pudo guardar el cambio</string>
 </resources>

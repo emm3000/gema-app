@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.evaluation.AchievementLevel
@@ -30,6 +31,7 @@ import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
+import com.emm.gema.feature.evaluation.R
 import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GLevelChip
@@ -39,9 +41,6 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
-
-private const val CURRENT_PERIOD_BADGE: String = "ACTUAL"
-private const val STUDENT_COLUMN_TITLE: String = "ALUMNO"
 
 @Composable
 fun PeriodLevelsScreen(
@@ -118,6 +117,7 @@ fun PeriodLevelsScreen(
 
 @Composable
 private fun Selectors(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) -> Unit) {
+    val currentPeriodBadge: String = stringResource(R.string.period_levels_badge_current)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -136,7 +136,7 @@ private fun Selectors(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiInten
                 GPickerOption(
                     value = it.id,
                     label = it.label,
-                    badge = CURRENT_PERIOD_BADGE.takeIf { _ -> it.isCurrent },
+                    badge = currentPeriodBadge.takeIf { _ -> it.isCurrent },
                 )
             },
             selected = state.selectedPeriodId,
@@ -179,7 +179,7 @@ private fun GridHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             GText(
-                text = STUDENT_COLUMN_TITLE,
+                text = stringResource(R.string.period_levels_column_student),
                 modifier = Modifier
                     .width(GemaSpacing.gridNameColumnWidth)
                     .padding(horizontal = GemaSpacing.medium),
