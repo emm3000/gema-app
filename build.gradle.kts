@@ -84,7 +84,46 @@ val checkModuleBoundaries: TaskProvider<CheckModuleBoundariesTask> = tasks.regis
     description = "Fails when a module depends on a layer it is not allowed to reach."
 }
 
+abstract class CheckLazyListKeysTask : DefaultTask() {
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val sourceFiles: ConfigurableFileCollection
+
+    @TaskAction
+    fun check() {
+        val pattern: Regex = Regex("""key = \{ it\.[a-zA-Z]*[iI]d \}""")
+        val violations: List<String> = buildList {
+            sourceFiles.forEach { file ->
+                file.readLines().forEachIndexed { index, line ->
+                    if (pattern.containsMatchIn(line)) {
+                        add("${file.path}:${index + 1}: $line")
+                    }
+                }
+            }
+        }
+        check(violations.isEmpty()) {
+            violations.joinToString(
+                separator = "\n",
+                prefix = "Bundle-unsafe LazyColumn key: pass the typed id's underlying primitive, e.g. `it.id.value`.\n"
+            )
+        }
+    }
+}
+
+val checkLazyListKeys: TaskProvider<CheckLazyListKeysTask> = tasks.register<CheckLazyListKeysTask>("checkLazyListKeys") {
+    group = "verification"
+    description = "Fails when a LazyColumn key passes a typed id value class instead of its underlying primitive."
+}
+
 gradle.projectsEvaluated {
+    checkLazyListKeys.configure {
+        sourceFiles.setFrom(
+            subprojects
+                .filter { it.path.startsWith(":feature:") || it.path == ":app" }
+                .map { it.fileTree("src") { include("**/*.kt") } }
+        )
+    }
     checkModuleBoundaries.configure {
         modulePaths.set(subprojects.map { it.path })
         moduleDependencies.set(
