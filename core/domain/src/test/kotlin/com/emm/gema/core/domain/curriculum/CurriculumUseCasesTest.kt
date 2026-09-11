@@ -1,6 +1,7 @@
 package com.emm.gema.core.domain.curriculum
 
 import com.emm.gema.core.domain.fake.InMemoryCompetencyRepository
+import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
 import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
 import com.emm.gema.core.domain.section.Area
 import com.google.common.truth.Truth.assertThat
@@ -15,6 +16,7 @@ class CurriculumUseCasesTest {
 
     private val competencyRepository: InMemoryCompetencyRepository = InMemoryCompetencyRepository()
     private val workedCompetencyRepository: InMemoryWorkedCompetencyRepository = InMemoryWorkedCompetencyRepository()
+    private val sectionAreaRepository: InMemorySectionAreaRepository = InMemorySectionAreaRepository()
     private val seedCurriculum: SeedCurriculumUseCase = SeedCurriculumUseCase(competencyRepository)
     private val getPeriodCompetencies: GetPeriodCompetenciesUseCase = GetPeriodCompetenciesUseCase(
         competencyRepository = competencyRepository,
@@ -22,6 +24,11 @@ class CurriculumUseCasesTest {
     )
     private val setCompetencyWorked: SetCompetencyWorkedUseCase =
         SetCompetencyWorkedUseCase(workedCompetencyRepository)
+    private val getWorkedCompetencies: GetWorkedCompetenciesUseCase = GetWorkedCompetenciesUseCase(
+        competencyRepository = competencyRepository,
+        workedCompetencyRepository = workedCompetencyRepository,
+        sectionAreaRepository = sectionAreaRepository,
+    )
 
     @Test
     fun `seeding writes the whole primary curriculum`() = runTest {
@@ -97,5 +104,27 @@ class CurriculumUseCasesTest {
 
         assertThat(getPeriodCompetencies(SECTION_ID, PERIOD_ID, Area.MATE).first().none { it.isWorked }).isTrue()
         assertThat(getPeriodCompetencies("section-2", PERIOD_ID, Area.MATE).first().count { it.isWorked }).isEqualTo(1)
+    }
+
+    @Test
+    fun `worked competencies span every area`() = runTest {
+        seedCurriculum()
+        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.PPSS, 1), isWorked = true)
+        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.MATE, 1), isWorked = true)
+
+        val worked: List<Competency> = getWorkedCompetencies(SECTION_ID, PERIOD_ID).first()
+
+        assertThat(worked.map { it.area }).containsExactly(Area.PPSS, Area.MATE)
+    }
+
+    @Test
+    fun `a hidden area drops its worked competencies`() = runTest {
+        seedCurriculum()
+        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.PPSS, 1), isWorked = true)
+        sectionAreaRepository.setAreaHidden(SECTION_ID, Area.PPSS, isHidden = true)
+
+        val worked: List<Competency> = getWorkedCompetencies(SECTION_ID, PERIOD_ID).first()
+
+        assertThat(worked).isEmpty()
     }
 }

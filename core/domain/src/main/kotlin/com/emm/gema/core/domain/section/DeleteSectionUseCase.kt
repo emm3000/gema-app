@@ -1,5 +1,7 @@
 package com.emm.gema.core.domain.section
 
+import com.emm.gema.core.domain.activity.ActivityRepository
+import com.emm.gema.core.domain.activity.EvidenceLevelRepository
 import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
@@ -14,6 +16,8 @@ class DeleteSectionUseCase(
     private val siagieImportStore: SiagieImportStore,
     private val periodLevelRepository: PeriodLevelRepository,
     private val attendanceRepository: AttendanceRepository,
+    private val activityRepository: ActivityRepository,
+    private val evidenceLevelRepository: EvidenceLevelRepository,
 ) {
 
     suspend operator fun invoke(sectionId: String) {
@@ -24,5 +28,7 @@ class DeleteSectionUseCase(
         siagieImportStore.clearSection(sectionId)
         periodLevelRepository.clearSection(sectionId)
         attendanceRepository.deleteBySection(sectionId)
+        evidenceLevelRepository.clearSection(sectionId)
+        activityRepository.clearSection(sectionId)
     }
 }
