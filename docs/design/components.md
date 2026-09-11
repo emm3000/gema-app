@@ -17,6 +17,7 @@ of truth.
 | `GemaSpacing` | `xs`, `sm`, `md`, `lg`, `xl`, `screenGutter`, `minTouchTarget` |
 | `GemaShapes` | `control` (buttons, inputs, chips), `container` (cards, sheets), `pill` |
 | `GemaColors` / `MaterialTheme.colorScheme` | `surface`, `surfaceVariant`, `onSurface`, `onSurfaceVariant`, `outline`, `primary`, `onPrimary`, `error`, `onError` |
+| `GemaAccents` | `unmarkedSurface`, `onUnmarkedSurface` (the warm surface behind an Attendance row nobody has touched yet; light and dark values live in `Color.kt`) |
 | `GemaTypography` | `titleLarge`, `titleMedium`, `bodyLarge`, `bodyMedium`, `labelLarge`, `labelSmall`, `numericMedium` |
 
 `minTouchTarget` is 48dp and is a hard floor for every interactive component in
@@ -424,15 +425,21 @@ fun GAttendanceToggle(
 ```
 
 Wraps `GSegmentedPicker` with the four fixed statuses. Tokens: inherited, plus
-`colorScheme.onSurfaceVariant` at reduced emphasis when `isRecorded` is false.
+`colorScheme.outline` for the dashed outline drawn while `isRecorded` is false.
 
 Tradeoffs:
 
 - **`isRecorded` is a separate parameter, not a nullable status.** The row must
   show "present" while storing nothing (US 25, 26). Modelling that as
   `status: AttendanceStatus?` would let a caller render an empty row, which is
-  never correct. Visually it is a lighter selected segment: clearly the default,
-  clearly not yet a decision.
+  never correct.
+- **An unrecorded toggle fills no segment and carries a dashed outline.** The
+  earlier sketch here said "a lighter selected segment"; the reviewed attendance
+  design replaced it, because a filled segment reads as a decision the Teacher
+  never made. The default still lives in the state (`status` is `PRESENT`), so
+  the first tap on `P` records Present like any other tap, and the screen pairs
+  the dashed outline with `GemaAccents.unmarkedSurface` behind the whole row and
+  an "N sin marcar" counter in the header.
 - **`onSelect` is not nullable** — unlike `GLevelPicker`. An attendance record
   cannot be cleared back to "not recorded"; the four statuses are total. Making
   the two controls differ here is deliberate, and the type says so.

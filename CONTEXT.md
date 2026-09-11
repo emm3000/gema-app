@@ -115,6 +115,17 @@ _Avoid_: roll call, register
 Present, late, absent, or justified absence.
 _Avoid_: mark, flag
 
+**Attendance Entry**:
+A Student's Attendance for one date as a screen shows it: an Attendance Status
+plus whether it is recorded. An unrecorded entry reads Present and stores
+nothing; the first tap records it.
+_Avoid_: attendance row, attendance cell
+
+**Unmarked**:
+A Student with no Attendance row for the open date. The Teacher sees how many
+are unmarked and can record Present for all of them in one action.
+_Avoid_: pending, missing
+
 ### SIAGIE exchange
 
 **SIAGIE Template**:

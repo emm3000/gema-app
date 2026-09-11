@@ -511,6 +511,10 @@ data class SectionDetailUiState(
     val missingPeriodLevelCount: Int = 0,
     val activityCount: Int = 0,
 )
+
+`todayAttendanceSummary` reads *Sin tomar* until the first Student of the day is
+recorded, then *N de M presentes*. `currentPeriodLabel`, `hasStoredTemplate`,
+`missingPeriodLevelCount` and `activityCount` arrive with their own tickets.
 ```
 
 Intents: `TakeAttendanceClicked`, `StudentsClicked`, `AttendanceClicked`,
@@ -787,7 +791,9 @@ data class AttendanceDayUiState(
     val totalCount: Int = 0,
     val unmarkedCount: Int = 0,
     val rows: List<AttendanceRow> = emptyList(),
-)
+) {
+    val canMarkAllPresent: Boolean get() = unmarkedCount > 0
+}
 
 data class AttendanceRow(
     val studentId: StudentId,
@@ -811,7 +817,8 @@ Notes:
   counts these rows and drives the header's "N sin marcar" pill.
 - `MarkAllPresent` records present for every `isRecorded = false` row in one
   action; a row already marked (present, late, absent or justified) is left as
-  the Teacher set it.
+  the Teacher set it, and the action disables itself once nothing is unmarked.
+- `MonthlySummaryClicked` and its effect arrive with AttendanceMonth (#13).
 - `canGoForward` is false on today; future dates are unreachable rather than
   rejected after the fact.
 - Withdrawn Students are absent from `rows` for dates on or after their
