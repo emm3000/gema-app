@@ -1,14 +1,13 @@
 import org.gradle.api.artifacts.VersionCatalog
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
 }
 
 extensions.configure<LibraryExtension> {
     namespace = "com.emm.gema" + path.replace(':', '.')
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 26
@@ -17,12 +16,6 @@ extensions.configure<LibraryExtension> {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 

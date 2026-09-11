@@ -1,5 +1,5 @@
 import org.gradle.api.artifacts.VersionCatalog
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     id("gema.android.library")
