@@ -27,8 +27,6 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 
-private const val CURRENT_PERIOD_BADGE: String = "Actual"
-
 @Composable
 fun ExportScreen(
     state: ExportUiState,
@@ -36,6 +34,7 @@ fun ExportScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
+    val currentPeriodBadge: String = stringResource(R.string.export_period_badge_current)
     GScreen(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
@@ -59,7 +58,7 @@ fun ExportScreen(
                     GPickerOption(
                         value = it.id,
                         label = it.label,
-                        badge = CURRENT_PERIOD_BADGE.takeIf { _ -> it.isCurrent },
+                        badge = currentPeriodBadge.takeIf { _ -> it.isCurrent },
                     )
                 },
                 selected = state.selectedPeriodId,
