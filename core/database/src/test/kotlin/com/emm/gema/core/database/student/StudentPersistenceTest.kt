@@ -3,6 +3,7 @@ package com.emm.gema.core.database.student
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.UuidIdGenerator
+import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.inMemoryGemaDb
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
@@ -52,6 +53,7 @@ class StudentPersistenceTest {
         workedCompetencyRepository,
         studentRepository,
         SqlDelightSiagieImportStore(database, dispatcher),
+        SqlDelightPeriodLevelRepository(database, dispatcher),
     )
     private val saveStudent = SaveStudentUseCase(studentRepository, UuidIdGenerator())
     private val getStudents = GetStudentsUseCase(studentRepository)

@@ -1,0 +1,51 @@
+CREATE TABLE period_level (
+    section_id TEXT NOT NULL,
+    period_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    achievement_level TEXT,
+    unworked_comment TEXT,
+    descriptive_conclusion TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (section_id, period_id, student_id, competency_id)
+);
+
+CREATE INDEX period_level_section_period ON period_level(section_id, period_id);
+
+upsert:
+INSERT OR REPLACE INTO period_level (
+    section_id, period_id, student_id, competency_id,
+    achievement_level, unworked_comment, descriptive_conclusion
+)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+selectByPeriod:
+SELECT *
+FROM period_level
+WHERE section_id = ? AND period_id = ?;
+
+selectOne:
+SELECT *
+FROM period_level
+WHERE section_id = ? AND period_id = ? AND student_id = ? AND competency_id = ?;
+
+selectRecordedCountsByPeriod:
+SELECT competency_id, COUNT(*) AS recorded_count
+FROM period_level
+WHERE section_id = ? AND period_id = ?
+  AND (achievement_level IS NOT NULL OR unworked_comment IS NOT NULL)
+GROUP BY competency_id;
+
+selectRecordedCountsBySection:
+SELECT competency_id, COUNT(*) AS recorded_count
+FROM period_level
+WHERE section_id = ?
+  AND (achievement_level IS NOT NULL OR unworked_comment IS NOT NULL)
+GROUP BY competency_id;
+
+delete:
+DELETE FROM period_level
+WHERE section_id = ? AND period_id = ? AND student_id = ? AND competency_id = ?;
+
+deleteBySection:
+DELETE FROM period_level
+WHERE section_id = ?;

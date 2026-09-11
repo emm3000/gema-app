@@ -61,7 +61,7 @@ class SchemaVersion4MigrationTest {
     }
 }
 
-private val schemaVersionFourStatements: List<String> = listOf(
+internal val schemaVersionFourStatements: List<String> = listOf(
     """
     CREATE TABLE student (
         id TEXT NOT NULL PRIMARY KEY,

@@ -3,6 +3,7 @@ package com.emm.gema.core.database.setup
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.UuidIdGenerator
+import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.inMemoryGemaDb
 import com.emm.gema.core.database.schoolyear.SqlDelightActiveSchoolYearRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightPeriodRepository
@@ -78,6 +79,7 @@ class SetupPersistenceTest {
         workedCompetencyRepository,
         studentRepository,
         SqlDelightSiagieImportStore(database, dispatcher),
+        SqlDelightPeriodLevelRepository(database, dispatcher),
     )
     private val switchSchoolYear = SwitchSchoolYearUseCase(activeSchoolYearRepository)
     private val getActiveSchoolYear = GetActiveSchoolYearUseCase(activeSchoolYearRepository, schoolYearRepository)
