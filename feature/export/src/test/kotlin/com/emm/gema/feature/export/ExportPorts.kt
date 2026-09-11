@@ -4,8 +4,12 @@ import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevel
+import com.emm.gema.core.domain.evaluation.PeriodLevelSummary
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
+import com.emm.gema.core.domain.evaluation.PeriodLevelSummaryPdfRenderer
+import com.emm.gema.core.domain.evaluation.SummaryDocuments
+import com.emm.gema.core.domain.evaluation.SummaryFile
 import com.emm.gema.core.domain.export.ExportedFile
 import com.emm.gema.core.domain.export.SiagieExportStore
 import com.emm.gema.core.domain.schoolyear.Period
@@ -179,4 +183,16 @@ class FakeExportStore : SiagieExportStore {
 
     override suspend fun write(fileName: String, content: ByteArray): ExportedFile =
         ExportedFile(name = fileName, path = "/cache/exports/$fileName")
+}
+
+class FakeSummaryDocuments : SummaryDocuments {
+
+    override suspend fun write(fileName: String, bytes: ByteArray): SummaryFile =
+        SummaryFile(name = fileName, path = "/cache/exports/$fileName")
+}
+
+class FakePeriodLevelSummaryPdfRenderer : PeriodLevelSummaryPdfRenderer {
+
+    override fun render(sectionTitle: String, periodLabel: String, summary: PeriodLevelSummary): ByteArray =
+        byteArrayOf(1, 2, 3)
 }

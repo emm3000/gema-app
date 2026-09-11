@@ -2,6 +2,7 @@ package com.emm.gema.feature.export
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -67,6 +68,7 @@ fun ExportScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             GradesCard(state = state, onIntent = onIntent)
+            SummaryCard(state = state, onIntent = onIntent)
             Text(
                 text = stringResource(R.string.export_file_name_note),
                 style = MaterialTheme.typography.bodySmall,
@@ -130,7 +132,7 @@ private fun ReadyGrades(
         text = stringResource(R.string.export_generate_file),
         onClick = { onIntent(ExportUiIntent.ExportGradesClicked) },
         modifier = Modifier.fillMaxWidth(),
-        isBusy = state.isExporting,
+        isBusy = state.activeExport == ActiveExport.GRADES,
     )
 }
 
@@ -159,6 +161,37 @@ private fun BlockedGrades(
         modifier = Modifier.fillMaxWidth(),
         enabled = false,
     )
+}
+
+@Composable
+private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit) {
+    GCard {
+        Text(
+            text = stringResource(R.string.export_summary_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        ) {
+            GButton(
+                text = stringResource(R.string.export_summary_pdf),
+                onClick = { onIntent(ExportUiIntent.ExportSummaryPdfClicked) },
+                modifier = Modifier.weight(1f),
+                variant = GButtonVariant.SECONDARY,
+                enabled = state.selectedPeriodId != null && state.activeExport != ActiveExport.SUMMARY_CSV,
+                isBusy = state.activeExport == ActiveExport.SUMMARY_PDF,
+            )
+            GButton(
+                text = stringResource(R.string.export_summary_csv),
+                onClick = { onIntent(ExportUiIntent.ExportSummaryCsvClicked) },
+                modifier = Modifier.weight(1f),
+                variant = GButtonVariant.SECONDARY,
+                enabled = state.selectedPeriodId != null && state.activeExport != ActiveExport.SUMMARY_PDF,
+                isBusy = state.activeExport == ActiveExport.SUMMARY_CSV,
+            )
+        }
+    }
 }
 
 @Composable

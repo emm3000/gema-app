@@ -4,7 +4,9 @@ import app.cash.turbine.test
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.evaluation.AchievementLevel
+import com.emm.gema.core.domain.evaluation.ExportPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.export.ExportGradesUseCase
@@ -174,6 +176,45 @@ class ExportViewModelTest {
         assertThat(viewModel.state.value.sectionTitle).isEqualTo("6° A")
     }
 
+    @Test
+    fun `exporting the summary as csv hands the file to the share sheet`() = runTest {
+        seedSection()
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.ExportSummaryCsvClicked)
+
+            val shared = awaitItem() as ExportUiEffect.ShareFile
+            assertThat(shared.mimeType).isEqualTo("text/csv")
+        }
+    }
+
+    @Test
+    fun `exporting the summary as pdf hands the file to the share sheet`() = runTest {
+        seedSection()
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.ExportSummaryPdfClicked)
+
+            val shared = awaitItem() as ExportUiEffect.ShareFile
+            assertThat(shared.mimeType).isEqualTo("application/pdf")
+        }
+    }
+
+    @Test
+    fun `activeExport is null once a summary export finishes`() = runTest {
+        seedSection()
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.ExportSummaryCsvClicked)
+            awaitItem()
+        }
+
+        assertThat(viewModel.state.value.activeExport).isNull()
+    }
+
     private fun viewModel(): ExportViewModel {
         val getPlan = GetGradesExportPlanUseCase(
             getSectionAreas = GetSectionAreasUseCase(sectionAreas),
@@ -201,6 +242,17 @@ class ExportViewModelTest {
                 writer = writer,
                 exportStore = FakeExportStore(),
                 students = students,
+            ),
+            exportPeriodLevelSummary = ExportPeriodLevelSummaryUseCase(
+                getSummary = GetPeriodLevelSummaryUseCase(
+                    sectionAreaRepository = sectionAreas,
+                    competencyRepository = competencies,
+                    workedCompetencyRepository = worked,
+                    studentRepository = students,
+                    periodLevelRepository = levels,
+                ),
+                documents = FakeSummaryDocuments(),
+                pdfRenderer = FakePeriodLevelSummaryPdfRenderer(),
             ),
         )
     }

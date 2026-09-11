@@ -2,6 +2,9 @@ package com.emm.gema.feature.export
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.evaluation.ExportPeriodLevelSummaryUseCase
+import com.emm.gema.core.domain.evaluation.SummaryFile
+import com.emm.gema.core.domain.evaluation.SummaryFormat
 import com.emm.gema.core.domain.export.ExportGap
 import com.emm.gema.core.domain.export.ExportGradesUseCase
 import com.emm.gema.core.domain.export.GetGradesExportPlanUseCase
@@ -43,6 +46,7 @@ class ExportViewModel(
     private val getGradesTemplateName: GetGradesTemplateNameUseCase,
     private val getGradesExportPlan: GetGradesExportPlanUseCase,
     private val exportGrades: ExportGradesUseCase,
+    private val exportPeriodLevelSummary: ExportPeriodLevelSummaryUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<ExportUiState> = MutableStateFlow(ExportUiState())
@@ -70,6 +74,8 @@ class ExportViewModel(
                 ),
             )
             ExportUiIntent.ImportTemplateClicked -> emit(ExportUiEffect.NavigateToStudents(sectionId))
+            ExportUiIntent.ExportSummaryCsvClicked -> exportSummary(SummaryFormat.CSV)
+            ExportUiIntent.ExportSummaryPdfClicked -> exportSummary(SummaryFormat.PDF)
             ExportUiIntent.BackClicked -> emit(ExportUiEffect.NavigateBack)
         }
     }
@@ -122,12 +128,12 @@ class ExportViewModel(
 
     private fun generateFile() {
         val periodId: String = _state.value.selectedPeriodId ?: return
-        if (_state.value.isExporting) return
+        if (_state.value.activeExport != null) return
 
         viewModelScope.launch {
-            _state.value = _state.value.copy(isExporting = true, templateMismatch = null)
+            _state.value = _state.value.copy(activeExport = ActiveExport.GRADES, templateMismatch = null)
             val result: Result<GradesExportResult> = runCatching { exportGrades(sectionId, periodId) }
-            _state.value = _state.value.copy(isExporting = false)
+            _state.value = _state.value.copy(activeExport = null)
             result
                 .onSuccess(::onExported)
                 .onFailure { emit(ExportUiEffect.ShowMessage(ExportMessage.EXPORT_FAILED)) }
@@ -156,6 +162,36 @@ class ExportViewModel(
             is GradesExportResult.Exported ->
                 emit(ExportUiEffect.ShareFile(path = result.file.path, mimeType = SIAGIE_GRADES_MIME_TYPE))
         }
+    }
+
+    private fun exportSummary(format: SummaryFormat) {
+        val periodId: String = _state.value.selectedPeriodId ?: return
+        val periodLabel: String = _state.value.periods.find { it.id == periodId }?.label.orEmpty()
+        if (_state.value.activeExport != null) return
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(activeExport = format.toActiveExport())
+            val result: Result<SummaryFile> = runCatching {
+                exportPeriodLevelSummary(
+                    sectionId = sectionId,
+                    periodId = periodId,
+                    sectionTitle = _state.value.sectionTitle,
+                    periodLabel = periodLabel,
+                    format = format,
+                )
+            }
+            _state.value = _state.value.copy(activeExport = null)
+            result
+                .onSuccess { file: SummaryFile ->
+                    emit(ExportUiEffect.ShareFile(path = file.path, mimeType = format.mimeType))
+                }
+                .onFailure { emit(ExportUiEffect.ShowMessage(ExportMessage.EXPORT_FAILED)) }
+        }
+    }
+
+    private fun SummaryFormat.toActiveExport(): ActiveExport = when (this) {
+        SummaryFormat.CSV -> ActiveExport.SUMMARY_CSV
+        SummaryFormat.PDF -> ActiveExport.SUMMARY_PDF
     }
 
     private fun emit(effect: ExportUiEffect) {

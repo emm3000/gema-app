@@ -10,5 +10,9 @@ sealed interface ExportUiIntent {
 
     data object ImportTemplateClicked : ExportUiIntent
 
+    data object ExportSummaryCsvClicked : ExportUiIntent
+
+    data object ExportSummaryPdfClicked : ExportUiIntent
+
     data object BackClicked : ExportUiIntent
 }

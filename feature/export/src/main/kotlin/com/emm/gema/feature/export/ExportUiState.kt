@@ -8,8 +8,14 @@ data class ExportUiState(
     val templateFileName: String? = null,
     val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
     val templateMismatch: TemplateMismatchUi? = null,
-    val isExporting: Boolean = false,
+    val activeExport: ActiveExport? = null,
 )
+
+enum class ActiveExport {
+    GRADES,
+    SUMMARY_CSV,
+    SUMMARY_PDF,
+}
 
 data class TemplateMismatchUi(
     val areaNames: List<String>,

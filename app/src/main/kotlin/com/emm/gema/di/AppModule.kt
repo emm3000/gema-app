@@ -42,15 +42,19 @@ import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.GetAreaRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
+import com.emm.gema.core.domain.evaluation.ExportPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelSummaryUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
+import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
+import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
+import com.emm.gema.core.domain.evaluation.PeriodLevelSummaryPdfRenderer
+import com.emm.gema.core.domain.evaluation.SavePeriodLevelUseCase
+import com.emm.gema.core.domain.evaluation.SummaryDocuments
 import com.emm.gema.core.domain.export.ExportGradesUseCase
 import com.emm.gema.core.domain.export.GetGradesExportPlanUseCase
 import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
 import com.emm.gema.core.domain.export.SiagieExportStore
-import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
-import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
-import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
-import com.emm.gema.core.domain.evaluation.SavePeriodLevelUseCase
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
@@ -93,6 +97,8 @@ import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.core.siagie.XlsxMonthlyAttendanceWriter
 import com.emm.gema.core.siagie.XlsxSiagieGradesWriter
 import com.emm.gema.core.siagie.XlsxSiagieRosterReader
+import com.emm.gema.evaluation.CacheDirSummaryDocuments
+import com.emm.gema.evaluation.PdfDocumentPeriodLevelSummaryRenderer
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
 import com.emm.gema.navigation.StartDestinationViewModel
@@ -125,6 +131,8 @@ val appModule: Module = module {
     single<SiagieRosterReader> { XlsxSiagieRosterReader() }
     single<SiagieGradesWriter> { XlsxSiagieGradesWriter() }
     single<SiagieExportStore> { CacheSiagieExportStore(File(androidContext().cacheDir, EXPORTS_DIRECTORY)) }
+    single<SummaryDocuments> { CacheDirSummaryDocuments(File(androidContext().cacheDir, EXPORTS_DIRECTORY)) }
+    single<PeriodLevelSummaryPdfRenderer> { PdfDocumentPeriodLevelSummaryRenderer() }
     single<PeriodLevelRepository> { SqlDelightPeriodLevelRepository(get()) }
     single<AttendanceRepository> { SqlDelightAttendanceRepository(get()) }
     single<MonthlyAttendanceExporter> {
@@ -170,6 +178,8 @@ val appModule: Module = module {
     factory<GetGradesTemplateNameUseCase> { GetGradesTemplateNameUseCase(get()) }
     factory<GetGradesExportPlanUseCase> { GetGradesExportPlanUseCase(get(), get()) }
     factory<ExportGradesUseCase> { ExportGradesUseCase(get(), get(), get(), get(), get()) }
+    factory<GetPeriodLevelSummaryUseCase> { GetPeriodLevelSummaryUseCase(get(), get(), get(), get(), get()) }
+    factory<ExportPeriodLevelSummaryUseCase> { ExportPeriodLevelSummaryUseCase(get(), get(), get()) }
     factory<GetStudentsUseCase> { GetStudentsUseCase(get()) }
     factory<GetStudentUseCase> { GetStudentUseCase(get()) }
     factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }
