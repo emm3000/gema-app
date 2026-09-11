@@ -17,18 +17,22 @@ extensions.configure<SqlDelightExtension> {
     }
 }
 
-val checkSqlDelightSnapshots = tasks.register("checkSqlDelightSnapshots") {
-    group = "verification"
-    description = "Fails when a migration and its schema snapshot do not come in pairs."
+abstract class CheckSqlDelightSnapshotsTask : DefaultTask() {
 
-    val migrations: File = migrationDirectory
-    val snapshots: File = snapshotDirectory
-    inputs.dir(migrations).withPropertyName("migrations").optional()
-    inputs.dir(snapshots).withPropertyName("snapshots").optional()
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
+    abstract val migrations: DirectoryProperty
 
-    doLast {
-        val migratedVersions: List<Int> = migrations.versionsOf(extension = "sqm")
-        val snapshotVersions: List<Int> = snapshots.versionsOf(extension = "db")
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
+    abstract val snapshots: DirectoryProperty
+
+    @TaskAction
+    fun check() {
+        val migratedVersions: List<Int> = migrations.asFile.orNull.versionsOf(extension = "sqm")
+        val snapshotVersions: List<Int> = snapshots.asFile.orNull.versionsOf(extension = "db")
         val baselineVersion: Int? = snapshotVersions.minOrNull()
 
         val missingSnapshots: List<String> = migratedVersions
@@ -49,14 +53,22 @@ val checkSqlDelightSnapshots = tasks.register("checkSqlDelightSnapshots") {
             }
         }
     }
+
+    private fun File?.versionsOf(extension: String): List<Int> = this
+        ?.listFiles()
+        .orEmpty()
+        .filter { it.extension == extension }
+        .mapNotNull { it.nameWithoutExtension.toIntOrNull() }
+        .sorted()
+}
+
+val checkSqlDelightSnapshots: TaskProvider<CheckSqlDelightSnapshotsTask> = tasks.register<CheckSqlDelightSnapshotsTask>("checkSqlDelightSnapshots") {
+    group = "verification"
+    description = "Fails when a migration and its schema snapshot do not come in pairs."
+    migrations.set(migrationDirectory)
+    snapshots.set(snapshotDirectory)
 }
 
 val migrationVerificationTasks: Spec<Task> = Spec { it.name.startsWith("verify") && it.name.endsWith("Migration") }
 
 tasks.matching(migrationVerificationTasks).configureEach { dependsOn(checkSqlDelightSnapshots) }
-
-fun File.versionsOf(extension: String): List<Int> = listFiles()
-    .orEmpty()
-    .filter { it.extension == extension }
-    .mapNotNull { it.nameWithoutExtension.toIntOrNull() }
-    .sorted()

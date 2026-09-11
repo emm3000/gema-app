@@ -39,40 +39,70 @@ detekt {
 
 val androidPluginIds: Set<String> = setOf("com.android.library", "com.android.application")
 
-tasks.register("checkModuleBoundaries") {
+abstract class CheckModuleBoundariesTask : DefaultTask() {
+
+    @get:Input
+    abstract val modulePaths: ListProperty<String>
+
+    @get:Input
+    abstract val moduleDependencies: MapProperty<String, List<String>>
+
+    @get:Input
+    abstract val jvmOnlyModulesWithAndroidPlugin: ListProperty<String>
+
+    @TaskAction
+    fun check() {
+        val dependenciesByPath: Map<String, List<String>> = moduleDependencies.get()
+        val violations: List<String> = buildList {
+            modulePaths.get().forEach { path ->
+                val dependencies: List<String> = dependenciesByPath.getValue(path)
+
+                if (path != ":app") {
+                    dependencies
+                        .filter { it.startsWith(":feature:") }
+                        .forEach { add("$path depends on $it; only :app may reach a feature module") }
+                }
+
+                if (path.startsWith(":core:")) {
+                    dependencies
+                        .filter { it.startsWith(":core:") && it != ":core:domain" }
+                        .forEach { add("$path depends on $it; a core module may only reach :core:domain") }
+                }
+            }
+            jvmOnlyModulesWithAndroidPlugin.get().forEach { path ->
+                add("$path applies an Android plugin; it must stay JVM-only")
+            }
+        }
+        check(violations.isEmpty()) {
+            violations.joinToString(separator = "\n", prefix = "Module boundary violations:\n")
+        }
+    }
+}
+
+val checkModuleBoundaries: TaskProvider<CheckModuleBoundariesTask> = tasks.register<CheckModuleBoundariesTask>("checkModuleBoundaries") {
     group = "verification"
     description = "Fails when a module depends on a layer it is not allowed to reach."
+}
 
-    doLast {
-        val violations: List<String> = buildList {
-            subprojects.forEach { module ->
+gradle.projectsEvaluated {
+    checkModuleBoundaries.configure {
+        modulePaths.set(subprojects.map { it.path })
+        moduleDependencies.set(
+            subprojects.associate { module ->
                 val dependencies: List<String> = module.configurations
                     .flatMap { it.dependencies }
                     .filterIsInstance<ProjectDependency>()
                     .map { it.path }
                     .filter { it != module.path }
                     .distinct()
-
-                if (module.path != ":app") {
-                    dependencies
-                        .filter { it.startsWith(":feature:") }
-                        .forEach { add("${module.path} depends on $it; only :app may reach a feature module") }
-                }
-
-                if (module.path.startsWith(":core:")) {
-                    dependencies
-                        .filter { it.startsWith(":core:") && it != ":core:domain" }
-                        .forEach { add("${module.path} depends on $it; a core module may only reach :core:domain") }
-                }
-
-                val isJvmOnly: Boolean = module.path == ":core:domain" || module.path == ":core:siagie"
-                if (isJvmOnly && androidPluginIds.any(module.plugins::hasPlugin)) {
-                    add("${module.path} applies an Android plugin; it must stay JVM-only")
-                }
+                module.path to dependencies
             }
-        }
-        check(violations.isEmpty()) {
-            violations.joinToString(separator = "\n", prefix = "Module boundary violations:\n")
-        }
+        )
+        jvmOnlyModulesWithAndroidPlugin.set(
+            subprojects
+                .filter { it.path == ":core:domain" || it.path == ":core:siagie" }
+                .filter { module -> androidPluginIds.any(module.plugins::hasPlugin) }
+                .map { it.path }
+        )
     }
 }
