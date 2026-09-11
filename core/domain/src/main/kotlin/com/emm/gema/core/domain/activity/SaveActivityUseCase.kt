@@ -1,9 +1,11 @@
 package com.emm.gema.core.domain.activity
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import java.time.LocalDate
 
@@ -15,20 +17,20 @@ class SaveActivityUseCase(
 ) {
 
     suspend operator fun invoke(
-        sectionId: String,
-        activityId: String?,
+        sectionId: SectionId,
+        activityId: ActivityId?,
         name: String,
         date: LocalDate,
-        competencyIds: Set<String>,
+        competencyIds: Set<CompetencyId>,
     ): SaveActivityResult {
         val section: Section = requireNotNull(sectionRepository.findById(sectionId)) {
-            "There is no section $sectionId"
+            "There is no section ${sectionId.value}"
         }
         val period: Period = findPeriodForDate(section.schoolYearId, date)
             ?: return SaveActivityResult.DateOutsidePeriods
 
         val activity = Activity(
-            id = activityId ?: idGenerator.newId(),
+            id = activityId ?: ActivityId(idGenerator.newId()),
             sectionId = sectionId,
             periodId = period.id,
             name = name.trim(),

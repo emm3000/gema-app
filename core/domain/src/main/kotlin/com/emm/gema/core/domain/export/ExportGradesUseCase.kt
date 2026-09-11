@@ -1,5 +1,7 @@
 package com.emm.gema.core.domain.export
 
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
@@ -17,7 +19,7 @@ class ExportGradesUseCase(
     private val students: StudentRepository,
 ) {
 
-    suspend operator fun invoke(sectionId: String, periodId: String): GradesExportResult {
+    suspend operator fun invoke(sectionId: SectionId, periodId: PeriodId): GradesExportResult {
         val template: ImportedTemplate = importStore.findTemplate(sectionId, ImportedTemplateKind.GRADES)
             ?: return GradesExportResult.Unavailable
         val plan: GradesExportPlan = getPlan(sectionId, periodId).first()
@@ -31,7 +33,7 @@ class ExportGradesUseCase(
     }
 
     private suspend fun mismatchOf(
-        sectionId: String,
+        sectionId: SectionId,
         unmapped: SiagieGradesWriteResult.Unmapped,
     ): GradesExportResult.TemplateMismatch = GradesExportResult.TemplateMismatch(
         areas = unmapped.areas,

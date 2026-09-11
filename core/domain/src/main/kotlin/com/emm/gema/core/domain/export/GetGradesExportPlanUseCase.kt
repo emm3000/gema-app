@@ -1,12 +1,15 @@
 package com.emm.gema.core.domain.export
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelGrid
 import com.emm.gema.core.domain.evaluation.PeriodLevelGridRow
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.SectionArea
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,11 +24,11 @@ class GetGradesExportPlanUseCase(
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(sectionId: String, periodId: String): Flow<GradesExportPlan> = getSectionAreas(sectionId)
+    operator fun invoke(sectionId: SectionId, periodId: PeriodId): Flow<GradesExportPlan> = getSectionAreas(sectionId)
         .map { areas: List<SectionArea> -> areas.filter { it.isActive }.map { it.area } }
         .flatMapLatest { active: List<Area> -> planOf(sectionId, periodId, active) }
 
-    private fun planOf(sectionId: String, periodId: String, areas: List<Area>): Flow<GradesExportPlan> {
+    private fun planOf(sectionId: SectionId, periodId: PeriodId, areas: List<Area>): Flow<GradesExportPlan> {
         if (areas.isEmpty()) return flowOf(GradesExportPlan())
         val grids: List<Flow<AreaGrid>> = areas.map { area: Area ->
             getPeriodLevelGrid(sectionId = sectionId, periodId = periodId, area = area)
@@ -67,5 +70,5 @@ private class AreaGrid(val area: Area, val grid: PeriodLevelGrid) {
     private fun achievementValueOf(cell: PeriodLevel): String =
         cell.achievementLevel?.name ?: requireNotNull(cell.unworkedComment).siagieValue
 
-    private fun columnOf(competencyId: String) = grid.columns.first { it.id == competencyId }
+    private fun columnOf(competencyId: CompetencyId) = grid.columns.first { it.id == competencyId }
 }

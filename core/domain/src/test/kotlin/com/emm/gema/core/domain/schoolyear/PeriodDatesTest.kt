@@ -51,9 +51,6 @@ class PeriodDatesTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `a year shorter than its period count is rejected`() {
-        PeriodKind.BIMESTER.divide(
-            startDate = LocalDate.of(2026, 1, 1),
-            endDate = LocalDate.of(2026, 1, 2),
-        )
+        PeriodKind.BIMESTER.divide(startDate = LocalDate.of(2026, 1, 1), endDate = LocalDate.of(2026, 1, 2))
     }
 }

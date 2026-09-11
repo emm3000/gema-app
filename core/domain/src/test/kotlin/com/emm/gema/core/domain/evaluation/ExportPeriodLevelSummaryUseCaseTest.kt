@@ -8,16 +8,19 @@ import com.emm.gema.core.domain.fake.InMemoryPeriodLevelRepository
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
 import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
+import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.nio.charset.StandardCharsets
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-1")
 
 class ExportPeriodLevelSummaryUseCaseTest {
 
@@ -49,8 +52,8 @@ class ExportPeriodLevelSummaryUseCaseTest {
         addStudent("student-1", "ACOSTA RIVERA, Luz")
 
         val file: SummaryFile = export(
-            sectionId = SECTION_ID,
-            periodId = PERIOD_ID,
+            sectionId = sectionId,
+            periodId = periodId,
             sectionTitle = "3ro A",
             periodLabel = "II Bimestre",
             format = SummaryFormat.CSV,
@@ -66,8 +69,8 @@ class ExportPeriodLevelSummaryUseCaseTest {
         addStudent("student-1", "ACOSTA RIVERA, Luz")
 
         val file: SummaryFile = export(
-            sectionId = SECTION_ID,
-            periodId = PERIOD_ID,
+            sectionId = sectionId,
+            periodId = periodId,
             sectionTitle = "3ro A",
             periodLabel = "II Bimestre",
             format = SummaryFormat.PDF,
@@ -79,14 +82,14 @@ class ExportPeriodLevelSummaryUseCaseTest {
 
     private suspend fun seed() {
         SeedCurriculumUseCase(competencyRepository).invoke()
-        setCompetencyWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.PPSS, 1), isWorked = true)
+        setCompetencyWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), isWorked = true)
     }
 
     private suspend fun addStudent(id: String, fullName: String) {
         studentRepository.save(
             Student(
-                id = id,
-                sectionId = SECTION_ID,
+                id = StudentId(id),
+                sectionId = sectionId,
                 code = StudentCode("1234567890123${id.last()}"),
                 fullName = fullName,
             ),

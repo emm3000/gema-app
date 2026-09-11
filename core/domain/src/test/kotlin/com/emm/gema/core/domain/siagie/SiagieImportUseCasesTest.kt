@@ -4,10 +4,13 @@ import com.emm.gema.core.domain.fake.InMemorySectionRepository
 import com.emm.gema.core.domain.fake.InMemorySiagieImportStore
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
 import com.emm.gema.core.domain.fake.SequentialIdGenerator
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.Instant
@@ -16,7 +19,7 @@ import java.time.ZoneOffset
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private const val URI: String = "content://documents/6-primaria.xlsx"
 private const val FILE_NAME: String = "6 Primaria EBR.xlsx"
 private const val FIRST_CODE: String = "10000000000001"
@@ -48,7 +51,7 @@ class SiagieImportUseCasesTest {
             entry(SECOND_CODE, "BAUTISTA HUAMAN, JOSE"),
         )
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         val plan: SiagieImportPlan = (preview as SiagieImportPreview.Ready).plan
         assertThat(plan.fileName).isEqualTo(FILE_NAME)
@@ -63,10 +66,10 @@ class SiagieImportUseCasesTest {
         givenSection()
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
 
-        val result: SiagieImportResult = applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        val result: SiagieImportResult = applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 1, updated = 0, withdrawn = 0))
-        val stored: Student = students.listBySection(SECTION_ID).single()
+        val stored: Student = students.listBySection(sectionId).single()
         assertThat(stored.code).isEqualTo(StudentCode(FIRST_CODE))
         assertThat(stored.fullName).isEqualTo("ALVARADO QUISPE, MARIA")
         assertThat(stored.siagieId).isEqualTo("1001")
@@ -77,9 +80,9 @@ class SiagieImportUseCasesTest {
         givenSection()
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
 
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
-        val template: ImportedTemplate = requireNotNull(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES))
+        val template: ImportedTemplate = requireNotNull(store.findTemplate(sectionId, ImportedTemplateKind.GRADES))
         assertThat(template.fileName).isEqualTo(FILE_NAME)
         assertThat(template.content).isEqualTo(content)
     }
@@ -88,31 +91,31 @@ class SiagieImportUseCasesTest {
     fun `importing the same file twice changes nothing`() = runTest {
         givenSection()
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
-        val before: List<Student> = students.listBySection(SECTION_ID)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
+        val before: List<Student> = students.listBySection(sectionId)
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
-        val result: SiagieImportResult = applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
+        val result: SiagieImportResult = applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
         assertThat((preview as SiagieImportPreview.Ready).plan.created).isEmpty()
         assertThat(preview.plan.updated).isEmpty()
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 0, updated = 0, withdrawn = 0))
-        assertThat(students.listBySection(SECTION_ID)).isEqualTo(before)
+        assertThat(students.listBySection(sectionId)).isEqualTo(before)
     }
 
     @Test
     fun `a re-import updates the name of a student that changed in siagie`() = runTest {
         givenSection()
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA FERNANDA"))
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
         assertThat((preview as SiagieImportPreview.Ready).plan.updated.map { it.fullName })
             .containsExactly("ALVARADO QUISPE, MARIA FERNANDA")
-        assertThat(students.listBySection(SECTION_ID).single().fullName)
+        assertThat(students.listBySection(sectionId).single().fullName)
             .isEqualTo("ALVARADO QUISPE, MARIA FERNANDA")
     }
 
@@ -123,16 +126,16 @@ class SiagieImportUseCasesTest {
             entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"),
             entry(SECOND_CODE, "BAUTISTA HUAMAN, JOSE"),
         )
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
         val missing: SiagieImportMissing = (preview as SiagieImportPreview.Ready).plan.missing.single()
-        val result: SiagieImportResult = applyImport(SECTION_ID, URI, setOf(missing.studentId), withdrawalDate)
+        val result: SiagieImportResult = applyImport(sectionId, URI, setOf(missing.studentId), withdrawalDate)
 
         assertThat(missing.fullName).isEqualTo("BAUTISTA HUAMAN, JOSE")
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 0, updated = 0, withdrawn = 1))
-        val withdrawn: Student = students.listBySection(SECTION_ID).single { it.code.value == SECOND_CODE }
+        val withdrawn: Student = students.listBySection(sectionId).single { it.code.value == SECOND_CODE }
         assertThat(withdrawn.withdrawalDate).isEqualTo(withdrawalDate)
     }
 
@@ -143,12 +146,12 @@ class SiagieImportUseCasesTest {
             entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"),
             entry(SECOND_CODE, "BAUTISTA HUAMAN, JOSE"),
         )
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
 
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
-        val kept: Student = students.listBySection(SECTION_ID).single { it.code.value == SECOND_CODE }
+        val kept: Student = students.listBySection(sectionId).single { it.code.value == SECOND_CODE }
         assertThat(kept.withdrawalDate).isNull()
     }
 
@@ -159,18 +162,18 @@ class SiagieImportUseCasesTest {
             entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"),
             entry(SECOND_CODE, "BAUTISTA HUAMAN, JOSE"),
         )
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
         reader.roster = rosterOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"))
-        val missing: String = plannedMissing()
-        applyImport(SECTION_ID, URI, setOf(missing), withdrawalDate)
+        val missing: StudentId = plannedMissing()
+        applyImport(sectionId, URI, setOf(missing), withdrawalDate)
         reader.roster = rosterOf(
             entry(FIRST_CODE, "ALVARADO QUISPE, MARIA"),
             entry(SECOND_CODE, "BAUTISTA HUAMAN, JOSE"),
         )
 
-        applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
-        val returning: Student = students.listBySection(SECTION_ID).single { it.code.value == SECOND_CODE }
+        val returning: Student = students.listBySection(sectionId).single { it.code.value == SECOND_CODE }
         assertThat(returning.withdrawalDate).isNull()
         assertThat(returning.id).isEqualTo(missing)
     }
@@ -184,7 +187,7 @@ class SiagieImportUseCasesTest {
             students = listOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA")),
         )
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         assertThat(preview).isEqualTo(
             SiagieImportPreview.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6))
@@ -200,7 +203,7 @@ class SiagieImportUseCasesTest {
             students = listOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA")),
         )
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         assertThat(preview).isEqualTo(
             SiagieImportPreview.Rejected(SiagieImportRejection.SectionMismatch(expected = "A", found = "B"))
@@ -212,7 +215,7 @@ class SiagieImportUseCasesTest {
         givenSection()
         reader.roster = null
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate))
     }
@@ -222,7 +225,7 @@ class SiagieImportUseCasesTest {
         givenSection()
         reader.roster = SiagieRoster(gradeNumber = 6, sectionName = null, students = emptyList())
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.EmptyRoster))
     }
@@ -236,22 +239,22 @@ class SiagieImportUseCasesTest {
             students = listOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA")),
         )
 
-        val result: SiagieImportResult = applyImport(SECTION_ID, URI, emptySet(), withdrawalDate)
+        val result: SiagieImportResult = applyImport(sectionId, URI, emptySet(), withdrawalDate)
 
         assertThat(result).isEqualTo(
             SiagieImportResult.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6))
         )
-        assertThat(students.listBySection(SECTION_ID)).isEmpty()
-        assertThat(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES)).isNull()
+        assertThat(students.listBySection(sectionId)).isEmpty()
+        assertThat(store.findTemplate(sectionId, ImportedTemplateKind.GRADES)).isNull()
     }
 
-    private suspend fun plannedMissing(): String {
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, URI)
+    private suspend fun plannedMissing(): StudentId {
+        val preview: SiagieImportPreview = previewImport(sectionId, URI)
         return (preview as SiagieImportPreview.Ready).plan.missing.single().studentId
     }
 
     private suspend fun givenSection(grade: Grade = Grade.SIXTH) {
-        sections.save(Section(id = SECTION_ID, schoolYearId = "year-1", grade = grade, name = "A"))
+        sections.save(Section(id = sectionId, schoolYearId = SchoolYearId("year-1"), grade = grade, name = "A"))
     }
 
     private fun rosterOf(vararg students: SiagieRosterStudent): SiagieRoster =

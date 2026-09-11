@@ -1,7 +1,9 @@
 package com.emm.gema.core.domain.siagie
 
 import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import java.time.Clock
 import java.time.LocalDate
@@ -15,9 +17,9 @@ class ApplySiagieImportUseCase(
 ) {
 
     suspend operator fun invoke(
-        sectionId: String,
+        sectionId: SectionId,
         uri: String,
-        withdrawals: Set<String>,
+        withdrawals: Set<StudentId>,
         withdrawalDate: LocalDate,
     ): SiagieImportResult {
         val planned: PlannedImport = planner.plan(sectionId, uri)
@@ -37,7 +39,7 @@ class ApplySiagieImportUseCase(
         )
     }
 
-    private fun templateOf(sectionId: String, ready: PlannedImport.Ready): ImportedTemplate = ImportedTemplate(
+    private fun templateOf(sectionId: SectionId, ready: PlannedImport.Ready): ImportedTemplate = ImportedTemplate(
         sectionId = sectionId,
         kind = ImportedTemplateKind.GRADES,
         fileName = ready.plan.fileName,
@@ -45,8 +47,8 @@ class ApplySiagieImportUseCase(
         importedAt = clock.instant(),
     )
 
-    private fun SiagieImportEntry.asNewStudent(sectionId: String): Student = Student(
-        id = idGenerator.newId(),
+    private fun SiagieImportEntry.asNewStudent(sectionId: SectionId): Student = Student(
+        id = StudentId(idGenerator.newId()),
         sectionId = sectionId,
         code = code,
         fullName = fullName,

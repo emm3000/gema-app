@@ -1,18 +1,19 @@
 package com.emm.gema.core.domain.attendance
 
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
+import java.time.YearMonth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import java.time.YearMonth
 
 class GetMonthlyAttendanceSummaryUseCase(
     private val studentRepository: StudentRepository,
     private val attendanceRepository: AttendanceRepository,
 ) {
 
-    operator fun invoke(sectionId: String, month: YearMonth): Flow<MonthlyAttendanceSummary> = combine(
+    operator fun invoke(sectionId: SectionId, month: YearMonth): Flow<MonthlyAttendanceSummary> = combine(
         studentRepository.observeBySection(sectionId),
         attendanceRepository.observeBySectionAndMonth(sectionId, month),
     ) { students: List<Student>, records: List<AttendanceRecord> ->

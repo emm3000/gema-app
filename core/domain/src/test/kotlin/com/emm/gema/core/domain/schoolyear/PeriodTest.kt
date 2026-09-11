@@ -9,8 +9,8 @@ class PeriodTest {
     @Test(expected = IllegalArgumentException::class)
     fun `a period that ends before it starts is rejected`() {
         Period(
-            id = "any",
-            schoolYearId = "year",
+            id = PeriodId("any"),
+            schoolYearId = SchoolYearId("year"),
             number = 1,
             startDate = LocalDate.of(2026, 5, 15),
             endDate = LocalDate.of(2026, 3, 2),
@@ -20,8 +20,8 @@ class PeriodTest {
     @Test(expected = IllegalArgumentException::class)
     fun `a period numbered below one is rejected`() {
         Period(
-            id = "any",
-            schoolYearId = "year",
+            id = PeriodId("any"),
+            schoolYearId = SchoolYearId("year"),
             number = 0,
             startDate = LocalDate.of(2026, 3, 2),
             endDate = LocalDate.of(2026, 5, 15),
@@ -31,8 +31,8 @@ class PeriodTest {
     @Test(expected = IllegalArgumentException::class)
     fun `a period without a school year is rejected`() {
         Period(
-            id = "any",
-            schoolYearId = " ",
+            id = PeriodId("any"),
+            schoolYearId = SchoolYearId(" "),
             number = 1,
             startDate = LocalDate.of(2026, 3, 2),
             endDate = LocalDate.of(2026, 5, 15),
@@ -42,8 +42,8 @@ class PeriodTest {
     @Test
     fun `a period contains the days between its dates, both included`() {
         val period = Period(
-            id = "any",
-            schoolYearId = "year",
+            id = PeriodId("any"),
+            schoolYearId = SchoolYearId("year"),
             number = 1,
             startDate = LocalDate.of(2026, 3, 2),
             endDate = LocalDate.of(2026, 5, 15),

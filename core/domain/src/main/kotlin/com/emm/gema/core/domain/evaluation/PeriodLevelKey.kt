@@ -1,15 +1,13 @@
 package com.emm.gema.core.domain.evaluation
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
+
 data class PeriodLevelKey(
-    val sectionId: String,
-    val periodId: String,
-    val studentId: String,
-    val competencyId: String,
-) {
-    init {
-        require(sectionId.isNotBlank()) { "A period level belongs to a section" }
-        require(periodId.isNotBlank()) { "A period level belongs to a period" }
-        require(studentId.isNotBlank()) { "A period level belongs to a student" }
-        require(competencyId.isNotBlank()) { "A period level belongs to a competency" }
-    }
-}
+    val sectionId: SectionId,
+    val periodId: PeriodId,
+    val studentId: StudentId,
+    val competencyId: CompetencyId,
+)

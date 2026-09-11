@@ -1,5 +1,6 @@
 package com.emm.gema.core.domain.activity
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
@@ -12,19 +13,23 @@ import com.emm.gema.core.domain.fake.InMemorySectionRepository
 import com.emm.gema.core.domain.fake.SequentialIdGenerator
 import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import java.time.LocalDate
 
-private const val SECTION_ID: String = "section-1"
-private const val SCHOOL_YEAR_ID: String = "year-1"
-private const val FIRST_PERIOD_ID: String = "period-1"
-private const val SECOND_PERIOD_ID: String = "period-2"
+private val sectionId: SectionId = SectionId("section-1")
+private val schoolYearId: SchoolYearId = SchoolYearId("year-1")
+private val firstPeriodId: PeriodId = PeriodId("period-1")
+private val secondPeriodId: PeriodId = PeriodId("period-2")
 
 class ActivityUseCasesTest {
 
@@ -56,11 +61,11 @@ class ActivityUseCasesTest {
 
     @Before
     fun setUp() = runTest {
-        sectionRepository.save(Section(SECTION_ID, SCHOOL_YEAR_ID, Grade.THIRD, "3ro A"))
+        sectionRepository.save(Section(sectionId, schoolYearId, Grade.THIRD, "3ro A"))
         periodRepository.saveAll(
             listOf(
-                Period(FIRST_PERIOD_ID, SCHOOL_YEAR_ID, 1, LocalDate.of(2026, 3, 1), LocalDate.of(2026, 5, 15)),
-                Period(SECOND_PERIOD_ID, SCHOOL_YEAR_ID, 2, LocalDate.of(2026, 5, 16), LocalDate.of(2026, 7, 31)),
+                Period(firstPeriodId, schoolYearId, 1, LocalDate.of(2026, 3, 1), LocalDate.of(2026, 5, 15)),
+                Period(secondPeriodId, schoolYearId, 2, LocalDate.of(2026, 5, 16), LocalDate.of(2026, 7, 31)),
             ),
         )
     }
@@ -68,58 +73,58 @@ class ActivityUseCasesTest {
     @Test
     fun `creating an activity derives its period from the date`() = runTest {
         val activity: Activity = saveActivityOk(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = null,
             name = "Debate del aula",
             date = LocalDate.of(2026, 3, 10),
-            competencyIds = setOf("PPSS-1"),
+            competencyIds = setOf(firstPpssId),
         )
 
-        assertThat(activity.periodId).isEqualTo(FIRST_PERIOD_ID)
-        assertThat(getActivities(SECTION_ID, FIRST_PERIOD_ID).first()).containsExactly(activity)
+        assertThat(activity.periodId).isEqualTo(firstPeriodId)
+        assertThat(getActivities(sectionId, firstPeriodId).first()).containsExactly(activity)
     }
 
     @Test
     fun `changing the date moves the activity to another period`() = runTest {
         val created: Activity = saveActivityOk(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = null,
             name = "Debate del aula",
             date = LocalDate.of(2026, 3, 10),
-            competencyIds = setOf("PPSS-1"),
+            competencyIds = setOf(firstPpssId),
         )
 
         val moved: Activity = saveActivityOk(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = created.id,
             name = created.name,
             date = LocalDate.of(2026, 6, 1),
             competencyIds = created.competencyIds,
         )
 
-        assertThat(moved.periodId).isEqualTo(SECOND_PERIOD_ID)
-        assertThat(getActivities(SECTION_ID, FIRST_PERIOD_ID).first()).isEmpty()
-        assertThat(getActivities(SECTION_ID, SECOND_PERIOD_ID).first()).containsExactly(moved)
+        assertThat(moved.periodId).isEqualTo(secondPeriodId)
+        assertThat(getActivities(sectionId, firstPeriodId).first()).isEmpty()
+        assertThat(getActivities(sectionId, secondPeriodId).first()).containsExactly(moved)
     }
 
     @Test
     fun `a date outside every period is reported, not thrown`() = runTest {
         val result: SaveActivityResult = saveActivity(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = null,
             name = "Debate del aula",
             date = LocalDate.of(2027, 1, 1),
-            competencyIds = setOf("PPSS-1"),
+            competencyIds = setOf(firstPpssId),
         )
 
         assertThat(result).isEqualTo(SaveActivityResult.DateOutsidePeriods)
-        assertThat(getActivities(SECTION_ID, FIRST_PERIOD_ID).first()).isEmpty()
+        assertThat(getActivities(sectionId, firstPeriodId).first()).isEmpty()
     }
 
     @Test
     fun `recording an evidence level stores it`() = runTest {
         val activity: Activity = createActivity()
-        val key = EvidenceLevelKey(activity.id, "student-1", "PPSS-1")
+        val key = EvidenceLevelKey(activity.id, firstStudentId, firstPpssId)
 
         recordEvidenceLevel(key, AchievementLevel.B)
 
@@ -130,17 +135,17 @@ class ActivityUseCasesTest {
     @Test
     fun `evidence levels are optional per student and competency`() = runTest {
         val activity: Activity = createActivity()
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, "student-1", "PPSS-1"), AchievementLevel.A)
+        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), AchievementLevel.A)
 
         val stored: List<EvidenceLevel> = getEvidenceForActivity(activity.id).first()
 
-        assertThat(stored.map { it.key.studentId }).containsExactly("student-1")
+        assertThat(stored.map { it.key.studentId }).containsExactly(firstStudentId)
     }
 
     @Test
     fun `recording no level clears a previously recorded one`() = runTest {
         val activity: Activity = createActivity()
-        val key = EvidenceLevelKey(activity.id, "student-1", "PPSS-1")
+        val key = EvidenceLevelKey(activity.id, firstStudentId, firstPpssId)
         recordEvidenceLevel(key, AchievementLevel.A)
 
         recordEvidenceLevel(key, null)
@@ -151,51 +156,51 @@ class ActivityUseCasesTest {
     @Test
     fun `deleting an activity deletes its evidence levels`() = runTest {
         val activity: Activity = createActivity()
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, "student-1", "PPSS-1"), AchievementLevel.A)
+        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), AchievementLevel.A)
 
         deleteActivity(activity.id)
 
         assertThat(getEvidenceForActivity(activity.id).first()).isEmpty()
-        assertThat(getActivities(SECTION_ID, activity.periodId).first()).isEmpty()
+        assertThat(getActivities(sectionId, activity.periodId).first()).isEmpty()
     }
 
     @Test
     fun `editing an activity never touches period levels`() = runTest {
         val activity: Activity = createActivity()
-        val periodLevelKey = PeriodLevelKey(SECTION_ID, activity.periodId, "student-1", "PPSS-1")
+        val periodLevelKey = PeriodLevelKey(sectionId, activity.periodId, firstStudentId, firstPpssId)
         savePeriodLevel(PeriodLevel(periodLevelKey).withAchievementLevel(AchievementLevel.B))
 
         saveActivityOk(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = activity.id,
             name = "Nuevo nombre",
             date = activity.date,
             competencyIds = activity.competencyIds,
         )
 
-        assertThat(periodLevelRepository.observeByPeriod(SECTION_ID, activity.periodId).first())
+        assertThat(periodLevelRepository.observeByPeriod(sectionId, activity.periodId).first())
             .containsExactly(PeriodLevel(periodLevelKey).withAchievementLevel(AchievementLevel.B))
     }
 
     @Test
     fun `deleting an activity never touches period levels`() = runTest {
         val activity: Activity = createActivity()
-        val periodLevelKey = PeriodLevelKey(SECTION_ID, activity.periodId, "student-1", "PPSS-1")
+        val periodLevelKey = PeriodLevelKey(sectionId, activity.periodId, firstStudentId, firstPpssId)
         savePeriodLevel(PeriodLevel(periodLevelKey).withAchievementLevel(AchievementLevel.B))
 
         deleteActivity(activity.id)
 
-        assertThat(periodLevelRepository.observeByPeriod(SECTION_ID, activity.periodId).first())
+        assertThat(periodLevelRepository.observeByPeriod(sectionId, activity.periodId).first())
             .containsExactly(PeriodLevel(periodLevelKey).withAchievementLevel(AchievementLevel.B))
     }
 
     @Test
     fun `the evidence count is the number of distinct students recorded`() = runTest {
         val activity: Activity = createActivity()
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, "student-1", "PPSS-1"), AchievementLevel.A)
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, "student-2", "PPSS-1"), AchievementLevel.B)
+        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), AchievementLevel.A)
+        recordEvidenceLevel(EvidenceLevelKey(activity.id, secondStudentId, firstPpssId), AchievementLevel.B)
 
-        val counts: Map<String, Int> = getEvidenceStudentCounts(SECTION_ID, activity.periodId).first()
+        val counts: Map<ActivityId, Int> = getEvidenceStudentCounts(sectionId, activity.periodId).first()
 
         assertThat(counts[activity.id]).isEqualTo(2)
     }
@@ -204,37 +209,43 @@ class ActivityUseCasesTest {
     fun `evidence for a period level is ordered by activity date`() = runTest {
         val first: Activity = createActivity()
         val second: Activity = saveActivityOk(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = null,
             name = "Ficha de convivencia",
             date = LocalDate.of(2026, 3, 20),
-            competencyIds = setOf("PPSS-1"),
+            competencyIds = setOf(firstPpssId),
         )
-        recordEvidenceLevel(EvidenceLevelKey(second.id, "student-1", "PPSS-1"), AchievementLevel.B)
-        recordEvidenceLevel(EvidenceLevelKey(first.id, "student-1", "PPSS-1"), AchievementLevel.A)
+        recordEvidenceLevel(EvidenceLevelKey(second.id, firstStudentId, firstPpssId), AchievementLevel.B)
+        recordEvidenceLevel(EvidenceLevelKey(first.id, firstStudentId, firstPpssId), AchievementLevel.A)
 
         val evidence: List<EvidenceRecord> =
-            getEvidenceForPeriodLevel(SECTION_ID, first.periodId, "student-1", "PPSS-1").first()
+            getEvidenceForPeriodLevel(sectionId, first.periodId, firstStudentId, firstPpssId).first()
 
         assertThat(evidence.map { it.activityId }).containsExactly(first.id, second.id).inOrder()
     }
 
     private suspend fun createActivity(): Activity = saveActivityOk(
-        sectionId = SECTION_ID,
+        sectionId = sectionId,
         activityId = null,
         name = "Debate del aula",
         date = LocalDate.of(2026, 3, 10),
-        competencyIds = setOf("PPSS-1"),
+        competencyIds = setOf(firstPpssId),
     )
 
     private suspend fun saveActivityOk(
-        sectionId: String,
-        activityId: String?,
+        sectionId: SectionId,
+        activityId: ActivityId?,
         name: String,
         date: LocalDate,
-        competencyIds: Set<String>,
+        competencyIds: Set<CompetencyId>,
     ): Activity {
         val result: SaveActivityResult = saveActivity(sectionId, activityId, name, date, competencyIds)
         return (result as SaveActivityResult.Saved).activity
     }
 }
+
+private val firstStudentId: StudentId = StudentId("student-1")
+
+private val secondStudentId: StudentId = StudentId("student-2")
+
+private val firstPpssId: CompetencyId = CompetencyId("PPSS-1")

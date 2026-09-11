@@ -1,15 +1,12 @@
 package com.emm.gema.core.domain.attendance
 
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 
 data class AttendanceRecord(
-    val sectionId: String,
-    val studentId: String,
+    val sectionId: SectionId,
+    val studentId: StudentId,
     val date: LocalDate,
     val status: AttendanceStatus,
-) {
-    init {
-        require(sectionId.isNotBlank()) { "An attendance record belongs to a section" }
-        require(studentId.isNotBlank()) { "An attendance record belongs to a student" }
-    }
-}
+)

@@ -3,12 +3,15 @@ package com.emm.gema.core.domain.setup
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.PeriodDates
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.divide
 import com.emm.gema.core.domain.schoolyear.requirePeriodsFit
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import java.time.LocalDate
 
 data class CompleteSetupRequest(
@@ -28,7 +31,7 @@ class CompleteSetupUseCase(
 
     suspend operator fun invoke(request: CompleteSetupRequest): CompletedSetup {
         val schoolYear = SchoolYear(
-            id = idGenerator.newId(),
+            id = SchoolYearId(idGenerator.newId()),
             label = request.yearLabel.trim(),
             startDate = request.startDate,
             endDate = request.endDate,
@@ -36,7 +39,7 @@ class CompleteSetupUseCase(
         )
         val periods: List<Period> = request.periodDates.map { dates ->
             Period(
-                id = idGenerator.newId(),
+                id = PeriodId(idGenerator.newId()),
                 schoolYearId = schoolYear.id,
                 number = dates.number,
                 startDate = dates.startDate,
@@ -44,7 +47,7 @@ class CompleteSetupUseCase(
             )
         }
         val section = Section(
-            id = idGenerator.newId(),
+            id = SectionId(idGenerator.newId()),
             schoolYearId = schoolYear.id,
             grade = request.grade,
             name = request.sectionName.trim(),

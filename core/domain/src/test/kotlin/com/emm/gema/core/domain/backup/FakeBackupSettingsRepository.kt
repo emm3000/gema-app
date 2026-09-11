@@ -10,10 +10,7 @@ class FakeBackupSettingsRepository(
 ) : BackupSettingsRepository {
 
     private val settings: MutableStateFlow<BackupSettings> = MutableStateFlow(
-        BackupSettings(
-            lastBackupAt = lastBackupAt,
-            reminderThresholdDays = reminderThresholdDays,
-        )
+        BackupSettings(lastBackupAt = lastBackupAt, reminderThresholdDays = reminderThresholdDays)
     )
 
     override fun observeSettings(): Flow<BackupSettings> = settings

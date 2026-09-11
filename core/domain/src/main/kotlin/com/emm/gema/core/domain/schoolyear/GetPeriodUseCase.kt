@@ -4,5 +4,5 @@ class GetPeriodUseCase(
     private val repository: PeriodRepository,
 ) {
 
-    suspend operator fun invoke(periodId: String): Period? = repository.findById(periodId)
+    suspend operator fun invoke(periodId: PeriodId): Period? = repository.findById(periodId)
 }

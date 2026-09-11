@@ -68,10 +68,7 @@ class BackupReminderTest {
     }
 
     private suspend fun statusOf(lastBackupAt: Instant?, thresholdDays: Int): BackupStatus {
-        val settings = FakeBackupSettingsRepository(
-            lastBackupAt = lastBackupAt,
-            reminderThresholdDays = thresholdDays,
-        )
+        val settings = FakeBackupSettingsRepository(lastBackupAt = lastBackupAt, reminderThresholdDays = thresholdDays)
         return ObserveBackupStatusUseCase(settings, clock)().first()
     }
 

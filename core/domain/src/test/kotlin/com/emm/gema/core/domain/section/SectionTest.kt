@@ -1,5 +1,6 @@
 package com.emm.gema.core.domain.section
 
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -7,12 +8,12 @@ class SectionTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `a section without a name is rejected`() {
-        Section(id = "section", schoolYearId = "year", grade = Grade.FIRST, name = " ")
+        Section(id = SectionId("section"), schoolYearId = SchoolYearId("year"), grade = Grade.FIRST, name = " ")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `a section without a school year is rejected`() {
-        Section(id = "section", schoolYearId = "", grade = Grade.FIRST, name = "A")
+        Section(id = SectionId("section"), schoolYearId = SchoolYearId(""), grade = Grade.FIRST, name = "A")
     }
 
     @Test

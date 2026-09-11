@@ -1,12 +1,13 @@
 package com.emm.gema.core.domain.attendance
 
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.AttendanceExportEntry
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentRepository
-import kotlinx.coroutines.flow.first
 import java.time.YearMonth
+import kotlinx.coroutines.flow.first
 
 class ExportMonthlyAttendanceUseCase(
     private val studentRepository: StudentRepository,
@@ -14,7 +15,7 @@ class ExportMonthlyAttendanceUseCase(
     private val exporter: MonthlyAttendanceExporter,
 ) {
 
-    suspend operator fun invoke(sectionId: String, month: YearMonth, templateUri: String): AttendanceExportFile {
+    suspend operator fun invoke(sectionId: SectionId, month: YearMonth, templateUri: String): AttendanceExportFile {
         val students: List<Student> = studentRepository.listBySection(sectionId)
         val records: List<AttendanceRecord> = attendanceRepository.observeBySectionAndMonth(sectionId, month).first()
 

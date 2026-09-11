@@ -1,12 +1,16 @@
 package com.emm.gema.core.domain.evaluation
 
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
 import java.nio.charset.StandardCharsets
+import org.junit.Test
 
 class PeriodLevelSummaryCsvTest {
 
@@ -190,18 +194,20 @@ class PeriodLevelSummaryCsvTest {
     )
 
     private fun student(fullName: String): Student = Student(
-        id = "student-1",
-        sectionId = "section-1",
+        id = firstStudentId,
+        sectionId = SectionId("section-1"),
         code = StudentCode("12345678901234"),
         fullName = fullName,
     )
 
-    private fun level(competencyId: String): PeriodLevel = PeriodLevel(
+    private fun level(competencyId: CompetencyId): PeriodLevel = PeriodLevel(
         PeriodLevelKey(
-            sectionId = "section-1",
-            periodId = "period-1",
-            studentId = "student-1",
+            sectionId = SectionId("section-1"),
+            periodId = PeriodId("period-1"),
+            studentId = firstStudentId,
             competencyId = competencyId,
         ),
     )
 }
+
+private val firstStudentId: StudentId = StudentId("student-1")

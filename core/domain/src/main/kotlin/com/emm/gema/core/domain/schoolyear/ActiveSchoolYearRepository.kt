@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ActiveSchoolYearRepository {
 
-    fun observeActiveId(): Flow<String?>
+    fun observeActiveId(): Flow<SchoolYearId?>
 
-    suspend fun activate(schoolYearId: String)
+    suspend fun activate(schoolYearId: SchoolYearId)
 }

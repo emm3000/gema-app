@@ -1,20 +1,21 @@
 package com.emm.gema.core.domain.student
 
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.flow.Flow
 
 interface StudentRepository {
 
-    fun observeBySection(sectionId: String): Flow<List<Student>>
+    fun observeBySection(sectionId: SectionId): Flow<List<Student>>
 
-    fun observeCountsBySection(): Flow<Map<String, Int>>
+    fun observeCountsBySection(): Flow<Map<SectionId, Int>>
 
-    suspend fun listBySection(sectionId: String): List<Student>
+    suspend fun listBySection(sectionId: SectionId): List<Student>
 
-    suspend fun findById(id: String): Student?
+    suspend fun findById(id: StudentId): Student?
 
-    suspend fun findByCode(sectionId: String, code: StudentCode): Student?
+    suspend fun findByCode(sectionId: SectionId, code: StudentCode): Student?
 
     suspend fun save(student: Student)
 
-    suspend fun deleteBySection(sectionId: String)
+    suspend fun deleteBySection(sectionId: SectionId)
 }

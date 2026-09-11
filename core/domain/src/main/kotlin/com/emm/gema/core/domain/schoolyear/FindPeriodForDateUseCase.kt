@@ -6,6 +6,6 @@ class FindPeriodForDateUseCase(
     private val repository: PeriodRepository,
 ) {
 
-    suspend operator fun invoke(schoolYearId: String, date: LocalDate): Period? =
+    suspend operator fun invoke(schoolYearId: SchoolYearId, date: LocalDate): Period? =
         repository.findBySchoolYear(schoolYearId).find { it.contains(date) }
 }

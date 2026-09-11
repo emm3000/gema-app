@@ -31,14 +31,14 @@ class PrimaryCurriculumTest {
 
     @Test
     fun `every competency id is unique`() {
-        val ids: List<String> = PrimaryCurriculum.competencies.map { it.id }
+        val ids: List<CompetencyId> = PrimaryCurriculum.competencies.map { it.id }
 
         assertThat(ids).containsNoDuplicates()
     }
 
     @Test
     fun `a competency id names its area and its siagie ordinal`() {
-        assertThat(Competency.idOf(Area.PPSS, 5)).isEqualTo("PPSS-5")
+        assertThat(Competency.idOf(Area.PPSS, 5)).isEqualTo(CompetencyId("PPSS-5"))
     }
 
     @Test

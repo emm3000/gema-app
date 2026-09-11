@@ -1,12 +1,14 @@
 package com.emm.gema.core.domain.curriculum
 
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.flow.Flow
 
 interface WorkedCompetencyRepository {
 
-    fun observeWorked(sectionId: String, periodId: String): Flow<Set<String>>
+    fun observeWorked(sectionId: SectionId, periodId: PeriodId): Flow<Set<CompetencyId>>
 
-    suspend fun setWorked(sectionId: String, periodId: String, competencyId: String, isWorked: Boolean)
+    suspend fun setWorked(sectionId: SectionId, periodId: PeriodId, competencyId: CompetencyId, isWorked: Boolean)
 
-    suspend fun clearSection(sectionId: String)
+    suspend fun clearSection(sectionId: SectionId)
 }

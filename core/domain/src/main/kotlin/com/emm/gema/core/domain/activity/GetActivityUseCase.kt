@@ -4,5 +4,5 @@ class GetActivityUseCase(
     private val repository: ActivityRepository,
 ) {
 
-    suspend operator fun invoke(activityId: String): Activity? = repository.findById(activityId)
+    suspend operator fun invoke(activityId: ActivityId): Activity? = repository.findById(activityId)
 }
