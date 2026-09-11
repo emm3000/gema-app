@@ -10,6 +10,7 @@ data class BackupUiState(
     val reminderThresholdDays: Int = DEFAULT_REMINDER_THRESHOLD_DAYS,
     val reminderThresholdInput: String = DEFAULT_REMINDER_THRESHOLD_DAYS.toString(),
     val isReminderThresholdInvalid: Boolean = false,
+    val isBackupOverdue: Boolean = false,
     val isCreating: Boolean = false,
     val restoreConfirmation: RestoreConfirmation? = null,
     val isRestoring: Boolean = false,

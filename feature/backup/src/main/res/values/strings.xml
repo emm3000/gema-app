@@ -11,6 +11,7 @@
     <string name="backup_reminder_label">Recordarme cada</string>
     <string name="backup_reminder_days">días</string>
     <string name="backup_reminder_error">Elige entre %1$d y %2$d días</string>
+    <string name="backup_overdue_subtitle">%1$s · pasaste tu recordatorio de %2$d días</string>
     <string name="backup_restore_confirm_title">¿Restaurar este respaldo?</string>
     <string name="backup_restore_confirm_file">%1$s reemplazará los datos de este teléfono.</string>
     <string name="backup_restore_confirm">Restaurar</string>

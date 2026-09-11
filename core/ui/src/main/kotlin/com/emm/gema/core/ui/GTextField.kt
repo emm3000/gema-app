@@ -17,7 +17,7 @@ import com.emm.gema.core.theme.GemaTheme
 fun GTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    label: String?,
     modifier: Modifier = Modifier,
     supportingText: String? = null,
     errorText: String? = null,
@@ -28,7 +28,7 @@ fun GTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget),
-        label = { Text(text = label, style = MaterialTheme.typography.labelSmall) },
+        label = label?.let { { Text(text = it, style = MaterialTheme.typography.labelSmall) } },
         enabled = isEnabled,
         singleLine = true,
         isError = errorText != null,
