@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +28,9 @@ import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCard
 import com.emm.gema.core.ui.GDialog
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import java.time.format.DateTimeFormatter
 
@@ -73,13 +74,13 @@ fun BackupScreen(
 @Composable
 private fun LastBackupCard(state: BackupUiState, onIntent: (BackupUiIntent) -> Unit) {
     GCard {
-        Text(
+        GText(
             text = stringResource(R.string.backup_last_title),
-            style = MaterialTheme.typography.labelSmall,
+            style = GTextStyle.LABEL_SMALL,
         )
-        Text(
+        GText(
             text = lastBackupLabel(state),
-            style = MaterialTheme.typography.titleMedium,
+            style = GTextStyle.TITLE_MEDIUM,
             color = MaterialTheme.colorScheme.onSurface,
         )
         GButton(
@@ -90,9 +91,9 @@ private fun LastBackupCard(state: BackupUiState, onIntent: (BackupUiIntent) -> U
                 .padding(top = GemaSpacing.medium),
             isBusy = state.isCreating,
         )
-        Text(
+        GText(
             text = stringResource(R.string.backup_create_hint),
-            style = MaterialTheme.typography.labelSmall,
+            style = GTextStyle.LABEL_SMALL,
             modifier = Modifier.padding(top = GemaSpacing.small),
         )
     }
@@ -101,9 +102,9 @@ private fun LastBackupCard(state: BackupUiState, onIntent: (BackupUiIntent) -> U
 @Composable
 private fun RestoreSection(state: BackupUiState, onIntent: (BackupUiIntent) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-        Text(
+        GText(
             text = stringResource(R.string.backup_restore_title),
-            style = MaterialTheme.typography.titleMedium,
+            style = GTextStyle.TITLE_MEDIUM,
             color = MaterialTheme.colorScheme.onSurface,
         )
         GButton(
@@ -135,9 +136,9 @@ private fun ReminderSection(state: BackupUiState, onIntent: (BackupUiIntent) -> 
             keyboardType = KeyboardType.Number,
             errorText = reminderThresholdError(state),
         )
-        Text(
+        GText(
             text = stringResource(R.string.backup_reminder_days),
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -153,22 +154,22 @@ private fun RestoreDialog(confirmation: RestoreConfirmation, onIntent: (BackupUi
         dismissText = stringResource(R.string.backup_restore_cancel),
         isDestructive = true,
     ) {
-        Text(
+        GText(
             text = stringResource(R.string.backup_restore_confirm_file, confirmation.fileName),
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
         )
-        Text(
+        GText(
             text = pluralStringResource(
                 R.plurals.backup_restore_confirm_school_years,
                 confirmation.currentSchoolYearCount,
                 confirmation.currentSchoolYearCount,
             ),
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             modifier = Modifier.padding(top = GemaSpacing.small),
         )
-        Text(
+        GText(
             text = stringResource(R.string.backup_restore_warning),
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(top = GemaSpacing.small),
         )

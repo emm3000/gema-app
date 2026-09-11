@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -22,7 +21,9 @@ import com.emm.gema.core.ui.GDialog
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.domain.section.label
 
@@ -117,11 +118,11 @@ private fun DeleteSectionDialog(
         dismissText = "Cancelar",
         isDestructive = true,
     ) {
-        Text(
+        GText(
             text = "Se perderán ${confirmation.studentCount} estudiantes, " +
                 "${confirmation.attendanceDayCount} días de asistencia y " +
                 "${confirmation.periodLevelCount} niveles de logro.",
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }

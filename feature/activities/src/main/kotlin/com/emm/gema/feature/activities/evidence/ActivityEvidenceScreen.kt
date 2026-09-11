@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -25,6 +24,8 @@ import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GLevelPicker
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 
 @Composable
@@ -94,9 +95,9 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
             label = "Competencia",
             modifier = Modifier.fillMaxWidth(),
         )
-        Text(
+        GText(
             text = "${state.recordedCount}/${state.totalCount}",
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -109,7 +110,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> U
             .fillMaxWidth()
             .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
     ) {
-        Text(text = row.displayName, style = MaterialTheme.typography.bodyLarge)
+        GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
         GLevelPicker(
             selected = row.level?.toOption(),
             onSelect = { option -> onSelect(option?.toAchievementLevel()) },

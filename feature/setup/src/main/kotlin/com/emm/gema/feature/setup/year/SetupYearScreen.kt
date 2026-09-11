@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -26,7 +25,9 @@ import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.setup.rangeLabel
 import java.time.LocalDate
@@ -105,9 +106,9 @@ fun SetupYearScreen(
                 )
             }
             item {
-                Text(
+                GText(
                     text = "Periodos",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = GTextStyle.TITLE_MEDIUM,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
             }

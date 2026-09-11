@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.emm.gema.core.domain.evaluation.UnworkedComment
@@ -14,7 +13,9 @@ import com.emm.gema.core.ui.GBottomSheet
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GCheckRow
 import com.emm.gema.core.ui.GLevelPicker
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import java.time.format.DateTimeFormatter
 
 private const val CONCLUSION_HINT: String = "Obligatoria para SIAGIE cuando el nivel es C. Puedes guardarla después."
@@ -32,9 +33,9 @@ fun PeriodLevelSheet(
         title = sheet.studentName,
         subtitle = sheet.competencyLabel,
     ) {
-        Text(
+        GText(
             text = "Nivel de logro",
-            style = MaterialTheme.typography.labelSmall,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GLevelPicker(
@@ -42,9 +43,9 @@ fun PeriodLevelSheet(
             onSelect = { onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(it?.toAchievementLevel())) },
             modifier = Modifier.fillMaxWidth(),
         )
-        Text(
+        GText(
             text = "O no evaluada",
-            style = MaterialTheme.typography.labelSmall,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
@@ -68,9 +69,9 @@ fun PeriodLevelSheet(
             supportingText = CONCLUSION_HINT.takeIf { sheet.isConclusionRequiredForExport },
         )
         if (sheet.evidence.isNotEmpty()) {
-            Text(
+            GText(
                 text = "EVIDENCIAS DE ESTE PERIODO",
-                style = MaterialTheme.typography.labelSmall,
+                style = GTextStyle.LABEL_SMALL,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
@@ -91,19 +92,19 @@ private fun EvidenceListRow(evidence: EvidenceRow) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
-        Text(
+        GText(
             text = evidence.date.format(evidenceDateFormatter),
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Text(
+        GText(
             text = evidence.activityName,
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             modifier = Modifier.weight(1f),
         )
-        Text(
+        GText(
             text = evidence.achievementLevel.name,
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
         )
     }
 }
