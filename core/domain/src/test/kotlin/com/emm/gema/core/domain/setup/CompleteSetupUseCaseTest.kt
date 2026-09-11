@@ -47,12 +47,14 @@ class CompleteSetupUseCaseTest {
     @Test
     fun `setup persists the school year, its periods and the first section`() = runTest {
         val completed: CompletedSetup = completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.BIMESTER,
-            grade = Grade.THIRD,
-            sectionName = "A",
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.BIMESTER,
+                grade = Grade.THIRD,
+                sectionName = "A",
+            ),
         )
 
         assertThat(getSchoolYears().first()).containsExactly(completed.schoolYear)
@@ -63,12 +65,14 @@ class CompleteSetupUseCaseTest {
     @Test
     fun `the periods cover the school year without gaps`() = runTest {
         val completed: CompletedSetup = completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.TRIMESTER,
-            grade = Grade.FIRST,
-            sectionName = "A",
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.TRIMESTER,
+                grade = Grade.FIRST,
+                sectionName = "A",
+            ),
         )
 
         val periods: List<Period> = getPeriods(completed.schoolYear.id).first()
@@ -81,12 +85,14 @@ class CompleteSetupUseCaseTest {
     @Test
     fun `setup activates the school year it creates`() = runTest {
         val completed: CompletedSetup = completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.BIMESTER,
-            grade = Grade.FIRST,
-            sectionName = "A",
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.BIMESTER,
+                grade = Grade.FIRST,
+                sectionName = "A",
+            ),
         )
 
         assertThat(getActiveSchoolYear().first()).isEqualTo(completed.schoolYear)
@@ -95,20 +101,24 @@ class CompleteSetupUseCaseTest {
     @Test
     fun `a second school year keeps the first one and its sections reachable`() = runTest {
         val first: CompletedSetup = completeSetup(
-            yearLabel = "2025",
-            startDate = LocalDate.of(2025, 3, 3),
-            endDate = LocalDate.of(2025, 12, 19),
-            periodKind = PeriodKind.BIMESTER,
-            grade = Grade.FIRST,
-            sectionName = "A",
+            CompleteSetupRequest(
+                yearLabel = "2025",
+                startDate = LocalDate.of(2025, 3, 3),
+                endDate = LocalDate.of(2025, 12, 19),
+                periodKind = PeriodKind.BIMESTER,
+                grade = Grade.FIRST,
+                sectionName = "A",
+            ),
         )
         val second: CompletedSetup = completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.TRIMESTER,
-            grade = Grade.SECOND,
-            sectionName = "B",
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.TRIMESTER,
+                grade = Grade.SECOND,
+                sectionName = "B",
+            ),
         )
 
         assertThat(getSchoolYears().first()).containsExactly(second.schoolYear, first.schoolYear).inOrder()
@@ -125,29 +135,33 @@ class CompleteSetupUseCaseTest {
     @Test(expected = IllegalArgumentException::class)
     fun `setup without a section name is rejected`() = runTest {
         completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.BIMESTER,
-            grade = Grade.FIRST,
-            sectionName = " ",
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.BIMESTER,
+                grade = Grade.FIRST,
+                sectionName = " ",
+            ),
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `setup with overlapping period dates is rejected`() = runTest {
         completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.BIMESTER,
-            grade = Grade.FIRST,
-            sectionName = "A",
-            periodDates = listOf(
-                PeriodDates(1, LocalDate.of(2026, 3, 2), LocalDate.of(2026, 6, 30)),
-                PeriodDates(2, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 8, 31)),
-                PeriodDates(3, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 10, 31)),
-                PeriodDates(4, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 12, 18)),
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.BIMESTER,
+                grade = Grade.FIRST,
+                sectionName = "A",
+                periodDates = listOf(
+                    PeriodDates(1, LocalDate.of(2026, 3, 2), LocalDate.of(2026, 6, 30)),
+                    PeriodDates(2, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 8, 31)),
+                    PeriodDates(3, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 10, 31)),
+                    PeriodDates(4, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 12, 18)),
+                ),
             ),
         )
     }
@@ -155,16 +169,18 @@ class CompleteSetupUseCaseTest {
     @Test(expected = IllegalArgumentException::class)
     fun `setup with a period outside the school year is rejected`() = runTest {
         completeSetup(
-            yearLabel = "2026",
-            startDate = LocalDate.of(2026, 3, 2),
-            endDate = LocalDate.of(2026, 12, 18),
-            periodKind = PeriodKind.TRIMESTER,
-            grade = Grade.FIRST,
-            sectionName = "A",
-            periodDates = listOf(
-                PeriodDates(1, LocalDate.of(2026, 3, 2), LocalDate.of(2026, 6, 30)),
-                PeriodDates(2, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 9, 30)),
-                PeriodDates(3, LocalDate.of(2026, 10, 1), LocalDate.of(2027, 1, 10)),
+            CompleteSetupRequest(
+                yearLabel = "2026",
+                startDate = LocalDate.of(2026, 3, 2),
+                endDate = LocalDate.of(2026, 12, 18),
+                periodKind = PeriodKind.TRIMESTER,
+                grade = Grade.FIRST,
+                sectionName = "A",
+                periodDates = listOf(
+                    PeriodDates(1, LocalDate.of(2026, 3, 2), LocalDate.of(2026, 6, 30)),
+                    PeriodDates(2, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 9, 30)),
+                    PeriodDates(3, LocalDate.of(2026, 10, 1), LocalDate.of(2027, 1, 10)),
+                ),
             ),
         )
     }

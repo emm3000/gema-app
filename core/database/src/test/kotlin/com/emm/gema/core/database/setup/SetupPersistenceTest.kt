@@ -40,6 +40,7 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
+import com.emm.gema.core.domain.setup.CompleteSetupRequest
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
 import com.emm.gema.core.domain.student.StudentRepository
@@ -165,12 +166,14 @@ class SetupPersistenceTest {
     fun `a second school year keeps the first one and its sections`() = runTest {
         val first: SchoolYear = runSetup()
         val second: SchoolYear = completeSetup(
-            yearLabel = "2027",
-            startDate = LocalDate.of(2027, 3, 1),
-            endDate = LocalDate.of(2027, 12, 17),
-            periodKind = PeriodKind.TRIMESTER,
-            grade = Grade.FOURTH,
-            sectionName = "Unica",
+            CompleteSetupRequest(
+                yearLabel = "2027",
+                startDate = LocalDate.of(2027, 3, 1),
+                endDate = LocalDate.of(2027, 12, 17),
+                periodKind = PeriodKind.TRIMESTER,
+                grade = Grade.FOURTH,
+                sectionName = "Unica",
+            ),
         ).schoolYear
 
         assertThat(getSchoolYears().first()).containsExactly(second, first).inOrder()
@@ -183,11 +186,13 @@ class SetupPersistenceTest {
     }
 
     private suspend fun runSetup(): SchoolYear = completeSetup(
-        yearLabel = "2026",
-        startDate = LocalDate.of(2026, 3, 2),
-        endDate = LocalDate.of(2026, 12, 18),
-        periodKind = PeriodKind.BIMESTER,
-        grade = Grade.THIRD,
-        sectionName = "A",
+        CompleteSetupRequest(
+            yearLabel = "2026",
+            startDate = LocalDate.of(2026, 3, 2),
+            endDate = LocalDate.of(2026, 12, 18),
+            periodKind = PeriodKind.BIMESTER,
+            grade = Grade.THIRD,
+            sectionName = "A",
+        ),
     ).schoolYear
 }

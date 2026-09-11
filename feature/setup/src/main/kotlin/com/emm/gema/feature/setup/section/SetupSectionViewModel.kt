@@ -3,6 +3,7 @@ package com.emm.gema.feature.setup.section
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.section.Grade
+import com.emm.gema.core.domain.setup.CompleteSetupRequest
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.CompletedSetup
 import com.emm.gema.feature.setup.year.SchoolYearDraft
@@ -49,13 +50,15 @@ class SetupSectionViewModel(
         viewModelScope.launch {
             runCatching {
                 completeSetup(
-                    yearLabel = draft.label,
-                    startDate = draft.startDate,
-                    endDate = draft.endDate,
-                    periodKind = draft.periodKind,
-                    grade = grade,
-                    sectionName = current.sectionName,
-                    periodDates = draft.periods,
+                    CompleteSetupRequest(
+                        yearLabel = draft.label,
+                        startDate = draft.startDate,
+                        endDate = draft.endDate,
+                        periodKind = draft.periodKind,
+                        grade = grade,
+                        sectionName = current.sectionName,
+                        periodDates = draft.periods,
+                    ),
                 )
             }
                 .onSuccess { _effects.send(nextStep(it)) }
