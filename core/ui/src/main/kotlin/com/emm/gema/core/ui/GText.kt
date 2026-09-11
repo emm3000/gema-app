@@ -40,6 +40,10 @@ private fun GTextStyle.toTextStyle(): TextStyle = when (this) {
     GTextStyle.BODY_LARGE -> MaterialTheme.typography.bodyLarge
     GTextStyle.BODY_MEDIUM -> MaterialTheme.typography.bodyMedium
     GTextStyle.BODY_SMALL -> MaterialTheme.typography.bodySmall
+    GTextStyle.LABEL_LARGE_EMPHASIS -> MaterialTheme.typography.labelLarge.copy(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+    )
     GTextStyle.LABEL_MEDIUM -> MaterialTheme.typography.labelMedium
     GTextStyle.LABEL_SMALL -> MaterialTheme.typography.labelSmall
     GTextStyle.LABEL_SMALL_EMPHASIS -> MaterialTheme.typography.labelSmall.copy(
@@ -58,6 +62,7 @@ private fun GTextPreview() {
             GText(text = "Cuerpo de texto", style = GTextStyle.BODY_MEDIUM)
             GText(text = "Etiqueta", style = GTextStyle.LABEL_SMALL)
             GText(text = "Encabezado de sección", style = GTextStyle.LABEL_SMALL_EMPHASIS)
+            GText(text = "24/30", style = GTextStyle.LABEL_LARGE_EMPHASIS)
         }
     }
 }
