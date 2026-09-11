@@ -1417,12 +1417,16 @@ data class TemplateMismatchUi(
 )
 ```
 
-The attendance and PDF/CSV cards land with their own tickets and add their
-fields (`attendanceMonthLabel` among them) to this same `UiState`.
+The Resumen card adds `activeExport: ActiveExport?` to this same `UiState`
+(ticket #14) — `GRADES`, `SUMMARY_CSV` or `SUMMARY_PDF`, or `null` when
+nothing is exporting; the screen derives each button's busy/enabled state
+from it, and only one export runs at a time. The attendance card lands
+with its own ticket and adds `attendanceMonthLabel`.
 
 Intents: `PeriodSelected(periodId: PeriodId)`, `ExportGradesClicked`,
-`GapRowClicked(row: ExportGapRow)`, `ExportAttendanceClicked`, `ExportPdfClicked`,
-`ExportCsvClicked`, `ImportTemplateClicked`, `BackClicked`.
+`GapRowClicked(row: ExportGapRow)`, `ExportAttendanceClicked`,
+`ExportSummaryPdfClicked`, `ExportSummaryCsvClicked`, `ImportTemplateClicked`,
+`BackClicked`.
 
 Effects: `ShareFile(path: String, mimeType: String)`,
 `NavigateToPeriodLevelCell(sectionId: SectionId, studentId: StudentId, competencyId: CompetencyId)`,
@@ -1438,6 +1442,13 @@ the grid opens as before, on the current Period and the first active Area.
 Period recorded — an active Area with no sheet, a Worked Competency with no
 column in that sheet, or a Student the Template does not carry. It reads as a warning banner in the grades card and no file is
 written (ADR 0018).
+
+The Resumen card's PDF and CSV buttons read `activeExport` to show which one
+is busy and disable the other; its `ExportMessage.EXPORT_FAILED` on failure
+is the same message the grades card uses — one failure message for the
+whole screen. Each output is one table per active Area (a title row, then
+"Estudiante" plus one column per Worked Competency), not one flat table
+spanning every Area — see ADR 0020.
 
 Note: screen title is "Entregar", because that is the Teacher's goal, not the
 file format. Every blocking gap now lists as a tap-through row inside the
