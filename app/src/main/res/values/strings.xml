@@ -2,4 +2,11 @@
     <string name="app_name">Gema</string>
     <string name="home_empty_title">Aún no hay nada</string>
     <string name="home_empty_message">Crea tu año escolar para empezar a registrar asistencia y niveles de logro.</string>
+    <string name="home_backup_reminder_never">Todavía no respaldaste tus datos</string>
+    <string name="home_backup_reminder_action">Respaldar ahora</string>
+
+    <plurals name="home_backup_reminder_days">
+        <item quantity="one">Último respaldo hace %d día</item>
+        <item quantity="other">Último respaldo hace %d días</item>
+    </plurals>
 </resources>

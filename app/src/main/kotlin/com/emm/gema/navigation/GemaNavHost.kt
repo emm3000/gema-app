@@ -6,7 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.emm.gema.home.HomeScreen
+import com.emm.gema.feature.backup.BackupRoute
+import com.emm.gema.home.HomeRoute
 
 @Composable
 fun GemaNavHost(modifier: Modifier = Modifier) {
@@ -18,7 +19,10 @@ fun GemaNavHost(modifier: Modifier = Modifier) {
         modifier = modifier,
     ) {
         composable(GemaRoutes.HOME) {
-            HomeScreen()
+            HomeRoute(onNavigateToBackup = { navController.navigate(GemaRoutes.BACKUP) })
+        }
+        composable(GemaRoutes.BACKUP) {
+            BackupRoute(onNavigateBack = { navController.popBackStack() })
         }
     }
 }
