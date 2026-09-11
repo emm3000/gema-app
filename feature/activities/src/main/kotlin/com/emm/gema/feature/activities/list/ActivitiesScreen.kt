@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,10 +17,10 @@ import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GButtonVariant
+import com.emm.gema.core.ui.GDateChip
 import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GEmptyState
+import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
@@ -38,16 +41,16 @@ fun ActivitiesScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = "Actividades",
-                subtitle = state.sectionTitle,
+                title = "Actividades · ${state.sectionTitle}",
+                subtitle = "Las más nuevas primero",
                 onBackClick = { onIntent(ActivitiesUiIntent.BackClicked) },
-                actions = {
-                    GButton(
-                        text = "Nueva actividad",
-                        onClick = { onIntent(ActivitiesUiIntent.AddActivityClicked) },
-                        variant = GButtonVariant.TEXT,
-                    )
-                },
+            )
+        },
+        fab = {
+            GExtendedFab(
+                text = "Nueva actividad",
+                icon = Icons.Filled.Add,
+                onClick = { onIntent(ActivitiesUiIntent.AddActivityClicked) },
             )
         },
         modifier = modifier,
@@ -63,7 +66,6 @@ fun ActivitiesScreen(
                 },
                 selected = state.selectedPeriodId,
                 onSelect = { onIntent(ActivitiesUiIntent.PeriodSelected(it)) },
-                label = "Periodo",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = GemaSpacing.small),
@@ -80,8 +82,13 @@ fun ActivitiesScreen(
                     items(state.activities, key = { it.id.value }) { row ->
                         GListItem(
                             title = row.name,
+                            titleLeading = { GDateChip(text = row.date.format(dateFormatter)) },
                             subtitle = row.subtitle(),
-                            trailingText = row.date.format(dateFormatter),
+                            subtitleColor = if (row.isFullyCovered) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                null
+                            },
                             hasChevron = true,
                             onClick = { onIntent(ActivitiesUiIntent.ActivityClicked(row.id)) },
                             modifier = Modifier.fillMaxWidth(),
@@ -93,9 +100,12 @@ fun ActivitiesScreen(
     }
 }
 
+private val ActivityRow.isFullyCovered: Boolean
+    get() = evidenceRecordedCount == studentCount
+
 private fun ActivityRow.subtitle(): String {
     val competencies: String = competencyLabels.joinToString(", ")
-    return "$competencies - $evidenceRecordedCount de $studentCount con evidencia"
+    return "$competencies · $evidenceRecordedCount de $studentCount con evidencia"
 }
 
 @PreviewLightDark
