@@ -72,7 +72,7 @@ class AttendanceMonthViewModelTest {
 
         assertThat(state.recordedDayCount).isEqualTo(1)
         assertThat(state.canExport).isTrue()
-        assertThat(state.rows.single().lateCount).isEqualTo(1)
+        assertThat(state.rows.single().countsByStatus[AttendanceStatus.LATE]).isEqualTo(1)
     }
 
     @Test
@@ -85,7 +85,7 @@ class AttendanceMonthViewModelTest {
         viewModel.onIntent(AttendanceMonthUiIntent.PreviousMonthClicked)
 
         assertThat(viewModel.state.value.monthLabel).isEqualTo("agosto 2026")
-        assertThat(viewModel.state.value.rows.single().absentCount).isEqualTo(1)
+        assertThat(viewModel.state.value.rows.single().countsByStatus[AttendanceStatus.ABSENT]).isEqualTo(1)
     }
 
     @Test

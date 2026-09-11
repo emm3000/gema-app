@@ -38,11 +38,11 @@ class MonthlyAttendanceUseCasesTest {
 
         assertThat(summary.recordedDayCount).isEqualTo(2)
         val luzCounts: StudentAttendanceMonthCount = summary.rows.single { it.studentId == luz.id }
-        assertThat(luzCounts.presentCount).isEqualTo(1)
-        assertThat(luzCounts.lateCount).isEqualTo(1)
+        assertThat(luzCounts.countsByStatus[AttendanceStatus.PRESENT]).isEqualTo(1)
+        assertThat(luzCounts.countsByStatus[AttendanceStatus.LATE]).isEqualTo(1)
         val joseCounts: StudentAttendanceMonthCount = summary.rows.single { it.studentId == jose.id }
-        assertThat(joseCounts.absentCount).isEqualTo(1)
-        assertThat(joseCounts.justifiedCount).isEqualTo(1)
+        assertThat(joseCounts.countsByStatus[AttendanceStatus.ABSENT]).isEqualTo(1)
+        assertThat(joseCounts.countsByStatus[AttendanceStatus.JUSTIFIED]).isEqualTo(1)
     }
 
     @Test
@@ -50,8 +50,9 @@ class MonthlyAttendanceUseCasesTest {
         val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
 
         assertThat(summary.recordedDayCount).isEqualTo(0)
-        assertThat(summary.rows.map { it.presentCount + it.lateCount + it.absentCount + it.justifiedCount })
-            .containsExactly(0, 0)
+        assertThat(summary.rows.map { it.countsByStatus.values.sum() }).containsExactly(0, 0)
+        assertThat(summary.rows.map { it.countsByStatus.keys })
+            .containsExactly(AttendanceStatus.entries.toSet(), AttendanceStatus.entries.toSet())
     }
 
     @Test
@@ -78,8 +79,9 @@ class MonthlyAttendanceUseCasesTest {
 
         val summary: MonthlyAttendanceSummary = getMonthlySummary(SECTION_ID, september).first()
 
-        assertThat(summary.rows.single { it.studentId == luz.id }.absentCount).isEqualTo(1)
-        assertThat(summary.rows.single { it.studentId == luz.id }.lateCount).isEqualTo(0)
+        val luzCounts: Map<AttendanceStatus, Int> = summary.rows.single { it.studentId == luz.id }.countsByStatus
+        assertThat(luzCounts[AttendanceStatus.ABSENT]).isEqualTo(1)
+        assertThat(luzCounts[AttendanceStatus.LATE]).isEqualTo(0)
     }
 
     @Test

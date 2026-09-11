@@ -151,8 +151,8 @@ class AttendancePersistenceTest {
 
         assertThat(summary.recordedDayCount).isEqualTo(1)
         val counts: StudentAttendanceMonthCount = summary.rows.single { it.studentId == student.id }
-        assertThat(counts.lateCount).isEqualTo(1)
-        assertThat(counts.absentCount).isEqualTo(0)
+        assertThat(counts.countsByStatus[AttendanceStatus.LATE]).isEqualTo(1)
+        assertThat(counts.countsByStatus[AttendanceStatus.ABSENT]).isEqualTo(0)
     }
 
     private suspend fun section(): Section = createSection("2026", Grade.THIRD, "A")

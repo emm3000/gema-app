@@ -73,7 +73,8 @@ B `CodEstudiante`, C `Nombres`, then one column per day starting at D.
 ### Attendance status codes — PENDING CONFIRMATION AGAINST A REAL FILE
 
 We do not have a real SIAGIE-generated attendance file. The codes below are our
-own choice, kept in one place (`AttendanceSiagieCode` in `core:siagie`) so a
+own choice, kept in one place (`AttendanceSiagieCode` in `core:domain`, read by
+both `core:siagie` and `feature:attendance` so nothing repeats it) so a
 correction is a one-line edit once a real file is available:
 
 | App status (`AttendanceStatus`) | SIAGIE code written |

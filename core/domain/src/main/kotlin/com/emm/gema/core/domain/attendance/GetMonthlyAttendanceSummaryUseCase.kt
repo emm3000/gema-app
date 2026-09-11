@@ -30,10 +30,9 @@ class GetMonthlyAttendanceSummaryUseCase(
         return StudentAttendanceMonthCount(
             studentId = id,
             displayName = fullName,
-            presentCount = own.count { it.status == AttendanceStatus.PRESENT },
-            lateCount = own.count { it.status == AttendanceStatus.LATE },
-            absentCount = own.count { it.status == AttendanceStatus.ABSENT },
-            justifiedCount = own.count { it.status == AttendanceStatus.JUSTIFIED },
+            countsByStatus = AttendanceStatus.entries.associateWith { status ->
+                own.count { it.status == status }
+            },
         )
     }
 }
