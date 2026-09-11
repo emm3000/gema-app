@@ -126,3 +126,20 @@ requirement, not a global CNEB index.
   autonomous learning), not tied to one area.
 - `achievementScale[]` — the literal scale AD/A/B/C with the official
   Minedu description of each level.
+
+## What the app seeds from this file
+
+`core:domain` carries the area competencies of `primary.json` as `PrimaryCurriculum`,
+a JVM constant keyed by the `Area` enum, with `VERSION` matching this file's
+`version`. Every competency gets the stable id `<AREA_CODE>-<siagie ordinal>` and
+`core:database` writes it to the `competency` table on first run, idempotently, so
+a reinstall or an upgrade never duplicates a row and a later curriculum version is
+an additive migration plus a bumped `VERSION`.
+
+Left out of the seed for now:
+
+- **The two transversal competencies.** They belong to no `Area`, so storing them
+  would need a nullable area column and a second toggle surface. Issue #7 asks for
+  the areas and their competencies only. Adding them later is a new curriculum
+  version, which is exactly what the versioned seed is for.
+- **`achievementScale`.** Ticket #9 owns the AD/A/B/C scale; nothing reads it yet.
