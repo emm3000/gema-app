@@ -1,7 +1,10 @@
 package com.emm.gema.core.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,4 +33,13 @@ object GemaShapes {
 
 object GemaBorder {
     val hairline: Dp = 1.dp
+}
+
+object GemaAccents {
+
+    val unmarkedSurface: Color
+        @Composable get() = if (isSystemInDarkTheme()) unmarkedDark else unmarkedLight
+
+    val onUnmarkedSurface: Color
+        @Composable get() = if (isSystemInDarkTheme()) onUnmarkedDark else onUnmarkedLight
 }
