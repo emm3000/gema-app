@@ -1,0 +1,58 @@
+CREATE TABLE activity (
+    id TEXT NOT NULL PRIMARY KEY,
+    section_id TEXT NOT NULL,
+    period_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    date TEXT NOT NULL
+);
+
+CREATE INDEX activity_section_period ON activity(section_id, period_id);
+
+CREATE TABLE activity_competency (
+    activity_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    PRIMARY KEY (activity_id, competency_id)
+);
+
+upsert:
+INSERT OR REPLACE INTO activity (id, section_id, period_id, name, date)
+VALUES (?, ?, ?, ?, ?);
+
+insertCompetency:
+INSERT OR REPLACE INTO activity_competency (activity_id, competency_id)
+VALUES (?, ?);
+
+deleteCompetenciesByActivity:
+DELETE FROM activity_competency
+WHERE activity_id = ?;
+
+deleteCompetenciesBySection:
+DELETE FROM activity_competency
+WHERE activity_id IN (SELECT id FROM activity WHERE section_id = ?);
+
+selectByPeriod:
+SELECT activity.id AS id, activity.section_id AS section_id, activity.period_id AS period_id,
+       activity.name AS name, activity.date AS date,
+       GROUP_CONCAT(activity_competency.competency_id) AS competency_ids
+FROM activity
+LEFT JOIN activity_competency ON activity_competency.activity_id = activity.id
+WHERE activity.section_id = ? AND activity.period_id = ?
+GROUP BY activity.id
+ORDER BY activity.date DESC;
+
+selectById:
+SELECT activity.id AS id, activity.section_id AS section_id, activity.period_id AS period_id,
+       activity.name AS name, activity.date AS date,
+       GROUP_CONCAT(activity_competency.competency_id) AS competency_ids
+FROM activity
+LEFT JOIN activity_competency ON activity_competency.activity_id = activity.id
+WHERE activity.id = ?
+GROUP BY activity.id;
+
+delete:
+DELETE FROM activity
+WHERE id = ?;
+
+deleteBySection:
+DELETE FROM activity
+WHERE section_id = ?;

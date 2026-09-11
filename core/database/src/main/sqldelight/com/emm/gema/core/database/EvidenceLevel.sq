@@ -1,0 +1,35 @@
+CREATE TABLE evidence_level (
+    activity_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    achievement_level TEXT NOT NULL,
+    PRIMARY KEY (activity_id, student_id, competency_id)
+);
+
+upsert:
+INSERT OR REPLACE INTO evidence_level (activity_id, student_id, competency_id, achievement_level)
+VALUES (?, ?, ?, ?);
+
+selectByActivity:
+SELECT *
+FROM evidence_level
+WHERE activity_id = ?;
+
+selectRecordedStudentCountsByPeriod:
+SELECT evidence_level.activity_id AS activity_id, COUNT(DISTINCT evidence_level.student_id) AS student_count
+FROM evidence_level
+JOIN activity ON activity.id = evidence_level.activity_id
+WHERE activity.section_id = ? AND activity.period_id = ?
+GROUP BY evidence_level.activity_id;
+
+delete:
+DELETE FROM evidence_level
+WHERE activity_id = ? AND student_id = ? AND competency_id = ?;
+
+deleteByActivity:
+DELETE FROM evidence_level
+WHERE activity_id = ?;
+
+deleteBySection:
+DELETE FROM evidence_level
+WHERE activity_id IN (SELECT id FROM activity WHERE section_id = ?);
