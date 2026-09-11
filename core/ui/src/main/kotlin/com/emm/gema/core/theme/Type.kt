@@ -2,31 +2,11 @@ package com.emm.gema.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
-import com.emm.gema.core.ui.R
 
-val provider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs
-)
+private val baseline: Typography = Typography()
 
-val bodyFontFamily: FontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Lato"),
-        fontProvider = provider,
-    )
-)
-
-val displayFontFamily: FontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Lato"),
-        fontProvider = provider,
-    )
-)
-
-val baseline = Typography()
+val bodyFontFamily: FontFamily = FontFamily.SansSerif
+val displayFontFamily: FontFamily = FontFamily.SansSerif
 
 val gemaTypography = Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
