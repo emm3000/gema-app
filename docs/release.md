@@ -37,10 +37,9 @@ Run this outside the repository (for example in `~/keys`):
 ```bash
 mkdir -p ~/keys
 keytool -genkeypair -v \
-  -keystore ~/keys/gema-upload.jks \
+  -keystore ~/keys/gema-upload.keystore \
   -alias gema-upload \
-  -keyalg RSA -keysize 4096 -validity 10000 \
-  -storetype JKS
+  -keyalg RSA -keysize 4096 -validity 10000
 ```
 
 `keytool` asks for a store password, a key password and the certificate
@@ -48,12 +47,18 @@ identity (name, organizational unit, organization, city, state, country
 code). Use `PE` as the country code. Store both passwords in a password
 manager.
 
+The build reads whatever format the file already is. Modern `keytool`
+produces PKCS12, older keystores are JKS, and both work with no extra
+setting, because the JVM resolves the type from the file itself. An existing
+`.p12` or `.jks` upload keystore is used as it is — only the path in
+`storeFile` has to point at it.
+
 ### 2. Point the build at it locally
 
 Create `keystore.properties` at the repository root (git-ignored):
 
 ```properties
-storeFile=/Users/<you>/keys/gema-upload.jks
+storeFile=/Users/<you>/keys/gema-upload.keystore
 storePassword=<store password>
 keyAlias=gema-upload
 keyPassword=<key password>
@@ -74,7 +79,11 @@ are read only when the matching property is absent:
 
 When any of the four is missing or blank, no signing config is created and
 the release build stays unsigned. A clean clone with no keystore still builds
-debug, runs the tests and produces an unsigned `assembleRelease`.
+debug, runs the tests and produces an unsigned `assembleRelease`. When some
+but not all four are present, the build warns and names the missing ones
+before falling back to unsigned, so a typo in `keystore.properties` or a
+secret that never reached the runner is visible in the build log instead of
+producing a silently unsigned release.
 
 ### 3. Store it in GitHub
 
@@ -82,7 +91,7 @@ The `Release` workflow signs the bundle when these repository secrets exist:
 
 | Secret | Value |
 |---|---|
-| `GEMA_UPLOAD_KEYSTORE_BASE64` | `base64 -i ~/keys/gema-upload.jks` output, one line |
+| `GEMA_UPLOAD_KEYSTORE_BASE64` | `base64 -i ~/keys/gema-upload.keystore` output, one line |
 | `GEMA_STORE_PASSWORD` | store password |
 | `GEMA_KEY_ALIAS` | `gema-upload` |
 | `GEMA_KEY_PASSWORD` | key password |
@@ -129,23 +138,37 @@ broad `-keep`.
 
 ### Smoke check
 
-The minified build must be run before it is shipped. What was verified for
-this change, on an API 37 emulator with a throwaway keystore created outside
-the repository:
+The minified build must be run before it is shipped, and the walkthrough has
+to reach every flow that touches `java.util.zip`, the DOM parser or a file
+provider, because those are the ones R8 can break without any build-time
+warning.
 
-1. `./gradlew assembleRelease bundleRelease` with the four environment
-   variables set produced a signed `app-release.apk` and `app-release.aab`.
-2. `adb install -r app-release.apk`, then launch: the setup flow rendered its
-   first step with the computed school-year periods, which exercises Koin
-   injection, Compose and the domain layer.
-3. Advancing to step two rendered the section step, which exercises the
-   SQLDelight read and write path.
-4. `adb logcat` showed no `FATAL`, no `ClassNotFoundException` and no
-   `NoSuchMethodError`.
+What was verified for this change, on an API 37 emulator, with a throwaway
+keystore created outside the repository and the fixtures in
+`core/siagie/src/test/resources` pushed to `/sdcard/Download`:
 
-The SIAGIE import and export and the backup restore are not covered by that
-walkthrough; run them manually on a minified build before the first public
-release.
+1. `assembleRelease` and `bundleRelease` with the four environment variables
+   set produced a signed `app-release.apk` and `app-release.aab`. The
+   throwaway keystore was PKCS12, and `apksigner verify --print-certs`
+   reported its certificate on the packaged APK.
+2. Setup: both steps rendered and saved, which exercises Koin injection,
+   Compose, the domain layer and the SQLDelight write path.
+3. SIAGIE import: picking `6 Primaria EBR.xlsx` for a 1° section was rejected
+   with "Este archivo no es de esta sección" after the file's own 6° grade was
+   read, and picking it for a 6° A section previewed "5 alumnos en el archivo"
+   and created the five students.
+4. SIAGIE grades export: "Generar archivo" rewrote the imported workbook and
+   opened the share sheet with it.
+5. Monthly attendance: a day was recorded (four present, one absent), the
+   monthly summary counted it per student, and "Exportar el mes" filled
+   `AsistenciaIE_12345_6_A.xlsx` and shared it.
+6. Backup and restore: "Crear respaldo" wrote a `.gema` file and shared it,
+   and restoring a `.gema` from a different school year replaced the data and
+   restarted the app on the restored year.
+7. `adb logcat` showed no `FATAL EXCEPTION`, no `ClassNotFoundException` and
+   no `NoSuchMethodError` at any point.
+
+No keep rule was needed for any of it.
 
 ## Shipping to internal testing
 
