@@ -29,6 +29,12 @@ A clean clone with no keystore builds debug, runs the tests and produces an
 unsigned release. That is the property CI depends on: `assembleRelease` runs on
 every pull request, including from a fork, where no secret is readable.
 
+`keystore.properties` is read through `providers.fileContents`, not through
+`File.readText`. The configuration cache tracks a provider and does not track a
+raw file read, so with the plain read the first cached configuration would
+survive the owner creating the keystore file and keep producing unsigned
+releases until something else invalidated the cache.
+
 ## One version, in the version catalog
 
 `gemaVersionCode` and `gemaVersionName` are `[versions]` entries in

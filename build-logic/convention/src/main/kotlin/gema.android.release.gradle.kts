@@ -8,10 +8,12 @@ plugins {
 
 val catalog: VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
+val declaredKeystore: RegularFile = rootProject.layout.projectDirectory.file("keystore.properties")
+val declaredCredentials: String = providers.fileContents(declaredKeystore).asText.orNull.orEmpty()
+
 val keystoreProperties: Properties = Properties().apply {
-    val declaredKeystore: File = rootProject.file("keystore.properties")
-    if (declaredKeystore.exists()) {
-        declaredKeystore.inputStream().use(::load)
+    if (declaredCredentials.isNotBlank()) {
+        declaredCredentials.reader().use(::load)
     }
 }
 
