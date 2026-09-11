@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="school_years_section_count">
+        <item quantity="one">%d sección</item>
+        <item quantity="other">%d secciones</item>
+    </plurals>
+</resources>
