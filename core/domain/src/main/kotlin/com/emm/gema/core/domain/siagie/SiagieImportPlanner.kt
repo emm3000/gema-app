@@ -28,6 +28,8 @@ class SiagieImportPlanner(
         val content: ByteArray = documents.readContent(uri)
         val roster: SiagieRoster = when (val result: SiagieRosterResult = reader.read(fileName, content)) {
             is SiagieRosterResult.Parsed -> result.roster
+            is SiagieRosterResult.Malformed ->
+                return PlannedImport.Rejected(SiagieImportRejection.MalformedRow(result.row))
             SiagieRosterResult.NotASiagieTemplate ->
                 return PlannedImport.Rejected(SiagieImportRejection.NotASiagieTemplate)
         }

@@ -134,6 +134,19 @@ class SiagieImportFixtureTest {
     }
 
     @Test
+    fun `a roster broken in the middle is rejected instead of silently truncated`() = runTest {
+        sections.section = sectionOf(Grade.SIXTH)
+        val broken: File = fixtureWith("B6", "")
+
+        val preview: SiagieImportPreview = previewImport(SECTION_ID, broken.absolutePath)
+
+        assertThat(preview).isEqualTo(
+            SiagieImportPreview.Rejected(SiagieImportRejection.MalformedRow(row = 6))
+        )
+        assertThat(students.listBySection(SECTION_ID)).isEmpty()
+    }
+
+    @Test
     fun `a file that is not a template is rejected`() = runTest {
         sections.section = sectionOf(Grade.SIXTH)
         val notATemplate: File = temporaryFolder.newFile("notas.xlsx")

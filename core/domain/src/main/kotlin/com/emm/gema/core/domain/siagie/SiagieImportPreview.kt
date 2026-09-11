@@ -13,6 +13,8 @@ sealed interface SiagieImportRejection {
 
     data object EmptyRoster : SiagieImportRejection
 
+    data class MalformedRow(val row: Int) : SiagieImportRejection
+
     data class GradeMismatch(val expected: Int, val found: Int) : SiagieImportRejection
 
     data class SectionMismatch(val expected: String, val found: String) : SiagieImportRejection

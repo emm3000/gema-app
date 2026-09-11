@@ -138,6 +138,11 @@ class ImportPreviewViewModel(
             expected = null,
             found = null,
         )
+        is SiagieImportRejection.MalformedRow -> ImportRejection(
+            reason = "La fila ${reason.row} del archivo no tiene un código de estudiante válido",
+            expected = null,
+            found = null,
+        )
         is SiagieImportRejection.GradeMismatch -> ImportRejection(
             reason = "Este archivo no es de esta sección",
             expected = sectionTitle.ifEmpty { section?.title().orEmpty() },

@@ -51,6 +51,24 @@ class SiagieImportPersistenceTest {
     }
 
     @Test
+    fun `one transaction creates a new student and updates an existing one`() = runTest {
+        store.apply(listOf(studentOf("student-1", "10000000000001")), templateOf())
+
+        store.apply(
+            listOf(
+                studentOf("student-1", "10000000000001", "ALVARADO QUISPE, MARIA FERNANDA"),
+                studentOf("student-2", "10000000000002"),
+            ),
+            templateOf(),
+        )
+
+        val stored: List<Student> = students.listBySection(SECTION_ID)
+        assertThat(stored.map { it.id }).containsExactly("student-1", "student-2")
+        assertThat(stored.single { it.id == "student-1" }.fullName)
+            .isEqualTo("ALVARADO QUISPE, MARIA FERNANDA")
+    }
+
+    @Test
     fun `a second import replaces the template of the section`() = runTest {
         store.apply(emptyList(), templateOf())
 
@@ -103,10 +121,14 @@ class SiagieImportPersistenceTest {
         importedAt = importedAt,
     )
 
-    private fun studentOf(id: String, code: String): Student = Student(
+    private fun studentOf(
+        id: String,
+        code: String,
+        fullName: String = "ALVARADO QUISPE, MARIA",
+    ): Student = Student(
         id = id,
         sectionId = SECTION_ID,
         code = StudentCode(code),
-        fullName = "ALVARADO QUISPE, MARIA",
+        fullName = fullName,
     )
 }

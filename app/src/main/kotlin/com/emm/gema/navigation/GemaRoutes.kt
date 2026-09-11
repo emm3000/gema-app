@@ -1,6 +1,5 @@
 package com.emm.gema.navigation
 
-import android.net.Uri
 import com.emm.gema.core.domain.section.Area
 
 object GemaRoutes {
@@ -40,8 +39,27 @@ object GemaRoutes {
         "student-form/$sectionId?studentId=${studentId.orEmpty()}"
 
     fun importPreview(sectionId: String, uri: String): String =
-        "import-preview/$sectionId/${Uri.encode(uri)}"
+        "import-preview/$sectionId/${encodeArgument(uri)}"
 
     fun workedCompetenciesOf(sectionId: String, periodId: String, area: Area): String =
         "worked-competencies/$sectionId/$periodId/${area.name}"
+}
+
+private const val UNRESERVED: String = "-._~"
+private const val BYTE_MASK: Int = 0xFF
+private const val ASCII_LIMIT: Int = 0x80
+private const val HEXADECIMAL: Int = 16
+private const val HEXADECIMAL_DIGITS: Int = 2
+
+private fun encodeArgument(value: String): String = buildString {
+    value.toByteArray(Charsets.UTF_8).forEach { byte: Byte ->
+        val code: Int = byte.toInt() and BYTE_MASK
+        val character: Char = code.toChar()
+        if (character.isLetterOrDigit() && code < ASCII_LIMIT || character in UNRESERVED) {
+            append(character)
+        } else {
+            append('%')
+            append(code.toString(radix = HEXADECIMAL).uppercase().padStart(HEXADECIMAL_DIGITS, '0'))
+        }
+    }
 }
