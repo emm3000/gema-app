@@ -5,9 +5,10 @@ iron rule from `.claude/rules/ui-components.md` holds: a feature screen calls
 `G*` components only, never raw Material3, and never a literal colour, size or
 radius.
 
-Target path: `app/src/main/kotlin/com/emm/gema/core/ui/`, moving to `core:ui`
-once the foundation split lands. Tokens live in `core/theme/Color.kt`, `Type.kt`
-and `Foundation.kt` and are the single source of truth.
+Built path: `core/ui/src/main/kotlin/com/emm/gema/core/ui/` — the foundation
+split has landed, `core:ui` is its own module. Tokens live in
+`core/theme/Color.kt`, `Type.kt` and `Foundation.kt` and are the single source
+of truth.
 
 ## Token vocabulary used below
 
@@ -26,30 +27,32 @@ every component must honour it.
 
 Sixteen components. Each one is justified by at least two screens; anything used
 once lives in its feature package instead (`.claude/rules/ui-components.md`,
-"Decide the scope").
+"Decide the scope"). Fourteen are built in `core:ui`; six are still **planned**
+— specified here because a future feature ticket needs them, but with no
+`.kt` file yet.
 
-| Component | Wraps | Used by |
-|---|---|---|
-| `GScreen` | `Scaffold` | every screen |
-| `GTopBar` | `TopAppBar` | every screen |
-| `GButton` | `Button` / `OutlinedButton` / `TextButton` | setup, forms, export, backup |
-| `GIconButton` | `IconButton` | top bars, date stepper |
-| `GTextField` | `OutlinedTextField` | setup, student form, activity form, conclusion, backup |
-| `GDateField` | `OutlinedTextField` + `DatePickerDialog` | setup, periods, student form, activity form |
-| `GSegmentedPicker` | `SingleChoiceSegmentedButtonRow` | period kind, grade, attendance status, level pickers |
-| `GListItem` | `ListItem` inside `Surface` | home, sections, students, activities, blockers |
-| `GCard` | `Surface` | home banner, export cards, section detail |
-| `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows |
-| `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence |
-| `GAttendanceToggle` | `GSegmentedPicker` | attendance day |
-| `GCheckRow` | `Row` + `Checkbox` | worked competencies, activity form, import preview |
-| `GSwitchRow` | `Row` + `Switch` | section areas |
-| `GBanner` | `Surface` | backup reminder, import rejection, export blocked, period warnings |
-| `GEmptyState` | `Column` | students, activities, period levels, sections |
-| `GDialog` | `AlertDialog` | delete section, restore backup, apply import |
-| `GBottomSheet` | `ModalBottomSheet` | period level sheet, export blockers |
-| `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors |
-| `GSearchField` | `OutlinedTextField` | students |
+| Component | Wraps | Used by | Status |
+|---|---|---|---|
+| `GScreen` | `Scaffold` | every screen | built |
+| `GTopBar` | `TopAppBar` | every screen | built |
+| `GButton` | `Button` / `OutlinedButton` / `TextButton` | setup, forms, export, backup | built |
+| `GIconButton` | `IconButton` | top bars, date stepper | built |
+| `GTextField` | `OutlinedTextField` | setup, student form, activity form, conclusion, backup | built |
+| `GDateField` | `OutlinedTextField` + `DatePickerDialog` | setup, periods, student form, activity form | built |
+| `GSegmentedPicker` | `SingleChoiceSegmentedButtonRow` | period kind, grade, attendance status, level pickers | built |
+| `GListItem` | `ListItem` inside `Surface` | home, sections, students, activities, blockers | built |
+| `GCard` | `Surface` | home banner, export cards, section detail | built |
+| `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows | planned |
+| `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence | planned |
+| `GAttendanceToggle` | `GSegmentedPicker` | attendance day | planned |
+| `GCheckRow` | `Row` + `Checkbox` | worked competencies, activity form, import preview | built |
+| `GSwitchRow` | `Row` + `Switch` | section areas | built |
+| `GBanner` | `Surface` | backup reminder, import rejection, export blocked, period warnings | built |
+| `GEmptyState` | `Column` | students, activities, period levels, sections | built |
+| `GDialog` | `AlertDialog` | delete section, restore backup, apply import | built |
+| `GBottomSheet` | `ModalBottomSheet` | period level sheet, export blockers | planned |
+| `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors | planned |
+| `GSearchField` | `OutlinedTextField` | students | planned |
 
 (Twenty rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
 rather than widgets, which is why the working widget set is sixteen.)
@@ -66,14 +69,22 @@ bottom action bar are decided once instead of in twenty places.
 fun GScreen(
     topBar: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState? = null,
     bottomAction: (@Composable () -> Unit)? = null,
-    floatingAction: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
 )
 ```
 
 Wraps `Scaffold`. Tokens: `GemaSpacing.screenGutter` applied as horizontal
 padding to `content`, `colorScheme.surface` as the background.
+
+Deviation from an earlier draft of this catalog: the built signature carries
+`snackbarHostState: SnackbarHostState?`, not a `floatingAction` slot. There is
+no floating action button anywhere in this app (see "No `GTabRow`" and the
+rest of the "deliberately not in the catalog" list below for the same
+minimalism); the one host a screen needs is the `SnackbarHost` for pure
+acknowledgements such as "Respaldo creado", wired once here instead of once
+per screen.
 
 Tradeoff: `bottomAction` exists instead of leaving primary buttons inline in the
 scroll because on a 4.5" screen the primary action is otherwise below the fold,
@@ -116,9 +127,8 @@ fun GButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     variant: GButtonVariant = GButtonVariant.PRIMARY,
-    isEnabled: Boolean = true,
+    enabled: Boolean = true,
     isBusy: Boolean = false,
-    leadingIcon: ImageVector? = null,
 )
 ```
 
@@ -126,6 +136,15 @@ Wraps `Button` (primary), `OutlinedButton` (secondary), `Button` with
 `colorScheme.error` (destructive), `TextButton` (text). Tokens:
 `GemaShapes.control`, `GemaSpacing.md` horizontal padding,
 `GemaSpacing.minTouchTarget` height floor, `GemaTypography.labelLarge`.
+
+Deviation from an earlier draft of this catalog: the built parameter is
+`enabled`, matching Compose's own `Button`/`OutlinedButton`/`TextButton`
+convention, not `isEnabled` (the `is`-prefix convention `naming.md` uses for
+booleans elsewhere in this codebase — `GTextField`, `GDateField`,
+`GSegmentedPicker` and the rest of this catalog all use `isEnabled`, so
+`GButton` is the one outlier). There is also no `leadingIcon` parameter; no
+built screen has needed one yet, and adding it before a second real use would
+be YAGNI (`.claude/rules/principles.md`).
 
 Tradeoff: `isBusy` exists but is used on exactly three actions — create Backup,
 restore Backup and produce an export file. Everything else in this app writes to
@@ -165,9 +184,7 @@ fun GTextField(
     modifier: Modifier = Modifier,
     supportingText: String? = null,
     errorText: String? = null,
-    placeholder: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
-    maxLines: Int = 1,
     isEnabled: Boolean = true,
 )
 ```
@@ -180,10 +197,15 @@ Tokens: `GemaShapes.control`, `colorScheme.outline` / `primary` for the border,
 `colorScheme.error` for `errorText`, `GemaTypography.bodyLarge` for the value and
 `labelSmall` for the supporting line.
 
-Tradeoff: `errorText` and `supportingText` are separate parameters rather than
-one slot, because the Student Code field needs both at once — the live digit
-counter ("11 de 14 digitos") and the uniqueness error. Collapsing them would
-make the counter disappear exactly when the Teacher needs it.
+Deviation from an earlier draft of this catalog: the built component has no
+`placeholder` and no `maxLines` — every use so far is a single labelled line,
+so both would be unused parameters. It also does **not** show `errorText` and
+`supportingText` at once: the supporting line renders `errorText ?: supportingText`,
+so an error replaces the supporting text rather than sitting beside it. The
+Student Code live digit counter and its uniqueness error therefore cannot both
+be visible through this component as built; a screen that genuinely needs both
+at once has to compose its own supporting row until that need is confirmed
+against a real screen.
 
 ### GDateField
 
@@ -287,7 +309,6 @@ better spent on them.
 @Composable
 fun GCard(
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 )
 ```
@@ -300,7 +321,13 @@ Elevation shadows are the single most expensive thing to draw repeatedly on a
 low-end GPU, and in direct sunlight a shadow is invisible anyway — an outline
 is not.
 
-### GLevelChip
+Deviation from an earlier draft of this catalog: the built `GCard` has no
+`onClick`. Every current use (home banner, export cards, section detail) is a
+passive container; a clickable variant of the whole card was never needed, and
+a caller that wants a tap target wraps its own `Modifier.clickable` on the
+content rather than the catalog adding a parameter with no current caller.
+
+### GLevelChip (planned)
 
 Purpose: display one Achievement Level, one Unworked Comment, or an empty slot.
 Read-only.
@@ -343,7 +370,7 @@ Tradeoffs, and this is the one place where the obvious choice is wrong:
   name column at 360dp. A caller passing an arbitrary size would eventually
   break that arithmetic.
 
-### GLevelPicker
+### GLevelPicker (planned)
 
 ```kotlin
 @Composable
@@ -363,7 +390,7 @@ It exists as its own composable rather than a call-site configuration of
 `contentDescription`s must be identical on the Period Level sheet and on Activity
 Evidence. Two screens building the same list independently is how they drift.
 
-### GAttendanceToggle
+### GAttendanceToggle (planned)
 
 ```kotlin
 @Composable
@@ -467,9 +494,9 @@ container on a 360dp screen becomes decoration.
 @Composable
 fun GEmptyState(
     title: String,
+    message: String,
     modifier: Modifier = Modifier,
-    description: String? = null,
-    actionText: String? = null,
+    actionLabel: String? = null,
     onActionClick: (() -> Unit)? = null,
 )
 ```
@@ -481,6 +508,13 @@ No illustration and no mascot — the rule file forbids it, and an empty state
 here is almost always one tap from being resolved. The action text is the whole
 point: "Marca las competencias que trabajaste" routes straight to
 `WorkedCompetencies`.
+
+Deviation from an earlier draft of this catalog: `message` is required, not an
+optional `description` — an empty state with a title and no explanation gives
+the Teacher a dead end, so the component does not allow omitting it. The
+action-label parameter is named `actionLabel`, matching the "label describes
+the button text" convention used elsewhere in this catalog (`GBottomSheet`'s
+`title`/`subtitle`), not `actionText`.
 
 ### GDialog
 
@@ -505,7 +539,7 @@ Wraps `AlertDialog`. Tokens: `GemaShapes.container`, `colorScheme.surface`,
 list — what deleting a Section destroys, what restoring a Backup replaces. A
 confirmation that names quantities is a confirmation; "Estas seguro?" is not.
 
-### GBottomSheet
+### GBottomSheet (planned)
 
 ```kotlin
 @Composable
@@ -526,7 +560,7 @@ stays visible behind it and the Teacher keeps their place in a thirty-row list.
 The cost is that the sheet must scroll internally when the evidence list is
 long; `content` is scrollable and the level pickers are pinned above it.
 
-### GDropdownPicker
+### GDropdownPicker (planned)
 
 ```kotlin
 @Composable
@@ -554,7 +588,7 @@ Periods, twelve months — which is exactly where `GSegmentedPicker` stops fitti
 `badge` carries "ACTUAL" on the current Period so the Teacher is never guessing
 which one they are editing (US 5).
 
-### GSearchField
+### GSearchField (planned)
 
 ```kotlin
 @Composable

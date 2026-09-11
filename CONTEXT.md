@@ -33,7 +33,10 @@ The primary level a Section belongs to, first through sixth.
 _Avoid_: level, year, course
 
 **Student**:
-A child enrolled in a Section, identified by their SIAGIE student code.
+A child enrolled in a Section, identified by their SIAGIE student code. The
+name is stored and shown as one uppercase string exactly as it comes from the
+SIAGIE Excel, surnames and given names together — never split into separate
+fields.
 _Avoid_: pupil, kid, learner
 
 **Student Code**:
