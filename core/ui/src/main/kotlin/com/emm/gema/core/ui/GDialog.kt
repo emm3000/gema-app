@@ -7,7 +7,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaShapes
+import com.emm.gema.core.theme.GemaTheme
 
 @Composable
 fun GDialog(
@@ -40,4 +42,24 @@ fun GDialog(
             }
         },
     )
+}
+
+@PreviewLightDark
+@Composable
+private fun GDialogPreview() {
+    GemaTheme {
+        GDialog(
+            title = "¿Eliminar la sección?",
+            confirmText = "Eliminar",
+            onConfirm = {},
+            onDismiss = {},
+            dismissText = "Cancelar",
+            isDestructive = true,
+        ) {
+            Text(
+                text = "Se perderán los estudiantes y la asistencia registrada.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
 }
