@@ -1,0 +1,23 @@
+CREATE TABLE activity (
+    id TEXT NOT NULL PRIMARY KEY,
+    section_id TEXT NOT NULL,
+    period_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    date TEXT NOT NULL
+);
+
+CREATE INDEX activity_section_period ON activity(section_id, period_id);
+
+CREATE TABLE activity_competency (
+    activity_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    PRIMARY KEY (activity_id, competency_id)
+);
+
+CREATE TABLE evidence_level (
+    activity_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    achievement_level TEXT NOT NULL,
+    PRIMARY KEY (activity_id, student_id, competency_id)
+);

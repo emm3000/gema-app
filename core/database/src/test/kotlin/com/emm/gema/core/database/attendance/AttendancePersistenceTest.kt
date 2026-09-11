@@ -2,6 +2,8 @@ package com.emm.gema.core.database.attendance
 
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
+import com.emm.gema.core.database.activity.SqlDelightActivityRepository
+import com.emm.gema.core.database.activity.SqlDelightEvidenceLevelRepository
 import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
 import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
@@ -74,6 +76,8 @@ class AttendancePersistenceTest {
         SqlDelightSiagieImportStore(database, dispatcher),
         SqlDelightPeriodLevelRepository(database, dispatcher),
         attendanceRepository,
+        SqlDelightActivityRepository(database, dispatcher),
+        SqlDelightEvidenceLevelRepository(database, dispatcher),
     )
 
     @Test
