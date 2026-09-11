@@ -556,7 +556,8 @@ Primary action: FAB *Agregar alumno*.
 +------------------------------------------+
 ```
 
-Overflow carries *Importar de SIAGIE*.
+The top bar carries *Importar* next to *Agregar*; there is no overflow menu in
+the catalog yet (`GDropdownPicker` is still planned).
 
 ```kotlin
 data class StudentsUiState(
@@ -578,8 +579,8 @@ data class StudentRow(
 ```
 
 Intents: `QueryChanged(value: String)`, `StudentClicked(id: StudentId)`,
-`AddStudentClicked`, `ImportClicked`, `WithdrawnSectionToggled`,
-`ReactivateClicked(id: StudentId)`, `BackClicked`.
+`AddStudentClicked`, `ImportClicked`, `ImportFilePicked(uri: String)`,
+`WithdrawnSectionToggled`, `ReactivateClicked(id: StudentId)`, `BackClicked`.
 
 Effects: `NavigateToStudentForm(sectionId: SectionId, studentId: StudentId?)`,
 `OpenDocumentPicker(mimeTypes: List<String>)`,
@@ -651,7 +652,7 @@ Template, so editing the code by hand may break the round-trip.
 
 ## 11. ImportPreview
 
-Entry: Students overflow, after the system document picker returns a URI.
+Entry: the Students top bar, after the system document picker returns a URI.
 Shows what the import will do. Nothing is written until *Aplicar*.
 
 ```
@@ -697,6 +698,7 @@ data class ImportPreviewUiState(
     val isLoading: Boolean = true,
     val fileName: String = "",
     val sectionTitle: String = "",
+    val rosterSize: Int = 0,
     val rejection: ImportRejection? = null,
     val created: List<ImportStudentRow> = emptyList(),
     val updated: List<ImportStudentRow> = emptyList(),
@@ -717,9 +719,9 @@ data class ImportWithdrawalRow(
 )
 
 data class ImportRejection(
-    val expectedSection: String,
-    val foundSection: String,
     val reason: String,
+    val expected: String?,
+    val found: String?,
 )
 
 enum class ImportGroup { CREATED, UPDATED, WITHDRAWN }
