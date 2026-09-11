@@ -103,6 +103,16 @@ class SetupSectionViewModelTest {
     }
 
     @Test
+    fun `tapping the areas link on an incomplete form surfaces the section name error`() = runTest {
+        viewModel.effects.test {
+            viewModel.onIntent(SetupSectionUiIntent.AreaSelectionClicked)
+
+            expectNoEvents()
+        }
+        assertThat(viewModel.state.value.sectionNameError).isNotNull()
+    }
+
+    @Test
     fun `a failing save is reported and lets the teacher try again`() = runTest {
         repository.failsOnce = true
         fillSection()
