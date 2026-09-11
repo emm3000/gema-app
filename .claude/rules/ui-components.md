@@ -10,7 +10,7 @@ Every shared component lives in the `core:ui` module, under `com.emm.gema.core.u
 
 ## The iron rule
 
-Feature screens call **only** `G*` components. **Never** raw Material3 — no `Button`, `OutlinedTextField`, `TextField`, `Card`, `IconButton`.
+Feature screens call **only** `G*` components. **Never** raw Material3 — no `Button`, `OutlinedTextField`, `TextField`, `Card`, `IconButton`, `Text`.
 
 A custom component written inside a screen never replaces a `core/ui` component that exists for that purpose. If the `core/ui` one does not fit, extend or modify it first.
 
@@ -35,7 +35,7 @@ A custom component written inside a screen never replaces a `core/ui` component 
 
 ## Never
 
-- Raw Material3 in a feature screen.
+- Raw Material3 in a feature screen, including a bare `Text`.
 - A literal color, size or radius outside `com.emm.gema.core.theme`.
 - Semantic colors (success/warning/destructive) used to mean anything other than a system state — never to carry a grade or a right/wrong result.
 - An illustrated mascot in an empty state.

@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -59,7 +58,7 @@ private fun GScreenPreview() {
             bottomAction = { GButton(text = "Continuar", onClick = {}) },
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                Text(text = "Contenido")
+                GText(text = "Contenido", style = GTextStyle.BODY_MEDIUM)
             }
         }
     }

@@ -36,6 +36,7 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 |---|---|---|---|
 | `GScreen` | `Scaffold` | every screen | built |
 | `GTopBar` | `TopAppBar` | every screen | built |
+| `GText` | `Text` | every screen | built |
 | `GButton` | `Button` / `OutlinedButton` / `TextButton` | setup, forms, export, backup | built |
 | `GIconButton` | `IconButton` | top bars, date stepper | built |
 | `GTextField` | `OutlinedTextField` | setup, student form, activity form, conclusion, backup | built |
@@ -55,10 +56,43 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors, export period | built |
 | `GSearchField` | `OutlinedTextField` | students | planned |
 
-(Twenty rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
-rather than widgets, which is why the working widget set is sixteen.)
+(Twenty-one rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
+rather than widgets, which is why the working widget set is seventeen.)
 
 ---
+
+### GText
+
+Purpose: every piece of text in a feature screen goes through this, so a
+typography value never gets hardcoded outside `com.emm.gema.core.theme.Type`.
+
+```kotlin
+enum class GTextStyle {
+    TITLE_MEDIUM,
+    TITLE_SMALL,
+    BODY_LARGE,
+    BODY_MEDIUM,
+    BODY_SMALL,
+    LABEL_MEDIUM,
+    LABEL_SMALL,
+}
+
+@Composable
+fun GText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: GTextStyle = GTextStyle.BODY_MEDIUM,
+    color: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+)
+```
+
+Wraps `Text`. `GTextStyle` is a closed set mapped 1:1 to the `MaterialTheme.typography`
+members the app actually uses — not the full fifteen Material type-scale slots,
+and not a semantic name like "Title" or "Caption" that would drift from the
+token it maps to. `color` defaults to `Color.Unspecified`, so `Text` falls back
+to `LocalContentColor` exactly as a raw `Text` call would.
 
 ### GScreen
 
