@@ -11,4 +11,7 @@
     <string name="export_share_title">Compartir notas</string>
     <string name="export_message_failed">No se pudo generar el archivo</string>
     <string name="export_message_unavailable">Esta sección no tiene una plantilla SIAGIE importada</string>
+    <string name="export_summary_title">Resumen para imprimir</string>
+    <string name="export_summary_pdf">PDF</string>
+    <string name="export_summary_csv">CSV</string>
 </resources>
