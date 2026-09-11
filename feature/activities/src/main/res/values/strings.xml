@@ -6,4 +6,7 @@
     <string name="activities_list_badge_current">ACTUAL</string>
     <string name="activities_list_title">Actividades · %s</string>
     <string name="activities_list_subtitle">Las más nuevas primero</string>
+    <string name="activity_evidence_subtitle">%1$s · %2$s</string>
+    <string name="activity_evidence_edit_content_description">Editar actividad</string>
+    <string name="activity_evidence_no_evidence_label">sin evidencia</string>
 </resources>

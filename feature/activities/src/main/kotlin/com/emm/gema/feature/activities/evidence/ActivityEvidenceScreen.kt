@@ -1,5 +1,6 @@
 package com.emm.gema.feature.activities.evidence
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,26 +10,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.student.StudentId
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
-import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GDropdownPicker
+import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GLevelPicker
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.activities.R
 
 @Composable
 fun ActivityEvidenceScreen(
@@ -42,18 +47,23 @@ fun ActivityEvidenceScreen(
         topBar = {
             GTopBar(
                 title = state.activityName,
-                subtitle = "${state.activityDateLabel} - ${state.periodLabel}",
+                subtitle = stringResource(
+                    R.string.activity_evidence_subtitle,
+                    state.activityDateLabel,
+                    state.periodLabel,
+                ),
                 onBackClick = { onIntent(ActivityEvidenceUiIntent.BackClicked) },
                 actions = {
-                    GButton(
-                        text = "Editar",
+                    GIconButton(
+                        icon = Icons.Filled.MoreVert,
+                        contentDescription = stringResource(R.string.activity_evidence_edit_content_description),
                         onClick = { onIntent(ActivityEvidenceUiIntent.EditActivityClicked) },
-                        variant = GButtonVariant.TEXT,
                     )
                 },
             )
         },
         modifier = modifier,
+        contentGutter = false,
     ) { padding: PaddingValues ->
         Column(modifier = Modifier.padding(padding)) {
             if (message != null) {
@@ -61,7 +71,7 @@ fun ActivityEvidenceScreen(
                     text = message,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = GemaSpacing.small),
+                        .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
                     tone = GBannerTone.ERROR,
                     actionText = "Entendido",
                     onActionClick = onMessageDismissed,
@@ -87,7 +97,7 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = GemaSpacing.small),
+            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
         GDropdownPicker(
@@ -95,11 +105,11 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
             selected = state.selectedCompetencyId,
             onSelect = { onIntent(ActivityEvidenceUiIntent.CompetencySelected(it)) },
             label = "Competencia",
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.weight(1f),
         )
         GText(
             text = "${state.recordedCount}/${state.totalCount}",
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.LABEL_LARGE_EMPHASIS,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -107,12 +117,27 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
 
 @Composable
 private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> Unit) {
+    val hasNoEvidence: Boolean = row.level == null
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = GemaSpacing.small),
+            .background(if (hasNoEvidence) GemaAccents.unmarkedSurface else MaterialTheme.colorScheme.surface)
+            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
-        GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
+            if (hasNoEvidence) {
+                GText(
+                    text = stringResource(R.string.activity_evidence_no_evidence_label),
+                    style = GTextStyle.LABEL_MEDIUM,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
         GLevelPicker(
             selected = row.level?.name,
             onSelect = { letter -> onSelect(letter?.let(AchievementLevel::valueOf)) },
