@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.section.Grade
+import com.emm.gema.core.domain.section.label
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GButton
@@ -32,6 +34,17 @@ import com.emm.gema.feature.activities.R
 import java.time.LocalDate
 
 @Composable
+private fun activityFormSubtitle(state: ActivityFormUiState): String? {
+    val grade: Grade = state.grade ?: return null
+    val sectionTitle = "${grade.label()} ${state.sectionName}"
+    return if (state.resolvedPeriodLabel != null) {
+        stringResource(R.string.activity_form_subtitle, sectionTitle, state.resolvedPeriodLabel)
+    } else {
+        sectionTitle
+    }
+}
+
+@Composable
 fun ActivityFormScreen(
     state: ActivityFormUiState,
     onIntent: (ActivityFormUiIntent) -> Unit,
@@ -43,11 +56,7 @@ fun ActivityFormScreen(
         topBar = {
             GTopBar(
                 title = if (state.activityId == null) "Nueva actividad" else "Editar actividad",
-                subtitle = if (state.resolvedPeriodLabel != null) {
-                    stringResource(R.string.activity_form_subtitle, state.sectionTitle, state.resolvedPeriodLabel)
-                } else {
-                    state.sectionTitle
-                },
+                subtitle = activityFormSubtitle(state),
                 onBackClick = { onIntent(ActivityFormUiIntent.BackClicked) },
             )
         },
@@ -62,87 +71,91 @@ fun ActivityFormScreen(
             )
         },
     ) { padding: PaddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            if (message != null) {
-                item {
-                    GText(
-                        text = message,
-                        style = GTextStyle.BODY_MEDIUM,
-                        modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
-                    )
-                }
-            }
-            item {
-                Column(
-                    modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
-                    verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
-                ) {
-                    GTextField(
-                        value = state.name,
-                        onValueChange = { onIntent(ActivityFormUiIntent.NameChanged(it)) },
-                        label = "Nombre",
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Column {
-                        GDateField(
-                            value = state.date,
-                            onValueChange = { onIntent(ActivityFormUiIntent.DateChanged(it)) },
-                            label = "Fecha",
-                            modifier = Modifier.fillMaxWidth(),
-                            errorText = dateErrorText,
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) {
+                if (message != null) {
+                    item {
+                        GText(
+                            text = message,
+                            style = GTextStyle.BODY_MEDIUM,
+                            modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
                         )
-                        if (state.resolvedPeriodLabel != null) {
-                            GText(
-                                text = "Cae en el ${state.resolvedPeriodLabel}.",
-                                style = GTextStyle.BODY_SMALL,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        if (state.hasPeriodChangeWarning) {
-                            GText(
-                                text = stringResource(R.string.activity_form_period_change_warning),
-                                style = GTextStyle.BODY_SMALL,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
                     }
-                    GText(text = "Competencias trabajadas".uppercase(), style = GTextStyle.LABEL_SMALL_EMPHASIS)
                 }
-            }
-            state.competencyGroups.forEach { group ->
-                item {
-                    GGroupHeader(title = group.areaName.uppercase())
-                }
-                items(group.competencies, key = { it.id.value }) { competency ->
-                    GCheckRow(
-                        title = competency.name,
-                        isChecked = competency.id in state.selectedCompetencyIds,
-                        onCheckedChange = {
-                            onIntent(ActivityFormUiIntent.CompetencyToggled(competency.id, it))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        prefix = competency.siagieOrdinal.toString().padStart(2, '0'),
-                    )
-                }
-            }
-            if (state.canDelete) {
                 item {
                     Column(
                         modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
                         verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
                     ) {
-                        GDivider(modifier = Modifier.padding(top = GemaSpacing.small))
-                        GButton(
-                            text = "Eliminar actividad",
-                            onClick = { onIntent(ActivityFormUiIntent.DeleteClicked) },
-                            variant = GButtonVariant.DESTRUCTIVE,
+                        GTextField(
+                            value = state.name,
+                            onValueChange = { onIntent(ActivityFormUiIntent.NameChanged(it)) },
+                            label = "Nombre",
                             modifier = Modifier.fillMaxWidth(),
                         )
+                        Column {
+                            GDateField(
+                                value = state.date,
+                                onValueChange = { onIntent(ActivityFormUiIntent.DateChanged(it)) },
+                                label = "Fecha",
+                                modifier = Modifier.fillMaxWidth(),
+                                errorText = dateErrorText,
+                            )
+                            if (state.resolvedPeriodLabel != null) {
+                                GText(
+                                    text = "Cae en el ${state.resolvedPeriodLabel}.",
+                                    style = GTextStyle.BODY_SMALL,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            if (state.hasPeriodChangeWarning) {
+                                GText(
+                                    text = stringResource(R.string.activity_form_period_change_warning),
+                                    style = GTextStyle.BODY_SMALL,
+                                    color = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        }
+                        GText(text = "Competencias trabajadas".uppercase(), style = GTextStyle.LABEL_SMALL_EMPHASIS)
                     }
+                }
+                state.competencyGroups.forEach { group ->
+                    item {
+                        GGroupHeader(title = group.areaName.uppercase())
+                    }
+                    items(group.competencies, key = { it.id.value }) { competency ->
+                        GCheckRow(
+                            title = competency.name,
+                            isChecked = competency.id in state.selectedCompetencyIds,
+                            onCheckedChange = {
+                                onIntent(ActivityFormUiIntent.CompetencyToggled(competency.id, it))
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            prefix = competency.siagieOrdinal.toString().padStart(2, '0'),
+                        )
+                    }
+                }
+            }
+            if (state.canDelete) {
+                Column(
+                    modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
+                    verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
+                ) {
+                    GDivider(modifier = Modifier.padding(top = GemaSpacing.small))
+                    GButton(
+                        text = "Eliminar actividad",
+                        onClick = { onIntent(ActivityFormUiIntent.DeleteClicked) },
+                        variant = GButtonVariant.DESTRUCTIVE,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
         }
@@ -173,7 +186,8 @@ private fun ActivityFormScreenPreview() {
         ActivityFormScreen(
             state = ActivityFormUiState(
                 isLoading = false,
-                sectionTitle = "3ro A",
+                grade = Grade.THIRD,
+                sectionName = "A",
                 name = "Debate del aula",
                 date = LocalDate.of(2026, 6, 22),
                 resolvedPeriodLabel = "II Bimestre",
