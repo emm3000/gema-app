@@ -106,6 +106,7 @@ style:
     ignoreAnnotation: true
     ignoreNamedArgument: true
     ignoreEnums: true
+    ignoreAnnotated: ['PreviewLightDark']
   UnusedPrivateMember:
     active: true
     allowedNames: '(_|ignored|expected|serialVersionUID|.*Preview)'
