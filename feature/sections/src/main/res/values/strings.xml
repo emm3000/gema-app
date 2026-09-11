@@ -13,15 +13,16 @@
         <item quantity="other">%d faltan</item>
     </plurals>
 
-    <string name="sections_areas_title">Áreas</string>
+    <string name="sections_areas_title">Áreas de %1$s</string>
+    <string name="sections_areas_subtitle">Cada toque se guarda solo</string>
     <string name="sections_areas_understood">Entendido</string>
     <string name="sections_areas_hint">Apaga las áreas que no dictas. Nada se borra: puedes volver a encenderlas.</string>
 
     <string name="sections_areas_message_toggle_failed">No se pudo guardar el cambio</string>
 
     <plurals name="sections_areas_recorded_levels">
-        <item quantity="one">%d nivel registrado. Queda guardado.</item>
-        <item quantity="other">%d niveles registrados. Quedan guardados.</item>
+        <item quantity="one">%1$s tiene %2$d nivel registrado. Queda guardado y deja de exportarse.</item>
+        <item quantity="other">%1$s tiene %2$d niveles registrados. Quedan guardados y dejan de exportarse.</item>
     </plurals>
 
     <string name="sections_form_title_new">Nueva sección</string>
