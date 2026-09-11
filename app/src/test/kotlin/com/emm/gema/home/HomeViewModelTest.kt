@@ -107,15 +107,17 @@ class HomeViewModelTest {
 
     @Test
     fun `each section card says whether today's attendance is taken`() = runTest {
-        assertThat(homeAt(schoolYear.startDate).state.value.sections.map { it.attendanceSummary })
-            .containsExactly("Sin tomar", "Sin tomar")
+        assertThat(homeAt(schoolYear.startDate).state.value.sections.map { it.attendance.isTaken })
+            .containsExactly(false, false)
 
         attendanceRepository.record(
             AttendanceRecord("section-1", "student-1", schoolYear.startDate, AttendanceStatus.ABSENT),
         )
 
-        assertThat(homeAt(schoolYear.startDate).state.value.sections.map { it.attendanceSummary })
-            .containsExactly("1 de 2 presentes", "Sin tomar")
+        val sections: List<SectionRow> = homeAt(schoolYear.startDate).state.value.sections
+        assertThat(sections.map { it.attendance.isTaken }).containsExactly(true, false)
+        assertThat(sections.first().attendance.presentCount).isEqualTo(1)
+        assertThat(sections.first().attendance.totalCount).isEqualTo(2)
     }
 
     @Test

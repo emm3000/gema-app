@@ -17,6 +17,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.R
+import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -115,7 +116,7 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
             subtitle = stringResource(
                 R.string.home_section_attendance,
                 pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
-                row.attendanceSummary,
+                attendanceLabel(row.attendance),
             ),
             hasChevron = true,
             onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
@@ -127,6 +128,13 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
             variant = GButtonVariant.SECONDARY,
         )
     }
+}
+
+@Composable
+private fun attendanceLabel(summary: AttendanceDaySummary): String = if (summary.isTaken) {
+    stringResource(R.string.home_attendance_taken, summary.presentCount, summary.totalCount)
+} else {
+    stringResource(R.string.home_attendance_untaken)
 }
 
 @Composable

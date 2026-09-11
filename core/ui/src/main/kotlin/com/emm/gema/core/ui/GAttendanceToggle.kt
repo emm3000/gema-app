@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaTheme
 
@@ -20,26 +19,29 @@ private val pendingCornerRadius: Dp = 12.dp
 private val pendingDashLength: Dp = 6.dp
 private val pendingDashGap: Dp = 4.dp
 
-private val attendanceOptions: List<GSegmentOption<AttendanceStatus>> = listOf(
-    GSegmentOption(AttendanceStatus.PRESENT, "P", "Presente"),
-    GSegmentOption(AttendanceStatus.LATE, "T", "Tardanza"),
-    GSegmentOption(AttendanceStatus.ABSENT, "F", "Falta"),
-    GSegmentOption(AttendanceStatus.JUSTIFIED, "FJ", "Falta justificada"),
-)
+enum class GAttendanceOption(val label: String, val contentDescription: String) {
+    PRESENT("P", "Presente"),
+    LATE("T", "Tardanza"),
+    ABSENT("F", "Falta"),
+    JUSTIFIED("FJ", "Falta justificada"),
+}
+
+private val attendanceOptions: List<GSegmentOption<GAttendanceOption>> = GAttendanceOption.entries
+    .map { GSegmentOption(it, it.label, it.contentDescription) }
 
 @Composable
 fun GAttendanceToggle(
-    status: AttendanceStatus,
+    option: GAttendanceOption,
     isRecorded: Boolean,
-    onSelect: (AttendanceStatus) -> Unit,
+    onSelect: (GAttendanceOption) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val outline: Color = MaterialTheme.colorScheme.outline
 
     GSegmentedPicker(
         options = attendanceOptions,
-        selected = status.takeIf { isRecorded },
-        onSelect = { value: AttendanceStatus? -> onSelect(value ?: status) },
+        selected = option.takeIf { isRecorded },
+        onSelect = { value: GAttendanceOption? -> onSelect(value ?: option) },
         modifier = modifier
             .fillMaxWidth()
             .then(if (isRecorded) Modifier else Modifier.pendingOutline(outline)),
@@ -63,6 +65,6 @@ private fun Modifier.pendingOutline(color: Color): Modifier = drawBehind {
 @Composable
 private fun GAttendanceTogglePreview() {
     GemaTheme {
-        GAttendanceToggle(status = AttendanceStatus.PRESENT, isRecorded = false, onSelect = {})
+        GAttendanceToggle(option = GAttendanceOption.PRESENT, isRecorded = false, onSelect = {})
     }
 }

@@ -1,5 +1,7 @@
 package com.emm.gema.home
 
+import com.emm.gema.core.domain.attendance.AttendanceDaySummary
+
 data class HomeUiState(
     val isLoading: Boolean = true,
     val schoolYearId: String? = null,
@@ -13,7 +15,7 @@ data class SectionRow(
     val id: String,
     val title: String,
     val studentCount: Int,
-    val attendanceSummary: String = "",
+    val attendance: AttendanceDaySummary = AttendanceDaySummary(0, 0, 0),
 )
 
 data class BackupReminder(
