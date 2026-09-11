@@ -104,6 +104,27 @@ class AttendanceUseCasesTest {
     }
 
     @Test
+    fun `a day nobody touched summarises as untaken`() = runTest {
+        val summary: AttendanceDaySummary = getAttendanceDay(SECTION_ID, today).first().summarise()
+
+        assertThat(summary.isTaken).isFalse()
+        assertThat(summary.presentCount).isEqualTo(2)
+        assertThat(summary.totalCount).isEqualTo(2)
+        assertThat(summary.unmarkedCount).isEqualTo(2)
+    }
+
+    @Test
+    fun `one recorded student makes the day taken`() = runTest {
+        recordAttendance(SECTION_ID, luz.id, today, AttendanceStatus.ABSENT)
+
+        val summary: AttendanceDaySummary = getAttendanceDay(SECTION_ID, today).first().summarise()
+
+        assertThat(summary.isTaken).isTrue()
+        assertThat(summary.presentCount).isEqualTo(1)
+        assertThat(summary.unmarkedCount).isEqualTo(1)
+    }
+
+    @Test
     fun `recorded days are counted once per date`() = runTest {
         assertThat(countAttendanceDays(SECTION_ID)).isEqualTo(0)
 

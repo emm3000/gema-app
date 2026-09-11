@@ -514,7 +514,9 @@ data class SectionDetailUiState(
 ```
 
 `todayAttendanceSummary` reads *Sin tomar* until the first Student of the day is
-recorded, then *N de M presentes*. `currentPeriodLabel`, `hasStoredTemplate`,
+recorded, then *N de M presentes*. Both this screen and Home's section cards
+format the same `AttendanceDaySummary` from `core:domain`; neither counts
+Students itself. `currentPeriodLabel`, `hasStoredTemplate`,
 `missingPeriodLevelCount` and `activityCount` arrive with their own tickets.
 
 Intents: `TakeAttendanceClicked`, `StudentsClicked`, `AttendanceClicked`,

@@ -2,9 +2,9 @@ package com.emm.gema.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.core.domain.attendance.AttendanceEntry
-import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
+import com.emm.gema.core.domain.attendance.summarise
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
@@ -29,8 +29,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.LocalDate
-
-private const val UNTAKEN_ATTENDANCE: String = "Sin tomar"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
@@ -93,29 +91,23 @@ class HomeViewModel(
                 sections = sections.map { section ->
                     section.toRow(
                         studentCount = studentCounts[section.id] ?: 0,
-                        attendanceSummary = summaries[section.id] ?: UNTAKEN_ATTENDANCE,
+                        attendance = summaries[section.id] ?: AttendanceDaySummary(0, 0, 0),
                     )
                 },
             )
         }
     }
 
-    private fun attendanceSummaries(schoolYearId: String): Flow<Map<String, String>> =
+    private fun attendanceSummaries(schoolYearId: String): Flow<Map<String, AttendanceDaySummary>> =
         getSections(schoolYearId).flatMapLatest { sections: List<Section> ->
             if (sections.isEmpty()) return@flatMapLatest flowOf(emptyMap())
 
             combine(sections.map { section -> getAttendanceDay(section.id, today) }) { days ->
                 sections.mapIndexed { index: Int, section: Section ->
-                    section.id to summaryOf(days[index])
+                    section.id to days[index].summarise()
                 }.toMap()
             }
         }
-
-    private fun summaryOf(entries: List<AttendanceEntry>): String {
-        if (entries.none { it.isRecorded }) return UNTAKEN_ATTENDANCE
-        val present: Int = entries.count { it.status == AttendanceStatus.PRESENT }
-        return "$present de ${entries.size} presentes"
-    }
 
     private fun merge(schoolYearState: HomeUiState): HomeUiState =
         schoolYearState.copy(backupReminder = _state.value.backupReminder)
@@ -141,10 +133,10 @@ class HomeViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun Section.toRow(studentCount: Int, attendanceSummary: String): SectionRow = SectionRow(
+    private fun Section.toRow(studentCount: Int, attendance: AttendanceDaySummary): SectionRow = SectionRow(
         id = id,
         title = "${grade.label()} $name",
         studentCount = studentCount,
-        attendanceSummary = attendanceSummary,
+        attendance = attendance,
     )
 }

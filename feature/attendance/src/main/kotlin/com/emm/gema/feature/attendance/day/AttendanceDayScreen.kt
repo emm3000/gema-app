@@ -16,13 +16,15 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.attendance.AttendanceStatus
-import com.emm.gema.core.theme.GemaAccents
+import com.emm.gema.feature.attendance.asStatus
+import com.emm.gema.feature.attendance.asToggleOption
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.ui.GAttendanceOption
 import com.emm.gema.core.ui.GAttendanceToggle
+import com.emm.gema.core.ui.gAttendanceRowColor
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
@@ -156,12 +158,10 @@ private fun StudentRow(
     onIntent: (AttendanceDayUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val background: Color = if (row.isRecorded) Color.Transparent else GemaAccents.unmarkedSurface
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(background)
+            .background(gAttendanceRowColor(row.isRecorded))
             .padding(vertical = GemaSpacing.extraSmall),
         verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
     ) {
@@ -171,10 +171,10 @@ private fun StudentRow(
             trailingText = "sin marcar".takeIf { !row.isRecorded },
         )
         GAttendanceToggle(
-            status = row.status,
+            option = row.status.asToggleOption(),
             isRecorded = row.isRecorded,
-            onSelect = { status: AttendanceStatus ->
-                onIntent(AttendanceDayUiIntent.StatusSelected(row.studentId, status))
+            onSelect = { option: GAttendanceOption ->
+                onIntent(AttendanceDayUiIntent.StatusSelected(row.studentId, option.asStatus()))
             },
             modifier = Modifier.fillMaxWidth(),
         )

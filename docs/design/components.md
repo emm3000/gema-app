@@ -415,13 +415,23 @@ independently is how they drift.
 ### GAttendanceToggle
 
 ```kotlin
+enum class GAttendanceOption(val label: String, val contentDescription: String) {
+    PRESENT("P", "Presente"),
+    LATE("T", "Tardanza"),
+    ABSENT("F", "Falta"),
+    JUSTIFIED("FJ", "Falta justificada"),
+}
+
 @Composable
 fun GAttendanceToggle(
-    status: AttendanceStatus,
+    option: GAttendanceOption,
     isRecorded: Boolean,
-    onSelect: (AttendanceStatus) -> Unit,
+    onSelect: (GAttendanceOption) -> Unit,
     modifier: Modifier = Modifier,
 )
+
+@Composable
+fun gAttendanceRowColor(isRecorded: Boolean): Color
 ```
 
 Wraps `GSegmentedPicker` with the four fixed statuses. Tokens: inherited, plus
@@ -429,7 +439,15 @@ Wraps `GSegmentedPicker` with the four fixed statuses. Tokens: inherited, plus
 
 Tradeoffs:
 
-- **`isRecorded` is a separate parameter, not a nullable status.** The row must
+- **The control owns `GAttendanceOption`, not the domain's `AttendanceStatus`.**
+  This catalog knows no domain type; the calling screen maps the two, so
+  `core:ui` keeps depending on nothing but the theme. The four segments and
+  their `contentDescription`s still live here exactly once.
+- **`gAttendanceRowColor` ships with the toggle.** The dashed outline and the
+  warm row behind it are one visual state, so both read `isRecorded` from this
+  file; a screen paints the row with this helper rather than branching on the
+  flag itself.
+- **`isRecorded` is a separate parameter, not a nullable option.** The row must
   show "present" while storing nothing (US 25, 26). Modelling that as
   `status: AttendanceStatus?` would let a caller render an empty row, which is
   never correct.
@@ -438,10 +456,11 @@ Tradeoffs:
   design replaced it, because a filled segment reads as a decision the Teacher
   never made. The default still lives in the state (`status` is `PRESENT`), so
   the first tap on `P` records Present like any other tap, and the screen pairs
-  the dashed outline with `GemaAccents.unmarkedSurface` behind the whole row and
-  an "N sin marcar" counter in the header.
+  the dashed outline with `gAttendanceRowColor` behind the whole row and an
+  "N sin marcar" counter in the header.
 - **`onSelect` is not nullable** — unlike `GLevelPicker`. An attendance record
-  cannot be cleared back to "not recorded"; the four statuses are total. Making
+  cannot be cleared back to "not recorded"; the four options are total, so
+  re-tapping the selected segment re-records the same one. Making
   the two controls differ here is deliberate, and the type says so.
 - **Four segments across 360dp** leaves roughly 78dp each, comfortably above the
   floor. That is the whole reason "falta justificada" is abbreviated to `FJ` with
