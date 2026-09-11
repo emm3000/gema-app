@@ -65,7 +65,7 @@ class SqlDelightEvidenceLevelRepository(
             activity_id = evidenceLevel.key.activityId.value,
             student_id = evidenceLevel.key.studentId.value,
             competency_id = evidenceLevel.key.competencyId.value,
-            achievement_level = evidenceLevel.achievementLevel.name,
+            achievement_level = evidenceLevel.achievementLevel?.name,
         )
     }
 

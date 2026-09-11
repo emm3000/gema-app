@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.activity.EvidenceMark
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.student.StudentId
@@ -27,13 +28,18 @@ import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GIconButton
-import com.emm.gema.core.ui.GLevelPicker
+import com.emm.gema.core.ui.GLevelOption
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GSegmentOption
+import com.emm.gema.core.ui.GSegmentedPicker
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.activities.R
+
+private const val NO_EVIDENCE_PICKER_VALUE: String = "NO_EVIDENCE"
+private const val NO_EVIDENCE_CHIP_LABEL: String = "—"
 
 @Composable
 fun ActivityEvidenceScreen(
@@ -83,8 +89,8 @@ fun ActivityEvidenceScreen(
                 contentPadding = PaddingValues(vertical = GemaSpacing.small),
             ) {
                 items(state.rows, key = { it.studentId.value }) { row ->
-                    StudentRow(row = row, onSelect = { level ->
-                        onIntent(ActivityEvidenceUiIntent.LevelSelected(row.studentId, level))
+                    StudentRow(row = row, onSelect = { mark ->
+                        onIntent(ActivityEvidenceUiIntent.LevelSelected(row.studentId, mark))
                     })
                 }
             }
@@ -116,12 +122,12 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
 }
 
 @Composable
-private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> Unit) {
-    val hasNoEvidence: Boolean = row.level == null
+private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit) {
+    val isUntouched: Boolean = row.mark == null
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (hasNoEvidence) GemaAccents.unmarkedSurface else MaterialTheme.colorScheme.surface)
+            .background(if (isUntouched) GemaAccents.unmarkedSurface else MaterialTheme.colorScheme.surface)
             .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
         verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
@@ -130,7 +136,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> U
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
-            if (hasNoEvidence) {
+            if (isUntouched) {
                 GText(
                     text = stringResource(R.string.activity_evidence_no_evidence_label),
                     style = GTextStyle.LABEL_MEDIUM,
@@ -138,12 +144,38 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> U
                 )
             }
         }
-        GLevelPicker(
-            selected = row.level?.name,
-            onSelect = { letter -> onSelect(letter?.let(AchievementLevel::valueOf)) },
+        val noEvidenceContentDescription: String =
+            stringResource(R.string.activity_evidence_no_evidence_content_description)
+        val options: List<GSegmentOption<String?>> = GLevelOption.entries.map { option ->
+            GSegmentOption<String?>(
+                value = option.letter,
+                label = option.letter,
+                contentDescription = option.contentDescription,
+            )
+        } + GSegmentOption(
+            value = NO_EVIDENCE_PICKER_VALUE,
+            label = NO_EVIDENCE_CHIP_LABEL,
+            contentDescription = noEvidenceContentDescription,
+        )
+        GSegmentedPicker(
+            options = options,
+            selected = row.mark.toPickerValue(),
+            onSelect = { value -> onSelect(value.toEvidenceMark()) },
             modifier = Modifier.fillMaxWidth(),
         )
     }
+}
+
+private fun EvidenceMark?.toPickerValue(): String? = when (this) {
+    null -> null
+    EvidenceMark.NoEvidence -> NO_EVIDENCE_PICKER_VALUE
+    is EvidenceMark.Level -> achievementLevel.name
+}
+
+private fun String?.toEvidenceMark(): EvidenceMark? = when (this) {
+    null -> null
+    NO_EVIDENCE_PICKER_VALUE -> EvidenceMark.NoEvidence
+    else -> EvidenceMark.Level(AchievementLevel.valueOf(this))
 }
 
 @PreviewLightDark
@@ -158,11 +190,16 @@ private fun ActivityEvidenceScreenPreview() {
                 periodLabel = "II Bimestre",
                 competencies = listOf(CompetencyColumn(CompetencyId("PPSS-1"), "PPSS 01")),
                 selectedCompetencyId = CompetencyId("PPSS-1"),
-                recordedCount = 1,
-                totalCount = 2,
+                recordedCount = 2,
+                totalCount = 3,
                 rows = listOf(
-                    EvidenceLevelRow(StudentId("student-1"), "ACOSTA RIVERA, Luz Maria", AchievementLevel.B),
-                    EvidenceLevelRow(StudentId("student-2"), "BAUTISTA QUISPE, Jose", null),
+                    EvidenceLevelRow(
+                        StudentId("student-1"),
+                        "ACOSTA RIVERA, Luz Maria",
+                        EvidenceMark.Level(AchievementLevel.B),
+                    ),
+                    EvidenceLevelRow(StudentId("student-2"), "BAUTISTA QUISPE, Jose", EvidenceMark.NoEvidence),
+                    EvidenceLevelRow(StudentId("student-3"), "CCAHUANA MAMANI, Rosa", null),
                 ),
             ),
             onIntent = {},

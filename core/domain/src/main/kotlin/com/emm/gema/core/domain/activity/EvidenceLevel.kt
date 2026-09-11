@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 data class EvidenceLevel(
     val key: EvidenceLevelKey,
-    val achievementLevel: AchievementLevel,
+    val achievementLevel: AchievementLevel?,
 )
 
 data class EvidenceRecord(

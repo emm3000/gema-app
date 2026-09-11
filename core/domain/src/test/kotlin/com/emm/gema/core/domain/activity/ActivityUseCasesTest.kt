@@ -126,7 +126,7 @@ class ActivityUseCasesTest {
         val activity: Activity = createActivity()
         val key = EvidenceLevelKey(activity.id, firstStudentId, firstPpssId)
 
-        recordEvidenceLevel(key, AchievementLevel.B)
+        recordEvidenceLevel(key, EvidenceMark.Level(AchievementLevel.B))
 
         val stored: List<EvidenceLevel> = getEvidenceForActivity(activity.id).first()
         assertThat(stored).containsExactly(EvidenceLevel(key, AchievementLevel.B))
@@ -135,7 +135,10 @@ class ActivityUseCasesTest {
     @Test
     fun `evidence levels are optional per student and competency`() = runTest {
         val activity: Activity = createActivity()
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), AchievementLevel.A)
+        recordEvidenceLevel(
+            EvidenceLevelKey(activity.id, firstStudentId, firstPpssId),
+            EvidenceMark.Level(AchievementLevel.A),
+        )
 
         val stored: List<EvidenceLevel> = getEvidenceForActivity(activity.id).first()
 
@@ -146,7 +149,7 @@ class ActivityUseCasesTest {
     fun `recording no level clears a previously recorded one`() = runTest {
         val activity: Activity = createActivity()
         val key = EvidenceLevelKey(activity.id, firstStudentId, firstPpssId)
-        recordEvidenceLevel(key, AchievementLevel.A)
+        recordEvidenceLevel(key, EvidenceMark.Level(AchievementLevel.A))
 
         recordEvidenceLevel(key, null)
 
@@ -154,9 +157,44 @@ class ActivityUseCasesTest {
     }
 
     @Test
+    fun `marking a student with explicit no evidence persists the row`() = runTest {
+        val activity: Activity = createActivity()
+        val key = EvidenceLevelKey(activity.id, firstStudentId, firstPpssId)
+
+        recordEvidenceLevel(key, EvidenceMark.NoEvidence)
+
+        val stored: List<EvidenceLevel> = getEvidenceForActivity(activity.id).first()
+        assertThat(stored).containsExactly(EvidenceLevel(key, achievementLevel = null))
+    }
+
+    @Test
+    fun `an explicit no evidence mark counts as recorded`() = runTest {
+        val activity: Activity = createActivity()
+        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), EvidenceMark.NoEvidence)
+
+        val counts: Map<ActivityId, Int> = getEvidenceStudentCounts(sectionId, activity.periodId).first()
+
+        assertThat(counts[activity.id]).isEqualTo(1)
+    }
+
+    @Test
+    fun `an explicit no evidence mark is excluded from the period level timeline`() = runTest {
+        val activity: Activity = createActivity()
+        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), EvidenceMark.NoEvidence)
+
+        val evidence: List<EvidenceRecord> =
+            getEvidenceForPeriodLevel(sectionId, activity.periodId, firstStudentId, firstPpssId).first()
+
+        assertThat(evidence).isEmpty()
+    }
+
+    @Test
     fun `deleting an activity deletes its evidence levels`() = runTest {
         val activity: Activity = createActivity()
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), AchievementLevel.A)
+        recordEvidenceLevel(
+            EvidenceLevelKey(activity.id, firstStudentId, firstPpssId),
+            EvidenceMark.Level(AchievementLevel.A),
+        )
 
         deleteActivity(activity.id)
 
@@ -197,8 +235,14 @@ class ActivityUseCasesTest {
     @Test
     fun `the evidence count is the number of distinct students recorded`() = runTest {
         val activity: Activity = createActivity()
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, firstStudentId, firstPpssId), AchievementLevel.A)
-        recordEvidenceLevel(EvidenceLevelKey(activity.id, secondStudentId, firstPpssId), AchievementLevel.B)
+        recordEvidenceLevel(
+            EvidenceLevelKey(activity.id, firstStudentId, firstPpssId),
+            EvidenceMark.Level(AchievementLevel.A),
+        )
+        recordEvidenceLevel(
+            EvidenceLevelKey(activity.id, secondStudentId, firstPpssId),
+            EvidenceMark.Level(AchievementLevel.B),
+        )
 
         val counts: Map<ActivityId, Int> = getEvidenceStudentCounts(sectionId, activity.periodId).first()
 
@@ -215,8 +259,14 @@ class ActivityUseCasesTest {
             date = LocalDate.of(2026, 3, 20),
             competencyIds = setOf(firstPpssId),
         )
-        recordEvidenceLevel(EvidenceLevelKey(second.id, firstStudentId, firstPpssId), AchievementLevel.B)
-        recordEvidenceLevel(EvidenceLevelKey(first.id, firstStudentId, firstPpssId), AchievementLevel.A)
+        recordEvidenceLevel(
+            EvidenceLevelKey(second.id, firstStudentId, firstPpssId),
+            EvidenceMark.Level(AchievementLevel.B),
+        )
+        recordEvidenceLevel(
+            EvidenceLevelKey(first.id, firstStudentId, firstPpssId),
+            EvidenceMark.Level(AchievementLevel.A),
+        )
 
         val evidence: List<EvidenceRecord> =
             getEvidenceForPeriodLevel(sectionId, first.periodId, firstStudentId, firstPpssId).first()

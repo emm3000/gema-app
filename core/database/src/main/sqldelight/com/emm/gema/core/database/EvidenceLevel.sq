@@ -2,7 +2,7 @@ CREATE TABLE evidence_level (
     activity_id TEXT NOT NULL,
     student_id TEXT NOT NULL,
     competency_id TEXT NOT NULL,
-    achievement_level TEXT NOT NULL,
+    achievement_level TEXT,
     PRIMARY KEY (activity_id, student_id, competency_id)
 );
 
@@ -31,6 +31,7 @@ FROM evidence_level
 JOIN activity ON activity.id = evidence_level.activity_id
 WHERE activity.section_id = ? AND activity.period_id = ?
   AND evidence_level.student_id = ? AND evidence_level.competency_id = ?
+  AND evidence_level.achievement_level IS NOT NULL
 ORDER BY activity.date ASC;
 
 delete:
