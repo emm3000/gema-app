@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +19,8 @@ import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GLevelPicker
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 
 @Composable
 fun ColumnModeBar(
@@ -46,16 +47,16 @@ fun ColumnModeBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    GText(
                         text = heading,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = GTextStyle.LABEL_SMALL,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Text(
+                    GText(
                         text = studentName,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = GTextStyle.BODY_LARGE,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

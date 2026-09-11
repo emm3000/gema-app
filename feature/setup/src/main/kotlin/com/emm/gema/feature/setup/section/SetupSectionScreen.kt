@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -23,7 +22,9 @@ import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.domain.section.label
 
@@ -86,9 +87,9 @@ fun SetupSectionScreen(
                 modifier = Modifier.fillMaxWidth(),
                 errorText = state.sectionNameError,
             )
-            Text(
+            GText(
                 text = "Empiezas con todas las áreas activas. Puedes apagar las que no dictas.",
-                style = MaterialTheme.typography.bodyMedium,
+                style = GTextStyle.BODY_MEDIUM,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             GButton(
@@ -97,9 +98,9 @@ fun SetupSectionScreen(
                 variant = GButtonVariant.TEXT,
                 enabled = state.canFinish && !state.isSaving,
             )
-            Text(
+            GText(
                 text = "Si enseñas en aula multigrado, crea una sección por grado.",
-                style = MaterialTheme.typography.bodySmall,
+                style = GTextStyle.BODY_SMALL,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

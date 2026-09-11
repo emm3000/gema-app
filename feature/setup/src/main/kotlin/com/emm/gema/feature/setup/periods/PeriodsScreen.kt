@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -21,6 +20,8 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GCard
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import java.time.LocalDate
 
@@ -95,9 +96,9 @@ private fun PeriodEditor(
             modifier = Modifier.padding(GemaSpacing.medium),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            Text(
+            GText(
                 text = if (row.isCurrent) "${row.label} · ACTUAL" else row.label,
-                style = MaterialTheme.typography.titleMedium,
+                style = GTextStyle.TITLE_MEDIUM,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             GDateField(

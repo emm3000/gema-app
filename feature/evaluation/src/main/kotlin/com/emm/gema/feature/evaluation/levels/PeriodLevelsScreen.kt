@@ -17,7 +17,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.ScrollState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +37,8 @@ import com.emm.gema.core.ui.GLevelChipSize
 import com.emm.gema.core.ui.GLevelOption
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 
 private const val CURRENT_PERIOD_BADGE: String = "ACTUAL"
@@ -180,12 +181,12 @@ private fun GridHeader(
                 .height(GemaSpacing.minimumTouchTarget),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
+            GText(
                 text = STUDENT_COLUMN_TITLE,
                 modifier = Modifier
                     .width(GemaSpacing.gridNameColumnWidth)
                     .padding(horizontal = GemaSpacing.medium),
-                style = MaterialTheme.typography.labelSmall,
+                style = GTextStyle.LABEL_SMALL,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Row(
@@ -218,12 +219,12 @@ private fun GridRow(
             .height(GemaSpacing.gridRowHeight),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
+        GText(
             text = row.displayName,
             modifier = Modifier
                 .width(GemaSpacing.gridNameColumnWidth)
                 .padding(horizontal = GemaSpacing.medium),
-            style = MaterialTheme.typography.bodyMedium,
+            style = GTextStyle.BODY_MEDIUM,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -255,10 +256,10 @@ private fun GridRow(
 
 @Composable
 private fun Legend() {
-    Text(
+    GText(
         text = "C! falta la conclusión descriptiva. * comentario. Vacío es sin nivel.",
         modifier = Modifier.padding(GemaSpacing.screenGutter),
-        style = MaterialTheme.typography.bodyMedium,
+        style = GTextStyle.BODY_MEDIUM,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }

@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +23,8 @@ import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 
 private const val CURRENT_PERIOD_BADGE: String = "Actual"
@@ -69,9 +69,9 @@ fun ExportScreen(
             )
             GradesCard(state = state, onIntent = onIntent)
             SummaryCard(state = state, onIntent = onIntent)
-            Text(
+            GText(
                 text = stringResource(R.string.export_file_name_note),
-                style = MaterialTheme.typography.bodySmall,
+                style = GTextStyle.BODY_SMALL,
             )
         }
     }
@@ -83,9 +83,9 @@ private fun GradesCard(
     onIntent: (ExportUiIntent) -> Unit,
 ) {
     GCard {
-        Text(
+        GText(
             text = stringResource(R.string.export_grades_title),
-            style = MaterialTheme.typography.titleMedium,
+            style = GTextStyle.TITLE_MEDIUM,
         )
         TemplateMismatchBanner(state.templateMismatch)
         when (val grades: GradesExportUiState = state.gradesExportState) {
@@ -110,9 +110,9 @@ private fun TemplateMismatchBanner(mismatch: TemplateMismatchUi?) {
 
 @Composable
 private fun UnavailableGrades(onIntent: (ExportUiIntent) -> Unit) {
-    Text(
+    GText(
         text = stringResource(R.string.export_grades_unavailable),
-        style = MaterialTheme.typography.bodyMedium,
+        style = GTextStyle.BODY_MEDIUM,
     )
     GButton(
         text = stringResource(R.string.export_import_template),
@@ -166,9 +166,9 @@ private fun BlockedGrades(
 @Composable
 private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit) {
     GCard {
-        Text(
+        GText(
             text = stringResource(R.string.export_summary_title),
-            style = MaterialTheme.typography.titleMedium,
+            style = GTextStyle.TITLE_MEDIUM,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -197,7 +197,7 @@ private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit
 @Composable
 private fun TemplateName(fileName: String?) {
     if (fileName != null) {
-        Text(text = fileName, style = MaterialTheme.typography.bodyMedium)
+        GText(text = fileName, style = GTextStyle.BODY_MEDIUM)
     }
 }
 

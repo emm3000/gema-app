@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -21,7 +20,9 @@ import com.emm.gema.core.ui.GCheckRow
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GDialog
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import java.time.LocalDate
 
@@ -57,7 +58,7 @@ fun ActivityFormScreen(
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             if (message != null) {
-                item { Text(text = message, style = MaterialTheme.typography.bodyMedium) }
+                item { GText(text = message, style = GTextStyle.BODY_MEDIUM) }
             }
             item {
                 GTextField(
@@ -77,29 +78,29 @@ fun ActivityFormScreen(
                         errorText = state.dateError,
                     )
                     if (state.resolvedPeriodLabel != null) {
-                        Text(
+                        GText(
                             text = "Cae en el ${state.resolvedPeriodLabel}.",
-                            style = MaterialTheme.typography.bodySmall,
+                            style = GTextStyle.BODY_SMALL,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     if (state.periodChangeWarning != null) {
-                        Text(
+                        GText(
                             text = state.periodChangeWarning,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = GTextStyle.BODY_SMALL,
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
                 }
             }
             item {
-                Text(text = "Competencias trabajadas", style = MaterialTheme.typography.titleSmall)
+                GText(text = "Competencias trabajadas", style = GTextStyle.TITLE_SMALL)
             }
             state.competencyGroups.forEach { group ->
                 item {
-                    Text(
+                    GText(
                         text = group.areaName.uppercase(),
-                        style = MaterialTheme.typography.labelMedium,
+                        style = GTextStyle.LABEL_MEDIUM,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -136,9 +137,9 @@ fun ActivityFormScreen(
             dismissText = "Cancelar",
             isDestructive = true,
         ) {
-            Text(
+            GText(
                 text = "Se perderán las evidencias registradas para esta actividad.",
-                style = MaterialTheme.typography.bodyMedium,
+                style = GTextStyle.BODY_MEDIUM,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
