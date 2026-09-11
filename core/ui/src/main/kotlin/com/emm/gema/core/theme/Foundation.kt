@@ -24,6 +24,8 @@ object GemaSpacing {
     val gridRowHeight: Dp = 56.dp
     val gridChipHeight: Dp = 44.dp
     val leadingLabelWidth: Dp = 28.dp
+    val fabHeight: Dp = 56.dp
+    val activeBorder: Dp = 2.dp
 }
 
 object GemaShapes {

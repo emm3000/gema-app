@@ -57,6 +57,9 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GBottomSheet` | `ModalBottomSheet` | period level sheet | built |
 | `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors, export period | built |
 | `GSearchField` | `OutlinedTextField` | students | planned |
+| `GExtendedFab` | `ExtendedFloatingActionButton` | school years | built |
+| `GYearCard` | `Surface` + `Text` | school years | built |
+| `GBadge` | `Surface` + `Text` | school years | built |
 
 (Twenty-one rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
 rather than widgets, which is why the working widget set is seventeen.)
