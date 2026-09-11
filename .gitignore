@@ -17,6 +17,8 @@ local.properties
 /.kotlin
 /key
 /keystore.properties
+*.jks
+*.keystore
 
 # Gentle AI skill registry cache
 .atl/
