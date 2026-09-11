@@ -11,7 +11,6 @@ import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
-import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.feature.setup.PeriodRangeError
 import com.emm.gema.feature.setup.errorWithin
@@ -63,7 +62,7 @@ class PeriodsViewModel(
                 _state.value.copy(
                     isLoading = false,
                     schoolYearLabel = loaded.label,
-                    periodKindLabel = loaded.periodKind.kindLabel(),
+                    periodKind = loaded.periodKind,
                     periods = periods.map { it.toRow(loaded, currentPeriodId) },
                 )
             )

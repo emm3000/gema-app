@@ -16,6 +16,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBadge
@@ -40,7 +41,11 @@ fun PeriodsScreen(
     onMessageDismissed: () -> Unit = {},
     overlapErrorText: String? = null,
 ) {
-    val periodKindCountLabel: String = periodKindCountLabel(state.periodKindLabel, state.periods.size)
+    val periodKindCountLabel: String = pluralStringResource(
+        state.periodKind.periodCountPlural(),
+        state.periods.size,
+        state.periods.size,
+    )
 
     GScreen(
         topBar = {
@@ -99,14 +104,9 @@ fun PeriodsScreen(
     }
 }
 
-@Composable
-private fun periodKindCountLabel(periodKindLabel: String, count: Int): String {
-    val pluralsRes: Int = if (periodKindLabel.equals("Trimestre", ignoreCase = true)) {
-        R.plurals.setup_periods_trimester_count
-    } else {
-        R.plurals.setup_periods_bimester_count
-    }
-    return pluralStringResource(pluralsRes, count, count)
+private fun PeriodKind.periodCountPlural(): Int = when (this) {
+    PeriodKind.BIMESTER -> R.plurals.setup_periods_bimester_count
+    PeriodKind.TRIMESTER -> R.plurals.setup_periods_trimester_count
 }
 
 @Composable
@@ -168,7 +168,7 @@ private fun PeriodsScreenPreview() {
             state = PeriodsUiState(
                 isLoading = false,
                 schoolYearLabel = "2026",
-                periodKindLabel = "Bimestre",
+                periodKind = PeriodKind.BIMESTER,
                 periods = listOf(
                     PeriodRow(
                         PeriodId("1"),

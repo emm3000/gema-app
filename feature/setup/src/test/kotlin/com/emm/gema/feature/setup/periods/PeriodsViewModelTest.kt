@@ -65,6 +65,7 @@ class PeriodsViewModelTest {
         val state: PeriodsUiState = viewModel.state.value
         assertThat(state.isLoading).isFalse()
         assertThat(state.schoolYearLabel).isEqualTo("2026")
+        assertThat(state.periodKind).isEqualTo(PeriodKind.BIMESTER)
         assertThat(state.periods.map { it.id }).containsExactlyElementsIn(storedPeriods.map { it.id }).inOrder()
         assertThat(state.periods.single { it.isCurrent }.id).isEqualTo(PeriodId("period-2"))
     }
