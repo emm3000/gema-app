@@ -25,3 +25,9 @@ dependencies {
 tasks.withType<Test>().configureEach {
     useJUnit()
 }
+
+tasks.register("testDebugUnitTest") {
+    group = "verification"
+    description = "Runs the unit tests of this JVM module under the name the Android modules use."
+    dependsOn(tasks.named("test"))
+}
