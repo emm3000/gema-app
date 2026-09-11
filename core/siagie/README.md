@@ -14,6 +14,19 @@ template.readSheet("PPSS")
 template.fill(target, mapOf("PPSS" to mapOf("D4" to "AD", "E4" to "Conclusion")))
 ```
 
+Reading the roster of a grades template goes through the domain port
+`SiagieRosterReader`:
+
+```kotlin
+val reader = XlsxSiagieRosterReader()
+reader.read("6 Primaria EBR.xlsx", bytes)
+```
+
+It returns the Students of the first sheet (every sheet carries the same roster),
+the Grade written in the title row or in the file name, and the Section name when
+the file carries one. A file that is not a grades template comes back as
+`SiagieRosterResult.NotASiagieTemplate`.
+
 `fill` copies every part it does not edit byte for byte, so styles, dropdowns,
 frozen panes, hidden ids and sheet order survive. The target file name is the
 caller's choice and must stay the one SIAGIE generated.
