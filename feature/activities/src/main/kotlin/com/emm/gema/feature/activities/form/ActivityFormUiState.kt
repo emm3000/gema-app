@@ -2,12 +2,14 @@ package com.emm.gema.feature.activities.form
 
 import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.section.Grade
 import java.time.LocalDate
 
 data class ActivityFormUiState(
     val isLoading: Boolean = true,
     val activityId: ActivityId? = null,
-    val sectionTitle: String = "",
+    val grade: Grade? = null,
+    val sectionName: String = "",
     val name: String = "",
     val date: LocalDate? = null,
     val dateError: ActivityFormMessage? = null,
