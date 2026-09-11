@@ -1,0 +1,10 @@
+<resources>
+    <plurals name="students_active_count">
+        <item quantity="one">%d activo</item>
+        <item quantity="other">%d activos</item>
+    </plurals>
+    <plurals name="students_withdrawn_count">
+        <item quantity="one">%d retirado</item>
+        <item quantity="other">%d retirados</item>
+    </plurals>
+</resources>

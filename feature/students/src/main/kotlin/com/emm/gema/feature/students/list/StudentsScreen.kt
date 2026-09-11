@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
@@ -19,11 +23,12 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GExtendedFab
+import com.emm.gema.core.ui.GGroupHeader
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSearchField
-import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.students.R
 import com.emm.gema.feature.students.asDayMonthYear
 
 @Composable
@@ -34,27 +39,40 @@ fun StudentsScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    val activeCountLabel: String = pluralStringResource(
+        R.plurals.students_active_count,
+        state.activeStudents.size,
+        state.activeStudents.size,
+    )
+    val withdrawnCountLabel: String = pluralStringResource(
+        R.plurals.students_withdrawn_count,
+        state.withdrawnStudents.size,
+        state.withdrawnStudents.size,
+    )
     GScreen(
         topBar = {
             GTopBar(
                 title = "Alumnos · ${state.sectionTitle}",
-                subtitle = "${state.activeStudents.size} activos · ${state.withdrawnStudents.size} retirados",
+                subtitle = "$activeCountLabel · $withdrawnCountLabel",
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
                 actions = {
                     GButton(
                         text = "Importar",
                         onClick = { onIntent(StudentsUiIntent.ImportClicked) },
                         variant = GButtonVariant.SECONDARY,
+                        icon = Icons.Filled.Download,
                     )
                 },
             )
         },
-        floatingAction = {
+        fab = {
             GExtendedFab(
                 text = "Agregar alumno",
+                icon = Icons.Filled.Add,
                 onClick = { onIntent(StudentsUiIntent.AddStudentClicked) },
             )
         },
+        contentGutter = false,
         modifier = modifier,
     ) { padding: PaddingValues ->
         LazyColumn(
@@ -68,7 +86,9 @@ fun StudentsScreen(
                 item {
                     GBanner(
                         text = message,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = GemaSpacing.screenGutter),
                         tone = GBannerTone.ERROR,
                         actionText = "Entendido",
                         onActionClick = onMessageDismissed,
@@ -80,7 +100,9 @@ fun StudentsScreen(
                     query = state.query,
                     onQueryChange = { onIntent(StudentsUiIntent.QueryChanged(it)) },
                     placeholder = "Buscar",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = GemaSpacing.screenGutter),
                 )
             }
             if (state.isEmpty) {
@@ -105,7 +127,8 @@ fun StudentsScreen(
             }
             if (state.withdrawnStudents.isNotEmpty()) {
                 item {
-                    WithdrawnSectionHeader(
+                    GGroupHeader(
+                        title = "RETIRADOS",
                         count = state.withdrawnStudents.size,
                         isExpanded = state.isWithdrawnExpanded,
                         onClick = { onIntent(StudentsUiIntent.WithdrawnSectionToggled) },
@@ -119,24 +142,6 @@ fun StudentsScreen(
             }
         }
     }
-}
-
-@Composable
-private fun WithdrawnSectionHeader(
-    count: Int,
-    isExpanded: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    GListItem(
-        title = "RETIRADOS ($count)",
-        modifier = modifier.fillMaxWidth(),
-        titleStyle = GTextStyle.LABEL_SMALL_EMPHASIS,
-        isEmphasized = true,
-        isExpanded = isExpanded,
-        showDivider = false,
-        onClick = onClick,
-    )
 }
 
 @Composable
