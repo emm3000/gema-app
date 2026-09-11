@@ -60,9 +60,13 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GExtendedFab` | `ExtendedFloatingActionButton` | school years | built |
 | `GYearCard` | `Surface` + `Text` | school years | built |
 | `GBadge` | `Surface` + `Text` | school years | built |
+| `GTableHeaderBand` | `Surface` + `HorizontalDivider` | attendance month | built |
+| `GTableRow` | `Box` + `HorizontalDivider` | attendance month | built |
 
-(Twenty-one rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
-rather than widgets, which is why the working widget set is seventeen.)
+(Twenty-six rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
+rather than widgets, which is why the working widget set is twenty-two.
+`GTableHeaderBand`/`GTableRow` currently back one screen; the period levels
+grid drifts on the same shape and is its own migration ticket.)
 
 ---
 

@@ -1,11 +1,11 @@
 package com.emm.gema.feature.attendance.month
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,9 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +30,8 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GTableHeaderBand
+import com.emm.gema.core.ui.GTableRow
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
@@ -99,7 +99,6 @@ fun AttendanceMonthScreen(
             }
             items(state.rows, key = { it.studentId.value }) { row: AttendanceMonthRow ->
                 AttendanceMonthDataRow(row = row, modifier = Modifier.fillMaxWidth())
-                HorizontalDivider()
             }
             item {
                 GText(
@@ -116,64 +115,74 @@ fun AttendanceMonthScreen(
 }
 
 @Composable
+private fun AttendanceMonthColumns(
+    modifier: Modifier = Modifier,
+    name: @Composable () -> Unit,
+    counts: List<@Composable () -> Unit>,
+) {
+    Row(
+        modifier = modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(modifier = Modifier.weight(1f).padding(horizontal = GemaSpacing.medium)) { name() }
+        counts.forEach { cell: @Composable () -> Unit ->
+            Box(modifier = Modifier.width(GemaSpacing.narrowCellWidth)) { cell() }
+        }
+    }
+}
+
+@Composable
 private fun AttendanceMonthHeader(modifier: Modifier = Modifier) {
-    Surface(modifier = modifier, color = MaterialTheme.colorScheme.surfaceVariant) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(GemaSpacing.gridChipHeight),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            GText(
-                text = "ALUMNO",
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = GemaSpacing.medium),
-                style = GTextStyle.LABEL_SMALL,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            AttendanceStatus.entries.forEach { status: AttendanceStatus ->
+    GTableHeaderBand(modifier = modifier) {
+        AttendanceMonthColumns(
+            name = {
                 GText(
-                    text = AttendanceSiagieCode.of(status),
-                    modifier = Modifier.width(GemaSpacing.narrowCellWidth),
+                    text = "ALUMNO",
                     style = GTextStyle.LABEL_SMALL,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            }
-        }
+            },
+            counts = AttendanceStatus.entries.map { status: AttendanceStatus ->
+                {
+                    GText(
+                        text = AttendanceSiagieCode.of(status),
+                        style = GTextStyle.LABEL_SMALL,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+        )
     }
-    HorizontalDivider()
 }
 
 @Composable
 private fun AttendanceMonthDataRow(row: AttendanceMonthRow, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.height(GemaSpacing.compactRowHeight),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        GText(
-            text = row.displayName,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = GemaSpacing.medium),
-            style = GTextStyle.BODY_MEDIUM,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+    GTableRow(modifier = modifier) {
+        AttendanceMonthColumns(
+            name = {
+                GText(
+                    text = row.displayName,
+                    style = GTextStyle.BODY_MEDIUM,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            counts = AttendanceStatus.entries.map { status: AttendanceStatus ->
+                val count: Int = row.countsByStatus[status] ?: 0
+                {
+                    GText(
+                        text = count.toString(),
+                        style = GTextStyle.BODY_MEDIUM,
+                        color = if (count == 0) {
+                            MaterialTheme.colorScheme.outlineVariant
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                    )
+                }
+            },
         )
-        AttendanceStatus.entries.forEach { status: AttendanceStatus ->
-            val count: Int = row.countsByStatus[status] ?: 0
-            GText(
-                text = count.toString(),
-                modifier = Modifier.width(GemaSpacing.narrowCellWidth),
-                style = GTextStyle.BODY_MEDIUM,
-                color = if (count == 0) {
-                    MaterialTheme.colorScheme.outlineVariant
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-            )
-        }
     }
 }
 
