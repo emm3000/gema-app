@@ -62,16 +62,18 @@ class BackupViewModel(
     }
 
     private fun onStatus(status: BackupStatus) {
+        val daysSinceLastBackup: Int? = status.daysSinceLastBackup
         _state.value = _state.value.copy(
             isLoading = false,
             lastBackupDate = status.lastBackupAt?.atZone(clock.zone)?.toLocalDate(),
-            daysSinceLastBackup = status.daysSinceLastBackup,
+            daysSinceLastBackup = daysSinceLastBackup,
             reminderThresholdDays = status.reminderThresholdDays,
             reminderThresholdInput = if (_state.value.isReminderThresholdInvalid) {
                 _state.value.reminderThresholdInput
             } else {
                 status.reminderThresholdDays.toString()
             },
+            isBackupOverdue = daysSinceLastBackup != null && daysSinceLastBackup >= status.reminderThresholdDays,
         )
     }
 

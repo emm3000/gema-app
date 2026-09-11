@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -27,6 +31,7 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCard
 import com.emm.gema.core.ui.GDialog
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
@@ -60,7 +65,9 @@ fun BackupScreen(
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             LastBackupCard(state = state, onIntent = onIntent)
+            GDivider()
             RestoreSection(state = state, onIntent = onIntent)
+            GDivider()
             ReminderSection(state = state, onIntent = onIntent)
         }
     }
@@ -73,28 +80,36 @@ fun BackupScreen(
 
 @Composable
 private fun LastBackupCard(state: BackupUiState, onIntent: (BackupUiIntent) -> Unit) {
-    GCard {
-        GText(
-            text = stringResource(R.string.backup_last_title),
-            style = GTextStyle.LABEL_SMALL,
-        )
-        GText(
-            text = lastBackupLabel(state),
-            style = GTextStyle.TITLE_MEDIUM,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+    Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
+        if (state.isBackupOverdue) {
+            GBanner(
+                text = overdueBackupText(state),
+                tone = GBannerTone.ERROR,
+                icon = Icons.Filled.Warning,
+            )
+        } else {
+            GCard {
+                GText(
+                    text = stringResource(R.string.backup_last_title),
+                    style = GTextStyle.LABEL_SMALL,
+                )
+                GText(
+                    text = lastBackupLabel(state),
+                    style = GTextStyle.TITLE_MEDIUM,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
         GButton(
             text = stringResource(R.string.backup_create),
             onClick = { onIntent(BackupUiIntent.CreateBackupClicked) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = GemaSpacing.medium),
+            modifier = Modifier.fillMaxWidth(),
             isBusy = state.isCreating,
+            icon = Icons.Filled.Upload,
         )
         GText(
             text = stringResource(R.string.backup_create_hint),
             style = GTextStyle.LABEL_SMALL,
-            modifier = Modifier.padding(top = GemaSpacing.small),
         )
     }
 }
@@ -104,8 +119,7 @@ private fun RestoreSection(state: BackupUiState, onIntent: (BackupUiIntent) -> U
     Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
         GText(
             text = stringResource(R.string.backup_restore_title),
-            style = GTextStyle.TITLE_MEDIUM,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = GTextStyle.LABEL_SMALL_EMPHASIS,
         )
         GButton(
             text = stringResource(R.string.backup_restore_choose),
@@ -113,6 +127,7 @@ private fun RestoreSection(state: BackupUiState, onIntent: (BackupUiIntent) -> U
             modifier = Modifier.fillMaxWidth(),
             variant = GButtonVariant.SECONDARY,
             isBusy = state.isRestoring,
+            icon = Icons.Filled.FolderOpen,
         )
         GBanner(
             text = stringResource(R.string.backup_restore_warning),
@@ -123,24 +138,32 @@ private fun RestoreSection(state: BackupUiState, onIntent: (BackupUiIntent) -> U
 
 @Composable
 private fun ReminderSection(state: BackupUiState, onIntent: (BackupUiIntent) -> Unit) {
-    Row(
+    Column(
         modifier = Modifier.padding(bottom = GemaSpacing.large),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
-        GTextField(
-            value = state.reminderThresholdInput,
-            onValueChange = { value -> onIntent(BackupUiIntent.ReminderThresholdChanged(value)) },
-            label = stringResource(R.string.backup_reminder_label),
-            modifier = Modifier.width(GemaSpacing.narrowFieldWidth),
-            keyboardType = KeyboardType.Number,
-            errorText = reminderThresholdError(state),
-        )
         GText(
-            text = stringResource(R.string.backup_reminder_days),
-            style = GTextStyle.BODY_MEDIUM,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            text = stringResource(R.string.backup_reminder_label),
+            style = GTextStyle.LABEL_SMALL_EMPHASIS,
         )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        ) {
+            GTextField(
+                value = state.reminderThresholdInput,
+                onValueChange = { value -> onIntent(BackupUiIntent.ReminderThresholdChanged(value)) },
+                label = null,
+                modifier = Modifier.width(GemaSpacing.narrowFieldWidth),
+                keyboardType = KeyboardType.Number,
+                errorText = reminderThresholdError(state),
+            )
+            GText(
+                text = stringResource(R.string.backup_reminder_days),
+                style = GTextStyle.BODY_MEDIUM,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -185,7 +208,16 @@ private fun lastBackupLabel(state: BackupUiState): String {
     } else {
         pluralStringResource(R.plurals.backup_last_days_ago, days, days)
     }
-    return "$elapsed - $date"
+    return "$elapsed · $date"
+}
+
+@Composable
+private fun overdueBackupText(state: BackupUiState): String {
+    val days: Int = state.daysSinceLastBackup ?: 0
+    val title: String = pluralStringResource(R.plurals.backup_last_days_ago, days, days)
+    val date: String = state.lastBackupDate?.format(lastBackupDateFormat).orEmpty()
+    val subtitle: String = stringResource(R.string.backup_overdue_subtitle, date, state.reminderThresholdDays)
+    return "${stringResource(R.string.backup_last_title)} $title\n$subtitle"
 }
 
 @Composable
@@ -204,7 +236,18 @@ private fun reminderThresholdError(state: BackupUiState): String? = when {
 private fun BackupScreenPreview() {
     GemaTheme {
         BackupScreen(
-            state = BackupUiState(isLoading = false, daysSinceLastBackup = 12),
+            state = BackupUiState(isLoading = false, daysSinceLastBackup = 2),
+            onIntent = {},
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun BackupScreenOverduePreview() {
+    GemaTheme {
+        BackupScreen(
+            state = BackupUiState(isLoading = false, daysSinceLastBackup = 12, isBackupOverdue = true),
             onIntent = {},
         )
     }
