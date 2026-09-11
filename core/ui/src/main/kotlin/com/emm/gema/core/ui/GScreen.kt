@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -34,7 +35,8 @@ fun GScreen(
             bottomAction?.let { action ->
                 Box(
                     modifier = Modifier
-                        .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime)),
+                        .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
+                        .padding(horizontal = GemaSpacing.screenGutter),
                 ) {
                     action()
                 }
@@ -55,7 +57,9 @@ private fun GScreenPreview() {
     GemaTheme {
         GScreen(
             topBar = { GTopBar(title = "Año escolar") },
-            bottomAction = { GButton(text = "Continuar", onClick = {}) },
+            bottomAction = {
+                GButton(text = "Continuar", onClick = {}, modifier = Modifier.fillMaxWidth())
+            },
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
                 GText(text = "Contenido", style = GTextStyle.BODY_MEDIUM)

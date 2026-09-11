@@ -111,7 +111,11 @@ fun GScreen(
 ```
 
 Wraps `Scaffold`. Tokens: `GemaSpacing.screenGutter` applied as horizontal
-padding to `content`, `colorScheme.surface` as the background.
+padding to both `content` and `bottomAction`, `colorScheme.surface` as the
+background.
+
+Contract: `GScreen` owns the horizontal gutter once. A screen never adds
+horizontal `screenGutter` to its root column.
 
 Deviation from an earlier draft of this catalog: the built signature carries
 `snackbarHostState: SnackbarHostState?`, not a `floatingAction` slot. There is
