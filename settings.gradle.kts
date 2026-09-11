@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -21,3 +22,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "Gema"
 include(":app")
+include(":core:domain")
+include(":core:database")
+include(":core:siagie")
+include(":core:ui")
+include(":feature:setup")
+include(":feature:sections")
+include(":feature:students")
+include(":feature:attendance")
+include(":feature:evaluation")
+include(":feature:export")
+include(":feature:backup")

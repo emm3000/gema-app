@@ -63,6 +63,18 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:database"))
+    implementation(project(":core:siagie"))
+    implementation(project(":core:ui"))
+    implementation(project(":feature:setup"))
+    implementation(project(":feature:sections"))
+    implementation(project(":feature:students"))
+    implementation(project(":feature:attendance"))
+    implementation(project(":feature:evaluation"))
+    implementation(project(":feature:export"))
+    implementation(project(":feature:backup"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
