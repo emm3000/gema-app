@@ -16,6 +16,9 @@ class InMemorySectionRepository : SectionRepository {
                 .sortedWith(compareBy({ it.grade.number }, { it.name }))
         }
 
+    override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = sections
+        .map { stored -> stored.groupingBy { it.schoolYearId }.eachCount() }
+
     override suspend fun findById(id: String): Section? = sections.value.find { it.id == id }
 
     override suspend fun save(section: Section) {

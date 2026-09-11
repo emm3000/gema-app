@@ -25,14 +25,17 @@ import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
+import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
-import com.emm.gema.core.domain.schoolyear.UpdatePeriodDatesUseCase
+import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
+import com.emm.gema.core.domain.section.GetSectionCountsUseCase
+import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionRepository
@@ -42,8 +45,10 @@ import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
+import com.emm.gema.navigation.StartDestinationViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import java.time.Clock
@@ -69,12 +74,15 @@ val appModule: Module = module {
     factory<SwitchSchoolYearUseCase> { SwitchSchoolYearUseCase(get()) }
     factory<GetPeriodsUseCase> { GetPeriodsUseCase(get()) }
     factory<GetCurrentPeriodUseCase> { GetCurrentPeriodUseCase(get(), get()) }
-    factory<UpdatePeriodDatesUseCase> { UpdatePeriodDatesUseCase(get(), get()) }
+    factory<UpdatePeriodsUseCase> { UpdatePeriodsUseCase(get(), get()) }
+    factory<GetSchoolYearUseCase> { GetSchoolYearUseCase(get()) }
     factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
     factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
     factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get()) }
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
+    factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }
+    factory<GetSectionUseCase> { GetSectionUseCase(get()) }
     factory<SetAreaVisibilityUseCase> { SetAreaVisibilityUseCase(get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
@@ -83,6 +91,7 @@ val appModule: Module = module {
     factory<ObserveBackupStatusUseCase> { ObserveBackupStatusUseCase(get(), get()) }
     factory<SetReminderThresholdUseCase> { SetReminderThresholdUseCase(get()) }
 
+    viewModel { StartDestinationViewModel(get()) }
     viewModelOf(::HomeViewModel)
     viewModelOf(::BackupViewModel)
 }
