@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
@@ -24,8 +25,8 @@ import com.emm.gema.core.ui.GBorderedContainer
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
-import com.emm.gema.core.ui.GExpandableGroupRow
 import com.emm.gema.core.ui.GFileCard
+import com.emm.gema.core.ui.GGroupHeader
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
@@ -128,6 +129,7 @@ private fun LazyListScope.plan(state: ImportPreviewUiState, onIntent: (ImportPre
                 .fillMaxWidth()
                 .padding(horizontal = GemaSpacing.medium),
             style = GTextStyle.BODY_SMALL,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -141,11 +143,16 @@ private fun ColumnScope.group(
     onIntent: (ImportPreviewUiIntent) -> Unit,
 ) {
     val isExpanded: Boolean = state.expandedGroup == group
-    GExpandableGroupRow(
+    GGroupHeader(
         title = title,
         count = rows.size,
         isExpanded = isExpanded,
         onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(group)) },
+        titleStyle = GTextStyle.BODY_LARGE,
+        titleColor = Color.Unspecified,
+        containerColor = MaterialTheme.colorScheme.surface,
+        countInTitle = false,
+        showDivider = true,
     )
     if (isExpanded) {
         GTintedGroupContent {
@@ -170,12 +177,16 @@ private fun ColumnScope.group(
 @Composable
 private fun ColumnScope.withdrawals(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {
     val isExpanded: Boolean = state.expandedGroup == ImportGroup.WITHDRAWN
-    GExpandableGroupRow(
+    GGroupHeader(
         title = "Se propondrán como retirados",
         count = state.proposedWithdrawals.size,
         isExpanded = isExpanded,
-        showDivider = false,
         onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(ImportGroup.WITHDRAWN)) },
+        titleStyle = GTextStyle.BODY_LARGE,
+        titleColor = Color.Unspecified,
+        containerColor = MaterialTheme.colorScheme.surface,
+        countInTitle = false,
+        showDivider = false,
     )
     if (isExpanded) {
         GTintedGroupContent {
