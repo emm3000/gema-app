@@ -2,23 +2,25 @@ package com.emm.gema.feature.students.form
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.GetStudentUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.feature.students.FakeStudentRepository
 import com.emm.gema.feature.students.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private const val FIRST_CODE: String = "12345678901234"
 private const val SECOND_CODE: String = "12345678901235"
 
@@ -29,11 +31,11 @@ class StudentFormViewModelTest {
 
     private val today = LocalDate.of(2026, 9, 10)
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
-    private val luz = Student("student-1", SECTION_ID, StudentCode(FIRST_CODE), "ACOSTA RIVERA, Luz Maria")
+    private val luz = Student(StudentId("student-1"), sectionId, StudentCode(FIRST_CODE), "ACOSTA RIVERA, Luz Maria")
     private val repository = FakeStudentRepository(listOf(luz))
 
-    private fun viewModelFor(studentId: String?): StudentFormViewModel = StudentFormViewModel(
-        sectionId = SECTION_ID,
+    private fun viewModelFor(studentId: StudentId?): StudentFormViewModel = StudentFormViewModel(
+        sectionId = sectionId,
         studentId = studentId,
         getStudent = GetStudentUseCase(repository),
         saveStudent = SaveStudentUseCase(repository, IdGenerator { "student-2" }),

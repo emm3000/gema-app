@@ -9,33 +9,37 @@ import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.sections.FakeAttendanceRepository
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakePeriodRepository
 import com.emm.gema.feature.sections.FakeSchoolYearRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
-import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeStudentRepository
+import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private val today: LocalDate = LocalDate.of(2026, 6, 1)
 
 class SectionDetailViewModelTest {
@@ -43,7 +47,7 @@ class SectionDetailViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section(SECTION_ID, "2026", Grade.THIRD, "A")
+    private val section = Section(sectionId, SchoolYearId("2026"), Grade.THIRD, "A")
     private val sectionRepository = FakeSectionRepository(listOf(section))
     private val studentRepository = FakeStudentRepository(
         listOf(
@@ -56,15 +60,15 @@ class SectionDetailViewModelTest {
     private val workedCompetencyRepository = FakeWorkedCompetencyRepository()
     private val periodLevelRepository = FakePeriodLevelRepository()
     private val schoolYear = SchoolYear(
-        id = "2026",
+        id = SchoolYearId("2026"),
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
         periodKind = PeriodKind.BIMESTER,
     )
     private val period = Period(
-        id = "period-2",
-        schoolYearId = "2026",
+        id = PeriodId("period-2"),
+        schoolYearId = SchoolYearId("2026"),
         number = 2,
         startDate = LocalDate.of(2026, 5, 11),
         endDate = LocalDate.of(2026, 7, 24),
@@ -76,7 +80,7 @@ class SectionDetailViewModelTest {
     )
 
     private fun viewModel(): SectionDetailViewModel = SectionDetailViewModel(
-        sectionId = SECTION_ID,
+        sectionId = sectionId,
         getSection = GetSectionUseCase(sectionRepository),
         getStudents = GetStudentsUseCase(studentRepository),
         getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
@@ -107,7 +111,7 @@ class SectionDetailViewModelTest {
         viewModel.effects.test {
             viewModel.onIntent(SectionDetailUiIntent.StudentsClicked)
 
-            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToStudents(SECTION_ID))
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToStudents(sectionId))
         }
     }
 
@@ -118,7 +122,7 @@ class SectionDetailViewModelTest {
         viewModel.effects.test {
             viewModel.onIntent(SectionDetailUiIntent.AreasClicked)
 
-            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToSectionAreas(SECTION_ID))
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToSectionAreas(sectionId))
         }
     }
 
@@ -129,14 +133,24 @@ class SectionDetailViewModelTest {
         viewModel.effects.test {
             viewModel.onIntent(SectionDetailUiIntent.PeriodLevelsClicked)
 
-            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToPeriodLevels(SECTION_ID))
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToPeriodLevels(sectionId))
         }
     }
 
     @Test
     fun `the levels row counts the cells still missing in the current period`() = runTest {
-        workedCompetencyRepository.setWorked("section-1", "period-2", Competency.idOf(Area.PPSS, 1), isWorked = true)
-        workedCompetencyRepository.setWorked("section-1", "period-2", Competency.idOf(Area.PPSS, 2), isWorked = true)
+        workedCompetencyRepository.setWorked(
+            SectionId("section-1"),
+            PeriodId("period-2"),
+            Competency.idOf(Area.PPSS, 1),
+            isWorked = true,
+        )
+        workedCompetencyRepository.setWorked(
+            SectionId("section-1"),
+            PeriodId("period-2"),
+            Competency.idOf(Area.PPSS, 2),
+            isWorked = true,
+        )
 
         val viewModel: SectionDetailViewModel = viewModel()
 
@@ -151,7 +165,8 @@ class SectionDetailViewModelTest {
         viewModel.effects.test {
             viewModel.onIntent(SectionDetailUiIntent.RenameClicked)
 
-            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToSectionForm("2026", SECTION_ID))
+            val expected = SectionDetailUiEffect.NavigateToSectionForm(SchoolYearId("2026"), sectionId)
+            assertThat(awaitItem()).isEqualTo(expected)
         }
     }
 
@@ -160,7 +175,7 @@ class SectionDetailViewModelTest {
         assertThat(viewModel().state.value.todayAttendanceSummary).isEqualTo("Sin tomar")
 
         attendanceRepository.record(
-            AttendanceRecord(SECTION_ID, "student-1", today, AttendanceStatus.ABSENT),
+            AttendanceRecord(sectionId, StudentId("student-1"), today, AttendanceStatus.ABSENT),
         )
 
         assertThat(viewModel().state.value.todayAttendanceSummary).isEqualTo("1 de 2 presentes")
@@ -172,17 +187,17 @@ class SectionDetailViewModelTest {
 
         viewModel.effects.test {
             viewModel.onIntent(SectionDetailUiIntent.TakeAttendanceClicked)
-            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToAttendanceDay(SECTION_ID, today))
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToAttendanceDay(sectionId, today))
 
             viewModel.onIntent(SectionDetailUiIntent.AttendanceClicked)
-            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToAttendanceDay(SECTION_ID, today))
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToAttendanceDay(sectionId, today))
         }
     }
 }
 
 private fun student(id: String, code: String, withdrawalDate: LocalDate? = null): Student = Student(
-    id = id,
-    sectionId = SECTION_ID,
+    id = StudentId(id),
+    sectionId = sectionId,
     code = StudentCode(code),
     fullName = "ACOSTA RIVERA, Luz Maria",
     withdrawalDate = withdrawalDate,

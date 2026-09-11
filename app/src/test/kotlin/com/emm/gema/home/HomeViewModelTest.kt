@@ -13,27 +13,25 @@ import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.divide
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -41,6 +39,12 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
 private const val REMINDER_THRESHOLD_DAYS: Int = 7
 
@@ -52,7 +56,7 @@ class HomeViewModelTest {
     private val now: Instant = Instant.parse("2026-09-10T19:32:00Z")
     private val backupClock: Clock = Clock.fixed(now, ZoneId.of("America/Lima"))
     private val schoolYear = SchoolYear(
-        id = "2026",
+        id = SchoolYearId("2026"),
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
@@ -60,22 +64,22 @@ class HomeViewModelTest {
     )
     private val periods: List<Period> = PeriodKind.BIMESTER
         .divide(schoolYear.startDate, schoolYear.endDate)
-        .map { Period("period-${it.number}", schoolYear.id, it.number, it.startDate, it.endDate) }
+        .map { Period(PeriodId("period-${it.number}"), schoolYear.id, it.number, it.startDate, it.endDate) }
     private val schoolYearRepository = FakeSchoolYearRepository(listOf(schoolYear))
     private val periodRepository = FakePeriodRepository(periods)
     private val sectionRepository = FakeSectionRepository(
         listOf(
-            Section("section-2", schoolYear.id, Grade.FOURTH, "B"),
-            Section("section-1", schoolYear.id, Grade.THIRD, "A"),
+            Section(SectionId("section-2"), schoolYear.id, Grade.FOURTH, "B"),
+            Section(SectionId("section-1"), schoolYear.id, Grade.THIRD, "A"),
         )
     )
     private val activeSchoolYearRepository = FakeActiveSchoolYearRepository(schoolYear.id)
     private val attendanceRepository = FakeAttendanceRepository()
     private val studentRepository = FakeStudentRepository(
         listOf(
-            student("student-1", "section-1", "12345678901234"),
-            student("student-2", "section-1", "12345678901235"),
-            student("student-3", "section-2", "12345678901236"),
+            student("student-1", SectionId("section-1"), "12345678901234"),
+            student("student-2", SectionId("section-1"), "12345678901235"),
+            student("student-3", SectionId("section-2"), "12345678901236"),
         )
     )
 
@@ -100,9 +104,9 @@ class HomeViewModelTest {
         val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
 
         viewModel.effects.test {
-            viewModel.onIntent(HomeUiIntent.SectionClicked("section-1"))
+            viewModel.onIntent(HomeUiIntent.SectionClicked(SectionId("section-1")))
 
-            assertThat(awaitItem()).isEqualTo(HomeUiEffect.NavigateToSectionDetail("section-1"))
+            assertThat(awaitItem()).isEqualTo(HomeUiEffect.NavigateToSectionDetail(SectionId("section-1")))
         }
     }
 
@@ -112,7 +116,12 @@ class HomeViewModelTest {
             .containsExactly(false, false)
 
         attendanceRepository.record(
-            AttendanceRecord("section-1", "student-1", schoolYear.startDate, AttendanceStatus.ABSENT),
+            AttendanceRecord(
+                SectionId("section-1"),
+                StudentId("student-1"),
+                schoolYear.startDate,
+                AttendanceStatus.ABSENT,
+            ),
         )
 
         val sections: List<SectionRow> = homeAt(schoolYear.startDate).state.value.sections
@@ -126,10 +135,10 @@ class HomeViewModelTest {
         val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
 
         viewModel.effects.test {
-            viewModel.onIntent(HomeUiIntent.TakeAttendanceClicked("section-1"))
+            viewModel.onIntent(HomeUiIntent.TakeAttendanceClicked(SectionId("section-1")))
 
             assertThat(awaitItem())
-                .isEqualTo(HomeUiEffect.NavigateToAttendanceDay("section-1", schoolYear.startDate))
+                .isEqualTo(HomeUiEffect.NavigateToAttendanceDay(SectionId("section-1"), schoolYear.startDate))
         }
     }
 
@@ -227,20 +236,20 @@ class HomeViewModelTest {
 
         override fun observeAll(): Flow<List<SchoolYear>> = schoolYears
 
-        override suspend fun findById(id: String): SchoolYear? = schoolYears.value.find { it.id == id }
+        override suspend fun findById(id: SchoolYearId): SchoolYear? = schoolYears.value.find { it.id == id }
 
         override suspend fun save(schoolYear: SchoolYear) = Unit
     }
 
     private class FakePeriodRepository(private val stored: List<Period>) : PeriodRepository {
 
-        override fun observeBySchoolYear(schoolYearId: String): Flow<List<Period>> =
+        override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Period>> =
             MutableStateFlow(stored.filter { it.schoolYearId == schoolYearId })
 
-        override suspend fun findBySchoolYear(schoolYearId: String): List<Period> =
+        override suspend fun findBySchoolYear(schoolYearId: SchoolYearId): List<Period> =
             stored.filter { it.schoolYearId == schoolYearId }
 
-        override suspend fun findById(id: String): Period? = stored.find { it.id == id }
+        override suspend fun findById(id: PeriodId): Period? = stored.find { it.id == id }
 
         override suspend fun saveAll(periods: List<Period>) = Unit
     }
@@ -249,54 +258,54 @@ class HomeViewModelTest {
 
         private val sections: MutableStateFlow<List<Section>> = MutableStateFlow(initial)
 
-        override fun observeBySchoolYear(schoolYearId: String): Flow<List<Section>> = sections
+        override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Section>> = sections
             .map { stored ->
                 stored.filter { it.schoolYearId == schoolYearId }
                     .sortedWith(compareBy({ it.grade.number }, { it.name }))
             }
 
-        override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = sections
+        override fun observeCountsBySchoolYear(): Flow<Map<SchoolYearId, Int>> = sections
             .map { stored -> stored.groupingBy { it.schoolYearId }.eachCount() }
 
-        override suspend fun findById(id: String): Section? = sections.value.find { it.id == id }
+        override suspend fun findById(id: SectionId): Section? = sections.value.find { it.id == id }
 
         override suspend fun save(section: Section) = Unit
 
-        override suspend fun delete(id: String) = Unit
+        override suspend fun delete(id: SectionId) = Unit
     }
 
     private class FakeStudentRepository(initial: List<Student>) : StudentRepository {
 
         private val students: MutableStateFlow<List<Student>> = MutableStateFlow(initial)
 
-        override fun observeBySection(sectionId: String): Flow<List<Student>> = students
+        override fun observeBySection(sectionId: SectionId): Flow<List<Student>> = students
             .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
 
-        override fun observeCountsBySection(): Flow<Map<String, Int>> = students
+        override fun observeCountsBySection(): Flow<Map<SectionId, Int>> = students
             .map { stored -> stored.filterNot { it.isWithdrawn }.groupingBy { it.sectionId }.eachCount() }
 
-        override suspend fun listBySection(sectionId: String): List<Student> = students.value
+        override suspend fun listBySection(sectionId: SectionId): List<Student> = students.value
             .filter { it.sectionId == sectionId }
             .orderedByName()
 
-        override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
+        override suspend fun findById(id: StudentId): Student? = students.value.find { it.id == id }
 
-        override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
+        override suspend fun findByCode(sectionId: SectionId, code: StudentCode): Student? = students.value
             .find { it.sectionId == sectionId && it.code == code }
 
         override suspend fun save(student: Student) = Unit
 
-        override suspend fun deleteBySection(sectionId: String) = Unit
+        override suspend fun deleteBySection(sectionId: SectionId) = Unit
     }
 
     private class FakeAttendanceRepository : AttendanceRepository {
 
         private val records: MutableStateFlow<List<AttendanceRecord>> = MutableStateFlow(emptyList())
 
-        override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
+        override fun observeBySectionAndDate(sectionId: SectionId, date: LocalDate): Flow<List<AttendanceRecord>> =
             records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
 
-        override fun observeBySectionAndMonth(sectionId: String, month: YearMonth): Flow<List<AttendanceRecord>> =
+        override fun observeBySectionAndMonth(sectionId: SectionId, month: YearMonth): Flow<List<AttendanceRecord>> =
             records.map { stored ->
                 stored.filter { it.sectionId == sectionId && YearMonth.from(it.date) == month }
             }
@@ -306,30 +315,30 @@ class HomeViewModelTest {
                 .filterNot { it.studentId == record.studentId && it.date == record.date } + record
         }
 
-        override suspend fun countRecordedDays(sectionId: String): Int = records.value
+        override suspend fun countRecordedDays(sectionId: SectionId): Int = records.value
             .filter { it.sectionId == sectionId }
             .distinctBy { it.date }
             .size
 
-        override suspend fun deleteBySection(sectionId: String) {
+        override suspend fun deleteBySection(sectionId: SectionId) {
             records.value = records.value.filterNot { it.sectionId == sectionId }
         }
     }
 
-    private class FakeActiveSchoolYearRepository(initial: String?) : ActiveSchoolYearRepository {
+    private class FakeActiveSchoolYearRepository(initial: SchoolYearId?) : ActiveSchoolYearRepository {
 
-        private val activeId: MutableStateFlow<String?> = MutableStateFlow(initial)
+        private val activeId: MutableStateFlow<SchoolYearId?> = MutableStateFlow(initial)
 
-        override fun observeActiveId(): Flow<String?> = activeId
+        override fun observeActiveId(): Flow<SchoolYearId?> = activeId
 
-        override suspend fun activate(schoolYearId: String) {
+        override suspend fun activate(schoolYearId: SchoolYearId) {
             activeId.value = schoolYearId
         }
     }
 }
 
-private fun student(id: String, sectionId: String, code: String): Student = Student(
-    id = id,
+private fun student(id: String, sectionId: SectionId, code: String): Student = Student(
+    id = StudentId(id),
     sectionId = sectionId,
     code = StudentCode(code),
     fullName = "ACOSTA RIVERA, Luz Maria",

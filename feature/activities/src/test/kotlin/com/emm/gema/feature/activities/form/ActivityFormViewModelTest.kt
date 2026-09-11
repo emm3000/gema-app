@@ -2,6 +2,7 @@ package com.emm.gema.feature.activities.form
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.DeleteActivityUseCase
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
@@ -14,12 +15,16 @@ import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.activities.FakeActivityRepository
 import com.emm.gema.feature.activities.FakeCompetencyRepository
 import com.emm.gema.feature.activities.FakeEvidenceLevelRepository
@@ -30,17 +35,17 @@ import com.emm.gema.feature.activities.FakeSectionRepository
 import com.emm.gema.feature.activities.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.activities.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
-private const val SCHOOL_YEAR_ID: String = "year-1"
-private const val FIRST_PERIOD_ID: String = "period-1"
-private const val SECOND_PERIOD_ID: String = "period-2"
+private val sectionId: SectionId = SectionId("section-1")
+private val schoolYearId: SchoolYearId = SchoolYearId("year-1")
+private val firstPeriodId: PeriodId = PeriodId("period-1")
+private val secondPeriodId: PeriodId = PeriodId("period-2")
 
 class ActivityFormViewModelTest {
 
@@ -48,17 +53,17 @@ class ActivityFormViewModelTest {
     val mainDispatcherRule: MainDispatcherRule = MainDispatcherRule()
 
     private val schoolYear: SchoolYear = SchoolYear(
-        id = SCHOOL_YEAR_ID,
+        id = schoolYearId,
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
         periodKind = PeriodKind.BIMESTER,
     )
-    private val section: Section = Section(SECTION_ID, SCHOOL_YEAR_ID, Grade.THIRD, "A")
+    private val section: Section = Section(sectionId, schoolYearId, Grade.THIRD, "A")
     private val firstPeriod: Period =
-        Period(FIRST_PERIOD_ID, SCHOOL_YEAR_ID, 1, LocalDate.of(2026, 3, 2), LocalDate.of(2026, 5, 10))
+        Period(firstPeriodId, schoolYearId, 1, LocalDate.of(2026, 3, 2), LocalDate.of(2026, 5, 10))
     private val secondPeriod: Period =
-        Period(SECOND_PERIOD_ID, SCHOOL_YEAR_ID, 2, LocalDate.of(2026, 5, 11), LocalDate.of(2026, 7, 24))
+        Period(secondPeriodId, schoolYearId, 2, LocalDate.of(2026, 5, 11), LocalDate.of(2026, 7, 24))
     private val today: LocalDate = LocalDate.of(2026, 3, 10)
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
@@ -69,7 +74,7 @@ class ActivityFormViewModelTest {
 
     @Test
     fun `the default date resolves to the period it falls into`() = runTest {
-        workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
 
         val state: ActivityFormUiState = viewModel(activityId = null).state.value
 
@@ -80,7 +85,7 @@ class ActivityFormViewModelTest {
 
     @Test
     fun `saving derives the period from the date`() = runTest {
-        workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
         val viewModel: ActivityFormViewModel = viewModel(activityId = null)
         viewModel.onIntent(ActivityFormUiIntent.NameChanged("Debate del aula"))
         viewModel.onIntent(ActivityFormUiIntent.CompetencyToggled(Competency.idOf(Area.PPSS, 1), true))
@@ -93,24 +98,24 @@ class ActivityFormViewModelTest {
         }
 
         val saved: Activity = activityRepository.activities.value.single()
-        assertThat(saved.periodId).isEqualTo(FIRST_PERIOD_ID)
+        assertThat(saved.periodId).isEqualTo(firstPeriodId)
     }
 
     @Test
     fun `changing the date to another period warns and moves the activity`() = runTest {
-        workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
-        workedCompetencyRepository.setWorked(SECTION_ID, SECOND_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
         val existing = Activity(
-            id = "activity-1",
-            sectionId = SECTION_ID,
-            periodId = FIRST_PERIOD_ID,
+            id = ActivityId("activity-1"),
+            sectionId = sectionId,
+            periodId = firstPeriodId,
             name = "Debate del aula",
             date = LocalDate.of(2026, 3, 10),
             competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
         )
         activityRepository.save(existing)
 
-        val viewModel: ActivityFormViewModel = viewModel(activityId = "activity-1")
+        val viewModel: ActivityFormViewModel = viewModel(activityId = ActivityId("activity-1"))
         viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 6, 1)))
 
         val state: ActivityFormUiState = viewModel.state.value
@@ -120,10 +125,10 @@ class ActivityFormViewModelTest {
 
     @Test
     fun `a date that stops falling into any period is reported, not thrown`() = runTest {
-        workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
         val periods: MutableList<Period> = mutableListOf(firstPeriod, secondPeriod)
         val viewModel = ActivityFormViewModel(
-            sectionId = SECTION_ID,
+            sectionId = sectionId,
             activityId = null,
             clock = clock,
             getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
@@ -156,11 +161,11 @@ class ActivityFormViewModelTest {
 
     @Test
     fun `deleting an activity deletes its evidence levels too`() = runTest {
-        workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
         val existing = Activity(
-            id = "activity-1",
-            sectionId = SECTION_ID,
-            periodId = FIRST_PERIOD_ID,
+            id = ActivityId("activity-1"),
+            sectionId = sectionId,
+            periodId = firstPeriodId,
             name = "Debate del aula",
             date = LocalDate.of(2026, 3, 10),
             competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
@@ -168,11 +173,11 @@ class ActivityFormViewModelTest {
         activityRepository.save(existing)
         evidenceLevelRepository.save(
             EvidenceLevel(
-                EvidenceLevelKey("activity-1", "student-1", Competency.idOf(Area.PPSS, 1)),
+                EvidenceLevelKey(ActivityId("activity-1"), StudentId("student-1"), Competency.idOf(Area.PPSS, 1)),
                 AchievementLevel.A,
             ),
         )
-        val viewModel: ActivityFormViewModel = viewModel(activityId = "activity-1")
+        val viewModel: ActivityFormViewModel = viewModel(activityId = ActivityId("activity-1"))
 
         viewModel.effects.test {
             viewModel.onIntent(ActivityFormUiIntent.DeleteConfirmed)
@@ -184,8 +189,8 @@ class ActivityFormViewModelTest {
         assertThat(evidenceLevelRepository.levels.value).isEmpty()
     }
 
-    private fun viewModel(activityId: String?): ActivityFormViewModel = ActivityFormViewModel(
-        sectionId = SECTION_ID,
+    private fun viewModel(activityId: ActivityId?): ActivityFormViewModel = ActivityFormViewModel(
+        sectionId = sectionId,
         activityId = activityId,
         clock = clock,
         getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),

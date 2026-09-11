@@ -4,25 +4,28 @@ import app.cash.turbine.test
 import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.attendance.FakeAttendanceRepository
 import com.emm.gema.feature.attendance.FakeSectionRepository
 import com.emm.gema.feature.attendance.FakeStudentRepository
 import com.emm.gema.feature.attendance.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
-import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneOffset
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
+import org.junit.Test
 
-private const val sectionId: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private val today: LocalDate = LocalDate.of(2026, 9, 10)
 private val yesterday: LocalDate = today.minusDays(1)
 
@@ -31,7 +34,7 @@ class AttendanceDayViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section(sectionId, "2026", Grade.THIRD, "A")
+    private val section = Section(SectionId(sectionId.value), SchoolYearId("2026"), Grade.THIRD, "A")
     private val luz = student("student-1", "12345678901234", "ACOSTA RIVERA, Luz Maria")
     private val jose = student("student-2", "12345678901235", "BAUTISTA QUISPE, Jose")
 
@@ -41,7 +44,7 @@ class AttendanceDayViewModelTest {
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
 
     private fun viewModel(initialDate: LocalDate? = null): AttendanceDayViewModel = AttendanceDayViewModel(
-        sectionId = sectionId,
+        sectionId = SectionId(sectionId.value),
         initialDate = initialDate,
         getSection = GetSectionUseCase(sectionRepository),
         getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository),
@@ -191,8 +194,8 @@ class AttendanceDayViewModelTest {
 }
 
 private fun student(id: String, code: String, fullName: String): Student = Student(
-    id = id,
-    sectionId = sectionId,
+    id = StudentId(id),
+    sectionId = SectionId(sectionId.value),
     code = StudentCode(code),
     fullName = fullName,
 )

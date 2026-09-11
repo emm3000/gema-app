@@ -73,15 +73,15 @@ class FakeSiagieImportStore(private val students: FakeStudentRepository) : Siagi
 
     override suspend fun apply(students: List<Student>, template: ImportedTemplate) {
         students.forEach { this.students.save(it) }
-        templates["${template.sectionId}/${template.kind}"] = template
+        templates["${template.sectionId.value}/${template.kind}"] = template
     }
 
     override suspend fun clearSection(sectionId: SectionId) {
-        templates.keys.filter { it.startsWith("$sectionId/") }.forEach(templates::remove)
+        templates.keys.filter { it.startsWith("${sectionId.value}/") }.forEach(templates::remove)
     }
 
     override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
-        templates["$sectionId/$kind"]
+        templates["${sectionId.value}/$kind"]
 }
 
 class FileSiagieDocuments : SiagieDocuments {

@@ -5,25 +5,27 @@ import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.divide
 import com.emm.gema.feature.setup.MainDispatcherRule
 import com.emm.gema.feature.setup.PeriodRangeError
 import com.google.common.truth.Truth.assertThat
+import java.time.Clock
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.Clock
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZoneOffset
 
 class PeriodsViewModelTest {
 
@@ -31,7 +33,7 @@ class PeriodsViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val schoolYear = SchoolYear(
-        id = "2026",
+        id = SchoolYearId("2026"),
         label = "2026",
         startDate = LocalDate.of(2026, 1, 1),
         endDate = LocalDate.of(2026, 12, 31),
@@ -40,7 +42,7 @@ class PeriodsViewModelTest {
     private val storedPeriods: List<Period> = PeriodKind.BIMESTER
         .divide(schoolYear.startDate, schoolYear.endDate)
         .map { dates ->
-            Period("period-${dates.number}", schoolYear.id, dates.number, dates.startDate, dates.endDate)
+            Period(PeriodId("period-${dates.number}"), schoolYear.id, dates.number, dates.startDate, dates.endDate)
         }
     private val periodRepository = FakePeriodRepository(storedPeriods)
     private val schoolYearRepository = FakeSchoolYearRepository(schoolYear)
@@ -64,7 +66,7 @@ class PeriodsViewModelTest {
         assertThat(state.isLoading).isFalse()
         assertThat(state.schoolYearLabel).isEqualTo("2026")
         assertThat(state.periods.map { it.id }).containsExactlyElementsIn(storedPeriods.map { it.id }).inOrder()
-        assertThat(state.periods.single { it.isCurrent }.id).isEqualTo("period-2")
+        assertThat(state.periods.single { it.isCurrent }.id).isEqualTo(PeriodId("period-2"))
     }
 
     @Test
@@ -79,7 +81,7 @@ class PeriodsViewModelTest {
         val viewModel: PeriodsViewModel = viewModelAt(schoolYear.startDate)
         val newEnd: LocalDate = storedPeriods.first().endDate.minusDays(4)
 
-        viewModel.onIntent(PeriodsUiIntent.EndDateChanged("period-1", newEnd))
+        viewModel.onIntent(PeriodsUiIntent.EndDateChanged(PeriodId("period-1"), newEnd))
 
         assertThat(viewModel.state.value.periods.first().endDate).isEqualTo(newEnd)
         assertThat(viewModel.state.value.canSave).isTrue()
@@ -96,7 +98,7 @@ class PeriodsViewModelTest {
     fun `overlapping periods are reported and block saving`() = runTest {
         val viewModel: PeriodsViewModel = viewModelAt(schoolYear.startDate)
 
-        viewModel.onIntent(PeriodsUiIntent.EndDateChanged("period-1", storedPeriods[1].startDate))
+        viewModel.onIntent(PeriodsUiIntent.EndDateChanged(PeriodId("period-1"), storedPeriods[1].startDate))
 
         assertThat(viewModel.state.value.overlapError).isEqualTo(PeriodRangeError.OVERLAP)
         assertThat(viewModel.state.value.canSave).isFalse()
@@ -112,7 +114,7 @@ class PeriodsViewModelTest {
     fun `a date outside the school year is reported and blocks saving`() = runTest {
         val viewModel: PeriodsViewModel = viewModelAt(schoolYear.startDate)
 
-        viewModel.onIntent(PeriodsUiIntent.StartDateChanged("period-1", schoolYear.startDate.minusDays(2)))
+        viewModel.onIntent(PeriodsUiIntent.StartDateChanged(PeriodId("period-1"), schoolYear.startDate.minusDays(2)))
 
         assertThat(viewModel.state.value.overlapError).isEqualTo(PeriodRangeError.OUTSIDE_YEAR)
         assertThat(viewModel.state.value.canSave).isFalse()
@@ -133,17 +135,17 @@ class PeriodsViewModelTest {
 
         val periods: MutableStateFlow<List<Period>> = MutableStateFlow(initial)
 
-        override fun observeBySchoolYear(schoolYearId: String): Flow<List<Period>> = periods
+        override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Period>> = periods
             .map { stored -> stored.filter { it.schoolYearId == schoolYearId }.sortedBy { it.number } }
 
-        override suspend fun findBySchoolYear(schoolYearId: String): List<Period> = periods.value
+        override suspend fun findBySchoolYear(schoolYearId: SchoolYearId): List<Period> = periods.value
             .filter { it.schoolYearId == schoolYearId }
             .sortedBy { it.number }
 
-        override suspend fun findById(id: String): Period? = periods.value.find { it.id == id }
+        override suspend fun findById(id: PeriodId): Period? = periods.value.find { it.id == id }
 
         override suspend fun saveAll(periods: List<Period>) {
-            val incoming: Set<String> = periods.map { it.id }.toSet()
+            val incoming: Set<PeriodId> = periods.map { it.id }.toSet()
             this.periods.value = (this.periods.value.filterNot { it.id in incoming } + periods)
                 .sortedBy { it.number }
         }
@@ -153,7 +155,7 @@ class PeriodsViewModelTest {
 
         override fun observeAll(): Flow<List<SchoolYear>> = MutableStateFlow(listOf(schoolYear))
 
-        override suspend fun findById(id: String): SchoolYear? = schoolYear.takeIf { it.id == id }
+        override suspend fun findById(id: SchoolYearId): SchoolYear? = schoolYear.takeIf { it.id == id }
 
         override suspend fun save(schoolYear: SchoolYear) = Unit
     }

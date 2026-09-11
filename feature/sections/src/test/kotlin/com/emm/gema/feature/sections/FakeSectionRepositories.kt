@@ -1,6 +1,7 @@
 package com.emm.gema.feature.sections
 
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.ActivityRepository
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
@@ -8,51 +9,56 @@ import com.emm.gema.core.domain.activity.EvidenceLevelRepository
 import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.attendance.AttendanceRecord
 import com.emm.gema.core.domain.attendance.AttendanceRepository
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionCascade
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
-import com.emm.gema.core.domain.student.Student
-import com.emm.gema.core.domain.student.StudentCode
-import com.emm.gema.core.domain.student.StudentRepository
-import com.emm.gema.core.domain.student.orderedByName
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieImportStore
+import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
+import com.emm.gema.core.domain.student.StudentRepository
+import com.emm.gema.core.domain.student.orderedByName
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 class FakeSectionRepository(initial: List<Section> = emptyList()) : SectionRepository {
 
     val sections: MutableStateFlow<List<Section>> = MutableStateFlow(initial)
     var failsOnce: Boolean = false
 
-    override fun observeBySchoolYear(schoolYearId: String): Flow<List<Section>> = sections
+    override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Section>> = sections
         .map { stored -> stored.filter { it.schoolYearId == schoolYearId } }
 
-    override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = sections
+    override fun observeCountsBySchoolYear(): Flow<Map<SchoolYearId, Int>> = sections
         .map { stored -> stored.groupingBy { it.schoolYearId }.eachCount() }
 
-    override suspend fun findById(id: String): Section? = sections.value.find { it.id == id }
+    override suspend fun findById(id: SectionId): Section? = sections.value.find { it.id == id }
 
     override suspend fun save(section: Section) {
         failOnce()
         sections.value = sections.value.filterNot { it.id == section.id } + section
     }
 
-    override suspend fun delete(id: String) {
+    override suspend fun delete(id: SectionId) {
         failOnce()
         sections.value = sections.value.filterNot { it.id == id }
     }
@@ -66,40 +72,43 @@ class FakeSectionRepository(initial: List<Section> = emptyList()) : SectionRepos
 
 class FakeSectionAreaRepository : SectionAreaRepository {
 
-    val hiddenAreas: MutableStateFlow<Map<String, Set<Area>>> = MutableStateFlow(emptyMap())
+    val hiddenAreas: MutableStateFlow<Map<SectionId, Set<Area>>> = MutableStateFlow(emptyMap())
 
-    override fun observeHiddenAreas(sectionId: String): Flow<Set<Area>> = hiddenAreas
+    override fun observeHiddenAreas(sectionId: SectionId): Flow<Set<Area>> = hiddenAreas
         .map { stored -> stored[sectionId].orEmpty() }
 
-    override suspend fun setAreaHidden(sectionId: String, area: Area, isHidden: Boolean) {
+    override suspend fun setAreaHidden(sectionId: SectionId, area: Area, isHidden: Boolean) {
         val current: Set<Area> = hiddenAreas.value[sectionId].orEmpty()
         hiddenAreas.value = hiddenAreas.value + (sectionId to if (isHidden) current + area else current - area)
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         hiddenAreas.value = hiddenAreas.value - sectionId
     }
 }
 
 class FakeWorkedCompetencyRepository : WorkedCompetencyRepository {
 
-    val rows: MutableStateFlow<Set<Triple<String, String, String>>> = MutableStateFlow(emptySet())
+    val rows: MutableStateFlow<Set<Triple<SectionId, PeriodId, CompetencyId>>> = MutableStateFlow(emptySet())
 
-    override fun observeWorked(sectionId: String, periodId: String): Flow<Set<String>> = rows.map { current ->
+    override fun observeWorked(
+        sectionId: SectionId,
+        periodId: PeriodId,
+    ): Flow<Set<CompetencyId>> = rows.map { current ->
         current.filter { it.first == sectionId && it.second == periodId }.mapTo(mutableSetOf()) { it.third }
     }
 
     override suspend fun setWorked(
-        sectionId: String,
-        periodId: String,
-        competencyId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
+        competencyId: CompetencyId,
         isWorked: Boolean,
     ) {
-        val row: Triple<String, String, String> = Triple(sectionId, periodId, competencyId)
+        val row: Triple<SectionId, PeriodId, CompetencyId> = Triple(sectionId, periodId, competencyId)
         rows.value = if (isWorked) rows.value + row else rows.value - row
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         rows.value = rows.value.filterNotTo(mutableSetOf()) { it.first == sectionId }
     }
 }
@@ -108,43 +117,43 @@ class FakeStudentRepository(initial: List<Student> = emptyList()) : StudentRepos
 
     val students: MutableStateFlow<List<Student>> = MutableStateFlow(initial)
 
-    override fun observeBySection(sectionId: String): Flow<List<Student>> = students
+    override fun observeBySection(sectionId: SectionId): Flow<List<Student>> = students
         .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
 
-    override fun observeCountsBySection(): Flow<Map<String, Int>> = students
+    override fun observeCountsBySection(): Flow<Map<SectionId, Int>> = students
         .map { stored -> stored.filterNot { it.isWithdrawn }.groupingBy { it.sectionId }.eachCount() }
 
-    override suspend fun listBySection(sectionId: String): List<Student> = students.value
+    override suspend fun listBySection(sectionId: SectionId): List<Student> = students.value
         .filter { it.sectionId == sectionId }
         .orderedByName()
 
-    override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
+    override suspend fun findById(id: StudentId): Student? = students.value.find { it.id == id }
 
-    override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
+    override suspend fun findByCode(sectionId: SectionId, code: StudentCode): Student? = students.value
         .find { it.sectionId == sectionId && it.code == code }
 
     override suspend fun save(student: Student) {
         students.value = students.value.filterNot { it.id == student.id } + student
     }
 
-    override suspend fun deleteBySection(sectionId: String) {
+    override suspend fun deleteBySection(sectionId: SectionId) {
         students.value = students.value.filterNot { it.sectionId == sectionId }
     }
 }
 
 class FakeSiagieImportStore : SiagieImportStore {
 
-    private val templates: MutableMap<String, ImportedTemplate> = mutableMapOf()
+    private val templates: MutableMap<SectionId, ImportedTemplate> = mutableMapOf()
 
     override suspend fun apply(students: List<Student>, template: ImportedTemplate) {
         templates[template.sectionId] = template
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         templates.remove(sectionId)
     }
 
-    override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
+    override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
         templates[sectionId]?.takeIf { it.kind == kind }
 }
 
@@ -152,10 +161,13 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
 
     private val levels: MutableStateFlow<List<PeriodLevel>> = MutableStateFlow(emptyList())
 
-    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<PeriodLevel>> = levels
+    override fun observeByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<List<PeriodLevel>> = levels
         .map { stored -> stored.filter { it.key.sectionId == sectionId && it.key.periodId == periodId } }
 
-    override fun observeRecordedCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> = levels
+    override fun observeRecordedCountsByPeriod(
+        sectionId: SectionId,
+        periodId: PeriodId,
+    ): Flow<Map<CompetencyId, Int>> = levels
         .map { stored ->
             stored
                 .filter { it.key.sectionId == sectionId && it.key.periodId == periodId && it.isRecorded }
@@ -163,7 +175,7 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
                 .eachCount()
         }
 
-    override fun observeRecordedCountsBySection(sectionId: String): Flow<Map<String, Int>> = levels
+    override fun observeRecordedCountsBySection(sectionId: SectionId): Flow<Map<CompetencyId, Int>> = levels
         .map { stored ->
             stored
                 .filter { it.key.sectionId == sectionId && it.isRecorded }
@@ -181,20 +193,20 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
         levels.value = levels.value.filterNot { it.key == key }
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         levels.value = levels.value.filterNot { it.key.sectionId == sectionId }
     }
 }
 
 class FakePeriodRepository(private val periods: List<Period> = emptyList()) : PeriodRepository {
 
-    override fun observeBySchoolYear(schoolYearId: String): Flow<List<Period>> =
+    override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Period>> =
         MutableStateFlow(periods.filter { it.schoolYearId == schoolYearId })
 
-    override suspend fun findBySchoolYear(schoolYearId: String): List<Period> =
+    override suspend fun findBySchoolYear(schoolYearId: SchoolYearId): List<Period> =
         periods.filter { it.schoolYearId == schoolYearId }
 
-    override suspend fun findById(id: String): Period? = periods.find { it.id == id }
+    override suspend fun findById(id: PeriodId): Period? = periods.find { it.id == id }
 
     override suspend fun saveAll(periods: List<Period>) = Unit
 }
@@ -203,7 +215,7 @@ class FakeSchoolYearRepository(private val schoolYears: List<SchoolYear> = empty
 
     override fun observeAll(): Flow<List<SchoolYear>> = MutableStateFlow(schoolYears)
 
-    override suspend fun findById(id: String): SchoolYear? = schoolYears.find { it.id == id }
+    override suspend fun findById(id: SchoolYearId): SchoolYear? = schoolYears.find { it.id == id }
 
     override suspend fun save(schoolYear: SchoolYear) = Unit
 }
@@ -211,10 +223,10 @@ class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : 
 
     val records: MutableStateFlow<List<AttendanceRecord>> = MutableStateFlow(initial)
 
-    override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
+    override fun observeBySectionAndDate(sectionId: SectionId, date: LocalDate): Flow<List<AttendanceRecord>> =
         records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
 
-    override fun observeBySectionAndMonth(sectionId: String, month: YearMonth): Flow<List<AttendanceRecord>> =
+    override fun observeBySectionAndMonth(sectionId: SectionId, month: YearMonth): Flow<List<AttendanceRecord>> =
         records.map { stored ->
             stored.filter { it.sectionId == sectionId && YearMonth.from(it.date) == month }
         }
@@ -224,12 +236,12 @@ class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : 
             .filterNot { it.studentId == record.studentId && it.date == record.date } + record
     }
 
-    override suspend fun countRecordedDays(sectionId: String): Int = records.value
+    override suspend fun countRecordedDays(sectionId: SectionId): Int = records.value
         .filter { it.sectionId == sectionId }
         .distinctBy { it.date }
         .size
 
-    override suspend fun deleteBySection(sectionId: String) {
+    override suspend fun deleteBySection(sectionId: SectionId) {
         records.value = records.value.filterNot { it.sectionId == sectionId }
     }
 }
@@ -238,20 +250,20 @@ class FakeActivityRepository : ActivityRepository {
 
     val activities: MutableStateFlow<List<Activity>> = MutableStateFlow(emptyList())
 
-    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<Activity>> = activities
+    override fun observeByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<List<Activity>> = activities
         .map { stored -> stored.filter { it.sectionId == sectionId && it.periodId == periodId } }
 
-    override suspend fun findById(id: String): Activity? = activities.value.find { it.id == id }
+    override suspend fun findById(id: ActivityId): Activity? = activities.value.find { it.id == id }
 
     override suspend fun save(activity: Activity) {
         activities.value = activities.value.filterNot { it.id == activity.id } + activity
     }
 
-    override suspend fun delete(id: String) {
+    override suspend fun delete(id: ActivityId) {
         activities.value = activities.value.filterNot { it.id == id }
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         activities.value = activities.value.filterNot { it.sectionId == sectionId }
     }
 }
@@ -268,7 +280,7 @@ class FakeSectionCascade(
     private val evidenceLevelRepository: EvidenceLevelRepository,
 ) : SectionCascade {
 
-    override suspend fun deleteSection(sectionId: String) {
+    override suspend fun deleteSection(sectionId: SectionId) {
         sectionRepository.delete(sectionId)
         sectionAreaRepository.clearSection(sectionId)
         workedCompetencyRepository.clearSection(sectionId)
@@ -285,17 +297,20 @@ class FakeEvidenceLevelRepository : EvidenceLevelRepository {
 
     val levels: MutableStateFlow<List<EvidenceLevel>> = MutableStateFlow(emptyList())
 
-    override fun observeByActivity(activityId: String): Flow<List<EvidenceLevel>> = levels
+    override fun observeByActivity(activityId: ActivityId): Flow<List<EvidenceLevel>> = levels
         .map { stored -> stored.filter { it.key.activityId == activityId } }
 
-    override fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
+    override fun observeRecordedStudentCountsByPeriod(
+        sectionId: SectionId,
+        periodId: PeriodId,
+    ): Flow<Map<ActivityId, Int>> =
         MutableStateFlow(emptyMap())
 
     override fun observeForStudentAndCompetency(
-        sectionId: String,
-        periodId: String,
-        studentId: String,
-        competencyId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
+        studentId: StudentId,
+        competencyId: CompetencyId,
     ): Flow<List<EvidenceRecord>> = MutableStateFlow(emptyList())
 
     override suspend fun save(evidenceLevel: EvidenceLevel) {
@@ -306,11 +321,11 @@ class FakeEvidenceLevelRepository : EvidenceLevelRepository {
         levels.value = levels.value.filterNot { it.key == key }
     }
 
-    override suspend fun deleteByActivity(activityId: String) {
+    override suspend fun deleteByActivity(activityId: ActivityId) {
         levels.value = levels.value.filterNot { it.key.activityId == activityId }
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         levels.value = emptyList()
     }
 }

@@ -2,11 +2,13 @@ package com.emm.gema.feature.sections.areas
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.evaluation.GetAreaRecordedLevelCountsUseCase
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
@@ -22,7 +24,7 @@ class SectionAreasViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val section = Section("section-1", "2026", Grade.THIRD, "A")
+    private val section = Section(SectionId("section-1"), SchoolYearId("2026"), Grade.THIRD, "A")
     private val sectionRepository = FakeSectionRepository(listOf(section))
     private val sectionAreaRepository = FakeSectionAreaRepository()
     private val periodLevelRepository = FakePeriodLevelRepository()
@@ -61,7 +63,7 @@ class SectionAreasViewModelTest {
         viewModel.onIntent(SectionAreasUiIntent.AreaToggled(Area.EREL, isActive = true))
 
         assertThat(viewModel.state.value.areas.all { it.isActive }).isTrue()
-        assertThat(sectionAreaRepository.hiddenAreas.value.getValue(section.id)).isEmpty()
+        assertThat(sectionAreaRepository.hiddenAreas.value.getValue(SectionId(section.id.value))).isEmpty()
     }
 
     @Test

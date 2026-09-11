@@ -8,15 +8,16 @@ import com.emm.gema.core.domain.curriculum.SeedCurriculumUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.section.Area
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
 class StartDestinationViewModelTest {
 
@@ -25,7 +26,7 @@ class StartDestinationViewModelTest {
 
     private val competencyRepository: RecordingCompetencyRepository = RecordingCompetencyRepository()
     private val schoolYear: SchoolYear = SchoolYear(
-        id = "year-1",
+        id = SchoolYearId("year-1"),
         label = "2026",
         startDate = LocalDate.of(2026, 3, 2),
         endDate = LocalDate.of(2026, 12, 18),
@@ -76,7 +77,7 @@ private class FakeSchoolYearRepository(private val schoolYears: List<SchoolYear>
 
     override fun observeAll(): Flow<List<SchoolYear>> = MutableStateFlow(schoolYears)
 
-    override suspend fun findById(id: String): SchoolYear? = schoolYears.find { it.id == id }
+    override suspend fun findById(id: SchoolYearId): SchoolYear? = schoolYears.find { it.id == id }
 
     override suspend fun save(schoolYear: SchoolYear) = Unit
 }

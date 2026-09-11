@@ -19,11 +19,11 @@ class InMemorySiagieImportStore(
     }
 
     override suspend fun clearSection(sectionId: SectionId) {
-        templates.keys.filter { it.startsWith("$sectionId/") }.forEach(templates::remove)
+        templates.keys.filter { it.startsWith("${sectionId.value}/") }.forEach(templates::remove)
     }
 
     override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
         templates[key(sectionId, kind)]
 
-    private fun key(sectionId: SectionId, kind: ImportedTemplateKind): String = "$sectionId/$kind"
+    private fun key(sectionId: SectionId, kind: ImportedTemplateKind): String = "${sectionId.value}/$kind"
 }

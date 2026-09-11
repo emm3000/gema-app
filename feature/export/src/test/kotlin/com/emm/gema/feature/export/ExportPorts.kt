@@ -1,24 +1,28 @@
 package com.emm.gema.feature.export
 
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevel
-import com.emm.gema.core.domain.evaluation.PeriodLevelSummary
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
+import com.emm.gema.core.domain.evaluation.PeriodLevelSummary
 import com.emm.gema.core.domain.evaluation.PeriodLevelSummaryPdfRenderer
 import com.emm.gema.core.domain.evaluation.SummaryDocuments
 import com.emm.gema.core.domain.evaluation.SummaryFile
 import com.emm.gema.core.domain.export.ExportedFile
 import com.emm.gema.core.domain.export.SiagieExportStore
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
@@ -28,6 +32,7 @@ import com.emm.gema.core.domain.siagie.SiagieGradesWriter
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
 import kotlinx.coroutines.flow.Flow
@@ -36,34 +41,34 @@ import kotlinx.coroutines.flow.map
 
 class FakeSectionRepository(private val section: Section) : SectionRepository {
 
-    override fun observeBySchoolYear(schoolYearId: String): Flow<List<Section>> =
+    override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Section>> =
         MutableStateFlow(listOf(section))
 
-    override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = MutableStateFlow(emptyMap())
+    override fun observeCountsBySchoolYear(): Flow<Map<SchoolYearId, Int>> = MutableStateFlow(emptyMap())
 
-    override suspend fun findById(id: String): Section? = section.takeIf { it.id == id }
+    override suspend fun findById(id: SectionId): Section? = section.takeIf { it.id == id }
 
     override suspend fun save(section: Section) = Unit
 
-    override suspend fun delete(id: String) = Unit
+    override suspend fun delete(id: SectionId) = Unit
 }
 
 class FakeSchoolYearRepository(private val schoolYear: SchoolYear) : SchoolYearRepository {
 
     override fun observeAll(): Flow<List<SchoolYear>> = MutableStateFlow(listOf(schoolYear))
 
-    override suspend fun findById(id: String): SchoolYear? = schoolYear.takeIf { it.id == id }
+    override suspend fun findById(id: SchoolYearId): SchoolYear? = schoolYear.takeIf { it.id == id }
 
     override suspend fun save(schoolYear: SchoolYear) = Unit
 }
 
 class FakePeriodRepository(private val periods: List<Period>) : PeriodRepository {
 
-    override fun observeBySchoolYear(schoolYearId: String): Flow<List<Period>> = MutableStateFlow(periods)
+    override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Period>> = MutableStateFlow(periods)
 
-    override suspend fun findBySchoolYear(schoolYearId: String): List<Period> = periods
+    override suspend fun findBySchoolYear(schoolYearId: SchoolYearId): List<Period> = periods
 
-    override suspend fun findById(id: String): Period? = periods.find { it.id == id }
+    override suspend fun findById(id: PeriodId): Period? = periods.find { it.id == id }
 
     override suspend fun saveAll(periods: List<Period>) = Unit
 }
@@ -72,23 +77,23 @@ class FakeStudentRepository : StudentRepository {
 
     private val students: MutableStateFlow<List<Student>> = MutableStateFlow(emptyList())
 
-    override fun observeBySection(sectionId: String): Flow<List<Student>> = students
+    override fun observeBySection(sectionId: SectionId): Flow<List<Student>> = students
         .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
 
-    override fun observeCountsBySection(): Flow<Map<String, Int>> = MutableStateFlow(emptyMap())
+    override fun observeCountsBySection(): Flow<Map<SectionId, Int>> = MutableStateFlow(emptyMap())
 
-    override suspend fun listBySection(sectionId: String): List<Student> = students.value
+    override suspend fun listBySection(sectionId: SectionId): List<Student> = students.value
 
-    override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
+    override suspend fun findById(id: StudentId): Student? = students.value.find { it.id == id }
 
-    override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
+    override suspend fun findByCode(sectionId: SectionId, code: StudentCode): Student? = students.value
         .find { it.sectionId == sectionId && it.code == code }
 
     override suspend fun save(student: Student) {
         students.value = students.value.filterNot { it.id == student.id } + student
     }
 
-    override suspend fun deleteBySection(sectionId: String) = Unit
+    override suspend fun deleteBySection(sectionId: SectionId) = Unit
 }
 
 class FakeCompetencyRepository(private val competencies: List<Competency>) : CompetencyRepository {
@@ -102,33 +107,33 @@ class FakeCompetencyRepository(private val competencies: List<Competency>) : Com
 
 class FakeWorkedCompetencyRepository : WorkedCompetencyRepository {
 
-    private val worked: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
+    private val worked: MutableStateFlow<Set<CompetencyId>> = MutableStateFlow(emptySet())
 
-    override fun observeWorked(sectionId: String, periodId: String): Flow<Set<String>> = worked
+    override fun observeWorked(sectionId: SectionId, periodId: PeriodId): Flow<Set<CompetencyId>> = worked
 
     override suspend fun setWorked(
-        sectionId: String,
-        periodId: String,
-        competencyId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
+        competencyId: CompetencyId,
         isWorked: Boolean,
     ) {
         worked.value = if (isWorked) worked.value + competencyId else worked.value - competencyId
     }
 
-    override suspend fun clearSection(sectionId: String) = Unit
+    override suspend fun clearSection(sectionId: SectionId) = Unit
 }
 
 class FakePeriodLevelRepository : PeriodLevelRepository {
 
     private val levels: MutableStateFlow<List<PeriodLevel>> = MutableStateFlow(emptyList())
 
-    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<PeriodLevel>> = levels
+    override fun observeByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<List<PeriodLevel>> = levels
         .map { stored -> stored.filter { it.key.periodId == periodId } }
 
-    override fun observeRecordedCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
+    override fun observeRecordedCountsByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<Map<CompetencyId, Int>> =
         MutableStateFlow(emptyMap())
 
-    override fun observeRecordedCountsBySection(sectionId: String): Flow<Map<String, Int>> =
+    override fun observeRecordedCountsBySection(sectionId: SectionId): Flow<Map<CompetencyId, Int>> =
         MutableStateFlow(emptyMap())
 
     override suspend fun find(key: PeriodLevelKey): PeriodLevel? = levels.value.find { it.key == key }
@@ -141,20 +146,20 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
         levels.value = levels.value.filterNot { it.key == key }
     }
 
-    override suspend fun clearSection(sectionId: String) = Unit
+    override suspend fun clearSection(sectionId: SectionId) = Unit
 }
 
 class FakeSectionAreaRepository : SectionAreaRepository {
 
     private val hidden: MutableStateFlow<Set<Area>> = MutableStateFlow(emptySet())
 
-    override fun observeHiddenAreas(sectionId: String): Flow<Set<Area>> = hidden
+    override fun observeHiddenAreas(sectionId: SectionId): Flow<Set<Area>> = hidden
 
-    override suspend fun setAreaHidden(sectionId: String, area: Area, isHidden: Boolean) {
+    override suspend fun setAreaHidden(sectionId: SectionId, area: Area, isHidden: Boolean) {
         hidden.value = if (isHidden) hidden.value + area else hidden.value - area
     }
 
-    override suspend fun clearSection(sectionId: String) = Unit
+    override suspend fun clearSection(sectionId: SectionId) = Unit
 }
 
 class FakeSiagieImportStore : SiagieImportStore {
@@ -162,13 +167,13 @@ class FakeSiagieImportStore : SiagieImportStore {
     private val templates: MutableMap<String, ImportedTemplate> = mutableMapOf()
 
     override suspend fun apply(students: List<Student>, template: ImportedTemplate) {
-        templates["${template.sectionId}/${template.kind}"] = template
+        templates["${template.sectionId.value}/${template.kind}"] = template
     }
 
-    override suspend fun clearSection(sectionId: String) = Unit
+    override suspend fun clearSection(sectionId: SectionId) = Unit
 
-    override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
-        templates["$sectionId/$kind"]
+    override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
+        templates["${sectionId.value}/$kind"]
 }
 
 class FakeGradesWriter : SiagieGradesWriter {
