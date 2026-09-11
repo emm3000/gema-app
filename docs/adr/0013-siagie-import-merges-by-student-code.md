@@ -49,6 +49,13 @@ nothing in the file contradicts it.
 - Two Sections of the same Grade can receive the same file. Until a real
   generated file proves the Section is written somewhere, that ambiguity is the
   Teacher's to resolve, and the preview is what makes it visible.
+- `student.insert` is `INSERT OR REPLACE`, so it upserts on the primary key, and
+  a plan that creates and updates in the same transaction works. That statement
+  also resolves the `UNIQUE (section_id, student_code)` index by **deleting** the
+  row it collides with. The planner never produces such a collision, because it
+  compares the codes in the file against every enrolled Student, the Withdrawn
+  ones included. Any future writer that inserts Students outside the planner has
+  to keep that invariant, or a Student disappears without an error.
 - The fixture under `core/siagie` is modelled from the Minedu instructives, not
   produced by SIAGIE. The Grade and Section extraction must be re-checked
   against a real file before release, together with the Export in ADR 0002.
