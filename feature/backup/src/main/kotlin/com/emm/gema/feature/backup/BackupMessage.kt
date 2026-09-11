@@ -6,4 +6,5 @@ enum class BackupMessage {
     FILE_IS_NOT_A_BACKUP,
     BACKUP_FROM_A_NEWER_APP,
     RESTORE_FAILED,
+    MANUAL_RESTART_REQUIRED,
 }

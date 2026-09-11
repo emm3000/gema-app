@@ -20,6 +20,7 @@
     <string name="backup_message_not_a_backup">Ese archivo no es un respaldo de Gema</string>
     <string name="backup_message_newer_app">Ese respaldo viene de una versión más nueva de Gema</string>
     <string name="backup_message_restore_failed">No se pudo restaurar el respaldo</string>
+    <string name="backup_message_manual_restart_required">Cierra y vuelve a abrir la app</string>
     <string name="backup_share_title">Compartir respaldo</string>
 
     <plurals name="backup_last_days_ago">
