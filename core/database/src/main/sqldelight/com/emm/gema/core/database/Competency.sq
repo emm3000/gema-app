@@ -1,0 +1,24 @@
+CREATE TABLE competency (
+    id TEXT NOT NULL PRIMARY KEY,
+    area TEXT NOT NULL,
+    siagie_ordinal INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    curriculum_version INTEGER NOT NULL
+);
+
+CREATE INDEX competency_area ON competency(area);
+
+upsert:
+INSERT OR REPLACE INTO competency (id, area, siagie_ordinal, name, curriculum_version)
+VALUES (?, ?, ?, ?, ?);
+
+selectByArea:
+SELECT *
+FROM competency
+WHERE area = ?
+ORDER BY siagie_ordinal;
+
+selectAll:
+SELECT *
+FROM competency
+ORDER BY area, siagie_ordinal;

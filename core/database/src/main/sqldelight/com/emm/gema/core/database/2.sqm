@@ -1,0 +1,18 @@
+CREATE TABLE competency (
+    id TEXT NOT NULL PRIMARY KEY,
+    area TEXT NOT NULL,
+    siagie_ordinal INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    curriculum_version INTEGER NOT NULL
+);
+
+CREATE INDEX competency_area ON competency(area);
+
+CREATE TABLE worked_competency (
+    section_id TEXT NOT NULL,
+    period_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    PRIMARY KEY (section_id, period_id, competency_id)
+);
+
+CREATE INDEX worked_competency_section_period ON worked_competency(section_id, period_id);

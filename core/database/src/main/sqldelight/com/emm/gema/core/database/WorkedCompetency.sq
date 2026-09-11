@@ -1,0 +1,25 @@
+CREATE TABLE worked_competency (
+    section_id TEXT NOT NULL,
+    period_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    PRIMARY KEY (section_id, period_id, competency_id)
+);
+
+CREATE INDEX worked_competency_section_period ON worked_competency(section_id, period_id);
+
+insert:
+INSERT OR IGNORE INTO worked_competency (section_id, period_id, competency_id)
+VALUES (?, ?, ?);
+
+selectBySectionAndPeriod:
+SELECT competency_id
+FROM worked_competency
+WHERE section_id = ? AND period_id = ?;
+
+delete:
+DELETE FROM worked_competency
+WHERE section_id = ? AND period_id = ? AND competency_id = ?;
+
+deleteBySection:
+DELETE FROM worked_competency
+WHERE section_id = ?;
