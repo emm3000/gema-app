@@ -8,6 +8,7 @@ import com.emm.gema.core.database.schoolyear.SqlDelightPeriodRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightSchoolYearRepository
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
+import com.emm.gema.core.database.student.SqlDelightStudentRepository
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -35,6 +36,7 @@ import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
+import com.emm.gema.core.domain.student.StudentRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -60,6 +62,7 @@ class SetupPersistenceTest {
     private val activeSchoolYearRepository: ActiveSchoolYearRepository =
         SqlDelightActiveSchoolYearRepository(database, dispatcher)
     private val setupRepository: SetupRepository = SqlDelightSetupRepository(database, dispatcher)
+    private val studentRepository: StudentRepository = SqlDelightStudentRepository(database, dispatcher)
 
     private val completeSetup = CompleteSetupUseCase(setupRepository, UuidIdGenerator())
     private val getSchoolYears = GetSchoolYearsUseCase(schoolYearRepository)
@@ -72,6 +75,7 @@ class SetupPersistenceTest {
         sectionRepository,
         sectionAreaRepository,
         workedCompetencyRepository,
+        studentRepository,
     )
     private val switchSchoolYear = SwitchSchoolYearUseCase(activeSchoolYearRepository)
     private val getActiveSchoolYear = GetActiveSchoolYearUseCase(activeSchoolYearRepository, schoolYearRepository)
