@@ -5,13 +5,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.activities.evidence.ActivityEvidenceRoute
 import com.emm.gema.feature.activities.form.ActivityFormRoute
 import com.emm.gema.feature.activities.list.ActivitiesRoute
@@ -32,9 +39,9 @@ import com.emm.gema.feature.students.form.StudentFormRoute
 import com.emm.gema.feature.students.list.StudentsRoute
 import com.emm.gema.feature.students.siagie.ImportPreviewRoute
 import com.emm.gema.home.HomeRoute
-import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.time.YearMonth
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GemaNavHost(
@@ -95,7 +102,7 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.SCHOOL_YEAR_ID) { type = NavType.StringType }),
         ) { entry ->
             PeriodsRoute(
-                schoolYearId = entry.arguments?.getString(GemaRoutes.SCHOOL_YEAR_ID).orEmpty(),
+                schoolYearId = SchoolYearId(entry.argument(GemaRoutes.SCHOOL_YEAR_ID)),
                 onBack = { navController.popBackStack() },
             )
         }
@@ -110,8 +117,8 @@ fun GemaNavHost(
             ),
         ) { entry ->
             SectionFormRoute(
-                schoolYearId = entry.arguments?.getString(GemaRoutes.SCHOOL_YEAR_ID).orEmpty(),
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID)?.takeIf { it.isNotEmpty() },
+                schoolYearId = SchoolYearId(entry.argument(GemaRoutes.SCHOOL_YEAR_ID)),
+                sectionId = entry.optionalArgument(GemaRoutes.SECTION_ID)?.let(::SectionId),
                 onBack = { navController.popBackStack() },
             )
         }
@@ -120,9 +127,9 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
         ) { entry ->
             SectionDetailRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 onAttendanceDay = { sectionId, date ->
-                    navController.navigate(GemaRoutes.attendanceDayOf(sectionId, date))
+                    navController.navigate(GemaRoutes.attendanceDayOf(SectionId(sectionId), date))
                 },
                 onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
                 onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
@@ -146,13 +153,13 @@ fun GemaNavHost(
             ),
         ) { entry ->
             AttendanceDayRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 date = entry.arguments?.getString(GemaRoutes.DATE)
                     ?.takeIf { it.isNotEmpty() }
                     ?.let(LocalDate::parse),
                 onBack = { navController.popBackStack() },
                 onMonthlySummary = { sectionId, month ->
-                    navController.navigate(GemaRoutes.attendanceMonthOf(sectionId, month))
+                    navController.navigate(GemaRoutes.attendanceMonthOf(SectionId(sectionId), month))
                 },
             )
         }
@@ -167,7 +174,7 @@ fun GemaNavHost(
             ),
         ) { entry ->
             AttendanceMonthRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 month = entry.arguments?.getString(GemaRoutes.MONTH)
                     ?.takeIf { it.isNotEmpty() }
                     ?.let(YearMonth::parse),
@@ -179,12 +186,12 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
         ) { entry ->
             StudentsRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 onStudentForm = { sectionId, studentId ->
                     navController.navigate(GemaRoutes.studentForm(sectionId, studentId))
                 },
                 onImportPreview = { sectionId, uri ->
-                    navController.navigate(GemaRoutes.importPreview(sectionId, uri))
+                    navController.navigate(GemaRoutes.importPreview(SectionId(sectionId), uri))
                 },
                 onBack = { navController.popBackStack() },
             )
@@ -197,8 +204,8 @@ fun GemaNavHost(
             ),
         ) { entry ->
             ImportPreviewRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                uri = entry.arguments?.getString(GemaRoutes.URI).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
+                uri = entry.argument(GemaRoutes.URI),
                 onBack = { navController.popBackStack() },
             )
         }
@@ -213,8 +220,8 @@ fun GemaNavHost(
             ),
         ) { entry ->
             StudentFormRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                studentId = entry.arguments?.getString(GemaRoutes.STUDENT_ID)?.takeIf { it.isNotEmpty() },
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
+                studentId = entry.optionalArgument(GemaRoutes.STUDENT_ID)?.let(::StudentId),
                 onBack = { navController.popBackStack() },
             )
         }
@@ -223,7 +230,7 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
         ) { entry ->
             SectionAreasRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 onBack = { navController.popBackStack() },
             )
         }
@@ -242,9 +249,9 @@ fun GemaNavHost(
             ),
         ) { entry ->
             PeriodLevelsRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                studentId = entry.arguments?.getString(GemaRoutes.STUDENT_ID),
-                competencyId = entry.arguments?.getString(GemaRoutes.COMPETENCY_ID),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
+                studentId = entry.optionalArgument(GemaRoutes.STUDENT_ID)?.let(::StudentId),
+                competencyId = entry.optionalArgument(GemaRoutes.COMPETENCY_ID)?.let(::CompetencyId),
                 onWorkedCompetencies = { sectionId, periodId, area ->
                     navController.navigate(GemaRoutes.workedCompetenciesOf(sectionId, periodId, area))
                 },
@@ -256,7 +263,7 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
         ) { entry ->
             ExportRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 onPeriodLevelCell = { sectionId, studentId, competencyId ->
                     navController.navigate(
                         GemaRoutes.periodLevelCellOf(sectionId, studentId, competencyId),
@@ -279,8 +286,8 @@ fun GemaNavHost(
                 LaunchedEffect(Unit) { navController.popBackStack() }
             } else {
                 WorkedCompetenciesRoute(
-                    sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                    periodId = entry.arguments?.getString(GemaRoutes.PERIOD_ID).orEmpty(),
+                    sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
+                    periodId = PeriodId(entry.argument(GemaRoutes.PERIOD_ID)),
                     area = area,
                     onBack = { navController.popBackStack() },
                 )
@@ -291,7 +298,7 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
         ) { entry ->
             ActivitiesRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
                 onActivityEvidence = { navController.navigate(GemaRoutes.activityEvidenceOf(it)) },
                 onActivityForm = { sectionId, activityId ->
                     navController.navigate(GemaRoutes.activityForm(sectionId, activityId))
@@ -310,8 +317,8 @@ fun GemaNavHost(
             ),
         ) { entry ->
             ActivityFormRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                activityId = entry.arguments?.getString(GemaRoutes.ACTIVITY_ID)?.takeIf { it.isNotEmpty() },
+                sectionId = SectionId(entry.argument(GemaRoutes.SECTION_ID)),
+                activityId = entry.optionalArgument(GemaRoutes.ACTIVITY_ID)?.let(::ActivityId),
                 onActivityEvidence = {
                     navController.navigate(GemaRoutes.activityEvidenceOf(it)) {
                         popUpTo(GemaRoutes.ACTIVITIES) { inclusive = false }
@@ -325,7 +332,7 @@ fun GemaNavHost(
             arguments = listOf(navArgument(GemaRoutes.ACTIVITY_ID) { type = NavType.StringType }),
         ) { entry ->
             ActivityEvidenceRoute(
-                activityId = entry.arguments?.getString(GemaRoutes.ACTIVITY_ID).orEmpty(),
+                activityId = ActivityId(entry.argument(GemaRoutes.ACTIVITY_ID)),
                 onActivityForm = { sectionId, activityId ->
                     navController.navigate(GemaRoutes.activityForm(sectionId, activityId))
                 },
@@ -342,3 +349,8 @@ private fun NavHostController.toHome() {
 }
 
 internal fun parseArea(raw: String?): Area? = Area.entries.firstOrNull { it.name == raw }
+
+private fun NavBackStackEntry.argument(key: String): String = arguments?.getString(key).orEmpty()
+
+private fun NavBackStackEntry.optionalArgument(key: String): String? =
+    arguments?.getString(key)?.takeIf { it.isNotEmpty() }

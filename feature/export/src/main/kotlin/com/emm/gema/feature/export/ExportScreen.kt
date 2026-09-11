@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -208,15 +211,15 @@ private fun ExportScreenPreview() {
             state = ExportUiState(
                 isLoading = false,
                 sectionTitle = "6° A",
-                periods = listOf(PeriodOption(id = "period-1", label = "II Bimestre", isCurrent = true)),
-                selectedPeriodId = "period-1",
+                periods = listOf(PeriodOption(id = PeriodId("period-1"), label = "II Bimestre", isCurrent = true)),
+                selectedPeriodId = PeriodId("period-1"),
                 templateFileName = "6 Primaria EBR.xlsx",
                 gradesExportState = GradesExportUiState.Blocked(
                     listOf(
                         ExportGapRow(
-                            studentId = "student-1",
+                            studentId = StudentId("student-1"),
                             studentName = "BAUTISTA QUISPE, JOSE",
-                            competencyId = "PPSS-2",
+                            competencyId = CompetencyId("PPSS-2"),
                             competencyLabel = "Personal Social - 02",
                         ),
                     ),

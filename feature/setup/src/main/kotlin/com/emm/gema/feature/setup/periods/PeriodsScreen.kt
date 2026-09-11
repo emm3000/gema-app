@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -128,7 +129,14 @@ private fun PeriodsScreenPreview() {
                 schoolYearLabel = "2026",
                 periodKindLabel = "Bimestre",
                 periods = listOf(
-                    PeriodRow("1", 1, "I Bimestre", LocalDate.of(2026, 3, 2), LocalDate.of(2026, 5, 13), true),
+                    PeriodRow(
+                        PeriodId("1"),
+                        1,
+                        "I Bimestre",
+                        LocalDate.of(2026, 3, 2),
+                        LocalDate.of(2026, 5, 13),
+                        true,
+                    ),
                 ),
                 canSave = true,
             ),

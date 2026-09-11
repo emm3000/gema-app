@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-import com.emm.gema.feature.activities.R
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
@@ -26,6 +26,7 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.activities.R
 import java.time.LocalDate
 
 @Composable
@@ -162,12 +163,12 @@ private fun ActivityFormScreenPreview() {
                     CompetencyGroup(
                         areaName = "Personal Social",
                         competencies = listOf(
-                            CompetencyToggleRow("PPSS-1", 1, "Construye su identidad"),
-                            CompetencyToggleRow("PPSS-2", 2, "Convive y participa democráticamente"),
+                            CompetencyToggleRow(CompetencyId("PPSS-1"), 1, "Construye su identidad"),
+                            CompetencyToggleRow(CompetencyId("PPSS-2"), 2, "Convive y participa democráticamente"),
                         ),
                     ),
                 ),
-                selectedCompetencyIds = setOf("PPSS-2"),
+                selectedCompetencyIds = setOf(CompetencyId("PPSS-2")),
             ),
             onIntent = {},
         )

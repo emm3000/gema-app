@@ -8,8 +8,13 @@ import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.feature.attendance.asDayLabel
 import com.emm.gema.feature.attendance.title
+import java.time.Clock
+import java.time.LocalDate
+import java.time.YearMonth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -19,13 +24,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.Clock
-import java.time.LocalDate
-import java.time.YearMonth
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AttendanceDayViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     initialDate: LocalDate?,
     private val getSection: GetSectionUseCase,
     private val getAttendanceDay: GetAttendanceDayUseCase,
@@ -68,20 +70,20 @@ class AttendanceDayViewModel(
     }
 
     private fun markAllPresent() {
-        val pending: List<Pair<String, AttendanceStatus>> = _state.value.rows
+        val pending: List<Pair<StudentId, AttendanceStatus>> = _state.value.rows
             .filterNot { it.isRecorded }
             .map { it.studentId to AttendanceStatus.PRESENT }
 
         record(pending)
     }
 
-    private fun record(entries: List<Pair<String, AttendanceStatus>>) {
+    private fun record(entries: List<Pair<StudentId, AttendanceStatus>>) {
         if (entries.isEmpty()) return
         val selected: LocalDate = date.value
 
         viewModelScope.launch {
             runCatching {
-                entries.forEach { (studentId: String, status: AttendanceStatus) ->
+                entries.forEach { (studentId: StudentId, status: AttendanceStatus) ->
                     recordAttendance(sectionId, studentId, selected, status)
                 }
             }.onFailure { _effects.send(AttendanceDayUiEffect.ShowMessage(AttendanceDayMessage.RECORD_FAILED)) }

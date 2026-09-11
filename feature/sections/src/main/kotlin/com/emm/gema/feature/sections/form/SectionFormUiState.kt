@@ -1,10 +1,11 @@
 package com.emm.gema.feature.sections.form
 
 import com.emm.gema.core.domain.section.Grade
+import com.emm.gema.core.domain.section.SectionId
 
 data class SectionFormUiState(
     val isLoading: Boolean = true,
-    val sectionId: String? = null,
+    val sectionId: SectionId? = null,
     val grade: Grade? = null,
     val sectionName: String = "",
     val sectionNameError: SectionFormMessage? = null,

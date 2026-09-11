@@ -8,9 +8,12 @@ import com.emm.gema.core.domain.attendance.MonthlyAttendanceSummary
 import com.emm.gema.core.domain.attendance.StudentAttendanceMonthCount
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.feature.attendance.asMonthLabel
 import com.emm.gema.feature.attendance.title
+import java.time.Clock
+import java.time.YearMonth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +23,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.Clock
-import java.time.YearMonth
 
 private const val XLSX_MIME_TYPE: String = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -29,7 +30,7 @@ private val xlsxMimeTypes: List<String> = listOf(XLSX_MIME_TYPE, "application/vn
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AttendanceMonthViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     initialMonth: YearMonth?,
     private val getSection: GetSectionUseCase,
     private val getMonthlySummary: GetMonthlyAttendanceSummaryUseCase,

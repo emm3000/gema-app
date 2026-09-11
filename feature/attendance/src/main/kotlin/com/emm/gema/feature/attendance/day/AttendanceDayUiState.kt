@@ -1,6 +1,7 @@
 package com.emm.gema.feature.attendance.day
 
 import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 
 data class AttendanceDayUiState(
@@ -18,7 +19,7 @@ data class AttendanceDayUiState(
 }
 
 data class AttendanceRow(
-    val studentId: String,
+    val studentId: StudentId,
     val displayName: String,
     val status: AttendanceStatus,
     val isRecorded: Boolean,

@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import kotlinx.coroutines.channels.Channel
@@ -21,8 +23,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class SectionFormViewModel(
-    private val schoolYearId: String,
-    private val sectionId: String?,
+    private val schoolYearId: SchoolYearId,
+    private val sectionId: SectionId?,
     private val getSection: GetSectionUseCase,
     private val createSection: CreateSectionUseCase,
     private val updateSection: UpdateSectionUseCase,
@@ -79,7 +81,7 @@ class SectionFormViewModel(
         }
     }
 
-    private suspend fun persist(sectionId: String?, grade: Grade, name: String) {
+    private suspend fun persist(sectionId: SectionId?, grade: Grade, name: String) {
         if (sectionId == null) {
             createSection(schoolYearId = schoolYearId, grade = grade, name = name)
         } else {
@@ -88,7 +90,7 @@ class SectionFormViewModel(
     }
 
     private fun delete() {
-        val sectionId: String = _state.value.sectionId ?: return
+        val sectionId: SectionId = _state.value.sectionId ?: return
 
         viewModelScope.launch {
             runCatching { deleteSection(sectionId) }
@@ -99,14 +101,14 @@ class SectionFormViewModel(
     }
 
     private fun askForConfirmation() {
-        val sectionId: String = _state.value.sectionId ?: return
+        val sectionId: SectionId = _state.value.sectionId ?: return
 
         viewModelScope.launch {
             _state.value = _state.value.copy(deleteConfirmation = countWhatIsLost(sectionId))
         }
     }
 
-    private suspend fun countWhatIsLost(sectionId: String): DeleteConfirmation = DeleteConfirmation(
+    private suspend fun countWhatIsLost(sectionId: SectionId): DeleteConfirmation = DeleteConfirmation(
         studentCount = getStudents(sectionId).first().size,
         attendanceDayCount = countAttendanceDays(sectionId),
         periodLevelCount = getPeriodLevelCount(sectionId).first(),

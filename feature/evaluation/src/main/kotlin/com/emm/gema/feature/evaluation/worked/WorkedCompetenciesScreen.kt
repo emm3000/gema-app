@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -100,8 +101,8 @@ private fun WorkedCompetenciesScreenPreview() {
                 areaName = "Personal Social",
                 periodLabel = "II Bimestre",
                 competencies = listOf(
-                    CompetencyToggleRow("PPSS-1", 1, "Construye su identidad", true, 0),
-                    CompetencyToggleRow("PPSS-2", 2, "Convive y participa democráticamente", false, 12),
+                    CompetencyToggleRow(CompetencyId("PPSS-1"), 1, "Construye su identidad", true, 0),
+                    CompetencyToggleRow(CompetencyId("PPSS-2"), 2, "Convive y participa democráticamente", false, 12),
                 ),
                 selectedCount = 1,
             ),

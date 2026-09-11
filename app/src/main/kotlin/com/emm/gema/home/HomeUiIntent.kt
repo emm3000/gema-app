@@ -1,10 +1,12 @@
 package com.emm.gema.home
 
+import com.emm.gema.core.domain.section.SectionId
+
 sealed interface HomeUiIntent {
 
-    data class SectionClicked(val id: String) : HomeUiIntent
+    data class SectionClicked(val id: SectionId) : HomeUiIntent
 
-    data class TakeAttendanceClicked(val id: String) : HomeUiIntent
+    data class TakeAttendanceClicked(val id: SectionId) : HomeUiIntent
 
     data object AddSectionClicked : HomeUiIntent
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -140,7 +141,7 @@ private fun StudentFormScreenPreview() {
         StudentFormScreen(
             state = StudentFormUiState(
                 isLoading = false,
-                studentId = "student-1",
+                studentId = StudentId("student-1"),
                 studentCode = "12345678901234",
                 studentCodeHint = "14 de 14 dígitos",
                 fullName = "ACOSTA RIVERA, Luz Maria",

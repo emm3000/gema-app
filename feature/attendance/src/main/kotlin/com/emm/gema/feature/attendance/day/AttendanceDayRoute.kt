@@ -10,16 +10,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.feature.attendance.R
+import java.time.LocalDate
+import java.time.YearMonth
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import java.time.LocalDate
-import java.time.YearMonth
 
 @Composable
 fun AttendanceDayRoute(
-    sectionId: String,
+    sectionId: SectionId,
     date: LocalDate?,
     onBack: () -> Unit,
     onMonthlySummary: (String, YearMonth) -> Unit,
@@ -34,7 +35,10 @@ fun AttendanceDayRoute(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is AttendanceDayUiEffect.ShowMessage -> message = messages.getValue(effect.message)
-                is AttendanceDayUiEffect.NavigateToAttendanceMonth -> onMonthlySummary(effect.sectionId, effect.month)
+                is AttendanceDayUiEffect.NavigateToAttendanceMonth -> onMonthlySummary(
+                    effect.sectionId.value,
+                    effect.month,
+                )
                 AttendanceDayUiEffect.NavigateBack -> onBack()
             }
         }

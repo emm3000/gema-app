@@ -11,14 +11,18 @@ import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
-import com.emm.gema.core.domain.schoolyear.labelFor
-import com.emm.gema.core.domain.section.title
 import com.emm.gema.feature.sections.asDayLabel
 import com.emm.gema.feature.sections.attendanceSummaryLabel
+import java.time.Clock
+import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,11 +30,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.Clock
-import java.time.LocalDate
 
 class SectionDetailViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val getSection: GetSectionUseCase,
     private val getStudents: GetStudentsUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
@@ -90,7 +92,7 @@ class SectionDetailViewModel(
         section = stored
         _state.value = _state.value.copy(isLoading = false, sectionTitle = stored?.title().orEmpty())
 
-        val schoolYearId: String = stored?.schoolYearId ?: return
+        val schoolYearId: SchoolYearId = stored?.schoolYearId ?: return
         val schoolYear: SchoolYear = getSchoolYear(schoolYearId) ?: return
         val currentPeriod: Period = getCurrentPeriod(schoolYearId) ?: return
 
@@ -104,7 +106,7 @@ class SectionDetailViewModel(
     }
 
     private fun rename() {
-        val schoolYearId: String = section?.schoolYearId ?: return
+        val schoolYearId: SchoolYearId = section?.schoolYearId ?: return
         emit(SectionDetailUiEffect.NavigateToSectionForm(schoolYearId, sectionId))
     }
 

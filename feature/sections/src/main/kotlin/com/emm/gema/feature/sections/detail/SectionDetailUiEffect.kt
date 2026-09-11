@@ -1,22 +1,24 @@
 package com.emm.gema.feature.sections.detail
 
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.section.SectionId
 import java.time.LocalDate
 
 sealed interface SectionDetailUiEffect {
 
-    data class NavigateToAttendanceDay(val sectionId: String, val date: LocalDate) : SectionDetailUiEffect
+    data class NavigateToAttendanceDay(val sectionId: SectionId, val date: LocalDate) : SectionDetailUiEffect
 
-    data class NavigateToStudents(val sectionId: String) : SectionDetailUiEffect
+    data class NavigateToStudents(val sectionId: SectionId) : SectionDetailUiEffect
 
-    data class NavigateToPeriodLevels(val sectionId: String) : SectionDetailUiEffect
+    data class NavigateToPeriodLevels(val sectionId: SectionId) : SectionDetailUiEffect
 
-    data class NavigateToExport(val sectionId: String) : SectionDetailUiEffect
+    data class NavigateToExport(val sectionId: SectionId) : SectionDetailUiEffect
 
-    data class NavigateToActivities(val sectionId: String) : SectionDetailUiEffect
+    data class NavigateToActivities(val sectionId: SectionId) : SectionDetailUiEffect
 
-    data class NavigateToSectionAreas(val sectionId: String) : SectionDetailUiEffect
+    data class NavigateToSectionAreas(val sectionId: SectionId) : SectionDetailUiEffect
 
-    data class NavigateToSectionForm(val schoolYearId: String, val sectionId: String) : SectionDetailUiEffect
+    data class NavigateToSectionForm(val schoolYearId: SchoolYearId, val sectionId: SectionId) : SectionDetailUiEffect
 
     data object NavigateBack : SectionDetailUiEffect
 }

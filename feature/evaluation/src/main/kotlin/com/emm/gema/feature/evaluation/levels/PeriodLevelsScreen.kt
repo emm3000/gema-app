@@ -1,5 +1,6 @@
 package com.emm.gema.feature.evaluation.levels
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.foundation.ScrollState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,8 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -270,8 +273,8 @@ private data class ColumnModeBarState(
 )
 
 private fun PeriodLevelsUiState.currentCell(): PeriodLevelCellKey? {
-    val competencyId: String = columnMode?.competencyId ?: return null
-    val studentId: String = columnModeStudent?.studentId ?: return null
+    val competencyId: CompetencyId = columnMode?.competencyId ?: return null
+    val studentId: StudentId = columnModeStudent?.studentId ?: return null
 
     return PeriodLevelCellKey(studentId = studentId, competencyId = competencyId)
 }
@@ -300,19 +303,19 @@ private fun PeriodLevelsScreenPreview() {
                 sectionTitle = "3° A",
                 areas = listOf(AreaOption(Area.PPSS, "Personal Social")),
                 selectedArea = Area.PPSS,
-                periods = listOf(PeriodOption("period-2", "II Bimestre", isCurrent = true)),
-                selectedPeriodId = "period-2",
+                periods = listOf(PeriodOption(PeriodId("period-2"), "II Bimestre", isCurrent = true)),
+                selectedPeriodId = PeriodId("period-2"),
                 columns = listOf(
-                    CompetencyColumn("PPSS-1", 1, "Construye su identidad"),
-                    CompetencyColumn("PPSS-2", 2, "Convive y participa democráticamente"),
+                    CompetencyColumn(CompetencyId("PPSS-1"), 1, "Construye su identidad"),
+                    CompetencyColumn(CompetencyId("PPSS-2"), 2, "Convive y participa democráticamente"),
                 ),
                 rows = listOf(
                     PeriodLevelRow(
-                        studentId = "student-1",
+                        studentId = StudentId("student-1"),
                         displayName = "ACOSTA RIVERA, Luz",
                         cells = listOf(
-                            PeriodLevelCell("PPSS-1", AchievementLevel.AD, null, false, false),
-                            PeriodLevelCell("PPSS-2", AchievementLevel.C, null, false, true),
+                            PeriodLevelCell(CompetencyId("PPSS-1"), AchievementLevel.AD, null, false, false),
+                            PeriodLevelCell(CompetencyId("PPSS-2"), AchievementLevel.C, null, false, true),
                         ),
                     ),
                 ),

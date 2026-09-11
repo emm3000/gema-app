@@ -5,15 +5,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ActivitiesRoute(
-    sectionId: String,
-    onActivityEvidence: (String) -> Unit,
-    onActivityForm: (String, String?) -> Unit,
+    sectionId: SectionId,
+    onActivityEvidence: (ActivityId) -> Unit,
+    onActivityForm: (SectionId, ActivityId?) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

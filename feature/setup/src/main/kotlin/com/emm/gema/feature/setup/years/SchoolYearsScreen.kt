@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GButton
@@ -83,7 +84,7 @@ private fun SchoolYearsScreenPreview() {
             state = SchoolYearsUiState(
                 isLoading = false,
                 years = listOf(
-                    SchoolYearRow("2026", "2026", "02/03/2026 - 18/12/2026", "Bimestre", 2, true),
+                    SchoolYearRow(SchoolYearId("2026"), "2026", "02/03/2026 - 18/12/2026", "Bimestre", 2, true),
                 ),
             ),
             onIntent = {},

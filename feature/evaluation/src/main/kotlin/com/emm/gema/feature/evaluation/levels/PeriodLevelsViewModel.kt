@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelSheetContextUseCase
@@ -16,14 +17,17 @@ import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionArea
-import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
+import com.emm.gema.core.domain.student.StudentId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +41,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PeriodLevelsViewModel(
-    private val sectionId: String,
+    private val sectionId: SectionId,
     private val initialCell: PeriodLevelCellKey? = null,
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
@@ -92,7 +96,7 @@ class PeriodLevelsViewModel(
         val periods: List<Period> = getPeriods(section.schoolYearId).first()
         val currentPeriod: Period? = getCurrentPeriod(section.schoolYearId)
         val areas: List<SectionArea> = getSectionAreas(sectionId).first().filter { it.isActive }
-        val selectedPeriodId: String? = (currentPeriod ?: periods.firstOrNull())?.id
+        val selectedPeriodId: PeriodId? = (currentPeriod ?: periods.firstOrNull())?.id
         val selectedArea: Area? = initialArea(areas) ?: areas.firstOrNull()?.area
 
         _state.value = _state.value.copy(
@@ -163,10 +167,10 @@ class PeriodLevelsViewModel(
         openCell(cell)
     }
 
-    private fun select(area: Area? = null, periodId: String? = null) {
+    private fun select(area: Area? = null, periodId: PeriodId? = null) {
         val current: PeriodLevelsUiState = _state.value
         val nextArea: Area = area ?: current.selectedArea ?: return
-        val nextPeriodId: String = periodId ?: current.selectedPeriodId ?: return
+        val nextPeriodId: PeriodId = periodId ?: current.selectedPeriodId ?: return
 
         _state.value = current.copy(
             selectedArea = nextArea,
@@ -183,7 +187,7 @@ class PeriodLevelsViewModel(
 
     private fun openWorkedCompetencies() {
         val area: Area = _state.value.selectedArea ?: return
-        val periodId: String = _state.value.selectedPeriodId ?: return
+        val periodId: PeriodId = _state.value.selectedPeriodId ?: return
 
         emit(PeriodLevelsUiEffect.NavigateToWorkedCompetencies(sectionId, periodId, area))
     }
@@ -252,8 +256,8 @@ class PeriodLevelsViewModel(
             .onFailure { _effects.send(PeriodLevelsUiEffect.ShowMessage(PeriodLevelsMessage.SAVE_FAILED)) }
     }
 
-    private fun keyOf(studentId: String, competencyId: String): PeriodLevelKey? {
-        val periodId: String = _state.value.selectedPeriodId ?: return null
+    private fun keyOf(studentId: StudentId, competencyId: CompetencyId): PeriodLevelKey? {
+        val periodId: PeriodId = _state.value.selectedPeriodId ?: return null
 
         return PeriodLevelKey(
             sectionId = sectionId,
@@ -270,7 +274,7 @@ class PeriodLevelsViewModel(
 
 private data class GridSelection(
     val area: Area,
-    val periodId: String,
+    val periodId: PeriodId,
 )
 
 private fun Competency.toColumn(): CompetencyColumn = CompetencyColumn(

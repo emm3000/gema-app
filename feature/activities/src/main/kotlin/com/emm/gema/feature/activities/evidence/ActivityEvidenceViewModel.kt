@@ -3,12 +3,14 @@ package com.emm.gema.feature.activities.evidence
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
 import com.emm.gema.core.domain.activity.GetActivityUseCase
 import com.emm.gema.core.domain.activity.GetEvidenceForActivityUseCase
 import com.emm.gema.core.domain.activity.RecordEvidenceLevelUseCase
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
@@ -18,9 +20,12 @@ import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.orderedByName
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -33,12 +38,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
 
 private val activityDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 class ActivityEvidenceViewModel(
-    private val activityId: String,
+    private val activityId: ActivityId,
     private val getActivity: GetActivityUseCase,
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
@@ -55,8 +59,8 @@ class ActivityEvidenceViewModel(
     private val _effects: Channel<ActivityEvidenceUiEffect> = Channel(Channel.BUFFERED)
     val effects: Flow<ActivityEvidenceUiEffect> = _effects.receiveAsFlow()
 
-    private val selectedCompetencyId: MutableStateFlow<String?> = MutableStateFlow(null)
-    private val loadedSectionId: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val selectedCompetencyId: MutableStateFlow<CompetencyId?> = MutableStateFlow(null)
+    private val loadedSectionId: MutableStateFlow<SectionId?> = MutableStateFlow(null)
     private var activity: Activity? = null
 
     init {
@@ -110,9 +114,9 @@ class ActivityEvidenceViewModel(
                     selectedCompetencyId,
                     getStudents(sectionId),
                     getEvidenceForActivity(activityId),
-                ) { competencyId: String?, students: List<Student>, evidence: List<EvidenceLevel> ->
+                ) { competencyId: CompetencyId?, students: List<Student>, evidence: List<EvidenceLevel> ->
                     val activeStudents: List<Student> = students.filterNot { it.isWithdrawn }.orderedByName()
-                    val recorded: Map<String, AchievementLevel> = evidence
+                    val recorded: Map<StudentId, AchievementLevel> = evidence
                         .filter { it.key.competencyId == competencyId }
                         .associate { it.key.studentId to it.achievementLevel }
 
@@ -128,13 +132,13 @@ class ActivityEvidenceViewModel(
             }
     }
 
-    private fun select(competencyId: String) {
+    private fun select(competencyId: CompetencyId) {
         _state.value = _state.value.copy(selectedCompetencyId = competencyId)
         selectedCompetencyId.value = competencyId
     }
 
-    private fun record(studentId: String, level: AchievementLevel?) {
-        val competencyId: String = _state.value.selectedCompetencyId ?: return
+    private fun record(studentId: StudentId, level: AchievementLevel?) {
+        val competencyId: CompetencyId = _state.value.selectedCompetencyId ?: return
         val key = EvidenceLevelKey(activityId = activityId, studentId = studentId, competencyId = competencyId)
 
         viewModelScope.launch {

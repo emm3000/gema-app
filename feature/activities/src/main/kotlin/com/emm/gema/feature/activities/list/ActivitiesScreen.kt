@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GButton
@@ -104,11 +106,11 @@ private fun ActivitiesScreenPreview() {
             state = ActivitiesUiState(
                 isLoading = false,
                 sectionTitle = "3ro A",
-                periods = listOf(PeriodOption("period-2", "II Bimestre", isCurrent = true)),
-                selectedPeriodId = "period-2",
+                periods = listOf(PeriodOption(PeriodId("period-2"), "II Bimestre", isCurrent = true)),
+                selectedPeriodId = PeriodId("period-2"),
                 activities = listOf(
                     ActivityRow(
-                        id = "activity-1",
+                        id = ActivityId("activity-1"),
                         name = "Debate del aula",
                         date = LocalDate.of(2026, 6, 22),
                         competencyLabels = listOf("PPSS 01", "PPSS 02"),

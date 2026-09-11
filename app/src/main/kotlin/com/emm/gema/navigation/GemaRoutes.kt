@@ -1,6 +1,12 @@
 package com.emm.gema.navigation
 
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -38,44 +44,46 @@ object GemaRoutes {
     const val DATE: String = "date"
     const val MONTH: String = "month"
 
-    fun periodsOf(schoolYearId: String): String = "periods/$schoolYearId"
+    fun periodsOf(schoolYearId: SchoolYearId): String = "periods/${schoolYearId.value}"
 
-    fun sectionForm(schoolYearId: String, sectionId: String?): String =
-        "section-form?schoolYearId=$schoolYearId&sectionId=${sectionId.orEmpty()}"
+    fun sectionForm(schoolYearId: SchoolYearId, sectionId: SectionId?): String =
+        "section-form?schoolYearId=${schoolYearId.value}&sectionId=${sectionId?.value.orEmpty()}"
 
-    fun sectionAreasOf(sectionId: String): String = "section-areas/$sectionId"
+    fun sectionAreasOf(sectionId: SectionId): String = "section-areas/${sectionId.value}"
 
-    fun sectionDetailOf(sectionId: String): String = "section-detail/$sectionId"
+    fun sectionDetailOf(sectionId: SectionId): String = "section-detail/${sectionId.value}"
 
-    fun attendanceDayOf(sectionId: String, date: LocalDate?): String =
-        "attendance/$sectionId?date=${date?.toString().orEmpty()}"
+    fun attendanceDayOf(sectionId: SectionId, date: LocalDate?): String =
+        "attendance/${sectionId.value}?date=${date?.toString().orEmpty()}"
 
-    fun attendanceMonthOf(sectionId: String, month: YearMonth?): String =
-        "attendance-month/$sectionId?month=${month?.toString().orEmpty()}"
+    fun attendanceMonthOf(sectionId: SectionId, month: YearMonth?): String =
+        "attendance-month/${sectionId.value}?month=${month?.toString().orEmpty()}"
 
-    fun studentsOf(sectionId: String): String = "students/$sectionId"
+    fun studentsOf(sectionId: SectionId): String = "students/${sectionId.value}"
 
-    fun studentForm(sectionId: String, studentId: String?): String =
-        "student-form/$sectionId?studentId=${studentId.orEmpty()}"
+    fun studentForm(sectionId: SectionId, studentId: StudentId?): String =
+        "student-form/${sectionId.value}?studentId=${studentId?.value.orEmpty()}"
 
-    fun importPreview(sectionId: String, uri: String): String =
-        "import-preview/$sectionId/${encodeArgument(uri)}"
-    fun periodLevelsOf(sectionId: String): String = periodLevelCellOf(sectionId, null, null)
+    fun importPreview(sectionId: SectionId, uri: String): String =
+        "import-preview/${sectionId.value}/${encodeArgument(uri)}"
+    fun periodLevelsOf(sectionId: SectionId): String = periodLevelCellOf(sectionId, null, null)
 
-    fun periodLevelCellOf(sectionId: String, studentId: String?, competencyId: String?): String =
-        "period-levels/$sectionId?studentId=${studentId.orEmpty()}&competencyId=${competencyId.orEmpty()}"
+    fun periodLevelCellOf(sectionId: SectionId, studentId: StudentId?, competencyId: CompetencyId?): String =
+        "period-levels/${sectionId.value}" +
+            "?studentId=${studentId?.value.orEmpty()}" +
+            "&competencyId=${competencyId?.value.orEmpty()}"
 
-    fun exportOf(sectionId: String): String = "export/$sectionId"
+    fun exportOf(sectionId: SectionId): String = "export/${sectionId.value}"
 
-    fun workedCompetenciesOf(sectionId: String, periodId: String, area: Area): String =
-        "worked-competencies/$sectionId/$periodId/${area.name}"
+    fun workedCompetenciesOf(sectionId: SectionId, periodId: PeriodId, area: Area): String =
+        "worked-competencies/${sectionId.value}/${periodId.value}/${area.name}"
 
-    fun activitiesOf(sectionId: String): String = "activities/$sectionId"
+    fun activitiesOf(sectionId: SectionId): String = "activities/${sectionId.value}"
 
-    fun activityForm(sectionId: String, activityId: String?): String =
-        "activity-form/$sectionId?activityId=${activityId.orEmpty()}"
+    fun activityForm(sectionId: SectionId, activityId: ActivityId?): String =
+        "activity-form/${sectionId.value}?activityId=${activityId?.value.orEmpty()}"
 
-    fun activityEvidenceOf(activityId: String): String = "activity-evidence/$activityId"
+    fun activityEvidenceOf(activityId: ActivityId): String = "activity-evidence/${activityId.value}"
 }
 
 private const val UNRESERVED: String = "-._~"

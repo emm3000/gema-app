@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.feature.students.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -16,7 +17,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ImportPreviewRoute(
-    sectionId: String,
+    sectionId: SectionId,
     uri: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

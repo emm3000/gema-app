@@ -1,5 +1,6 @@
 package com.emm.gema.feature.activities.form
 
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import java.time.LocalDate
 
 sealed interface ActivityFormUiIntent {
@@ -8,7 +9,7 @@ sealed interface ActivityFormUiIntent {
 
     data class DateChanged(val value: LocalDate) : ActivityFormUiIntent
 
-    data class CompetencyToggled(val id: String, val isSelected: Boolean) : ActivityFormUiIntent
+    data class CompetencyToggled(val id: CompetencyId, val isSelected: Boolean) : ActivityFormUiIntent
 
     data object SaveClicked : ActivityFormUiIntent
 

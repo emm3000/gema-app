@@ -18,6 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.R
 import com.emm.gema.core.domain.attendance.AttendanceDaySummary
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -155,10 +157,10 @@ private fun HomeScreenPreview() {
         HomeScreen(
             state = HomeUiState(
                 isLoading = false,
-                schoolYearId = "2026",
+                schoolYearId = SchoolYearId("2026"),
                 schoolYearLabel = "2026",
                 currentPeriodLabel = "II Bimestre",
-                sections = listOf(SectionRow("a", "3° A", 30), SectionRow("b", "4° B", 28)),
+                sections = listOf(SectionRow(SectionId("a"), "3° A", 30), SectionRow(SectionId("b"), "4° B", 28)),
             ),
             onIntent = {},
         )

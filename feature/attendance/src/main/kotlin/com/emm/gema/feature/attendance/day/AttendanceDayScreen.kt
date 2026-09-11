@@ -19,14 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.attendance.AttendanceStatus
-import com.emm.gema.feature.attendance.R
-import com.emm.gema.feature.attendance.asStatus
-import com.emm.gema.feature.attendance.asToggleOption
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GAttendanceOption
 import com.emm.gema.core.ui.GAttendanceToggle
-import com.emm.gema.core.ui.gAttendanceRowColor
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
@@ -38,6 +35,10 @@ import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.core.ui.gAttendanceRowColor
+import com.emm.gema.feature.attendance.R
+import com.emm.gema.feature.attendance.asStatus
+import com.emm.gema.feature.attendance.asToggleOption
 import java.time.LocalDate
 
 @Composable
@@ -203,9 +204,9 @@ private fun AttendanceDayScreenPreview() {
                 totalCount = 3,
                 unmarkedCount = 1,
                 rows = listOf(
-                    AttendanceRow("1", "ACOSTA RIVERA, Luz Maria", AttendanceStatus.PRESENT, true),
-                    AttendanceRow("2", "BAUTISTA QUISPE, Jose", AttendanceStatus.LATE, true),
-                    AttendanceRow("3", "CCAHUANA MAMANI, Rosa", AttendanceStatus.PRESENT, false),
+                    AttendanceRow(StudentId("1"), "ACOSTA RIVERA, Luz Maria", AttendanceStatus.PRESENT, true),
+                    AttendanceRow(StudentId("2"), "BAUTISTA QUISPE, Jose", AttendanceStatus.LATE, true),
+                    AttendanceRow(StudentId("3"), "CCAHUANA MAMANI, Rosa", AttendanceStatus.PRESENT, false),
                 ),
             ),
             onIntent = {},
