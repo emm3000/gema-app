@@ -41,7 +41,11 @@ fun BackupRoute(
                 is BackupUiEffect.ShareFile -> context.shareBackup(effect.path, effect.mimeType, shareTitle)
                 is BackupUiEffect.OpenDocumentPicker -> pickBackup.launch(effect.mimeTypes.toTypedArray())
                 is BackupUiEffect.ShowMessage -> snackbarHostState.showSnackbar(messages.getValue(effect.message))
-                BackupUiEffect.RestartApp -> context.restart()
+                BackupUiEffect.RestartApp -> when (context.restart()) {
+                    RestartOutcome.Restarted -> Unit
+                    RestartOutcome.ManualRestartRequired ->
+                        snackbarHostState.showSnackbar(messages.getValue(BackupMessage.MANUAL_RESTART_REQUIRED))
+                }
                 BackupUiEffect.NavigateBack -> onNavigateBack()
             }
         }
@@ -62,4 +66,5 @@ private fun backupMessages(): Map<BackupMessage, String> = mapOf(
     BackupMessage.FILE_IS_NOT_A_BACKUP to stringResource(R.string.backup_message_not_a_backup),
     BackupMessage.BACKUP_FROM_A_NEWER_APP to stringResource(R.string.backup_message_newer_app),
     BackupMessage.RESTORE_FAILED to stringResource(R.string.backup_message_restore_failed),
+    BackupMessage.MANUAL_RESTART_REQUIRED to stringResource(R.string.backup_message_manual_restart_required),
 )

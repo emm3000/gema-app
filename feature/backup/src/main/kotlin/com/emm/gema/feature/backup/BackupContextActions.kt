@@ -23,11 +23,27 @@ fun Context.shareBackup(path: String, mimeType: String, chooserTitle: String) {
     startActivity(Intent.createChooser(share, chooserTitle).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
-fun Context.restart() {
-    val launch: Intent? = packageManager.getLaunchIntentForPackage(packageName)
-    if (launch != null) {
-        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(launch)
-    }
-    exitProcess(0)
+sealed interface RestartOutcome {
+    data object Restarted : RestartOutcome
+    data object ManualRestartRequired : RestartOutcome
+}
+
+fun Context.restart(): RestartOutcome {
+    val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
+    return performRestart(
+        launch = launchIntent?.let { intent ->
+            {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+            }
+        },
+        exit = { exitProcess(0) },
+    )
+}
+
+internal fun performRestart(launch: (() -> Unit)?, exit: () -> Unit): RestartOutcome {
+    if (launch == null) return RestartOutcome.ManualRestartRequired
+    launch()
+    exit()
+    return RestartOutcome.Restarted
 }
