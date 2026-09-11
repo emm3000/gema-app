@@ -8,7 +8,6 @@ data class AttendanceDayUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
     val date: LocalDate? = null,
-    val dateLabel: String = "",
     val canGoForward: Boolean = false,
     val presentCount: Int = 0,
     val totalCount: Int = 0,

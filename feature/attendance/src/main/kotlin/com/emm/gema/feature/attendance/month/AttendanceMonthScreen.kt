@@ -30,6 +30,7 @@ import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.label
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
@@ -239,7 +240,7 @@ private fun MonthStepper(
             contentDescription = "Mes anterior",
             onClick = { onIntent(AttendanceMonthUiIntent.PreviousMonthClicked) },
         )
-        GText(text = state.monthLabel, style = GTextStyle.TITLE_SMALL)
+        GText(text = state.month?.label().orEmpty(), style = GTextStyle.TITLE_SMALL)
         GIconButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Mes siguiente",
@@ -257,7 +258,7 @@ private fun AttendanceMonthScreenPreview() {
             state = AttendanceMonthUiState(
                 isLoading = false,
                 sectionTitle = "3° A",
-                monthLabel = "setiembre 2026",
+                month = YearMonth.of(2026, 9),
                 recordedDayCount = 20,
                 canExport = true,
                 rows = listOf(

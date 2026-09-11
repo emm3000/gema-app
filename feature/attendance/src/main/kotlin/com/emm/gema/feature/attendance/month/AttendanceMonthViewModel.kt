@@ -10,7 +10,6 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
-import com.emm.gema.feature.attendance.asMonthLabel
 import com.emm.gema.feature.attendance.title
 import java.time.Clock
 import java.time.YearMonth
@@ -86,7 +85,6 @@ class AttendanceMonthViewModel(
         return _state.value.copy(
             isLoading = false,
             month = selected,
-            monthLabel = selected.asMonthLabel(),
             recordedDayCount = summary.recordedDayCount,
             rows = summary.rows.map { it.toRow() },
             canExport = summary.recordedDayCount > 0,

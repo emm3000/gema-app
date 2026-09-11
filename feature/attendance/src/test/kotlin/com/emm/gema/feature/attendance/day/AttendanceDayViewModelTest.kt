@@ -59,7 +59,6 @@ class AttendanceDayViewModelTest {
         assertThat(state.isLoading).isFalse()
         assertThat(state.sectionTitle).isEqualTo("3° A")
         assertThat(state.date).isEqualTo(today)
-        assertThat(state.dateLabel).isEqualTo("Jue 10 set 2026")
         assertThat(state.rows.map { it.displayName })
             .containsExactly("ACOSTA RIVERA, Luz Maria", "BAUTISTA QUISPE, Jose").inOrder()
         assertThat(state.rows.map { it.isRecorded }).containsExactly(false, false)

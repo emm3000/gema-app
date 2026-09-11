@@ -13,12 +13,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.fullLabel
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.sections.R
+import java.time.LocalDate
 
 @Composable
 fun SectionDetailScreen(
@@ -64,7 +66,7 @@ fun SectionDetailScreen(
             GListItem(
                 title = stringResource(R.string.sections_detail_attendance),
                 modifier = Modifier.fillMaxWidth(),
-                subtitle = state.todayLabel,
+                subtitle = state.today?.let { today: LocalDate -> today.fullLabel() }.orEmpty(),
                 trailingText = state.todayAttendanceSummary,
                 hasChevron = true,
                 onClick = { onIntent(SectionDetailUiIntent.AttendanceClicked) },
@@ -115,7 +117,7 @@ private fun SectionDetailScreenPreview() {
                 studentCount = 30,
                 currentPeriodLabel = "II Bimestre",
                 missingPeriodLevelCount = 12,
-                todayLabel = "Jueves 10 de setiembre",
+                today = LocalDate.of(2026, 9, 10),
                 todayAttendanceSummary = "Sin tomar",
             ),
             onIntent = {},

@@ -22,6 +22,7 @@ import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.label
 import com.emm.gema.core.ui.GAttendanceOption
 import com.emm.gema.core.ui.GAttendanceToggle
 import com.emm.gema.core.ui.GBanner
@@ -125,7 +126,7 @@ private fun DayStepper(
         GDateField(
             value = state.date,
             onValueChange = { picked: LocalDate -> onIntent(AttendanceDayUiIntent.DatePicked(picked)) },
-            label = state.dateLabel,
+            label = state.date?.label().orEmpty(),
             modifier = Modifier.weight(1f),
             maxDate = LocalDate.now(),
         )
@@ -199,7 +200,6 @@ private fun AttendanceDayScreenPreview() {
                 isLoading = false,
                 sectionTitle = "3° A",
                 date = LocalDate.of(2026, 9, 10),
-                dateLabel = "Jue 10 set 2026",
                 presentCount = 2,
                 totalCount = 3,
                 unmarkedCount = 1,

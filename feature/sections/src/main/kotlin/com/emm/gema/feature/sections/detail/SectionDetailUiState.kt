@@ -9,6 +9,5 @@ data class SectionDetailUiState(
     val currentPeriodLabel: String? = null,
     val missingPeriodLevelCount: Int = 0,
     val today: LocalDate? = null,
-    val todayLabel: String = "",
     val todayAttendanceSummary: String = "",
 )

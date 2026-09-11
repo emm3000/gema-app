@@ -8,7 +8,6 @@ data class AttendanceMonthUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
     val month: YearMonth? = null,
-    val monthLabel: String = "",
     val recordedDayCount: Int = 0,
     val rows: List<AttendanceMonthRow> = emptyList(),
     val canExport: Boolean = false,

@@ -7,14 +7,9 @@ import org.junit.Test
 class DateLabelsTest {
 
     @Test
-    fun `formats a short day and month with leading zero`() {
-        assertThat(LocalDate.of(2026, 3, 1).asShortDayMonth()).isEqualTo("01 mar")
-    }
+    fun `formats a day month year range with a hyphen`() {
+        val label: String = rangeLabel(LocalDate.of(2026, 3, 1), LocalDate.of(2026, 5, 15))
 
-    @Test
-    fun `formats a short range with an en dash`() {
-        val label: String = shortRangeLabel(LocalDate.of(2026, 3, 1), LocalDate.of(2026, 5, 15))
-
-        assertThat(label).isEqualTo("01 mar – 15 may")
+        assertThat(label).isEqualTo("01/03/2026 - 15/05/2026")
     }
 }
