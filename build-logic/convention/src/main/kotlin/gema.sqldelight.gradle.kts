@@ -19,7 +19,7 @@ extensions.configure<SqlDelightExtension> {
 
 val checkSqlDelightSnapshots = tasks.register("checkSqlDelightSnapshots") {
     group = "verification"
-    description = "Fails when a migration has no schema snapshot committed next to it."
+    description = "Fails when a migration and its schema snapshot do not come in pairs."
 
     val migrations: File = migrationDirectory
     val snapshots: File = snapshotDirectory
@@ -27,26 +27,36 @@ val checkSqlDelightSnapshots = tasks.register("checkSqlDelightSnapshots") {
     inputs.dir(snapshots).withPropertyName("snapshots").optional()
 
     doLast {
-        val versions: List<Int> = migrations.listFiles()
-            .orEmpty()
-            .filter { it.extension == "sqm" }
-            .mapNotNull { it.nameWithoutExtension.toIntOrNull() }
-            .sorted()
+        val migratedVersions: List<Int> = migrations.versionsOf(extension = "sqm")
+        val snapshotVersions: List<Int> = snapshots.versionsOf(extension = "db")
+        val baselineVersion: Int? = snapshotVersions.minOrNull()
 
-        val missing: List<String> = versions
-            .filterNot { snapshots.resolve("${it + 1}.db").isFile }
+        val missingSnapshots: List<String> = migratedVersions
+            .filterNot { snapshotVersions.contains(it + 1) }
             .map { "$it.sqm has no snapshot ${it + 1}.db" }
 
-        check(missing.isEmpty()) {
+        val orphanSnapshots: List<String> = snapshotVersions
+            .filterNot { it == baselineVersion || migratedVersions.contains(it - 1) }
+            .map { "$it.db has no migration ${it - 1}.sqm" }
+
+        val problems: List<String> = missingSnapshots + orphanSnapshots
+        check(problems.isEmpty()) {
             buildString {
-                appendLine("Missing SQLDelight schema snapshots:")
-                missing.forEach { appendLine("  $it") }
-                appendLine("Every N.sqm ships its (N+1).db in the same commit.")
-                append("Generate it with ./gradlew :core:database:generateDebugGemaDbSchema")
+                appendLine("SQLDelight migrations and schema snapshots do not match:")
+                problems.forEach { appendLine("  $it") }
+                appendLine("Every N.sqm ships its (N+1).db in the same commit, and no snapshot outlives its migration.")
+                append("Generate a snapshot with ./gradlew :core:database:generateDebugGemaDbSchema")
             }
         }
     }
 }
 
-tasks.matching { it.name == "verifySqlDelightMigration" || it.name.endsWith("GemaDbMigration") }
-    .configureEach { dependsOn(checkSqlDelightSnapshots) }
+val migrationVerificationTasks: Spec<Task> = Spec { it.name.startsWith("verify") && it.name.endsWith("Migration") }
+
+tasks.matching(migrationVerificationTasks).configureEach { dependsOn(checkSqlDelightSnapshots) }
+
+fun File.versionsOf(extension: String): List<Int> = listFiles()
+    .orEmpty()
+    .filter { it.extension == extension }
+    .mapNotNull { it.nameWithoutExtension.toIntOrNull() }
+    .sorted()
