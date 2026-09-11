@@ -155,6 +155,11 @@ attendance file every month, so the Teacher picks that month's file at Export
 time instead of one being stored (ADR 0019).
 _Avoid_: file, attachment, saved excel
 
+**Export Gap**:
+A Student and Competency whose recorded `C` has no Descriptive Conclusion. Every
+Gap of the Section and Period blocks the whole Export until it is filled.
+_Avoid_: error, missing grade, incomplete
+
 **Backup**:
 A single file containing all teacher data, shared to another device to restore.
 _Avoid_: sync, cloud, export

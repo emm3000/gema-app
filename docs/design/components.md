@@ -41,7 +41,7 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GTextField` | `OutlinedTextField` | setup, student form, activity form, conclusion, backup | built |
 | `GDateField` | `OutlinedTextField` + `DatePickerDialog` | setup, periods, student form, activity form | built |
 | `GSegmentedPicker` | `SingleChoiceSegmentedButtonRow` | period kind, grade, attendance status, level pickers | built |
-| `GListItem` | `ListItem` inside `Surface` | home, sections, students, activities, blockers | built |
+| `GListItem` | `ListItem` inside `Surface` | home, sections, students, activities, export gaps | built |
 | `GCard` | `Surface` | home banner, export cards, section detail | built |
 | `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows | built |
 | `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence | built |
@@ -51,8 +51,8 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GBanner` | `Surface` | backup reminder, import rejection, export blocked, period warnings | built |
 | `GEmptyState` | `Column` | students, activities, period levels, sections | built |
 | `GDialog` | `AlertDialog` | delete section, restore backup, apply import | built |
-| `GBottomSheet` | `ModalBottomSheet` | period level sheet, export blockers | built |
-| `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors | built |
+| `GBottomSheet` | `ModalBottomSheet` | period level sheet | built |
+| `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors, export period | built |
 | `GSearchField` | `OutlinedTextField` | students | planned |
 
 (Twenty rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells

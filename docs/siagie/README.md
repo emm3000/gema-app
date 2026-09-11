@@ -35,7 +35,7 @@ Legend block below the data lists competencies by number for that area
 (e.g. PPSS: 01 Construye su identidad, 02 Convive y participa ..., 05 Gestiona
 responsablemente los recursos economicos).
 
-NL dropdown values (exact Spanish strings from the UGEL San Marcos instructive legend; whether the cell stores the short token or the full sentence is unconfirmed):
+NL dropdown values (exact Spanish strings from the UGEL San Marcos instructive legend; the cell itself stores the short `Comentario N` token, which is what the template's data validation list offers):
 
 - `Comentario 1. No se logró realizar acciones para su desarrollo`
 - `Comentario 2. No se cuenta con evidencia suficiente para determinar nivel de logro.`
@@ -52,6 +52,23 @@ Rules:
 - If NL is `C`, the descriptive conclusion is mandatory; otherwise optional.
 - Grades are registered per period (bimestre or trimestre, set by the school).
 - The downloaded file name must not be changed before upload.
+
+## Grades export mapping (implemented)
+
+The export fills the stored template; it never builds a workbook (ADR 0002) and
+never writes a file while a gap remains (ADR 0018).
+
+- Sheet: the Area name with underscores read as spaces, so `CAST_SEGNL` is the
+  `CAST SEGNL` tab. An Area with no tab in the template is skipped.
+- Column: the header row 3 cell reading `Competencia NN NL`, where `NN` is the
+  Competency's SIAGIE ordinal. The Descriptive Conclusion goes in the column
+  right after it.
+- Row: the row whose `CodEstudiante` cell holds the Student Code. A Student the
+  template does not carry is skipped.
+- Value: `AD`, `A`, `B` or `C`, or the short `Comentario 1` / `Comentario 2` /
+  `Comentario 3` token, which is what the template's own dropdown lists.
+- Cells are written as inline strings, so the shared string table and every
+  other part of the `.xlsx` stay byte for byte as SIAGIE generated them.
 
 ## Attendance template (monthly)
 

@@ -1392,34 +1392,39 @@ data class ExportUiState(
     val periods: List<PeriodOption> = emptyList(),
     val selectedPeriodId: PeriodId? = null,
     val templateFileName: String? = null,
-    val gradesExportState: GradesExportState = GradesExportState.Unavailable,
-    val attendanceMonthLabel: String = "",
+    val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
     val isExporting: Boolean = false,
 )
 
-sealed interface GradesExportState {
-    data object Unavailable : GradesExportState
-    data object Ready : GradesExportState
-    data class Blocked(val gaps: List<ExportGapRow>) : GradesExportState
+sealed interface GradesExportUiState {
+    data object Unavailable : GradesExportUiState
+    data object Ready : GradesExportUiState
+    data class Blocked(val gaps: List<ExportGapRow>) : GradesExportUiState
 }
 
 data class ExportGapRow(
     val studentId: StudentId,
     val studentName: String,
+    val competencyId: CompetencyId,
     val areaName: String,
     val siagieOrdinal: Int,
-    val competencyId: CompetencyId,
 )
 ```
 
-Intents: `PeriodSelected(id: PeriodId)`, `ExportGradesClicked`,
+The attendance and PDF/CSV cards land with their own tickets and add their
+fields (`attendanceMonthLabel` among them) to this same `UiState`.
+
+Intents: `PeriodSelected(periodId: PeriodId)`, `ExportGradesClicked`,
 `GapRowClicked(row: ExportGapRow)`, `ExportAttendanceClicked`, `ExportPdfClicked`,
 `ExportCsvClicked`, `ImportTemplateClicked`, `BackClicked`.
 
 Effects: `ShareFile(path: String, mimeType: String)`,
-`NavigateToPeriodLevelCell(studentId: StudentId, competencyId: CompetencyId)`,
+`NavigateToPeriodLevels(sectionId: SectionId)`,
 `NavigateToStudents(sectionId: SectionId)`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: ExportMessage)`.
+
+A gap row opens the Period Levels grid for the Section; that grid owns the sheet
+that fixes the cell, so Export does not address the cell itself.
 
 Note: screen title is "Entregar", because that is the Teacher's goal, not the
 file format. Every blocking gap now lists as a tap-through row inside the
