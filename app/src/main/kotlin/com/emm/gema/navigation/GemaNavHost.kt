@@ -1,6 +1,7 @@
 package com.emm.gema.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -273,12 +274,17 @@ fun GemaNavHost(
                 navArgument(GemaRoutes.AREA) { type = NavType.StringType },
             ),
         ) { entry ->
-            WorkedCompetenciesRoute(
-                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                periodId = entry.arguments?.getString(GemaRoutes.PERIOD_ID).orEmpty(),
-                area = Area.valueOf(entry.arguments?.getString(GemaRoutes.AREA).orEmpty()),
-                onBack = { navController.popBackStack() },
-            )
+            val area: Area? = parseArea(entry.arguments?.getString(GemaRoutes.AREA))
+            if (area == null) {
+                LaunchedEffect(Unit) { navController.popBackStack() }
+            } else {
+                WorkedCompetenciesRoute(
+                    sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                    periodId = entry.arguments?.getString(GemaRoutes.PERIOD_ID).orEmpty(),
+                    area = area,
+                    onBack = { navController.popBackStack() },
+                )
+            }
         }
         composable(
             route = GemaRoutes.ACTIVITIES,
@@ -334,3 +340,5 @@ private fun NavHostController.toHome() {
         popUpTo(graph.id) { inclusive = true }
     }
 }
+
+internal fun parseArea(raw: String?): Area? = Area.entries.firstOrNull { it.name == raw }
