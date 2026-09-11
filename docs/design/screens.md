@@ -1136,10 +1136,8 @@ Notes:
 - `--- ` in the level row is the explicit "sin nivel" option; clearing a level is
   an action, not a long-press or a swipe.
 - `evidence` is read-only. There is no control on this sheet that copies an
-  Evidence Level into the Period Level.
-- `evidence` does not exist yet. Evidence Levels arrive with Activities, so
-  ticket #11 adds the field and the section that renders it; until then the
-  sheet has neither, rather than an empty placeholder.
+  Evidence Level into the Period Level. The section is hidden entirely when
+  the list is empty, rather than showing an empty placeholder.
 
 ---
 
