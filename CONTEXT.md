@@ -131,6 +131,12 @@ Filling an imported SIAGIE Template with Period Levels, Descriptive
 Conclusions or Attendance, preserving its file name and structure.
 _Avoid_: sync, generate, upload
 
+**Imported Template**:
+The SIAGIE Template a Teacher imported for a Section, stored with its original
+name and bytes so the Export can fill that exact file later. One per Section
+and kind.
+_Avoid_: file, attachment, saved excel
+
 **Backup**:
 A single file containing all teacher data, shared to another device to restore.
 _Avoid_: sync, cloud, export
