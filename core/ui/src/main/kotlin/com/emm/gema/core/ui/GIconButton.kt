@@ -32,7 +32,11 @@ fun GIconButton(
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = if (isEnabled) {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            } else {
+                MaterialTheme.colorScheme.outlineVariant
+            },
         )
     }
 }

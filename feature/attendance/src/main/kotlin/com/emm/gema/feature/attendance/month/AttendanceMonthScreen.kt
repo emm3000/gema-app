@@ -5,15 +5,21 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.attendance.AttendanceSiagieCode
 import com.emm.gema.core.domain.attendance.AttendanceStatus
@@ -25,12 +31,11 @@ import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
-import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
-
-private const val NAME_COLUMN_WEIGHT: Float = 2f
-private const val STAT_COLUMN_WEIGHT: Float = 1f
+import java.time.YearMonth
 
 @Composable
 fun AttendanceMonthScreen(
@@ -44,7 +49,7 @@ fun AttendanceMonthScreen(
         topBar = {
             GTopBar(
                 title = "Asistencia · ${state.sectionTitle}",
-                subtitle = state.monthLabel,
+                subtitle = "Resumen del mes",
                 onBackClick = { onIntent(AttendanceMonthUiIntent.BackClicked) },
             )
         },
@@ -81,9 +86,7 @@ fun AttendanceMonthScreen(
             }
             if (state.rows.isNotEmpty()) {
                 item {
-                    AttendanceMonthColumns(modifier = Modifier.fillMaxWidth()) { status: AttendanceStatus ->
-                        GListItem(title = AttendanceSiagieCode.of(status), modifier = Modifier.fillMaxWidth())
-                    }
+                    AttendanceMonthHeader(modifier = Modifier.fillMaxWidth())
                 }
             }
             if (state.rows.isEmpty() && !state.isLoading) {
@@ -95,12 +98,17 @@ fun AttendanceMonthScreen(
                 }
             }
             items(state.rows, key = { it.studentId.value }) { row: AttendanceMonthRow ->
-                AttendanceMonthRow(row = row, modifier = Modifier.fillMaxWidth())
+                AttendanceMonthDataRow(row = row, modifier = Modifier.fillMaxWidth())
+                HorizontalDivider()
             }
             item {
-                GListItem(
-                    title = "${state.recordedDayCount} días de clase registrados",
-                    modifier = Modifier.fillMaxWidth(),
+                GText(
+                    text = "${state.recordedDayCount} días de clase registrados",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.medium),
+                    style = GTextStyle.BODY_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -108,33 +116,64 @@ fun AttendanceMonthScreen(
 }
 
 @Composable
-private fun AttendanceMonthColumns(
-    modifier: Modifier = Modifier,
-    name: @Composable () -> Unit = { GListItem(title = "", modifier = Modifier.fillMaxWidth()) },
-    stat: @Composable (AttendanceStatus) -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Row(modifier = Modifier.weight(NAME_COLUMN_WEIGHT)) { name() }
-        AttendanceStatus.entries.forEach { status: AttendanceStatus ->
-            Row(modifier = Modifier.weight(STAT_COLUMN_WEIGHT)) { stat(status) }
+private fun AttendanceMonthHeader(modifier: Modifier = Modifier) {
+    Surface(modifier = modifier, color = MaterialTheme.colorScheme.surfaceVariant) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(GemaSpacing.gridChipHeight),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            GText(
+                text = "ALUMNO",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = GemaSpacing.medium),
+                style = GTextStyle.LABEL_SMALL,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            AttendanceStatus.entries.forEach { status: AttendanceStatus ->
+                GText(
+                    text = AttendanceSiagieCode.of(status),
+                    modifier = Modifier.width(GemaSpacing.narrowCellWidth),
+                    style = GTextStyle.LABEL_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
+    HorizontalDivider()
 }
 
 @Composable
-private fun AttendanceMonthRow(row: AttendanceMonthRow, modifier: Modifier = Modifier) {
-    AttendanceMonthColumns(
-        modifier = modifier,
-        name = { GListItem(title = row.displayName, modifier = Modifier.fillMaxWidth()) },
-    ) { status: AttendanceStatus ->
-        GListItem(
-            title = (row.countsByStatus[status] ?: 0).toString(),
-            modifier = Modifier.fillMaxWidth(),
+private fun AttendanceMonthDataRow(row: AttendanceMonthRow, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.height(GemaSpacing.compactRowHeight),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        GText(
+            text = row.displayName,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = GemaSpacing.medium),
+            style = GTextStyle.BODY_MEDIUM,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
+        AttendanceStatus.entries.forEach { status: AttendanceStatus ->
+            val count: Int = row.countsByStatus[status] ?: 0
+            GText(
+                text = count.toString(),
+                modifier = Modifier.width(GemaSpacing.narrowCellWidth),
+                style = GTextStyle.BODY_MEDIUM,
+                color = if (count == 0) {
+                    MaterialTheme.colorScheme.outlineVariant
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
+        }
     }
 }
 
@@ -144,9 +183,10 @@ private fun MonthStepper(
     onIntent: (AttendanceMonthUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isCurrentMonth: Boolean = state.month != null && state.month == YearMonth.now()
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GIconButton(
@@ -154,11 +194,12 @@ private fun MonthStepper(
             contentDescription = "Mes anterior",
             onClick = { onIntent(AttendanceMonthUiIntent.PreviousMonthClicked) },
         )
-        GListItem(title = state.monthLabel, modifier = Modifier.weight(1f))
+        GText(text = state.monthLabel, style = GTextStyle.TITLE_SMALL)
         GIconButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Mes siguiente",
             onClick = { onIntent(AttendanceMonthUiIntent.NextMonthClicked) },
+            isEnabled = !isCurrentMonth,
         )
     }
 }
