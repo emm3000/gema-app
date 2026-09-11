@@ -41,8 +41,8 @@ fun ActivitiesScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = "Actividades · ${state.sectionTitle}",
-                subtitle = "Las más nuevas primero",
+                title = stringResource(R.string.activities_list_title, state.sectionTitle),
+                subtitle = stringResource(R.string.activities_list_subtitle),
                 onBackClick = { onIntent(ActivitiesUiIntent.BackClicked) },
             )
         },
