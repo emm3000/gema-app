@@ -7,17 +7,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GButtonVariant
-import com.emm.gema.core.ui.GListItem
+import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.core.ui.GYearCard
 
 @Composable
 fun SchoolYearsScreen(
@@ -33,11 +34,11 @@ fun SchoolYearsScreen(
             )
         },
         modifier = modifier,
-        bottomAction = {
-            GButton(
+        fab = {
+            GExtendedFab(
                 text = "Nuevo año",
+                icon = Icons.Filled.Add,
                 onClick = { onIntent(SchoolYearsUiIntent.AddYearClicked) },
-                modifier = Modifier.fillMaxWidth(),
             )
         },
     ) { padding: PaddingValues ->
@@ -61,19 +62,22 @@ private fun SchoolYearItem(
     onIntent: (SchoolYearsUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GListItem(
-        title = if (row.isActive) "${row.label} · Activo" else row.label,
-        modifier = modifier.fillMaxWidth(),
-        subtitle = "${row.dateRangeLabel} · ${row.periodKindLabel} · ${row.sectionCount} secciones",
+    GYearCard(
+        label = row.label,
+        subtitle = "${row.dateRangeLabel} · ${row.periodKindLabel}",
+        sectionCountLabel = sectionCountLabel(row.sectionCount),
+        periodsLabel = "Periodos",
+        isActive = row.isActive,
         onClick = { onIntent(SchoolYearsUiIntent.YearClicked(row.id)) },
-        trailing = {
-            GButton(
-                text = "Periodos",
-                onClick = { onIntent(SchoolYearsUiIntent.PeriodsClicked(row.id)) },
-                variant = GButtonVariant.TEXT,
-            )
-        },
+        onPeriodsClick = { onIntent(SchoolYearsUiIntent.PeriodsClicked(row.id)) },
+        modifier = modifier.fillMaxWidth(),
     )
+}
+
+private fun sectionCountLabel(sectionCount: Int): String = if (sectionCount == 1) {
+    "1 sección"
+} else {
+    "$sectionCount secciones"
 }
 
 @PreviewLightDark
@@ -85,6 +89,7 @@ private fun SchoolYearsScreenPreview() {
                 isLoading = false,
                 years = listOf(
                     SchoolYearRow(SchoolYearId("2026"), "2026", "02/03/2026 - 18/12/2026", "Bimestre", 2, true),
+                    SchoolYearRow(SchoolYearId("2025"), "2025", "01/03/2025 - 19/12/2025", "Trimestre", 1, false),
                 ),
             ),
             onIntent = {},
