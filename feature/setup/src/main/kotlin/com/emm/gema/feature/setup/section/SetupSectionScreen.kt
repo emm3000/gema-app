@@ -18,7 +18,6 @@ import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
@@ -40,8 +39,7 @@ fun SetupSectionScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = "Tu primera sección",
-                subtitle = "Paso 2 de 2",
+                title = "",
                 onBackClick = { onIntent(SetupSectionUiIntent.BackClicked) },
             )
         },
@@ -64,6 +62,7 @@ fun SetupSectionScreen(
                 .padding(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
+            Header()
             if (message != null) {
                 GBanner(
                     text = message,
@@ -73,14 +72,17 @@ fun SetupSectionScreen(
                     onActionClick = onMessageDismissed,
                 )
             }
-            GSegmentedPicker(
-                options = Grade.entries.map {
-                    GSegmentOption(value = it, label = it.label(), contentDescription = "Grado ${it.label()}")
-                },
-                selected = state.grade,
-                onSelect = { grade -> grade?.let { onIntent(SetupSectionUiIntent.GradeSelected(it)) } },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
+                GText(text = "Grado", style = GTextStyle.LABEL_MEDIUM)
+                GSegmentedPicker(
+                    options = Grade.entries.map {
+                        GSegmentOption(value = it, label = it.label(), contentDescription = "Grado ${it.label()}")
+                    },
+                    selected = state.grade,
+                    onSelect = { grade -> grade?.let { onIntent(SetupSectionUiIntent.GradeSelected(it)) } },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             GTextField(
                 value = state.sectionName,
                 onValueChange = { onIntent(SetupSectionUiIntent.SectionNameChanged(it)) },
@@ -88,16 +90,11 @@ fun SetupSectionScreen(
                 modifier = Modifier.fillMaxWidth(),
                 errorText = sectionNameError,
             )
-            GText(
-                text = "Empiezas con todas las áreas activas. Puedes apagar las que no dictas.",
-                style = GTextStyle.BODY_MEDIUM,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            GButton(
-                text = "No dicto todas las áreas",
-                onClick = { onIntent(SetupSectionUiIntent.AreaSelectionClicked) },
-                variant = GButtonVariant.TEXT,
-                enabled = state.canFinish && !state.isSaving,
+            GBanner(
+                text = "Todas las áreas quedan activas.",
+                modifier = Modifier.fillMaxWidth(),
+                actionText = "No dicto todas las áreas",
+                onActionClick = { onIntent(SetupSectionUiIntent.AreaSelectionClicked) },
             )
             GText(
                 text = "Si enseñas en aula multigrado, crea una sección por grado.",
@@ -105,6 +102,18 @@ fun SetupSectionScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Composable
+private fun Header(modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
+        GText(text = "Paso 2 de 2", style = GTextStyle.LABEL_MEDIUM)
+        GText(text = "Tu primera sección", style = GTextStyle.TITLE_MEDIUM)
+        GText(
+            text = "Ya casi. Después puedes crear todas las secciones que dictes.",
+            style = GTextStyle.BODY_MEDIUM,
+        )
     }
 }
 
