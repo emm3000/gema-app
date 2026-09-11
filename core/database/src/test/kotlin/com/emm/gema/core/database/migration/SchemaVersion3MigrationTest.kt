@@ -61,7 +61,7 @@ class SchemaVersion3MigrationTest {
     }
 }
 
-private val schemaVersionThreeStatements: List<String> = listOf(
+internal val schemaVersionThreeStatements: List<String> = listOf(
     """
     CREATE TABLE school_year (
         id TEXT NOT NULL PRIMARY KEY,

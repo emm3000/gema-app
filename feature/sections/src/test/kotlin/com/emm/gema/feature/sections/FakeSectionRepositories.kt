@@ -12,6 +12,9 @@ import com.emm.gema.core.domain.student.orderedByName
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import com.emm.gema.core.domain.siagie.ImportedTemplate
+import com.emm.gema.core.domain.siagie.ImportedTemplateKind
+import com.emm.gema.core.domain.siagie.SiagieImportStore
 
 class FakeSectionRepository(initial: List<Section> = emptyList()) : SectionRepository {
 
@@ -93,6 +96,10 @@ class FakeStudentRepository(initial: List<Student> = emptyList()) : StudentRepos
     override fun observeCountsBySection(): Flow<Map<String, Int>> = students
         .map { stored -> stored.filterNot { it.isWithdrawn }.groupingBy { it.sectionId }.eachCount() }
 
+    override suspend fun listBySection(sectionId: String): List<Student> = students.value
+        .filter { it.sectionId == sectionId }
+        .orderedByName()
+
     override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
 
     override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
@@ -105,4 +112,20 @@ class FakeStudentRepository(initial: List<Student> = emptyList()) : StudentRepos
     override suspend fun deleteBySection(sectionId: String) {
         students.value = students.value.filterNot { it.sectionId == sectionId }
     }
+}
+
+class FakeSiagieImportStore : SiagieImportStore {
+
+    private val templates: MutableMap<String, ImportedTemplate> = mutableMapOf()
+
+    override suspend fun apply(students: List<Student>, template: ImportedTemplate) {
+        templates[template.sectionId] = template
+    }
+
+    override suspend fun clearSection(sectionId: String) {
+        templates.remove(sectionId)
+    }
+
+    override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
+        templates[sectionId]?.takeIf { it.kind == kind }
 }
