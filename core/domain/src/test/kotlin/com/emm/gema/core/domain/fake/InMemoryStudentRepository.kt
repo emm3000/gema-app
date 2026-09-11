@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-class InMemoryStudentRepository : StudentRepository {
+class InMemoryStudentRepository(initial: List<Student> = emptyList()) : StudentRepository {
 
-    private val students: MutableStateFlow<List<Student>> = MutableStateFlow(emptyList())
+    private val students: MutableStateFlow<List<Student>> = MutableStateFlow(initial)
 
     override fun observeBySection(sectionId: String): Flow<List<Student>> = students
         .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
