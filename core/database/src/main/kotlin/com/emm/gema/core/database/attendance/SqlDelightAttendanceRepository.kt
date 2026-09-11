@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.YearMonth
 
 class SqlDelightAttendanceRepository(
     database: GemaDb,
@@ -22,6 +23,12 @@ class SqlDelightAttendanceRepository(
 
     override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
         queries.selectBySectionAndDate(sectionId, date.toString())
+            .asFlow()
+            .mapToList(dispatcher)
+            .map { rows -> rows.map { it.toDomain() } }
+
+    override fun observeBySectionAndMonth(sectionId: String, month: YearMonth): Flow<List<AttendanceRecord>> =
+        queries.selectBySectionAndDateRange(sectionId, month.atDay(1).toString(), month.atEndOfMonth().toString())
             .asFlow()
             .mapToList(dispatcher)
             .map { rows -> rows.map { it.toDomain() } }

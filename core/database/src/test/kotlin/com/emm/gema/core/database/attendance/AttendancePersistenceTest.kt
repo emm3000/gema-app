@@ -14,7 +14,10 @@ import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
+import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
+import com.emm.gema.core.domain.attendance.MonthlyAttendanceSummary
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
+import com.emm.gema.core.domain.attendance.StudentAttendanceMonthCount
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
@@ -35,6 +38,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneOffset
 
 private const val firstCode: String = "12345678901234"
@@ -61,6 +65,7 @@ class AttendancePersistenceTest {
     private val getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository)
     private val recordAttendance = RecordAttendanceUseCase(attendanceRepository, clock)
     private val countAttendanceDays = CountAttendanceDaysUseCase(attendanceRepository)
+    private val getMonthlySummary = GetMonthlyAttendanceSummaryUseCase(studentRepository, attendanceRepository)
     private val deleteSection = DeleteSectionUseCase(
         sectionRepository,
         sectionAreaRepository,
@@ -132,6 +137,22 @@ class AttendancePersistenceTest {
         deleteSection(section.id)
 
         assertThat(countAttendanceDays(section.id)).isEqualTo(0)
+    }
+
+    @Test
+    fun `a month's summary counts survive a read back scoped to that month`() = runTest {
+        val section: Section = section()
+        val student: Student = savedStudent(section.id, firstCode, "ACOSTA RIVERA, Luz Maria")
+
+        recordAttendance(section.id, student.id, today, AttendanceStatus.LATE)
+        recordAttendance(section.id, student.id, LocalDate.of(2026, 8, 20), AttendanceStatus.ABSENT)
+
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(section.id, YearMonth.from(today)).first()
+
+        assertThat(summary.recordedDayCount).isEqualTo(1)
+        val counts: StudentAttendanceMonthCount = summary.rows.single { it.studentId == student.id }
+        assertThat(counts.lateCount).isEqualTo(1)
+        assertThat(counts.absentCount).isEqualTo(0)
     }
 
     private suspend fun section(): Section = createSection("2026", Grade.THIRD, "A")
