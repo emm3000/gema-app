@@ -28,6 +28,7 @@ fun GScreen(
     snackbarHostState: SnackbarHostState? = null,
     bottomAction: (@Composable () -> Unit)? = null,
     fab: (@Composable () -> Unit)? = null,
+    contentGutter: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     require(fab == null || bottomAction == null) {
@@ -52,7 +53,12 @@ fun GScreen(
         snackbarHost = { snackbarHostState?.let { state -> SnackbarHost(hostState = state) } },
         containerColor = MaterialTheme.colorScheme.surface,
     ) { scaffoldPadding ->
-        Box(modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter)) {
+        val contentModifier: Modifier = if (contentGutter) {
+            Modifier.padding(horizontal = GemaSpacing.screenGutter)
+        } else {
+            Modifier
+        }
+        Box(modifier = contentModifier) {
             content(scaffoldPadding)
         }
     }

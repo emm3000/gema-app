@@ -13,8 +13,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,6 +35,7 @@ import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
+import com.emm.gema.core.ui.GMonthPickerDialog
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTableHeaderBand
 import com.emm.gema.core.ui.GTableRow
@@ -45,12 +52,21 @@ fun AttendanceMonthScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    var isMonthPickerVisible: Boolean by remember { mutableStateOf(false) }
+
     GScreen(
         topBar = {
             GTopBar(
                 title = "Asistencia · ${state.sectionTitle}",
                 subtitle = "Resumen del mes",
                 onBackClick = { onIntent(AttendanceMonthUiIntent.BackClicked) },
+                actions = {
+                    GIconButton(
+                        icon = Icons.Filled.CalendarMonth,
+                        contentDescription = "Elegir mes",
+                        onClick = { isMonthPickerVisible = true },
+                    )
+                },
             )
         },
         modifier = modifier,
@@ -60,8 +76,10 @@ fun AttendanceMonthScreen(
                 onClick = { onIntent(AttendanceMonthUiIntent.ExportClicked) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = state.canExport && !state.isExporting,
+                icon = Icons.Filled.Upload,
             )
         },
+        contentGutter = false,
     ) { padding: PaddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -74,7 +92,9 @@ fun AttendanceMonthScreen(
                 item {
                     GBanner(
                         text = message,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = GemaSpacing.screenGutter),
                         tone = GBannerTone.ERROR,
                         actionText = "Entendido",
                         onActionClick = onMessageDismissed,
@@ -82,7 +102,11 @@ fun AttendanceMonthScreen(
                 }
             }
             item {
-                MonthStepper(state = state, onIntent = onIntent)
+                MonthStepper(
+                    state = state,
+                    onIntent = onIntent,
+                    modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
+                )
             }
             if (state.rows.isNotEmpty()) {
                 item {
@@ -105,12 +129,24 @@ fun AttendanceMonthScreen(
                     text = "${state.recordedDayCount} días de clase registrados",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.medium),
+                        .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.medium),
                     style = GTextStyle.BODY_SMALL,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
+    }
+
+    if (isMonthPickerVisible) {
+        GMonthPickerDialog(
+            value = state.month ?: YearMonth.now(),
+            onConfirm = { picked: YearMonth ->
+                onIntent(AttendanceMonthUiIntent.MonthPicked(picked))
+                isMonthPickerVisible = false
+            },
+            onDismiss = { isMonthPickerVisible = false },
+            maximum = YearMonth.now(),
+        )
     }
 }
 
