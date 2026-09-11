@@ -14,6 +14,7 @@ data class ExportUiState(
 data class TemplateMismatchUi(
     val areaNames: List<String>,
     val studentNames: List<String>,
+    val competencyLabels: List<String>,
 )
 
 data class PeriodOption(

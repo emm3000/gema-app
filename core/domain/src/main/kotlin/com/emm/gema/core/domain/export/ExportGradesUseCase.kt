@@ -38,5 +38,6 @@ class ExportGradesUseCase(
         studentNames = unmapped.studentCodes.map { code: StudentCode ->
             students.findByCode(sectionId, code)?.fullName ?: code.value
         },
+        competencies = unmapped.competencies,
     )
 }

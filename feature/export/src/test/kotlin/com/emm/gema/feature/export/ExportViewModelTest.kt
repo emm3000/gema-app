@@ -24,6 +24,7 @@ import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
+import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
@@ -146,6 +147,7 @@ class ExportViewModelTest {
         writer.unmapped = SiagieGradesWriteResult.Unmapped(
             areas = listOf(Area.MATE),
             studentCodes = listOf(StudentCode("10000000000001")),
+            competencies = listOf(SiagieCompetencyColumn(area = Area.COMU, siagieOrdinal = 3)),
         )
         val viewModel: ExportViewModel = viewModel()
 
@@ -155,6 +157,7 @@ class ExportViewModelTest {
             TemplateMismatchUi(
                 areaNames = listOf("Matemática"),
                 studentNames = listOf("ALVARADO QUISPE, MARIA"),
+                competencyLabels = listOf("Comunicación - 03"),
             ),
         )
     }

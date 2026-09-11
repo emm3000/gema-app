@@ -15,5 +15,6 @@ sealed interface SiagieGradesWriteResult {
     data class Unmapped(
         val areas: List<Area>,
         val studentCodes: List<StudentCode>,
+        val competencies: List<SiagieCompetencyColumn>,
     ) : SiagieGradesWriteResult
 }

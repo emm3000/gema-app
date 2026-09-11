@@ -1,6 +1,7 @@
 package com.emm.gema.core.siagie
 
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.student.StudentCode
@@ -67,7 +68,11 @@ class XlsxSiagieGradesWriterTest {
         )
 
         assertThat(result).isEqualTo(
-            SiagieGradesWriteResult.Unmapped(areas = listOf(Area.EFIS), studentCodes = emptyList()),
+            SiagieGradesWriteResult.Unmapped(
+                areas = listOf(Area.EFIS),
+                studentCodes = emptyList(),
+                competencies = emptyList(),
+            ),
         )
     }
 
@@ -82,6 +87,26 @@ class XlsxSiagieGradesWriterTest {
             SiagieGradesWriteResult.Unmapped(
                 areas = emptyList(),
                 studentCodes = listOf(StudentCode("99999999999999")),
+                competencies = emptyList(),
+            ),
+        )
+    }
+
+    @Test
+    fun `reports a competency the sheet has no column for instead of dropping it`() {
+        val result: SiagieGradesWriteResult = writer.write(
+            fixture().readBytes(),
+            listOf(
+                entryOf(Area.COMU, 1, "10000000000001", "A", ""),
+                entryOf(Area.COMU, 7, "10000000000001", "B", ""),
+            ),
+        )
+
+        assertThat(result).isEqualTo(
+            SiagieGradesWriteResult.Unmapped(
+                areas = emptyList(),
+                studentCodes = emptyList(),
+                competencies = listOf(SiagieCompetencyColumn(area = Area.COMU, siagieOrdinal = 7)),
             ),
         )
     }
