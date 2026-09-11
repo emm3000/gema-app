@@ -1,16 +1,14 @@
 [versions]
-agp = "8.11.0"
-firebaseBom = "33.15.0"
-kotlin = "2.1.21"
-coreKtx = "1.16.0"
+agp = "9.4.0"
+kotlin = "2.4.20"
+coreKtx = "1.19.0"
 junit = "4.13.2"
-lifecycleRuntimeKtx = "2.9.1"
-activityCompose = "1.10.1"
-koinBom = "4.0.3"
-composeBom = "2025.06.01"
-navigationCompose = "2.9.0"
-sqldelight = "2.0.2"
-mockk = "1.14.11"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+koinBom = "4.2.2"
+composeBom = "2026.09.00"
+navigationCompose = "2.10.1"
+sqldelight = "2.3.2"
 truth = "1.4.5"
 turbine = "1.2.1"
 kotlinxCoroutines = "1.11.0"
@@ -20,9 +18,7 @@ detektComposeRules = "0.6.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -43,7 +39,6 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
@@ -58,7 +53,6 @@ compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compil
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
