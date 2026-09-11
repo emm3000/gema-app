@@ -2,11 +2,12 @@ package com.emm.gema.feature.attendance
 
 import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.theme.DayNames
 import com.emm.gema.core.ui.GAttendanceOption
 import java.time.LocalDate
 import java.time.YearMonth
 
-private val dayNames: List<String> = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
+private const val ABBREVIATED_DAY_NAME_LENGTH: Int = 3
 
 private val monthNames: List<String> = listOf(
     "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "set", "oct", "nov", "dic",
@@ -19,8 +20,10 @@ private val fullMonthNames: List<String> = listOf(
 
 fun Section.title(): String = "${grade.number}° $name"
 
-fun LocalDate.asDayLabel(): String =
-    "${dayNames[dayOfWeek.value - 1]} $dayOfMonth ${monthNames[monthValue - 1]} $year"
+fun LocalDate.asDayLabel(): String {
+    val dayName: String = DayNames.full[dayOfWeek.value - 1].take(ABBREVIATED_DAY_NAME_LENGTH)
+    return "$dayName $dayOfMonth ${monthNames[monthValue - 1]} $year"
+}
 
 fun YearMonth.asMonthLabel(): String = "${fullMonthNames[monthValue - 1]} $year"
 
