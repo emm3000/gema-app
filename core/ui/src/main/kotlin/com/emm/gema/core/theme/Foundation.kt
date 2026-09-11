@@ -13,6 +13,7 @@ object GemaSpacing {
     val extraLarge: Dp = 32.dp
     val screenGutter: Dp = 16.dp
     val minimumTouchTarget: Dp = 48.dp
+    val indicatorStroke: Dp = 2.dp
 }
 
 object GemaShapes {
