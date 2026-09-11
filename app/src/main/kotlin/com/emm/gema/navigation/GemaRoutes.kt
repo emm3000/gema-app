@@ -19,7 +19,8 @@ object GemaRoutes {
     const val STUDENTS: String = "students/{sectionId}"
     const val STUDENT_FORM: String = "student-form/{sectionId}?studentId={studentId}"
     const val IMPORT_PREVIEW: String = "import-preview/{sectionId}/{uri}"
-    const val PERIOD_LEVELS: String = "period-levels/{sectionId}"
+    const val PERIOD_LEVELS: String =
+        "period-levels/{sectionId}?studentId={studentId}&competencyId={competencyId}"
     const val EXPORT: String = "export/{sectionId}"
     const val WORKED_COMPETENCIES: String = "worked-competencies/{sectionId}/{periodId}/{area}"
 
@@ -27,6 +28,7 @@ object GemaRoutes {
     const val SECTION_ID: String = "sectionId"
     const val STUDENT_ID: String = "studentId"
     const val PERIOD_ID: String = "periodId"
+    const val COMPETENCY_ID: String = "competencyId"
     const val URI: String = "uri"
     const val AREA: String = "area"
     const val DATE: String = "date"
@@ -54,7 +56,10 @@ object GemaRoutes {
 
     fun importPreview(sectionId: String, uri: String): String =
         "import-preview/$sectionId/${encodeArgument(uri)}"
-    fun periodLevelsOf(sectionId: String): String = "period-levels/$sectionId"
+    fun periodLevelsOf(sectionId: String): String = periodLevelCellOf(sectionId, null, null)
+
+    fun periodLevelCellOf(sectionId: String, studentId: String?, competencyId: String?): String =
+        "period-levels/$sectionId?studentId=${studentId.orEmpty()}&competencyId=${competencyId.orEmpty()}"
 
     fun exportOf(sectionId: String): String = "export/$sectionId"
 

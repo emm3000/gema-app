@@ -169,7 +169,7 @@ val appModule: Module = module {
     factory<ApplySiagieImportUseCase> { ApplySiagieImportUseCase(get(), get(), get(), get(), get()) }
     factory<GetGradesTemplateNameUseCase> { GetGradesTemplateNameUseCase(get()) }
     factory<GetGradesExportPlanUseCase> { GetGradesExportPlanUseCase(get(), get()) }
-    factory<ExportGradesUseCase> { ExportGradesUseCase(get(), get(), get(), get()) }
+    factory<ExportGradesUseCase> { ExportGradesUseCase(get(), get(), get(), get(), get()) }
     factory<GetStudentsUseCase> { GetStudentsUseCase(get()) }
     factory<GetStudentUseCase> { GetStudentUseCase(get()) }
     factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }

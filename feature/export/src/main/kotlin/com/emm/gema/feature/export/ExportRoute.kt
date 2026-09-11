@@ -17,7 +17,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ExportRoute(
     sectionId: String,
-    onPeriodLevels: (String) -> Unit,
+    onPeriodLevelCell: (String, String, String) -> Unit,
     onStudents: (String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -33,7 +33,8 @@ fun ExportRoute(
         viewModel.effects.collectLatest { effect: ExportUiEffect ->
             when (effect) {
                 is ExportUiEffect.ShareFile -> context.shareExport(effect.path, effect.mimeType, shareTitle)
-                is ExportUiEffect.NavigateToPeriodLevels -> onPeriodLevels(effect.sectionId)
+                is ExportUiEffect.NavigateToPeriodLevelCell ->
+                    onPeriodLevelCell(effect.sectionId, effect.studentId, effect.competencyId)
                 is ExportUiEffect.NavigateToStudents -> onStudents(effect.sectionId)
                 is ExportUiEffect.ShowMessage -> snackbarHostState.showSnackbar(messages.getValue(effect.message))
                 ExportUiEffect.NavigateBack -> onBack()

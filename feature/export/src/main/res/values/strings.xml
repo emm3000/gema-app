@@ -4,6 +4,7 @@
     <string name="export_grades_title">Notas para SIAGIE</string>
     <string name="export_grades_unavailable">Esta sección no tiene una plantilla SIAGIE importada. Importa una desde Alumnos, o usa el resumen PDF/CSV.</string>
     <string name="export_grades_blocked">Faltan %1$d conclusiones descriptivas</string>
+    <string name="export_template_mismatch">La plantilla importada no tiene todo lo que hay que llenar: %1$s. Importa la plantilla que SIAGIE generó para esta sección.</string>
     <string name="export_import_template">Importar plantilla</string>
     <string name="export_generate_file">Generar archivo</string>
     <string name="export_file_name_note">El archivo conserva su nombre original.</string>

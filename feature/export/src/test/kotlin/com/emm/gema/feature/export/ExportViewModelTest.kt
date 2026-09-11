@@ -24,6 +24,7 @@ import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
+import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.google.common.truth.Truth.assertThat
@@ -68,6 +69,7 @@ class ExportViewModelTest {
     private val sectionAreas = FakeSectionAreaRepository()
     private val importStore = FakeSiagieImportStore()
     private val competencies = FakeCompetencyRepository(listOf(competency))
+    private val writer = FakeGradesWriter()
 
     @Test
     fun `a section without a stored template offers the import instead`() = runTest {
@@ -93,8 +95,7 @@ class ExportViewModelTest {
                 studentId = "student-1",
                 studentName = "ALVARADO QUISPE, MARIA",
                 competencyId = "COMU-1",
-                areaName = "Comunicación",
-                siagieOrdinal = 1,
+                competencyLabel = "Comunicación - 01",
             ),
         )
     }
@@ -117,7 +118,7 @@ class ExportViewModelTest {
     }
 
     @Test
-    fun `a gap row opens the period levels that fix it`() = runTest {
+    fun `a gap row opens the cell that fixes it`() = runTest {
         seedSection()
         storeTemplate()
         record(AchievementLevel.C, conclusion = "")
@@ -127,8 +128,35 @@ class ExportViewModelTest {
         viewModel.effects.test {
             viewModel.onIntent(ExportUiIntent.GapRowClicked(gap))
 
-            assertThat(awaitItem()).isEqualTo(ExportUiEffect.NavigateToPeriodLevels(SECTION_ID))
+            assertThat(awaitItem()).isEqualTo(
+                ExportUiEffect.NavigateToPeriodLevelCell(
+                    sectionId = SECTION_ID,
+                    studentId = "student-1",
+                    competencyId = "COMU-1",
+                ),
+            )
         }
+    }
+
+    @Test
+    fun `a template that cannot hold every level is reported instead of filled`() = runTest {
+        seedSection()
+        storeTemplate()
+        record(AchievementLevel.A, conclusion = "")
+        writer.unmapped = SiagieGradesWriteResult.Unmapped(
+            areas = listOf(Area.MATE),
+            studentCodes = listOf(StudentCode("10000000000001")),
+        )
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.onIntent(ExportUiIntent.ExportGradesClicked)
+
+        assertThat(viewModel.state.value.templateMismatch).isEqualTo(
+            TemplateMismatchUi(
+                areaNames = listOf("Matemática"),
+                studentNames = listOf("ALVARADO QUISPE, MARIA"),
+            ),
+        )
     }
 
     @Test
@@ -167,8 +195,9 @@ class ExportViewModelTest {
             exportGrades = ExportGradesUseCase(
                 getPlan = getPlan,
                 importStore = importStore,
-                writer = FakeGradesWriter(),
+                writer = writer,
                 exportStore = FakeExportStore(),
+                students = students,
             ),
         )
     }

@@ -19,6 +19,7 @@ import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
+import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.Student
@@ -168,7 +169,10 @@ class FakeSiagieImportStore : SiagieImportStore {
 
 class FakeGradesWriter : SiagieGradesWriter {
 
-    override fun write(template: ByteArray, entries: List<SiagieGradeEntry>): ByteArray = template
+    var unmapped: SiagieGradesWriteResult.Unmapped? = null
+
+    override fun write(template: ByteArray, entries: List<SiagieGradeEntry>): SiagieGradesWriteResult =
+        unmapped ?: SiagieGradesWriteResult.Written(template)
 }
 
 class FakeExportStore : SiagieExportStore {

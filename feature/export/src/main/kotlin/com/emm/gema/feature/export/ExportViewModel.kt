@@ -9,6 +9,7 @@ import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
 import com.emm.gema.core.domain.export.GradesExportPlan
 import com.emm.gema.core.domain.export.GradesExportResult
 import com.emm.gema.core.domain.export.SIAGIE_GRADES_MIME_TYPE
+import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
@@ -29,6 +30,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+
+private const val ORDINAL_DIGITS: Int = 2
 
 class ExportViewModel(
     private val sectionId: String,
@@ -58,7 +61,13 @@ class ExportViewModel(
         when (intent) {
             is ExportUiIntent.PeriodSelected -> selectPeriod(intent.periodId)
             ExportUiIntent.ExportGradesClicked -> generateFile()
-            is ExportUiIntent.GapRowClicked -> emit(ExportUiEffect.NavigateToPeriodLevels(sectionId))
+            is ExportUiIntent.GapRowClicked -> emit(
+                ExportUiEffect.NavigateToPeriodLevelCell(
+                    sectionId = sectionId,
+                    studentId = intent.row.studentId,
+                    competencyId = intent.row.competencyId,
+                ),
+            )
             ExportUiIntent.ImportTemplateClicked -> emit(ExportUiEffect.NavigateToStudents(sectionId))
             ExportUiIntent.BackClicked -> emit(ExportUiEffect.NavigateBack)
         }
@@ -115,7 +124,7 @@ class ExportViewModel(
         if (_state.value.isExporting) return
 
         viewModelScope.launch {
-            _state.value = _state.value.copy(isExporting = true)
+            _state.value = _state.value.copy(isExporting = true, templateMismatch = null)
             val result: Result<GradesExportResult> = runCatching { exportGrades(sectionId, periodId) }
             _state.value = _state.value.copy(isExporting = false)
             result
@@ -132,6 +141,14 @@ class ExportViewModel(
                     gradesExportState = GradesExportUiState.Blocked(result.gaps.map { it.toRow() }),
                 )
 
+            is GradesExportResult.TemplateMismatch ->
+                _state.value = _state.value.copy(
+                    templateMismatch = TemplateMismatchUi(
+                        areaNames = result.areas.map(Area::officialName),
+                        studentNames = result.studentNames,
+                    ),
+                )
+
             is GradesExportResult.Exported ->
                 emit(ExportUiEffect.ShareFile(path = result.file.path, mimeType = SIAGIE_GRADES_MIME_TYPE))
         }
@@ -146,6 +163,8 @@ private fun ExportGap.toRow(): ExportGapRow = ExportGapRow(
     studentId = studentId,
     studentName = studentName,
     competencyId = competency.id,
-    areaName = competency.area.officialName,
-    siagieOrdinal = competency.siagieOrdinal,
+    competencyLabel = competencyLabelOf(competency.area.officialName, competency.siagieOrdinal),
 )
+
+private fun competencyLabelOf(areaName: String, siagieOrdinal: Int): String =
+    "$areaName - ${siagieOrdinal.toString().padStart(ORDINAL_DIGITS, '0')}"

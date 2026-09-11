@@ -224,10 +224,22 @@ fun GemaNavHost(
         }
         composable(
             route = GemaRoutes.PERIOD_LEVELS,
-            arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
+            arguments = listOf(
+                navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType },
+                navArgument(GemaRoutes.STUDENT_ID) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+                navArgument(GemaRoutes.COMPETENCY_ID) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
         ) { entry ->
             PeriodLevelsRoute(
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                studentId = entry.arguments?.getString(GemaRoutes.STUDENT_ID),
+                competencyId = entry.arguments?.getString(GemaRoutes.COMPETENCY_ID),
                 onWorkedCompetencies = { sectionId, periodId, area ->
                     navController.navigate(GemaRoutes.workedCompetenciesOf(sectionId, periodId, area))
                 },
@@ -240,7 +252,11 @@ fun GemaNavHost(
         ) { entry ->
             ExportRoute(
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
-                onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
+                onPeriodLevelCell = { sectionId, studentId, competencyId ->
+                    navController.navigate(
+                        GemaRoutes.periodLevelCellOf(sectionId, studentId, competencyId),
+                    )
+                },
                 onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
                 onBack = { navController.popBackStack() },
             )

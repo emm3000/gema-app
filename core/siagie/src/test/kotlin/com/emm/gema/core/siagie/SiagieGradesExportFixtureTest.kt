@@ -119,6 +119,23 @@ class SiagieGradesExportFixtureTest {
     }
 
     @Test
+    fun `every cell of the edited sheet but the written ones stays as it was`() = runTest {
+        importFixture()
+        worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
+        record("student-1", Area.COMU, 1, AchievementLevel.AD, "Lee con fluidez")
+        record("student-2", Area.COMU, 1, AchievementLevel.B, "")
+
+        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+
+        val written: Set<String> = setOf("D4", "E4", "D5")
+        val before: Map<String, String> = XlsxTemplate(fixture()).readSheet("COMU")
+        val after: Map<String, String> = XlsxTemplate(File(exportedPath(result))).readSheet("COMU")
+        assertThat(after.filterKeys { it !in written }).containsExactlyEntriesIn(before)
+        assertThat(after.filterKeys { it in written })
+            .containsExactly("D4", "AD", "E4", "Lee con fluidez", "D5", "B")
+    }
+
+    @Test
     fun `a C without a descriptive conclusion blocks the whole file`() = runTest {
         importFixture()
         worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
@@ -153,6 +170,7 @@ class SiagieGradesExportFixtureTest {
         importStore = importStore,
         writer = XlsxSiagieGradesWriter(),
         exportStore = FileExportStore(temporaryFolder.root),
+        students = students,
     )
 
     private suspend fun importFixture() {

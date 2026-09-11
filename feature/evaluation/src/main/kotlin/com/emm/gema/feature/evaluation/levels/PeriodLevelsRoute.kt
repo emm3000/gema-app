@@ -20,8 +20,12 @@ fun PeriodLevelsRoute(
     onWorkedCompetencies: (String, String, Area) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    studentId: String? = null,
+    competencyId: String? = null,
 ) {
-    val viewModel: PeriodLevelsViewModel = koinViewModel { parametersOf(sectionId) }
+    val viewModel: PeriodLevelsViewModel = koinViewModel {
+        parametersOf(sectionId, studentId.orEmpty(), competencyId.orEmpty())
+    }
     val state: State<PeriodLevelsUiState> = viewModel.state.collectAsStateWithLifecycle()
     var message: String? by remember { mutableStateOf(null) }
 

@@ -1393,6 +1393,7 @@ data class ExportUiState(
     val selectedPeriodId: PeriodId? = null,
     val templateFileName: String? = null,
     val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
+    val templateMismatch: TemplateMismatchUi? = null,
     val isExporting: Boolean = false,
 )
 
@@ -1406,8 +1407,12 @@ data class ExportGapRow(
     val studentId: StudentId,
     val studentName: String,
     val competencyId: CompetencyId,
-    val areaName: String,
-    val siagieOrdinal: Int,
+    val competencyLabel: String,
+)
+
+data class TemplateMismatchUi(
+    val areaNames: List<String>,
+    val studentNames: List<String>,
 )
 ```
 
@@ -1419,12 +1424,19 @@ Intents: `PeriodSelected(periodId: PeriodId)`, `ExportGradesClicked`,
 `ExportCsvClicked`, `ImportTemplateClicked`, `BackClicked`.
 
 Effects: `ShareFile(path: String, mimeType: String)`,
-`NavigateToPeriodLevels(sectionId: SectionId)`,
+`NavigateToPeriodLevelCell(sectionId: SectionId, studentId: StudentId, competencyId: CompetencyId)`,
 `NavigateToStudents(sectionId: SectionId)`, `NavigateBack`,
 `ShowMessage(message: ExportMessage)`.
 
-A gap row opens the Period Levels grid for the Section; that grid owns the sheet
-that fixes the cell, so Export does not address the cell itself.
+A gap row opens Period Levels on that exact cell: the route carries `studentId`
+and `competencyId`, and Period Levels selects the Competency's Area and opens
+its `PeriodLevelSheet` as soon as the grid has loaded. Without those arguments
+the grid opens as before, on the current Period and the first active Area.
+
+`templateMismatch` is filled when the stored Template cannot hold everything the
+Period recorded — an active Area with no sheet, or a Student the Template does
+not carry. It reads as a warning banner in the grades card and no file is
+written (ADR 0018).
 
 Note: screen title is "Entregar", because that is the Teacher's goal, not the
 file format. Every blocking gap now lists as a tap-through row inside the

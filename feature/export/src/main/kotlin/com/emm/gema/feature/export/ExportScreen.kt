@@ -85,12 +85,24 @@ private fun GradesCard(
             text = stringResource(R.string.export_grades_title),
             style = MaterialTheme.typography.titleMedium,
         )
+        TemplateMismatchBanner(state.templateMismatch)
         when (val grades: GradesExportUiState = state.gradesExportState) {
             GradesExportUiState.Unavailable -> UnavailableGrades(onIntent = onIntent)
             GradesExportUiState.Ready -> ReadyGrades(state = state, onIntent = onIntent)
             is GradesExportUiState.Blocked -> BlockedGrades(state = state, gaps = grades.gaps, onIntent = onIntent)
         }
     }
+}
+
+@Composable
+private fun TemplateMismatchBanner(mismatch: TemplateMismatchUi?) {
+    if (mismatch == null) return
+    val missing: String = (mismatch.areaNames + mismatch.studentNames).joinToString(separator = ", ")
+
+    GBanner(
+        text = stringResource(R.string.export_template_mismatch, missing),
+        tone = GBannerTone.WARNING,
+    )
 }
 
 @Composable
@@ -135,7 +147,7 @@ private fun BlockedGrades(
     gaps.forEach { gap: ExportGapRow ->
         GListItem(
             title = gap.studentName,
-            subtitle = "${gap.areaName} - ${gap.siagieOrdinal.toString().padStart(2, '0')}",
+            subtitle = gap.competencyLabel,
             hasChevron = true,
             onClick = { onIntent(ExportUiIntent.GapRowClicked(gap)) },
         )
@@ -172,8 +184,7 @@ private fun ExportScreenPreview() {
                             studentId = "student-1",
                             studentName = "BAUTISTA QUISPE, JOSE",
                             competencyId = "PPSS-2",
-                            areaName = "Personal Social",
-                            siagieOrdinal = 2,
+                            competencyLabel = "Personal Social - 02",
                         ),
                     ),
                 ),
