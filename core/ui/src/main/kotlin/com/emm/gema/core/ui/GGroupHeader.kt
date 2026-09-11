@@ -21,16 +21,12 @@ import com.emm.gema.core.theme.GemaTheme
 @Composable
 fun GGroupHeader(
     title: String,
-    count: Int,
-    isExpanded: Boolean,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    count: Int? = null,
+    isExpanded: Boolean? = null,
+    onClick: (() -> Unit)? = null,
 ) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-    ) {
+    val content: @Composable () -> Unit = {
         Row(
             modifier = Modifier
                 .height(GemaSpacing.compactRowHeight)
@@ -39,15 +35,30 @@ fun GGroupHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             GText(
-                text = "$title ($count)",
+                text = if (count != null) "$title ($count)" else title,
                 style = GTextStyle.LABEL_SMALL_EMPHASIS,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Icon(
-                imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (isExpanded != null) {
+                Icon(
+                    imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+    if (onClick != null) {
+        Surface(
+            onClick = onClick,
+            modifier = modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+        ) {
+            content()
+        }
+    } else {
+        Surface(modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.surfaceVariant) {
+            content()
         }
     }
 }
@@ -57,5 +68,13 @@ fun GGroupHeader(
 private fun GGroupHeaderPreview() {
     GemaTheme {
         GGroupHeader(title = "RETIRADOS", count = 2, isExpanded = false, onClick = {})
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GGroupHeaderStaticPreview() {
+    GemaTheme {
+        GGroupHeader(title = "PERSONAL SOCIAL")
     }
 }

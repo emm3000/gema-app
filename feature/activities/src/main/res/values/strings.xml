@@ -9,4 +9,5 @@
     <string name="activity_evidence_subtitle">%1$s · %2$s</string>
     <string name="activity_evidence_edit_content_description">Editar actividad</string>
     <string name="activity_evidence_no_evidence_label">sin evidencia</string>
+    <string name="activity_form_subtitle">%1$s · %2$s</string>
 </resources>
