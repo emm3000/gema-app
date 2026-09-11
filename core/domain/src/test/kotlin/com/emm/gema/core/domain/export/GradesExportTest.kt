@@ -17,6 +17,7 @@ import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
+import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
@@ -178,6 +179,7 @@ class GradesExportTest {
         writer.unmapped = SiagieGradesWriteResult.Unmapped(
             areas = listOf(Area.MATE),
             studentCodes = listOf(StudentCode("10000000000002")),
+            competencies = emptyList(),
         )
 
         val result: GradesExportResult = exportGrades(SECTION_ID, PERIOD_ID)
@@ -186,6 +188,30 @@ class GradesExportTest {
             GradesExportResult.TemplateMismatch(
                 areas = listOf(Area.MATE),
                 studentNames = listOf("BAUTISTA HUAMAN, JOSE"),
+                competencies = emptyList(),
+            ),
+        )
+        assertThat(exportStore.written).isEmpty()
+    }
+
+    @Test
+    fun `a template missing a competency column blocks the export`() = runTest {
+        seedSection()
+        storeTemplate()
+        record("student-1", "COMU-1", AchievementLevel.A)
+        writer.unmapped = SiagieGradesWriteResult.Unmapped(
+            areas = emptyList(),
+            studentCodes = emptyList(),
+            competencies = listOf(SiagieCompetencyColumn(area = Area.COMU, siagieOrdinal = 1)),
+        )
+
+        val result: GradesExportResult = exportGrades(SECTION_ID, PERIOD_ID)
+
+        assertThat(result).isEqualTo(
+            GradesExportResult.TemplateMismatch(
+                areas = emptyList(),
+                studentNames = emptyList(),
+                competencies = listOf(SiagieCompetencyColumn(area = Area.COMU, siagieOrdinal = 1)),
             ),
         )
         assertThat(exportStore.written).isEmpty()

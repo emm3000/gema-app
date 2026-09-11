@@ -1,6 +1,7 @@
 package com.emm.gema.core.siagie
 
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
@@ -28,6 +29,7 @@ class XlsxSiagieGradesWriter : SiagieGradesWriter {
                 return SiagieGradesWriteResult.Unmapped(
                     areas = plan.missingAreas,
                     studentCodes = plan.missingStudentCodes,
+                    competencies = plan.missingCompetencies,
                 )
             }
             workbook.fill(target, plan.edits)
@@ -56,6 +58,7 @@ class XlsxSiagieGradesWriter : SiagieGradesWriter {
             edits = sheetPlans.mapValues { it.value.cells }.filterValues { it.isNotEmpty() },
             missingAreas = missingAreas,
             missingStudentCodes = sheetPlans.values.flatMap { it.missingStudentCodes }.distinct(),
+            missingCompetencies = sheetPlans.values.flatMap { it.missingCompetencies }.distinct(),
         )
     }
 
@@ -63,21 +66,26 @@ class XlsxSiagieGradesWriter : SiagieGradesWriter {
         val rows: Map<String, Int> = rowsByCode(cells)
         val columns: Map<Int, String> = columnsByOrdinal(cells)
         val edits: MutableMap<String, String> = LinkedHashMap()
-        val missing: MutableList<StudentCode> = mutableListOf()
+        val missingStudents: MutableList<StudentCode> = mutableListOf()
+        val missingColumns: MutableList<SiagieCompetencyColumn> = mutableListOf()
 
         entries.forEach { entry: SiagieGradeEntry ->
             val row: Int? = rows[entry.studentCode.value]
             val column: String? = columns[entry.siagieOrdinal]
-            if (row == null) {
-                missing.add(entry.studentCode)
-            } else if (column != null) {
+            if (row == null) missingStudents.add(entry.studentCode)
+            if (column == null) missingColumns.add(SiagieCompetencyColumn(entry.area, entry.siagieOrdinal))
+            if (row != null && column != null) {
                 edits["$column$row"] = entry.achievementValue
                 if (entry.descriptiveConclusion.isNotBlank()) {
                     edits["${nextColumn(column)}$row"] = entry.descriptiveConclusion
                 }
             }
         }
-        return SheetEdits(cells = edits, missingStudentCodes = missing)
+        return SheetEdits(
+            cells = edits,
+            missingStudentCodes = missingStudents,
+            missingCompetencies = missingColumns,
+        )
     }
 
     private fun rowsByCode(cells: Map<String, String>): Map<String, Int> = cells
@@ -125,13 +133,18 @@ private class SheetPlan(
     val edits: Map<String, Map<String, String>>,
     val missingAreas: List<Area>,
     val missingStudentCodes: List<StudentCode>,
+    val missingCompetencies: List<SiagieCompetencyColumn>,
 ) {
-    val isUnmapped: Boolean get() = missingAreas.isNotEmpty() || missingStudentCodes.isNotEmpty()
+    val isUnmapped: Boolean
+        get() = missingAreas.isNotEmpty() ||
+            missingStudentCodes.isNotEmpty() ||
+            missingCompetencies.isNotEmpty()
 }
 
 private class SheetEdits(
     val cells: Map<String, String>,
     val missingStudentCodes: List<StudentCode>,
+    val missingCompetencies: List<SiagieCompetencyColumn>,
 )
 
 private val competencyHeader: Regex = Regex("""Competencia\s+(\d{$ORDINAL_DIGITS})\s+NL""", RegexOption.IGNORE_CASE)

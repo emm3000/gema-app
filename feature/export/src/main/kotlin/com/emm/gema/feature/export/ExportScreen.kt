@@ -97,7 +97,8 @@ private fun GradesCard(
 @Composable
 private fun TemplateMismatchBanner(mismatch: TemplateMismatchUi?) {
     if (mismatch == null) return
-    val missing: String = (mismatch.areaNames + mismatch.studentNames).joinToString(separator = ", ")
+    val missing: String = (mismatch.areaNames + mismatch.competencyLabels + mismatch.studentNames)
+        .joinToString(separator = ", ")
 
     GBanner(
         text = stringResource(R.string.export_template_mismatch, missing),

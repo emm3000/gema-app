@@ -10,6 +10,7 @@ import com.emm.gema.core.domain.export.GradesExportPlan
 import com.emm.gema.core.domain.export.GradesExportResult
 import com.emm.gema.core.domain.export.SIAGIE_GRADES_MIME_TYPE
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
@@ -146,6 +147,9 @@ class ExportViewModel(
                     templateMismatch = TemplateMismatchUi(
                         areaNames = result.areas.map(Area::officialName),
                         studentNames = result.studentNames,
+                        competencyLabels = result.competencies.map { column: SiagieCompetencyColumn ->
+                            competencyLabelOf(column.area.officialName, column.siagieOrdinal)
+                        },
                     ),
                 )
 

@@ -12,10 +12,11 @@ result is `Blocked` with the full list of Student x Competency gaps, and the
 workbook writer is never called.
 
 The workbook writer answers with the same discipline. When an active Area has no
-sheet in the stored Template, or a Student with a recorded level is not in its
-roster, it returns those Areas and Student Codes instead of a file, and
-`ExportGradesUseCase` turns them into a `TemplateMismatch` naming the Areas and
-the Students. Filling what fits and dropping the rest would hand the Teacher a
+sheet in the stored Template, a Worked Competency has no `Competencia NN NL`
+column in that sheet, or a Student with a recorded level is not in its roster,
+it returns those Areas, Competencies and Student Codes instead of a file, and
+`ExportGradesUseCase` turns them into a `TemplateMismatch` naming the Areas, the
+Competencies and the Students. Filling what fits and dropping the rest would hand the Teacher a
 file that looks finished and is not.
 
 A recorded level reaches the file as it stands: `AD`, `A`, `B`, `C` or the
@@ -47,5 +48,5 @@ SIAGIE generated them.
 - A Section with no stored Imported Template reports `Unavailable` before
   validation runs at all; there is nothing to fill.
 - A Template that no longer matches the Section reports `TemplateMismatch` with
-  the Areas and Students it cannot hold; the fix is re-importing the Template
+  the Areas, Competencies and Students it cannot hold; the fix is re-importing the Template
   SIAGIE generated for that Section.

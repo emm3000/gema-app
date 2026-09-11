@@ -1413,6 +1413,7 @@ data class ExportGapRow(
 data class TemplateMismatchUi(
     val areaNames: List<String>,
     val studentNames: List<String>,
+    val competencyLabels: List<String>,
 )
 ```
 
@@ -1434,8 +1435,8 @@ its `PeriodLevelSheet` as soon as the grid has loaded. Without those arguments
 the grid opens as before, on the current Period and the first active Area.
 
 `templateMismatch` is filled when the stored Template cannot hold everything the
-Period recorded — an active Area with no sheet, or a Student the Template does
-not carry. It reads as a warning banner in the grades card and no file is
+Period recorded — an active Area with no sheet, a Worked Competency with no
+column in that sheet, or a Student the Template does not carry. It reads as a warning banner in the grades card and no file is
 written (ADR 0018).
 
 Note: screen title is "Entregar", because that is the Teacher's goal, not the
