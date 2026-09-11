@@ -11,8 +11,13 @@ import com.emm.gema.core.domain.backup.BackupValidation
 import com.emm.gema.core.domain.backup.ValidateBackupUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.google.common.truth.Truth.assertThat
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -20,10 +25,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SqliteBackupStoreTest {
@@ -107,11 +108,7 @@ class SqliteBackupStoreTest {
             driver = driver,
             database = GemaDb(driver),
             backupDirectory = backupDirectory,
-            store = SqliteBackupStore(
-                driver = driver,
-                databaseFile = databaseFile,
-                backupDirectory = backupDirectory,
-            ),
+            store = SqliteBackupStore(driver = driver, databaseFile = databaseFile, backupDirectory = backupDirectory),
         )
     }
 
@@ -130,7 +127,7 @@ class SqliteBackupStoreTest {
         suspend fun createSchoolYear(startDate: LocalDate, endDate: LocalDate, periodKind: PeriodKind) {
             repository.save(
                 SchoolYear(
-                    id = UuidIdGenerator().newId(),
+                    id = SchoolYearId(UuidIdGenerator().newId()),
                     label = startDate.year.toString(),
                     startDate = startDate,
                     endDate = endDate,

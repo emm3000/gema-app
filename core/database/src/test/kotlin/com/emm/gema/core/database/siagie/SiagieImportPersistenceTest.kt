@@ -4,11 +4,13 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.student.SqlDelightStudentRepository
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.google.common.truth.Truth.assertThat
 import java.time.Instant
@@ -17,7 +19,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private val importedAt: Instant = Instant.parse("2026-09-10T12:00:00Z")
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,10 +34,10 @@ class SiagieImportPersistenceTest {
 
     @Test
     fun `an applied import stores the students and the template together`() = runTest {
-        store.apply(listOf(studentOf("student-1", "10000000000001")), templateOf())
+        store.apply(listOf(studentOf(firstStudentId, "10000000000001")), templateOf())
 
-        assertThat(students.listBySection(SECTION_ID).map { it.id }).containsExactly("student-1")
-        val stored: ImportedTemplate = requireNotNull(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES))
+        assertThat(students.listBySection(sectionId).map { it.id }).containsExactly(firstStudentId)
+        val stored: ImportedTemplate = requireNotNull(store.findTemplate(sectionId, ImportedTemplateKind.GRADES))
         assertThat(stored.fileName).isEqualTo("6 Primaria EBR.xlsx")
         assertThat(stored.content).isEqualTo(byteArrayOf(1, 2, 3))
         assertThat(stored.importedAt).isEqualTo(importedAt)
@@ -45,26 +47,26 @@ class SiagieImportPersistenceTest {
     fun `a failing import writes neither students nor template`() = runTest {
         rejectEveryTemplate()
 
-        runCatching { store.apply(listOf(studentOf("student-1", "10000000000001")), templateOf()) }
+        runCatching { store.apply(listOf(studentOf(firstStudentId, "10000000000001")), templateOf()) }
 
-        assertThat(students.listBySection(SECTION_ID)).isEmpty()
+        assertThat(students.listBySection(sectionId)).isEmpty()
     }
 
     @Test
     fun `one transaction creates a new student and updates an existing one`() = runTest {
-        store.apply(listOf(studentOf("student-1", "10000000000001")), templateOf())
+        store.apply(listOf(studentOf(firstStudentId, "10000000000001")), templateOf())
 
         store.apply(
             listOf(
-                studentOf("student-1", "10000000000001", "ALVARADO QUISPE, MARIA FERNANDA"),
-                studentOf("student-2", "10000000000002"),
+                studentOf(firstStudentId, "10000000000001", "ALVARADO QUISPE, MARIA FERNANDA"),
+                studentOf(secondStudentId, "10000000000002"),
             ),
             templateOf(),
         )
 
-        val stored: List<Student> = students.listBySection(SECTION_ID)
-        assertThat(stored.map { it.id }).containsExactly("student-1", "student-2")
-        assertThat(stored.single { it.id == "student-1" }.fullName)
+        val stored: List<Student> = students.listBySection(sectionId)
+        assertThat(stored.map { it.id }).containsExactly(firstStudentId, secondStudentId)
+        assertThat(stored.single { it.id == firstStudentId }.fullName)
             .isEqualTo("ALVARADO QUISPE, MARIA FERNANDA")
     }
 
@@ -74,7 +76,7 @@ class SiagieImportPersistenceTest {
 
         store.apply(emptyList(), templateOf(fileName = "3 Primaria EBR.xlsx"))
 
-        val stored: ImportedTemplate = requireNotNull(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES))
+        val stored: ImportedTemplate = requireNotNull(store.findTemplate(sectionId, ImportedTemplateKind.GRADES))
         assertThat(stored.fileName).isEqualTo("3 Primaria EBR.xlsx")
     }
 
@@ -84,9 +86,9 @@ class SiagieImportPersistenceTest {
 
         store.apply(emptyList(), templateOf(kind = ImportedTemplateKind.ATTENDANCE, fileName = "Asistencia.xls"))
 
-        assertThat(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES)?.fileName)
+        assertThat(store.findTemplate(sectionId, ImportedTemplateKind.GRADES)?.fileName)
             .isEqualTo("6 Primaria EBR.xlsx")
-        assertThat(store.findTemplate(SECTION_ID, ImportedTemplateKind.ATTENDANCE)?.fileName)
+        assertThat(store.findTemplate(sectionId, ImportedTemplateKind.ATTENDANCE)?.fileName)
             .isEqualTo("Asistencia.xls")
     }
 
@@ -94,9 +96,9 @@ class SiagieImportPersistenceTest {
     fun `clearing a section drops its imported templates`() = runTest {
         store.apply(emptyList(), templateOf())
 
-        store.clearSection(SECTION_ID)
+        store.clearSection(sectionId)
 
-        assertThat(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES)).isNull()
+        assertThat(store.findTemplate(sectionId, ImportedTemplateKind.GRADES)).isNull()
     }
 
     private fun rejectEveryTemplate() {
@@ -114,7 +116,7 @@ class SiagieImportPersistenceTest {
         kind: ImportedTemplateKind = ImportedTemplateKind.GRADES,
         fileName: String = "6 Primaria EBR.xlsx",
     ): ImportedTemplate = ImportedTemplate(
-        sectionId = SECTION_ID,
+        sectionId = sectionId,
         kind = kind,
         fileName = fileName,
         content = byteArrayOf(1, 2, 3),
@@ -122,13 +124,17 @@ class SiagieImportPersistenceTest {
     )
 
     private fun studentOf(
-        id: String,
+        id: StudentId,
         code: String,
         fullName: String = "ALVARADO QUISPE, MARIA",
     ): Student = Student(
         id = id,
-        sectionId = SECTION_ID,
+        sectionId = sectionId,
         code = StudentCode(code),
         fullName = fullName,
     )
 }
+
+private val firstStudentId: StudentId = StudentId("student-1")
+
+private val secondStudentId: StudentId = StudentId("student-2")

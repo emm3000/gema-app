@@ -3,19 +3,22 @@ package com.emm.gema.core.database.curriculum
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.inMemoryGemaDb
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
 import com.emm.gema.core.domain.curriculum.PrimaryCurriculum
 import com.emm.gema.core.domain.curriculum.SeedCurriculumUseCase
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.SectionId
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-1")
 
 class CurriculumPersistenceTest {
 
@@ -58,47 +61,54 @@ class CurriculumPersistenceTest {
     @Test
     fun `a marked competency survives a read back`() = runTest {
         seedCurriculum()
-        val target: String = Competency.idOf(Area.PPSS, 3)
+        val target: CompetencyId = Competency.idOf(Area.PPSS, 3)
 
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
 
-        assertThat(workedCompetencyRepository.observeWorked(SECTION_ID, PERIOD_ID).first()).containsExactly(target)
+        assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).containsExactly(target)
     }
 
     @Test
     fun `marking the same competency twice writes one row`() = runTest {
         seedCurriculum()
-        val target: String = Competency.idOf(Area.PPSS, 3)
+        val target: CompetencyId = Competency.idOf(Area.PPSS, 3)
 
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
 
-        assertThat(workedCompetencyRepository.observeWorked(SECTION_ID, PERIOD_ID).first()).hasSize(1)
+        assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).hasSize(1)
     }
 
     @Test
     fun `unmarking a competency removes only that row`() = runTest {
         seedCurriculum()
-        val kept: String = Competency.idOf(Area.PPSS, 1)
-        val dropped: String = Competency.idOf(Area.PPSS, 2)
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, kept, isWorked = true)
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, dropped, isWorked = true)
+        val kept: CompetencyId = Competency.idOf(Area.PPSS, 1)
+        val dropped: CompetencyId = Competency.idOf(Area.PPSS, 2)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(kept.value), isWorked = true)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(dropped.value), isWorked = true)
 
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, dropped, isWorked = false)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(dropped.value), isWorked = false)
 
-        assertThat(workedCompetencyRepository.observeWorked(SECTION_ID, PERIOD_ID).first()).containsExactly(kept)
+        assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).containsExactly(kept)
     }
 
     @Test
     fun `clearing a section leaves the other sections alone`() = runTest {
         seedCurriculum()
-        val target: String = Competency.idOf(Area.MATE, 1)
-        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, target, isWorked = true)
-        workedCompetencyRepository.setWorked("section-2", PERIOD_ID, target, isWorked = true)
+        val target: CompetencyId = Competency.idOf(Area.MATE, 1)
+        workedCompetencyRepository.setWorked(sectionId, periodId, CompetencyId(target.value), isWorked = true)
+        workedCompetencyRepository.setWorked(
+            SectionId("section-2"),
+            periodId,
+            CompetencyId(target.value),
+            isWorked = true,
+        )
 
-        workedCompetencyRepository.clearSection(SECTION_ID)
+        workedCompetencyRepository.clearSection(sectionId)
 
-        assertThat(workedCompetencyRepository.observeWorked(SECTION_ID, PERIOD_ID).first()).isEmpty()
-        assertThat(workedCompetencyRepository.observeWorked("section-2", PERIOD_ID).first()).containsExactly(target)
+        assertThat(workedCompetencyRepository.observeWorked(sectionId, periodId).first()).isEmpty()
+        val otherSectionId = SectionId("section-2")
+        val other: Set<CompetencyId> = workedCompetencyRepository.observeWorked(otherSectionId, periodId).first()
+        assertThat(other).containsExactly(target)
     }
 }

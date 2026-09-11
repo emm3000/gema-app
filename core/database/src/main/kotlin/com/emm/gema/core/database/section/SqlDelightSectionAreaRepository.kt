@@ -6,6 +6,7 @@ import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.SectionHiddenAreaQueries
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,22 +20,22 @@ class SqlDelightSectionAreaRepository(
 
     private val queries: SectionHiddenAreaQueries = database.sectionHiddenAreaQueries
 
-    override fun observeHiddenAreas(sectionId: String): Flow<Set<Area>> = queries.selectBySection(sectionId)
+    override fun observeHiddenAreas(sectionId: SectionId): Flow<Set<Area>> = queries.selectBySection(sectionId.value)
         .asFlow()
         .mapToList(dispatcher)
         .map { rows -> rows.mapNotNullTo(mutableSetOf()) { it.toAreaOrNull() } }
 
-    override suspend fun setAreaHidden(sectionId: String, area: Area, isHidden: Boolean): Unit =
+    override suspend fun setAreaHidden(sectionId: SectionId, area: Area, isHidden: Boolean): Unit =
         withContext(dispatcher) {
             if (isHidden) {
-                queries.insert(section_id = sectionId, area = area.name)
+                queries.insert(section_id = sectionId.value, area = area.name)
             } else {
-                queries.delete(section_id = sectionId, area = area.name)
+                queries.delete(section_id = sectionId.value, area = area.name)
             }
         }
 
-    override suspend fun clearSection(sectionId: String): Unit = withContext(dispatcher) {
-        queries.deleteBySection(sectionId)
+    override suspend fun clearSection(sectionId: SectionId): Unit = withContext(dispatcher) {
+        queries.deleteBySection(sectionId.value)
     }
 
     private fun String.toAreaOrNull(): Area? = Area.entries.find { it.name == this }

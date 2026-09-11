@@ -1,6 +1,7 @@
 package com.emm.gema.core.siagie
 
 import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevel
@@ -8,8 +9,10 @@ import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
 import com.emm.gema.core.domain.export.ExportedFile
 import com.emm.gema.core.domain.export.SiagieExportStore
+import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionId
 import java.io.File
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,20 +29,20 @@ class FakeCompetencyRepository(private val competencies: List<Competency>) : Com
 
 class FakeWorkedCompetencyRepository : WorkedCompetencyRepository {
 
-    private val worked: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
+    private val worked: MutableStateFlow<Set<CompetencyId>> = MutableStateFlow(emptySet())
 
-    override fun observeWorked(sectionId: String, periodId: String): Flow<Set<String>> = worked
+    override fun observeWorked(sectionId: SectionId, periodId: PeriodId): Flow<Set<CompetencyId>> = worked
 
     override suspend fun setWorked(
-        sectionId: String,
-        periodId: String,
-        competencyId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
+        competencyId: CompetencyId,
         isWorked: Boolean,
     ) {
         worked.value = if (isWorked) worked.value + competencyId else worked.value - competencyId
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         worked.value = emptySet()
     }
 }
@@ -48,13 +51,13 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
 
     private val levels: MutableStateFlow<List<PeriodLevel>> = MutableStateFlow(emptyList())
 
-    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<PeriodLevel>> = levels
+    override fun observeByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<List<PeriodLevel>> = levels
         .map { stored -> stored.filter { it.key.sectionId == sectionId && it.key.periodId == periodId } }
 
-    override fun observeRecordedCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
+    override fun observeRecordedCountsByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<Map<CompetencyId, Int>> =
         MutableStateFlow(emptyMap())
 
-    override fun observeRecordedCountsBySection(sectionId: String): Flow<Map<String, Int>> =
+    override fun observeRecordedCountsBySection(sectionId: SectionId): Flow<Map<CompetencyId, Int>> =
         MutableStateFlow(emptyMap())
 
     override suspend fun find(key: PeriodLevelKey): PeriodLevel? = levels.value.find { it.key == key }
@@ -67,7 +70,7 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
         levels.value = levels.value.filterNot { it.key == key }
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         levels.value = levels.value.filterNot { it.key.sectionId == sectionId }
     }
 }
@@ -76,13 +79,13 @@ class FakeSectionAreaRepository : SectionAreaRepository {
 
     private val hidden: MutableStateFlow<Set<Area>> = MutableStateFlow(emptySet())
 
-    override fun observeHiddenAreas(sectionId: String): Flow<Set<Area>> = hidden
+    override fun observeHiddenAreas(sectionId: SectionId): Flow<Set<Area>> = hidden
 
-    override suspend fun setAreaHidden(sectionId: String, area: Area, isHidden: Boolean) {
+    override suspend fun setAreaHidden(sectionId: SectionId, area: Area, isHidden: Boolean) {
         hidden.value = if (isHidden) hidden.value + area else hidden.value - area
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         hidden.value = emptySet()
     }
 }
