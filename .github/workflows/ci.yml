@@ -1,6 +1,9 @@
-name: PR Checks
+name: CI
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -8,8 +11,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: pr-checks-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   checks:
@@ -41,6 +44,7 @@ jobs:
       - name: Build, test and lint
         run: >-
           ./gradlew
+          checkModuleBoundaries
           detekt
           testDebugUnitTest
           assembleDebug
