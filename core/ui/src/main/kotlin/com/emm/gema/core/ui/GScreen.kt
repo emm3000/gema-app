@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -26,6 +27,7 @@ fun GScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState? = null,
     bottomAction: (@Composable () -> Unit)? = null,
+    fab: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -42,6 +44,8 @@ fun GScreen(
                 }
             }
         },
+        floatingActionButton = { fab?.invoke() },
+        floatingActionButtonPosition = FabPosition.End,
         snackbarHost = { snackbarHostState?.let { state -> SnackbarHost(hostState = state) } },
         containerColor = MaterialTheme.colorScheme.surface,
     ) { scaffoldPadding ->
