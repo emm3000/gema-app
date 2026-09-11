@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -29,43 +27,31 @@ fun GListItem(
     leadingText: String? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
-    isExpanded: Boolean? = null,
     showDivider: Boolean = true,
-    titleStyle: GTextStyle = GTextStyle.BODY_LARGE,
-    isEmphasized: Boolean = false,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    val containerColor = if (isEmphasized) {
-        MaterialTheme.colorScheme.surfaceVariant
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
     if (onClick != null) {
-        Surface(onClick = onClick, modifier = modifier, color = containerColor) {
+        Surface(onClick = onClick, modifier = modifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
                 subtitle = subtitle,
                 leadingText = leadingText,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
-                isExpanded = isExpanded,
                 showDivider = showDivider,
-                titleStyle = titleStyle,
                 trailing = trailing,
             )
         }
     } else {
-        Surface(modifier = modifier, color = containerColor) {
+        Surface(modifier = modifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
                 subtitle = subtitle,
                 leadingText = leadingText,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
-                isExpanded = isExpanded,
                 showDivider = showDivider,
-                titleStyle = titleStyle,
                 trailing = trailing,
             )
         }
@@ -79,9 +65,7 @@ private fun GListItemBody(
     leadingText: String?,
     trailingText: String?,
     hasChevron: Boolean,
-    isExpanded: Boolean?,
     showDivider: Boolean,
-    titleStyle: GTextStyle,
     trailing: (@Composable () -> Unit)?,
 ) {
     val subtitleContent: (@Composable () -> Unit)? = subtitle?.let { text ->
@@ -106,7 +90,6 @@ private fun GListItemBody(
     val trailingContent: (@Composable () -> Unit)? = gListItemTrailing(
         trailingText = trailingText,
         hasChevron = hasChevron,
-        isExpanded = isExpanded,
         trailing = trailing,
     )
 
@@ -116,7 +99,7 @@ private fun GListItemBody(
             headlineContent = {
                 Text(
                     text = title,
-                    style = titleStyle.toTextStyle(),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
             },
@@ -132,11 +115,9 @@ private fun GListItemBody(
 private fun gListItemTrailing(
     trailingText: String?,
     hasChevron: Boolean,
-    isExpanded: Boolean?,
     trailing: (@Composable () -> Unit)?,
 ): (@Composable () -> Unit)? {
-    val hasTrailingContent: Boolean = trailingText != null || hasChevron || isExpanded != null || trailing != null
-    if (!hasTrailingContent) return null
+    if (trailingText == null && !hasChevron && trailing == null) return null
     return {
         Row(
             horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
@@ -153,13 +134,6 @@ private fun gListItemTrailing(
             if (hasChevron) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (isExpanded != null) {
-                Icon(
-                    imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

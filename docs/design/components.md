@@ -56,7 +56,7 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GDialog` | `AlertDialog` | delete section, restore backup, apply import | built |
 | `GBottomSheet` | `ModalBottomSheet` | period level sheet | built |
 | `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors, export period | built |
-| `GSearchField` | `OutlinedTextField` | students | built |
+| `GSearchField` | `BasicTextField` | students | built |
 | `GExtendedFab` | `ExtendedFloatingActionButton` | students, sections, school years, activities | built |
 | `GGroupHeader` | `Surface` + `Text` | students | built |
 | `GYearCard` | `Surface` + `Text` | school years | built |
@@ -765,8 +765,10 @@ fun GSearchField(
 )
 ```
 
-Wraps `OutlinedTextField` with a leading search icon and a clear action. Tokens:
-`GemaShapes.pill`, `surfaceVariant` fill, inherited field tokens.
+Wraps `BasicTextField` in a pill `Surface`, with a leading search icon and a
+clear action — `OutlinedTextField`'s label padding cannot hit the mockup's
+48dp height. Tokens: `GemaSpacing.minimumTouchTarget`, `GemaShapes.pill`,
+`surfaceVariant` fill.
 
 It is a separate component from `GTextField` only because the clear affordance
 and the pill shape are search conventions, and because filtering is local and
@@ -792,6 +794,26 @@ screen (Students, Sections, School Years, Activities) — floats bottom-end via
 `bottomAction` are mutually exclusive on `GScreen`. Tokens:
 `GemaSpacing.fabHeight`, `GemaShapes.container`, `primaryContainer` /
 `onPrimaryContainer`.
+
+---
+
+### GGroupHeader
+
+```kotlin
+@Composable
+fun GGroupHeader(
+    title: String,
+    count: Int,
+    isExpanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+)
+```
+
+Wraps `Surface` + `GText`. A tinted, full-bleed, tappable divider between a
+list's primary rows and a collapsed secondary group — Students' withdrawn
+roster today. Tokens: `GemaSpacing.compactRowHeight`, `surfaceVariant` /
+`onSurfaceVariant`, `GTextStyle.LABEL_SMALL_EMPHASIS`.
 
 ---
 
