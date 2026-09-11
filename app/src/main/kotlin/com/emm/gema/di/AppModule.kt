@@ -15,6 +15,7 @@ import com.emm.gema.core.database.curriculum.SqlDelightCompetencyRepository
 import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
 import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
+import com.emm.gema.core.database.section.SqlDelightSectionCascade
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.setup.SqlDelightSetupRepository
 import com.emm.gema.core.database.siagie.CacheSiagieExportStore
@@ -87,6 +88,7 @@ import com.emm.gema.core.domain.section.GetSectionCountsUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionCascade
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
@@ -134,6 +136,7 @@ val appModule: Module = module {
     single<PeriodRepository> { SqlDelightPeriodRepository(get()) }
     single<SectionRepository> { SqlDelightSectionRepository(get()) }
     single<SectionAreaRepository> { SqlDelightSectionAreaRepository(get()) }
+    single<SectionCascade> { SqlDelightSectionCascade(get()) }
     single<ActiveSchoolYearRepository> { SqlDelightActiveSchoolYearRepository(get()) }
     single<SetupRepository> { SqlDelightSetupRepository(get()) }
     single<CompetencyRepository> { SqlDelightCompetencyRepository(get()) }
@@ -169,9 +172,7 @@ val appModule: Module = module {
     factory<GetSchoolYearUseCase> { GetSchoolYearUseCase(get()) }
     factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
     factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
-    factory<DeleteSectionUseCase> {
-        DeleteSectionUseCase(get(), get(), get(), get(), get(), get(), get(), get(), get())
-    }
+    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get()) }
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
     factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }

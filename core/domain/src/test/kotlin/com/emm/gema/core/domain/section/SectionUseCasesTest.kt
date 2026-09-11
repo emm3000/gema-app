@@ -5,6 +5,7 @@ import com.emm.gema.core.domain.fake.InMemoryAttendanceRepository
 import com.emm.gema.core.domain.fake.InMemoryEvidenceLevelRepository
 import com.emm.gema.core.domain.fake.InMemoryPeriodLevelRepository
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
+import com.emm.gema.core.domain.fake.InMemorySectionCascade
 import com.emm.gema.core.domain.fake.InMemorySectionRepository
 import com.emm.gema.core.domain.fake.InMemorySiagieImportStore
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
@@ -30,15 +31,17 @@ class SectionUseCasesTest {
     private val attendanceRepository = InMemoryAttendanceRepository()
     private val activityRepository = InMemoryActivityRepository()
     private val deleteSection = DeleteSectionUseCase(
-        sectionRepository,
-        sectionAreaRepository,
-        workedCompetencyRepository,
-        studentRepository,
-        siagieImportStore,
-        InMemoryPeriodLevelRepository(),
-        attendanceRepository,
-        activityRepository,
-        InMemoryEvidenceLevelRepository(activityRepository),
+        InMemorySectionCascade(
+            sectionRepository,
+            sectionAreaRepository,
+            workedCompetencyRepository,
+            studentRepository,
+            siagieImportStore,
+            InMemoryPeriodLevelRepository(),
+            attendanceRepository,
+            activityRepository,
+            InMemoryEvidenceLevelRepository(activityRepository),
+        ),
     )
     private val getSections = GetSectionsUseCase(sectionRepository)
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)

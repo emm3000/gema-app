@@ -1,16 +1,14 @@
 package com.emm.gema.core.database.setup
 
 import com.emm.gema.core.database.GemaDb
-import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.UuidIdGenerator
-import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.inMemoryGemaDb
 import com.emm.gema.core.database.schoolyear.SqlDelightActiveSchoolYearRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightPeriodRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightSchoolYearRepository
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
+import com.emm.gema.core.database.section.SqlDelightSectionCascade
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
-import com.emm.gema.core.database.student.SqlDelightStudentRepository
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -26,13 +24,7 @@ import com.emm.gema.core.domain.schoolyear.PeriodDates
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.CreateSectionUseCase
-import com.emm.gema.core.database.activity.SqlDelightActivityRepository
-import com.emm.gema.core.database.activity.SqlDelightEvidenceLevelRepository
-import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
-import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
-import com.emm.gema.core.database.attendance.SqlDelightAttendanceRepository
-import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Grade
@@ -43,7 +35,6 @@ import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.setup.CompleteSetupRequest
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
-import com.emm.gema.core.domain.student.StudentRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -64,13 +55,9 @@ class SetupPersistenceTest {
     private val periodRepository: PeriodRepository = SqlDelightPeriodRepository(database, dispatcher)
     private val sectionRepository: SectionRepository = SqlDelightSectionRepository(database, dispatcher)
     private val sectionAreaRepository: SectionAreaRepository = SqlDelightSectionAreaRepository(database, dispatcher)
-    private val workedCompetencyRepository: WorkedCompetencyRepository =
-        SqlDelightWorkedCompetencyRepository(database, dispatcher)
     private val activeSchoolYearRepository: ActiveSchoolYearRepository =
         SqlDelightActiveSchoolYearRepository(database, dispatcher)
     private val setupRepository: SetupRepository = SqlDelightSetupRepository(database, dispatcher)
-    private val studentRepository: StudentRepository = SqlDelightStudentRepository(database, dispatcher)
-    private val attendanceRepository: AttendanceRepository = SqlDelightAttendanceRepository(database, dispatcher)
 
     private val completeSetup = CompleteSetupUseCase(setupRepository, UuidIdGenerator())
     private val getSchoolYears = GetSchoolYearsUseCase(schoolYearRepository)
@@ -79,17 +66,7 @@ class SetupPersistenceTest {
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)
     private val setAreaVisibility = SetAreaVisibilityUseCase(sectionAreaRepository)
     private val createSection = CreateSectionUseCase(sectionRepository, UuidIdGenerator())
-    private val deleteSection = DeleteSectionUseCase(
-        sectionRepository,
-        sectionAreaRepository,
-        workedCompetencyRepository,
-        studentRepository,
-        SqlDelightSiagieImportStore(database, dispatcher),
-        SqlDelightPeriodLevelRepository(database, dispatcher),
-        attendanceRepository,
-        SqlDelightActivityRepository(database, dispatcher),
-        SqlDelightEvidenceLevelRepository(database, dispatcher),
-    )
+    private val deleteSection = DeleteSectionUseCase(SqlDelightSectionCascade(database, dispatcher))
     private val switchSchoolYear = SwitchSchoolYearUseCase(activeSchoolYearRepository)
     private val getActiveSchoolYear = GetActiveSchoolYearUseCase(activeSchoolYearRepository, schoolYearRepository)
     private val updatePeriods = UpdatePeriodsUseCase(periodRepository, schoolYearRepository)

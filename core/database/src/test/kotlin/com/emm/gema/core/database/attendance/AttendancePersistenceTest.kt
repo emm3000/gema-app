@@ -2,13 +2,8 @@ package com.emm.gema.core.database.attendance
 
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
-import com.emm.gema.core.database.activity.SqlDelightActivityRepository
-import com.emm.gema.core.database.activity.SqlDelightEvidenceLevelRepository
-import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
-import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
-import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.inMemoryGemaDb
-import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
+import com.emm.gema.core.database.section.SqlDelightSectionCascade
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.student.SqlDelightStudentRepository
 import com.emm.gema.core.domain.attendance.AttendanceEntry
@@ -20,12 +15,10 @@ import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
 import com.emm.gema.core.domain.attendance.MonthlyAttendanceSummary
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
 import com.emm.gema.core.domain.attendance.StudentAttendanceMonthCount
-import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.Student
@@ -54,11 +47,8 @@ class AttendancePersistenceTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val database: GemaDb = inMemoryGemaDb()
     private val sectionRepository: SectionRepository = SqlDelightSectionRepository(database, dispatcher)
-    private val sectionAreaRepository: SectionAreaRepository = SqlDelightSectionAreaRepository(database, dispatcher)
     private val studentRepository: StudentRepository = SqlDelightStudentRepository(database, dispatcher)
     private val attendanceRepository: AttendanceRepository = SqlDelightAttendanceRepository(database, dispatcher)
-    private val workedCompetencyRepository: WorkedCompetencyRepository =
-        SqlDelightWorkedCompetencyRepository(database, dispatcher)
 
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
     private val createSection = CreateSectionUseCase(sectionRepository, UuidIdGenerator())
@@ -68,17 +58,7 @@ class AttendancePersistenceTest {
     private val recordAttendance = RecordAttendanceUseCase(attendanceRepository, clock)
     private val countAttendanceDays = CountAttendanceDaysUseCase(attendanceRepository)
     private val getMonthlySummary = GetMonthlyAttendanceSummaryUseCase(studentRepository, attendanceRepository)
-    private val deleteSection = DeleteSectionUseCase(
-        sectionRepository,
-        sectionAreaRepository,
-        workedCompetencyRepository,
-        studentRepository,
-        SqlDelightSiagieImportStore(database, dispatcher),
-        SqlDelightPeriodLevelRepository(database, dispatcher),
-        attendanceRepository,
-        SqlDelightActivityRepository(database, dispatcher),
-        SqlDelightEvidenceLevelRepository(database, dispatcher),
-    )
+    private val deleteSection = DeleteSectionUseCase(SqlDelightSectionCascade(database, dispatcher))
 
     @Test
     fun `a status survives a read back on its own date`() = runTest {
