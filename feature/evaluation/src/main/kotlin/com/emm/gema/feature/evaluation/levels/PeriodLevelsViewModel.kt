@@ -212,7 +212,6 @@ class PeriodLevelsViewModel(
                     achievementLevel = stored.achievementLevel,
                     unworkedComment = stored.unworkedComment,
                     descriptiveConclusion = stored.descriptiveConclusion,
-                    isConclusionRequiredForExport = stored.achievementLevel == AchievementLevel.C,
                     evidence = context.evidence.map { it.toRow() },
                 ),
             )
@@ -231,7 +230,6 @@ class PeriodLevelsViewModel(
                     achievementLevel = updated.achievementLevel,
                     unworkedComment = updated.unworkedComment,
                     descriptiveConclusion = updated.descriptiveConclusion,
-                    isConclusionRequiredForExport = updated.achievementLevel == AchievementLevel.C,
                 ),
             )
             persist(updated)
