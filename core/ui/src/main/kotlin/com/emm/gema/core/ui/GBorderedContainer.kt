@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
@@ -33,13 +34,27 @@ fun GBorderedContainer(
 private fun GBorderedContainerPreview() {
     GemaTheme {
         GBorderedContainer {
-            GExpandableGroupRow(title = "Se crearán", count = 4, isExpanded = false, onClick = {})
-            GExpandableGroupRow(
+            GGroupHeader(
+                title = "Se crearán",
+                count = 4,
+                isExpanded = false,
+                onClick = {},
+                titleStyle = GTextStyle.BODY_LARGE,
+                titleColor = Color.Unspecified,
+                containerColor = MaterialTheme.colorScheme.surface,
+                countInTitle = false,
+                showDivider = true,
+            )
+            GGroupHeader(
                 title = "Se actualizarán",
                 count = 26,
                 isExpanded = false,
-                showDivider = false,
                 onClick = {},
+                titleStyle = GTextStyle.BODY_LARGE,
+                titleColor = Color.Unspecified,
+                containerColor = MaterialTheme.colorScheme.surface,
+                countInTitle = false,
+                showDivider = false,
             )
         }
     }
