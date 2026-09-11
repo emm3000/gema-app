@@ -3,13 +3,13 @@
 
     <application>
         <provider
-            android:name="com.emm.gema.feature.attendance.AttendanceFileProvider"
-            android:authorities="${applicationId}.attendance"
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.shared_files"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/attendance_file_paths" />
+                android:resource="@xml/gema_shared_file_paths" />
         </provider>
     </application>
 

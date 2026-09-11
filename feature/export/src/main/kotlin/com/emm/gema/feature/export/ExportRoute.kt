@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.ui.share.shareFile
+import java.io.File
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -32,7 +34,7 @@ fun ExportRoute(
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect: ExportUiEffect ->
             when (effect) {
-                is ExportUiEffect.ShareFile -> context.shareExport(effect.path, effect.mimeType, shareTitle)
+                is ExportUiEffect.ShareFile -> context.shareFile(File(effect.path), effect.mimeType, shareTitle)
                 is ExportUiEffect.NavigateToPeriodLevelCell ->
                     onPeriodLevelCell(effect.sectionId, effect.studentId, effect.competencyId)
                 is ExportUiEffect.NavigateToStudents -> onStudents(effect.sectionId)

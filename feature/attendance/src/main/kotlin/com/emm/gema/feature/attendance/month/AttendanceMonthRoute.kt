@@ -14,10 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.ui.share.shareFile
+import java.io.File
+import java.time.YearMonth
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import java.time.YearMonth
 
 private const val CHOOSER_TITLE: String = "Compartir asistencia"
 
@@ -42,7 +44,7 @@ fun AttendanceMonthRoute(
             when (effect) {
                 is AttendanceMonthUiEffect.OpenDocumentPicker -> pickTemplate.launch(effect.mimeTypes.toTypedArray())
                 is AttendanceMonthUiEffect.ShareFile ->
-                    context.shareAttendanceExport(effect.path, effect.mimeType, CHOOSER_TITLE)
+                    context.shareFile(File(effect.path), effect.mimeType, CHOOSER_TITLE)
                 is AttendanceMonthUiEffect.ShowMessage -> message = effect.text
                 AttendanceMonthUiEffect.NavigateBack -> onBack()
             }

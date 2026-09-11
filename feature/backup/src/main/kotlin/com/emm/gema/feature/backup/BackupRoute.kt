@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.core.ui.share.shareFile
+import java.io.File
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -38,7 +40,7 @@ fun BackupRoute(
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
-                is BackupUiEffect.ShareFile -> context.shareBackup(effect.path, effect.mimeType, shareTitle)
+                is BackupUiEffect.ShareFile -> context.shareFile(File(effect.path), effect.mimeType, shareTitle)
                 is BackupUiEffect.OpenDocumentPicker -> pickBackup.launch(effect.mimeTypes.toTypedArray())
                 is BackupUiEffect.ShowMessage -> snackbarHostState.showSnackbar(messages.getValue(effect.message))
                 BackupUiEffect.RestartApp -> when (context.restart()) {
