@@ -1,4 +1,4 @@
-package com.emm.gema.ui.theme
+package com.emm.gema.core.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.emm.gema.ui.theme
+package com.emm.gema.core.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
