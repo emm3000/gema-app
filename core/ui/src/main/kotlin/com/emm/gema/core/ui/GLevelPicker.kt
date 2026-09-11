@@ -36,6 +36,42 @@ fun GLevelPicker(
     )
 }
 
+@Composable
+fun GLevelPicker(
+    selected: String?,
+    onSelect: (String) -> Unit,
+    noEvidenceValue: String,
+    noEvidenceContentDescription: String,
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+) {
+    val options: List<GSegmentOption<String?>> = GLevelOption.entries.map { option ->
+        GSegmentOption<String?>(
+            value = option.letter,
+            label = option.letter,
+            contentDescription = option.contentDescription,
+        )
+    } + GSegmentOption<String?>(
+        value = noEvidenceValue,
+        label = NO_LEVEL_LABEL,
+        contentDescription = noEvidenceContentDescription,
+    )
+
+    GSegmentedPicker(
+        options = options,
+        selected = selected,
+        onSelect = { tapped -> nonDeselectingTap(tapped, onSelect) },
+        modifier = modifier,
+        isEnabled = isEnabled,
+    )
+}
+
+internal fun nonDeselectingTap(tapped: String?, onSelect: (String) -> Unit) {
+    if (tapped != null) {
+        onSelect(tapped)
+    }
+}
+
 @PreviewLightDark
 @Composable
 private fun GLevelPickerPreview() {

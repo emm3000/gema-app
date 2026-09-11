@@ -28,18 +28,15 @@ import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GIconButton
-import com.emm.gema.core.ui.GLevelOption
+import com.emm.gema.core.ui.GLevelPicker
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
-import com.emm.gema.core.ui.GSegmentOption
-import com.emm.gema.core.ui.GSegmentedPicker
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.activities.R
 
 private const val NO_EVIDENCE_PICKER_VALUE: String = "NO_EVIDENCE"
-private const val NO_EVIDENCE_CHIP_LABEL: String = "—"
 
 @Composable
 fun ActivityEvidenceScreen(
@@ -146,21 +143,11 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
         }
         val noEvidenceContentDescription: String =
             stringResource(R.string.activity_evidence_no_evidence_content_description)
-        val options: List<GSegmentOption<String?>> = GLevelOption.entries.map { option ->
-            GSegmentOption<String?>(
-                value = option.letter,
-                label = option.letter,
-                contentDescription = option.contentDescription,
-            )
-        } + GSegmentOption(
-            value = NO_EVIDENCE_PICKER_VALUE,
-            label = NO_EVIDENCE_CHIP_LABEL,
-            contentDescription = noEvidenceContentDescription,
-        )
-        GSegmentedPicker(
-            options = options,
+        GLevelPicker(
             selected = row.mark.toPickerValue(),
             onSelect = { value -> onSelect(value.toEvidenceMark()) },
+            noEvidenceValue = NO_EVIDENCE_PICKER_VALUE,
+            noEvidenceContentDescription = noEvidenceContentDescription,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -172,8 +159,7 @@ private fun EvidenceMark?.toPickerValue(): String? = when (this) {
     is EvidenceMark.Level -> achievementLevel.name
 }
 
-private fun String?.toEvidenceMark(): EvidenceMark? = when (this) {
-    null -> null
+private fun String.toEvidenceMark(): EvidenceMark = when (this) {
     NO_EVIDENCE_PICKER_VALUE -> EvidenceMark.NoEvidence
     else -> EvidenceMark.Level(AchievementLevel.valueOf(this))
 }
