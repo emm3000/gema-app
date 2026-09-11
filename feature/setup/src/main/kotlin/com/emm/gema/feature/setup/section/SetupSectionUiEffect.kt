@@ -8,5 +8,5 @@ sealed interface SetupSectionUiEffect {
 
     data object NavigateBack : SetupSectionUiEffect
 
-    data class ShowMessage(val text: String) : SetupSectionUiEffect
+    data class ShowMessage(val message: SetupSectionMessage) : SetupSectionUiEffect
 }

@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.YearMonth
 
-private const val EXPORT_FAILED_MESSAGE: String = "No se pudo generar el archivo de asistencia"
 private const val XLSX_MIME_TYPE: String = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 private val xlsxMimeTypes: List<String> = listOf(XLSX_MIME_TYPE, "application/vnd.ms-excel")
@@ -76,7 +75,7 @@ class AttendanceMonthViewModel(
                 .onSuccess { file: AttendanceExportFile ->
                     emit(AttendanceMonthUiEffect.ShareFile(file.path, XLSX_MIME_TYPE))
                 }
-                .onFailure { emit(AttendanceMonthUiEffect.ShowMessage(EXPORT_FAILED_MESSAGE)) }
+                .onFailure { emit(AttendanceMonthUiEffect.ShowMessage(AttendanceMonthMessage.EXPORT_FAILED)) }
             _state.value = _state.value.copy(isExporting = false)
         }
     }

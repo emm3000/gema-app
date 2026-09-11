@@ -36,8 +36,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val SAVE_FAILED_MESSAGE: String = "No se pudo guardar el nivel"
-
 class PeriodLevelsViewModel(
     private val sectionId: String,
     private val initialCell: PeriodLevelCellKey? = null,
@@ -251,7 +249,7 @@ class PeriodLevelsViewModel(
 
     private suspend fun persist(periodLevel: PeriodLevel) {
         runCatching { savePeriodLevel(periodLevel) }
-            .onFailure { _effects.send(PeriodLevelsUiEffect.ShowMessage(SAVE_FAILED_MESSAGE)) }
+            .onFailure { _effects.send(PeriodLevelsUiEffect.ShowMessage(PeriodLevelsMessage.SAVE_FAILED)) }
     }
 
     private fun keyOf(studentId: String, competencyId: String): PeriodLevelKey? {

@@ -1,5 +1,6 @@
 package com.emm.gema.feature.setup.periods
 
+import com.emm.gema.feature.setup.PeriodRangeError
 import java.time.LocalDate
 
 data class PeriodsUiState(
@@ -7,7 +8,7 @@ data class PeriodsUiState(
     val schoolYearLabel: String = "",
     val periodKindLabel: String = "",
     val periods: List<PeriodRow> = emptyList(),
-    val overlapError: String? = null,
+    val overlapError: PeriodRangeError? = null,
     val canSave: Boolean = false,
 )
 

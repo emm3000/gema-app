@@ -6,7 +6,7 @@ data class SetupSectionUiState(
     val isLoading: Boolean = false,
     val grade: Grade? = null,
     val sectionName: String = "",
-    val sectionNameError: String? = null,
+    val sectionNameError: SetupSectionMessage? = null,
     val canFinish: Boolean = false,
     val isSaving: Boolean = false,
 )

@@ -11,9 +11,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.feature.activities.R
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
@@ -32,6 +34,7 @@ fun ActivityFormScreen(
     onIntent: (ActivityFormUiIntent) -> Unit,
     modifier: Modifier = Modifier,
     message: String? = null,
+    dateErrorText: String? = null,
 ) {
     GScreen(
         topBar = {
@@ -75,7 +78,7 @@ fun ActivityFormScreen(
                         onValueChange = { onIntent(ActivityFormUiIntent.DateChanged(it)) },
                         label = "Fecha",
                         modifier = Modifier.fillMaxWidth(),
-                        errorText = state.dateError,
+                        errorText = dateErrorText,
                     )
                     if (state.resolvedPeriodLabel != null) {
                         GText(
@@ -84,9 +87,9 @@ fun ActivityFormScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    if (state.periodChangeWarning != null) {
+                    if (state.hasPeriodChangeWarning) {
                         GText(
-                            text = state.periodChangeWarning,
+                            text = stringResource(R.string.activity_form_period_change_warning),
                             style = GTextStyle.BODY_SMALL,
                             color = MaterialTheme.colorScheme.error,
                         )

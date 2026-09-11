@@ -32,6 +32,7 @@ fun PeriodsScreen(
     modifier: Modifier = Modifier,
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
+    overlapErrorText: String? = null,
 ) {
     GScreen(
         topBar = {
@@ -69,10 +70,10 @@ fun PeriodsScreen(
                     )
                 }
             }
-            if (state.overlapError != null) {
+            if (overlapErrorText != null) {
                 item {
                     GBanner(
-                        text = state.overlapError,
+                        text = overlapErrorText,
                         modifier = Modifier.fillMaxWidth(),
                         tone = GBannerTone.WARNING,
                     )

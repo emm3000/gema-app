@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
@@ -23,6 +24,7 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSwitchRow
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.students.R
 import java.time.LocalDate
 
 @Composable
@@ -80,7 +82,7 @@ fun StudentFormScreen(
                 label = "Código del estudiante",
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = state.studentCodeHint,
-                errorText = state.studentCodeError,
+                errorText = state.studentCodeError.asText(),
                 keyboardType = KeyboardType.Number,
             )
             GTextField(
@@ -89,7 +91,7 @@ fun StudentFormScreen(
                 label = "Apellidos y nombres",
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = "Apellidos primero, como en SIAGIE.",
-                errorText = state.fullNameError,
+                errorText = state.fullNameError.asText(),
             )
             HorizontalDivider()
             GSwitchRow(
@@ -105,11 +107,30 @@ fun StudentFormScreen(
                     onValueChange = { onIntent(StudentFormUiIntent.WithdrawalDateChanged(it)) },
                     label = "Fecha de retiro",
                     modifier = Modifier.fillMaxWidth(),
-                    errorText = state.withdrawalDateError,
+                    errorText = state.withdrawalDateError.asText(),
                 )
             }
         }
     }
+}
+
+@Composable
+private fun StudentCodeError?.asText(): String? = when (this) {
+    null -> null
+    is StudentCodeError.InvalidLength -> stringResource(R.string.student_form_error_invalid_code, length)
+    StudentCodeError.DuplicateCode -> stringResource(R.string.student_form_error_duplicate_code)
+}
+
+@Composable
+private fun FullNameError?.asText(): String? = when (this) {
+    null -> null
+    FullNameError.BLANK -> stringResource(R.string.student_form_error_missing_name)
+}
+
+@Composable
+private fun WithdrawalDateError?.asText(): String? = when (this) {
+    null -> null
+    WithdrawalDateError.MISSING -> stringResource(R.string.student_form_error_missing_withdrawal_date)
 }
 
 @PreviewLightDark

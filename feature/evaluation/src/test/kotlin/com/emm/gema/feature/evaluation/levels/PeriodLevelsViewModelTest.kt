@@ -304,7 +304,7 @@ class PeriodLevelsViewModelTest {
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.A))
 
         assertThat(viewModel.effects.first())
-            .isEqualTo(PeriodLevelsUiEffect.ShowMessage("No se pudo guardar el nivel"))
+            .isEqualTo(PeriodLevelsUiEffect.ShowMessage(PeriodLevelsMessage.SAVE_FAILED))
     }
 
     @Test

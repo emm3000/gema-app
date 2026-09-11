@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val REACTIVATE_FAILED_MESSAGE: String = "No se pudo reincorporar al alumno"
-
 private val siagieMimeTypes: List<String> = listOf(
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "application/vnd.ms-excel",
@@ -71,7 +69,7 @@ class StudentsViewModel(
     private fun reactivate(studentId: String) {
         viewModelScope.launch {
             runCatching { reactivateStudent(studentId) }
-                .onFailure { _effects.send(StudentsUiEffect.ShowMessage(REACTIVATE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(StudentsUiEffect.ShowMessage(StudentsMessage.REACTIVATE_FAILED)) }
         }
     }
 

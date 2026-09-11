@@ -12,5 +12,5 @@ sealed interface PeriodLevelsUiEffect {
 
     data object NavigateBack : PeriodLevelsUiEffect
 
-    data class ShowMessage(val text: String) : PeriodLevelsUiEffect
+    data class ShowMessage(val message: PeriodLevelsMessage) : PeriodLevelsUiEffect
 }

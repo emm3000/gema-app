@@ -4,5 +4,5 @@ sealed interface SectionFormUiEffect {
 
     data object NavigateBack : SectionFormUiEffect
 
-    data class ShowMessage(val text: String) : SectionFormUiEffect
+    data class ShowMessage(val message: SectionFormMessage) : SectionFormUiEffect
 }

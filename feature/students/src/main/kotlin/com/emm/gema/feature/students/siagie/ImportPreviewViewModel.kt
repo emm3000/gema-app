@@ -23,8 +23,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val IMPORT_FAILED_MESSAGE: String = "No se pudo importar la plantilla"
-
 class ImportPreviewViewModel(
     private val sectionId: String,
     private val uri: String,
@@ -64,7 +62,7 @@ class ImportPreviewViewModel(
     private suspend fun load(section: Section?) {
         val preview: SiagieImportPreview = runCatching { previewImport(sectionId, uri) }
             .getOrElse {
-                _effects.send(ImportPreviewUiEffect.ShowMessage(IMPORT_FAILED_MESSAGE))
+                _effects.send(ImportPreviewUiEffect.ShowMessage(ImportPreviewMessage.ImportFailed))
                 SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate)
             }
         _state.value = when (preview) {
@@ -106,7 +104,7 @@ class ImportPreviewViewModel(
                 .toSet()
             runCatching { applyImport(sectionId, uri, withdrawals, LocalDate.now(clock)) }
                 .onSuccess { result: SiagieImportResult -> announce(result) }
-                .onFailure { fail(IMPORT_FAILED_MESSAGE) }
+                .onFailure { fail(ImportPreviewMessage.ImportFailed) }
         }
     }
 
@@ -116,13 +114,14 @@ class ImportPreviewViewModel(
                 _effects.send(ImportPreviewUiEffect.ShowMessage(result.asMessage()))
                 _effects.send(ImportPreviewUiEffect.NavigateBack)
             }
+
             is SiagieImportResult.Rejected -> {
                 _state.value = _state.value.copy(isApplying = false, rejection = rejectionOf(result.reason, null))
             }
         }
     }
 
-    private suspend fun fail(message: String) {
+    private suspend fun fail(message: ImportPreviewMessage) {
         _state.value = _state.value.copy(isApplying = false)
         _effects.send(ImportPreviewUiEffect.ShowMessage(message))
     }
@@ -155,8 +154,8 @@ class ImportPreviewViewModel(
         )
     }
 
-    private fun SiagieImportResult.Applied.asMessage(): String =
-        "$created nuevos, $updated actualizados, $withdrawn retirados"
+    private fun SiagieImportResult.Applied.asMessage(): ImportPreviewMessage =
+        ImportPreviewMessage.Applied(created = created, updated = updated, withdrawn = withdrawn)
 
     private fun emit(effect: ImportPreviewUiEffect) {
         viewModelScope.launch { _effects.send(effect) }

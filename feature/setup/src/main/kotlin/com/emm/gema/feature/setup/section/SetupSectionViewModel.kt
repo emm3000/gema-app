@@ -15,9 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val MISSING_NAME_ERROR: String = "Escribe el nombre de la sección"
-private const val SAVE_FAILED_MESSAGE: String = "No se pudo guardar la configuración. Inténtalo otra vez."
-
 class SetupSectionViewModel(
     private val draft: SchoolYearDraft,
     private val completeSetup: CompleteSetupUseCase,
@@ -62,7 +59,7 @@ class SetupSectionViewModel(
                 )
             }
                 .onSuccess { _effects.send(nextStep(it)) }
-                .onFailure { _effects.send(SetupSectionUiEffect.ShowMessage(SAVE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(SetupSectionUiEffect.ShowMessage(SetupSectionMessage.SAVE_FAILED)) }
             _state.value = _state.value.copy(isSaving = false)
         }
     }
@@ -76,7 +73,8 @@ class SetupSectionViewModel(
     }
 
     private fun validate(state: SetupSectionUiState): SetupSectionUiState {
-        val sectionNameError: String? = MISSING_NAME_ERROR.takeIf { state.sectionName.isBlank() }
+        val sectionNameError: SetupSectionMessage? =
+            SetupSectionMessage.MISSING_NAME.takeIf { state.sectionName.isBlank() }
         return state.copy(
             sectionNameError = sectionNameError,
             canFinish = sectionNameError == null && state.grade != null,

@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.feature.setup.R
 import com.emm.gema.feature.setup.SetupDraftStore
 import com.emm.gema.feature.setup.year.SchoolYearDraft
 import kotlinx.coroutines.flow.collectLatest
@@ -28,6 +30,7 @@ fun SetupSectionRoute(
     val viewModel: SetupSectionViewModel = koinViewModel { parametersOf(draft) }
     val state: State<SetupSectionUiState> = viewModel.state.collectAsStateWithLifecycle()
     var message: String? by remember { mutableStateOf(null) }
+    val messages: Map<SetupSectionMessage, String> = setupSectionMessages()
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
@@ -35,7 +38,7 @@ fun SetupSectionRoute(
                 SetupSectionUiEffect.NavigateToHome -> onFinished()
                 is SetupSectionUiEffect.NavigateToSectionAreas -> onAreaSelection(effect.sectionId)
                 SetupSectionUiEffect.NavigateBack -> onBack()
-                is SetupSectionUiEffect.ShowMessage -> message = effect.text
+                is SetupSectionUiEffect.ShowMessage -> message = messages.getValue(effect.message)
             }
         }
     }
@@ -44,7 +47,14 @@ fun SetupSectionRoute(
         state = state.value,
         onIntent = viewModel::onIntent,
         modifier = modifier,
+        sectionNameError = state.value.sectionNameError?.let { messages.getValue(it) },
         message = message,
         onMessageDismissed = { message = null },
     )
 }
+
+@Composable
+private fun setupSectionMessages(): Map<SetupSectionMessage, String> = mapOf(
+    SetupSectionMessage.MISSING_NAME to stringResource(R.string.setup_section_error_missing_name),
+    SetupSectionMessage.SAVE_FAILED to stringResource(R.string.setup_section_message_save_failed),
+)

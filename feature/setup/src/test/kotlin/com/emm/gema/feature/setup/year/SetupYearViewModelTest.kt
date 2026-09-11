@@ -3,6 +3,7 @@ package com.emm.gema.feature.setup.year
 import app.cash.turbine.test
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.feature.setup.MainDispatcherRule
+import com.emm.gema.feature.setup.PeriodRangeError
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -115,7 +116,7 @@ class SetupYearViewModelTest {
 
         viewModel.onIntent(SetupYearUiIntent.EditorEndDateChanged(LocalDate.of(2026, 8, 1)))
 
-        assertThat(viewModel.state.value.editor?.error).isNotNull()
+        assertThat(viewModel.state.value.editor?.error).isEqualTo(PeriodRangeError.OVERLAP)
     }
 
     @Test
@@ -126,7 +127,7 @@ class SetupYearViewModelTest {
         viewModel.onIntent(SetupYearUiIntent.EditorConfirmed)
 
         val state: SetupYearUiState = viewModel.state.value
-        assertThat(state.periods.first().error).isNotNull()
+        assertThat(state.periods.first().error).isEqualTo(PeriodRangeError.OVERLAP)
         assertThat(state.canContinue).isFalse()
     }
 
@@ -136,7 +137,7 @@ class SetupYearViewModelTest {
 
         viewModel.onIntent(SetupYearUiIntent.EditorStartDateChanged(LocalDate.of(2026, 1, 5)))
 
-        assertThat(viewModel.state.value.editor?.error).isNotNull()
+        assertThat(viewModel.state.value.editor?.error).isEqualTo(PeriodRangeError.OUTSIDE_YEAR)
     }
 
     @Test
@@ -146,7 +147,7 @@ class SetupYearViewModelTest {
 
         viewModel.onIntent(SetupYearUiIntent.EditorConfirmed)
 
-        assertThat(viewModel.state.value.periods.first().error).isNotNull()
+        assertThat(viewModel.state.value.periods.first().error).isEqualTo(PeriodRangeError.OUTSIDE_YEAR)
         assertThat(viewModel.state.value.canContinue).isFalse()
     }
 

@@ -1,0 +1,4 @@
+<resources>
+    <string name="period_levels_message_save_failed">No se pudo guardar el nivel</string>
+    <string name="worked_competencies_message_toggle_failed">No se pudo guardar el cambio</string>
+</resources>

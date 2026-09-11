@@ -8,10 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import com.emm.gema.feature.sections.R
 
 @Composable
 fun SectionAreasRoute(
@@ -21,13 +23,13 @@ fun SectionAreasRoute(
 ) {
     val viewModel: SectionAreasViewModel = koinViewModel { parametersOf(sectionId) }
     val state: State<SectionAreasUiState> = viewModel.state.collectAsStateWithLifecycle()
-    var message: String? by remember { mutableStateOf(null) }
+    var message: SectionAreasMessage? by remember { mutableStateOf(null) }
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 SectionAreasUiEffect.NavigateBack -> onBack()
-                is SectionAreasUiEffect.ShowMessage -> message = effect.text
+                is SectionAreasUiEffect.ShowMessage -> message = effect.message
             }
         }
     }
@@ -36,7 +38,11 @@ fun SectionAreasRoute(
         state = state.value,
         onIntent = viewModel::onIntent,
         modifier = modifier,
-        message = message,
+        message = message?.let { stringResource(sectionAreasMessageRes(it)) },
         onMessageDismissed = { message = null },
     )
+}
+
+private fun sectionAreasMessageRes(message: SectionAreasMessage): Int = when (message) {
+    SectionAreasMessage.TOGGLE_FAILED -> R.string.sections_areas_message_toggle_failed
 }

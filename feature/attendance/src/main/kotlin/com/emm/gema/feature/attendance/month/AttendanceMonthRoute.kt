@@ -13,8 +13,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.emm.gema.core.ui.share.shareFile
+import com.emm.gema.feature.attendance.R
 import java.io.File
 import java.time.YearMonth
 import kotlinx.coroutines.flow.collectLatest
@@ -34,6 +36,7 @@ fun AttendanceMonthRoute(
     val state: State<AttendanceMonthUiState> = viewModel.state.collectAsStateWithLifecycle()
     val context: Context = LocalContext.current
     var message: String? by remember { mutableStateOf(null) }
+    val messages: Map<AttendanceMonthMessage, String> = attendanceMonthMessages()
 
     val pickTemplate = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         if (uri != null) viewModel.onIntent(AttendanceMonthUiIntent.TemplatePicked(uri.toString()))
@@ -45,7 +48,7 @@ fun AttendanceMonthRoute(
                 is AttendanceMonthUiEffect.OpenDocumentPicker -> pickTemplate.launch(effect.mimeTypes.toTypedArray())
                 is AttendanceMonthUiEffect.ShareFile ->
                     context.shareFile(File(effect.path), effect.mimeType, CHOOSER_TITLE)
-                is AttendanceMonthUiEffect.ShowMessage -> message = effect.text
+                is AttendanceMonthUiEffect.ShowMessage -> message = messages.getValue(effect.message)
                 AttendanceMonthUiEffect.NavigateBack -> onBack()
             }
         }
@@ -59,3 +62,8 @@ fun AttendanceMonthRoute(
         onMessageDismissed = { message = null },
     )
 }
+
+@Composable
+private fun attendanceMonthMessages(): Map<AttendanceMonthMessage, String> = mapOf(
+    AttendanceMonthMessage.EXPORT_FAILED to stringResource(R.string.attendance_month_message_export_failed),
+)

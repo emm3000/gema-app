@@ -23,9 +23,6 @@ import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
 
-private const val FUTURE_DATE_MESSAGE: String = "Todavía no puedes tomar asistencia de un día futuro"
-private const val RECORD_FAILED_MESSAGE: String = "No se pudo guardar la asistencia"
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class AttendanceDayViewModel(
     private val sectionId: String,
@@ -87,13 +84,13 @@ class AttendanceDayViewModel(
                 entries.forEach { (studentId: String, status: AttendanceStatus) ->
                     recordAttendance(sectionId, studentId, selected, status)
                 }
-            }.onFailure { _effects.send(AttendanceDayUiEffect.ShowMessage(RECORD_FAILED_MESSAGE)) }
+            }.onFailure { _effects.send(AttendanceDayUiEffect.ShowMessage(AttendanceDayMessage.RECORD_FAILED)) }
         }
     }
 
     private fun moveTo(value: LocalDate) {
         if (value.isAfter(today)) {
-            emit(AttendanceDayUiEffect.ShowMessage(FUTURE_DATE_MESSAGE))
+            emit(AttendanceDayUiEffect.ShowMessage(AttendanceDayMessage.FUTURE_DATE))
             return
         }
         date.value = value

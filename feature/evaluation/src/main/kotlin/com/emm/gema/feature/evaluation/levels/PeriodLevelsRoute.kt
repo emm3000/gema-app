@@ -8,8 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.feature.evaluation.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -28,6 +30,7 @@ fun PeriodLevelsRoute(
     }
     val state: State<PeriodLevelsUiState> = viewModel.state.collectAsStateWithLifecycle()
     var message: String? by remember { mutableStateOf(null) }
+    val messages: Map<PeriodLevelsMessage, String> = periodLevelsMessages()
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
@@ -36,7 +39,7 @@ fun PeriodLevelsRoute(
                     onWorkedCompetencies(effect.sectionId, effect.periodId, effect.area)
 
                 PeriodLevelsUiEffect.NavigateBack -> onBack()
-                is PeriodLevelsUiEffect.ShowMessage -> message = effect.text
+                is PeriodLevelsUiEffect.ShowMessage -> message = messages.getValue(effect.message)
             }
         }
     }
@@ -49,3 +52,8 @@ fun PeriodLevelsRoute(
         onMessageDismissed = { message = null },
     )
 }
+
+@Composable
+private fun periodLevelsMessages(): Map<PeriodLevelsMessage, String> = mapOf(
+    PeriodLevelsMessage.SAVE_FAILED to stringResource(R.string.period_levels_message_save_failed),
+)

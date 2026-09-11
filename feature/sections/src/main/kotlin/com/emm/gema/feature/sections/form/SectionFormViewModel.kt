@@ -20,10 +20,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val MISSING_NAME_ERROR: String = "Escribe el nombre de la sección"
-private const val SAVE_FAILED_MESSAGE: String = "No se pudo guardar la sección"
-private const val DELETE_FAILED_MESSAGE: String = "No se pudo eliminar la sección"
-
 class SectionFormViewModel(
     private val schoolYearId: String,
     private val sectionId: String?,
@@ -79,7 +75,7 @@ class SectionFormViewModel(
         viewModelScope.launch {
             runCatching { persist(current.sectionId, grade, current.sectionName) }
                 .onSuccess { _effects.send(SectionFormUiEffect.NavigateBack) }
-                .onFailure { _effects.send(SectionFormUiEffect.ShowMessage(SAVE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(SectionFormUiEffect.ShowMessage(SectionFormMessage.SAVE_FAILED)) }
         }
     }
 
@@ -97,7 +93,7 @@ class SectionFormViewModel(
         viewModelScope.launch {
             runCatching { deleteSection(sectionId) }
                 .onSuccess { _effects.send(SectionFormUiEffect.NavigateBack) }
-                .onFailure { _effects.send(SectionFormUiEffect.ShowMessage(DELETE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(SectionFormUiEffect.ShowMessage(SectionFormMessage.DELETE_FAILED)) }
             _state.value = _state.value.copy(deleteConfirmation = null)
         }
     }
@@ -125,7 +121,8 @@ class SectionFormViewModel(
     }
 
     private fun validate(state: SectionFormUiState): SectionFormUiState {
-        val sectionNameError: String? = MISSING_NAME_ERROR.takeIf { state.sectionName.isBlank() }
+        val sectionNameError: SectionFormMessage? =
+            SectionFormMessage.MISSING_NAME.takeIf { state.sectionName.isBlank() }
         return state.copy(
             sectionNameError = sectionNameError.takeIf { !state.isLoading },
             canSave = sectionNameError == null && state.grade != null,

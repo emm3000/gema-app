@@ -33,6 +33,7 @@ fun SetupSectionScreen(
     state: SetupSectionUiState,
     onIntent: (SetupSectionUiIntent) -> Unit,
     modifier: Modifier = Modifier,
+    sectionNameError: String? = null,
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
@@ -85,7 +86,7 @@ fun SetupSectionScreen(
                 onValueChange = { onIntent(SetupSectionUiIntent.SectionNameChanged(it)) },
                 label = "Nombre de la sección",
                 modifier = Modifier.fillMaxWidth(),
-                errorText = state.sectionNameError,
+                errorText = sectionNameError,
             )
             GText(
                 text = "Empiezas con todas las áreas activas. Puedes apagar las que no dictas.",

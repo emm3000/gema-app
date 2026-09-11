@@ -115,7 +115,7 @@ class ActivityFormViewModelTest {
 
         val state: ActivityFormUiState = viewModel.state.value
         assertThat(state.resolvedPeriodLabel).isEqualTo("II Bimestre")
-        assertThat(state.periodChangeWarning).isNotNull()
+        assertThat(state.hasPeriodChangeWarning).isTrue()
     }
 
     @Test
@@ -150,7 +150,7 @@ class ActivityFormViewModelTest {
         periods.clear()
         viewModel.onIntent(ActivityFormUiIntent.SaveClicked)
 
-        assertThat(viewModel.state.value.dateError).isEqualTo("Esa fecha no cae dentro de ningún periodo")
+        assertThat(viewModel.state.value.dateError).isEqualTo(ActivityFormMessage.OUTSIDE_PERIODS)
         assertThat(activityRepository.activities.value).isEmpty()
     }
 

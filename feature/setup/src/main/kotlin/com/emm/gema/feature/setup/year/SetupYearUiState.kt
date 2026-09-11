@@ -1,6 +1,7 @@
 package com.emm.gema.feature.setup.year
 
 import com.emm.gema.core.domain.schoolyear.PeriodKind
+import com.emm.gema.feature.setup.PeriodRangeError
 import java.time.LocalDate
 
 data class SetupYearUiState(
@@ -11,8 +12,8 @@ data class SetupYearUiState(
     val periodKind: PeriodKind = PeriodKind.BIMESTER,
     val periods: List<PeriodDraftRow> = emptyList(),
     val editor: PeriodEditorState? = null,
-    val yearLabelError: String? = null,
-    val dateRangeError: String? = null,
+    val yearLabelError: SetupYearMessage? = null,
+    val dateRangeError: SetupYearMessage? = null,
     val canContinue: Boolean = false,
 )
 
@@ -21,7 +22,7 @@ data class PeriodDraftRow(
     val label: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val error: String?,
+    val error: PeriodRangeError?,
 )
 
 data class PeriodEditorState(
@@ -29,5 +30,5 @@ data class PeriodEditorState(
     val label: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val error: String?,
+    val error: PeriodRangeError?,
 )
