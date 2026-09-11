@@ -11,6 +11,7 @@ data class SectionFormUiState(
     val sectionNameError: SectionFormMessage? = null,
     val canSave: Boolean = false,
     val canDelete: Boolean = false,
+    val studentCount: Int = 0,
     val deleteConfirmation: DeleteConfirmation? = null,
 )
 

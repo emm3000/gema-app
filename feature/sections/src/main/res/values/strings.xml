@@ -28,7 +28,15 @@
     <string name="sections_form_title_edit">Editar sección</string>
     <string name="sections_form_save">Guardar</string>
     <string name="sections_form_understood">Entendido</string>
+    <string name="sections_form_grade_label">Grado</string>
     <string name="sections_form_grade_content_description">Grado %1$s</string>
+    <string name="sections_form_subtitle">%1$s %2$s · %3$s</string>
+
+    <plurals name="sections_form_student_count">
+        <item quantity="one">%d alumno</item>
+        <item quantity="other">%d alumnos</item>
+    </plurals>
+
     <string name="sections_form_name_label">Nombre de la sección</string>
     <string name="sections_form_delete_button">Eliminar sección</string>
     <string name="sections_form_delete_dialog_title">¿Eliminar la sección?</string>

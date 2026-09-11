@@ -58,6 +58,7 @@ class SectionFormViewModel(
 
     private suspend fun load() {
         val section: Section? = sectionId?.let { getSection(it) }
+        val studentCount: Int = section?.let { getStudents(it.id).first().size } ?: 0
         _state.value = validate(
             _state.value.copy(
                 isLoading = false,
@@ -65,6 +66,7 @@ class SectionFormViewModel(
                 grade = section?.grade,
                 sectionName = section?.name.orEmpty(),
                 canDelete = section != null,
+                studentCount = studentCount,
             )
         )
     }

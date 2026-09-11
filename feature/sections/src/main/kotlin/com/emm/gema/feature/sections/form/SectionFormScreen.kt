@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Grade
@@ -31,6 +33,27 @@ import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.sections.R
 
 @Composable
+private fun gradeOptions(): List<GSegmentOption<Grade>> = Grade.entries.map { grade ->
+    GSegmentOption(
+        value = grade,
+        label = grade.label(),
+        contentDescription = stringResource(R.string.sections_form_grade_content_description, grade.label()),
+    )
+}
+
+@Composable
+private fun sectionFormSubtitle(state: SectionFormUiState): String? {
+    val grade: Grade = state.grade ?: return null
+    if (state.sectionId == null) return null
+    return stringResource(
+        R.string.sections_form_subtitle,
+        grade.label(),
+        state.sectionName,
+        pluralStringResource(R.plurals.sections_form_student_count, state.studentCount, state.studentCount),
+    )
+}
+
+@Composable
 fun SectionFormScreen(
     state: SectionFormUiState,
     onIntent: (SectionFormUiIntent) -> Unit,
@@ -46,6 +69,7 @@ fun SectionFormScreen(
                 } else {
                     stringResource(R.string.sections_form_title_edit)
                 },
+                subtitle = sectionFormSubtitle(state),
                 onBackClick = { onIntent(SectionFormUiIntent.BackClicked) },
             )
         },
@@ -63,7 +87,7 @@ fun SectionFormScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(vertical = GemaSpacing.screenGutter),
+                .padding(top = GemaSpacing.small),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             if (message != null) {
@@ -75,25 +99,15 @@ fun SectionFormScreen(
                     onActionClick = onMessageDismissed,
                 )
             }
-            GSegmentedPicker(
-                options = buildList {
-                    for (grade in Grade.entries) {
-                        add(
-                            GSegmentOption(
-                                value = grade,
-                                label = grade.label(),
-                                contentDescription = stringResource(
-                                    R.string.sections_form_grade_content_description,
-                                    grade.label(),
-                                ),
-                            ),
-                        )
-                    }
-                },
-                selected = state.grade,
-                onSelect = { grade -> grade?.let { onIntent(SectionFormUiIntent.GradeSelected(it)) } },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
+                GText(text = stringResource(R.string.sections_form_grade_label), style = GTextStyle.LABEL_MEDIUM)
+                GSegmentedPicker(
+                    options = gradeOptions(),
+                    selected = state.grade,
+                    onSelect = { grade -> grade?.let { onIntent(SectionFormUiIntent.GradeSelected(it)) } },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             GTextField(
                 value = state.sectionName,
                 onValueChange = { onIntent(SectionFormUiIntent.SectionNameChanged(it)) },
@@ -102,11 +116,20 @@ fun SectionFormScreen(
                 errorText = state.sectionNameError?.let { stringResource(sectionFormMessageRes(it)) },
             )
             if (state.canDelete) {
-                GButton(
-                    text = stringResource(R.string.sections_form_delete_button),
-                    onClick = { onIntent(SectionFormUiIntent.DeleteClicked) },
-                    variant = GButtonVariant.DESTRUCTIVE,
-                )
+                Column(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    verticalArrangement = Arrangement.Bottom,
+                ) {
+                    HorizontalDivider()
+                    GButton(
+                        text = stringResource(R.string.sections_form_delete_button),
+                        onClick = { onIntent(SectionFormUiIntent.DeleteClicked) },
+                        variant = GButtonVariant.DESTRUCTIVE,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = GemaSpacing.medium),
+                    )
+                }
             }
         }
     }
@@ -161,6 +184,7 @@ private fun SectionFormScreenPreview() {
                 sectionName = "A",
                 canSave = true,
                 canDelete = true,
+                studentCount = 30,
             ),
             onIntent = {},
         )
