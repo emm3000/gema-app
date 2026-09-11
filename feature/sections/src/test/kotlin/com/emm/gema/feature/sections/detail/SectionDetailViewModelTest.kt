@@ -102,6 +102,7 @@ class SectionDetailViewModelTest {
         assertThat(state.isLoading).isFalse()
         assertThat(state.sectionTitle).isEqualTo("3° A")
         assertThat(state.studentCount).isEqualTo(1)
+        assertThat(state.today).isEqualTo(today)
     }
 
     @Test

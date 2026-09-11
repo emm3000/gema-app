@@ -46,6 +46,7 @@ class SectionDetailViewModel(
 
     private val _state: MutableStateFlow<SectionDetailUiState> = MutableStateFlow(
         SectionDetailUiState(
+            today = today,
             todayLabel = today.asDayLabel(),
             todayAttendanceSummary = AttendanceDaySummary(0, 0, 0).attendanceSummaryLabel(),
         ),
