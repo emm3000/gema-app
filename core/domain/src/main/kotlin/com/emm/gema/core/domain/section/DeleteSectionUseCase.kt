@@ -1,6 +1,7 @@
 package com.emm.gema.core.domain.section
 
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
+import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.StudentRepository
 
@@ -10,6 +11,7 @@ class DeleteSectionUseCase(
     private val workedCompetencyRepository: WorkedCompetencyRepository,
     private val studentRepository: StudentRepository,
     private val siagieImportStore: SiagieImportStore,
+    private val periodLevelRepository: PeriodLevelRepository,
 ) {
 
     suspend operator fun invoke(sectionId: String) {
@@ -18,5 +20,6 @@ class DeleteSectionUseCase(
         workedCompetencyRepository.clearSection(sectionId)
         studentRepository.deleteBySection(sectionId)
         siagieImportStore.clearSection(sectionId)
+        periodLevelRepository.clearSection(sectionId)
     }
 }

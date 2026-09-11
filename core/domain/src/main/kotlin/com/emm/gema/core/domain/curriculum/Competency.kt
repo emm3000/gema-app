@@ -18,5 +18,7 @@ data class Competency(
         const val FIRST_SIAGIE_ORDINAL: Int = 1
 
         fun idOf(area: Area, siagieOrdinal: Int): String = "${area.name}-$siagieOrdinal"
+
+        fun areaOf(id: String): Area? = Area.entries.find { id.startsWith("${it.name}-") }
     }
 }

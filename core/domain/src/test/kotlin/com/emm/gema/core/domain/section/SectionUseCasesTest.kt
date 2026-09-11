@@ -1,5 +1,6 @@
 package com.emm.gema.core.domain.section
 
+import com.emm.gema.core.domain.fake.InMemoryPeriodLevelRepository
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
 import com.emm.gema.core.domain.fake.InMemorySectionRepository
 import com.emm.gema.core.domain.fake.InMemorySiagieImportStore
@@ -29,6 +30,7 @@ class SectionUseCasesTest {
         workedCompetencyRepository,
         studentRepository,
         siagieImportStore,
+        InMemoryPeriodLevelRepository(),
     )
     private val getSections = GetSectionsUseCase(sectionRepository)
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)
