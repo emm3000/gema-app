@@ -36,6 +36,7 @@ fun GText(
 @Composable
 private fun GTextStyle.toTextStyle(): TextStyle = when (this) {
     GTextStyle.TITLE_MEDIUM -> MaterialTheme.typography.titleMedium
+    GTextStyle.TITLE_MEDIUM_EMPHASIS -> MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
     GTextStyle.TITLE_SMALL -> MaterialTheme.typography.titleSmall
     GTextStyle.BODY_LARGE -> MaterialTheme.typography.bodyLarge
     GTextStyle.BODY_MEDIUM -> MaterialTheme.typography.bodyMedium
@@ -63,6 +64,7 @@ private fun GTextPreview() {
             GText(text = "Etiqueta", style = GTextStyle.LABEL_SMALL)
             GText(text = "Encabezado de sección", style = GTextStyle.LABEL_SMALL_EMPHASIS)
             GText(text = "24/30", style = GTextStyle.LABEL_LARGE_EMPHASIS)
+            GText(text = "26", style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
         }
     }
 }
