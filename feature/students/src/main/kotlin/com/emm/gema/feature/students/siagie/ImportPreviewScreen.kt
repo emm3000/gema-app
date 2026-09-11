@@ -168,7 +168,7 @@ private fun ImportActions(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(GemaSpacing.medium),
+            .padding(vertical = GemaSpacing.medium),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
         GButton(

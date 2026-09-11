@@ -59,7 +59,7 @@ fun ActivityEvidenceScreen(
                     text = message,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+                        .padding(vertical = GemaSpacing.small),
                     tone = GBannerTone.ERROR,
                     actionText = "Entendido",
                     onActionClick = onMessageDismissed,
@@ -85,7 +85,7 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+            .padding(vertical = GemaSpacing.small),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
         GDropdownPicker(
@@ -108,7 +108,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> U
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+            .padding(vertical = GemaSpacing.small),
     ) {
         GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
         GLevelPicker(

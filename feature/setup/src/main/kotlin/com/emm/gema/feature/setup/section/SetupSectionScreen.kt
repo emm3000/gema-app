@@ -61,7 +61,7 @@ fun SetupSectionScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(GemaSpacing.screenGutter),
+                .padding(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             if (message != null) {

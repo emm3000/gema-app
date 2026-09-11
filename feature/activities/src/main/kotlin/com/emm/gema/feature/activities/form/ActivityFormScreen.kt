@@ -56,8 +56,7 @@ fun ActivityFormScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = GemaSpacing.screenGutter),
+                .padding(padding),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             if (message != null) {

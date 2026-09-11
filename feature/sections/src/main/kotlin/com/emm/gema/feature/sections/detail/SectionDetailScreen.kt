@@ -52,9 +52,7 @@ fun SectionDetailScreen(
             GButton(
                 text = stringResource(R.string.sections_detail_take_attendance),
                 onClick = { onIntent(SectionDetailUiIntent.TakeAttendanceClicked) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = GemaSpacing.screenGutter),
+                modifier = Modifier.fillMaxWidth(),
             )
             GListItem(
                 title = stringResource(R.string.sections_detail_students),
