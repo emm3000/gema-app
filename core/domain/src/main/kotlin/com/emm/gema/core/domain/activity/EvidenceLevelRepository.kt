@@ -8,6 +8,13 @@ interface EvidenceLevelRepository {
 
     fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>>
 
+    fun observeForStudentAndCompetency(
+        sectionId: String,
+        periodId: String,
+        studentId: String,
+        competencyId: String,
+    ): Flow<List<EvidenceRecord>>
+
     suspend fun save(evidenceLevel: EvidenceLevel)
 
     suspend fun delete(key: EvidenceLevelKey)

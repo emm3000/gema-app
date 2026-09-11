@@ -57,7 +57,6 @@ import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
 import com.emm.gema.core.domain.evaluation.ExportPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelSummaryUseCase
-import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
 import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevelSummaryPdfRenderer
@@ -67,6 +66,7 @@ import com.emm.gema.core.domain.export.ExportGradesUseCase
 import com.emm.gema.core.domain.export.GetGradesExportPlanUseCase
 import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
 import com.emm.gema.core.domain.export.SiagieExportStore
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelSheetContextUseCase
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
@@ -182,7 +182,7 @@ val appModule: Module = module {
     factory<SetCompetencyWorkedUseCase> { SetCompetencyWorkedUseCase(get()) }
     factory<GetWorkedCompetenciesUseCase> { GetWorkedCompetenciesUseCase(get(), get(), get()) }
     factory<GetPeriodLevelGridUseCase> { GetPeriodLevelGridUseCase(get(), get(), get()) }
-    factory<GetPeriodLevelUseCase> { GetPeriodLevelUseCase(get()) }
+    factory<GetPeriodLevelSheetContextUseCase> { GetPeriodLevelSheetContextUseCase(get(), get()) }
     factory<SavePeriodLevelUseCase> { SavePeriodLevelUseCase(get()) }
     factory<GetRecordedLevelCountsUseCase> { GetRecordedLevelCountsUseCase(get()) }
     factory<GetAreaRecordedLevelCountsUseCase> { GetAreaRecordedLevelCountsUseCase(get()) }

@@ -3,6 +3,7 @@ package com.emm.gema.feature.evaluation.levels
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.UnworkedComment
 import com.emm.gema.core.domain.section.Area
+import java.time.LocalDate
 
 data class PeriodLevelsUiState(
     val isLoading: Boolean = true,
@@ -79,6 +80,14 @@ data class PeriodLevelSheetUiState(
     val unworkedComment: UnworkedComment? = null,
     val descriptiveConclusion: String = "",
     val isConclusionRequiredForExport: Boolean = false,
+    val evidence: List<EvidenceRow> = emptyList(),
+)
+
+data class EvidenceRow(
+    val activityId: String,
+    val activityName: String,
+    val date: LocalDate,
+    val achievementLevel: AchievementLevel,
 )
 
 data class ColumnModeUiState(

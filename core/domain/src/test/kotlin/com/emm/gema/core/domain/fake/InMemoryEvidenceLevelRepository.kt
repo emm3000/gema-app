@@ -4,6 +4,7 @@ import com.emm.gema.core.domain.activity.Activity
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
 import com.emm.gema.core.domain.activity.EvidenceLevelRepository
+import com.emm.gema.core.domain.activity.EvidenceRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -26,6 +27,31 @@ class InMemoryEvidenceLevelRepository(
                 .groupBy { it.key.activityId }
                 .mapValues { (_, recorded) -> recorded.map { it.key.studentId }.distinct().size }
         }
+
+    override fun observeForStudentAndCompetency(
+        sectionId: String,
+        periodId: String,
+        studentId: String,
+        competencyId: String,
+    ): Flow<List<EvidenceRecord>> = combine(
+        levels,
+        activityRepository.observeByPeriod(sectionId, periodId),
+    ) { stored, activities ->
+        val activitiesById: Map<String, Activity> = activities.associateBy(Activity::id)
+
+        stored
+            .filter { it.key.studentId == studentId && it.key.competencyId == competencyId }
+            .mapNotNull { level -> activitiesById[level.key.activityId]?.let { level to it } }
+            .sortedBy { (_, activity) -> activity.date }
+            .map { (level, activity) ->
+                EvidenceRecord(
+                    activityId = activity.id,
+                    activityName = activity.name,
+                    date = activity.date,
+                    achievementLevel = level.achievementLevel,
+                )
+            }
+    }
 
     override suspend fun save(evidenceLevel: EvidenceLevel) {
         levels.value = levels.value.filterNot { it.key == evidenceLevel.key } + evidenceLevel

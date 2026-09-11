@@ -50,6 +50,8 @@ class ActivityUseCasesTest {
         GetEvidenceForActivityUseCase(evidenceLevelRepository)
     private val getEvidenceStudentCounts: GetActivityEvidenceStudentCountsUseCase =
         GetActivityEvidenceStudentCountsUseCase(evidenceLevelRepository)
+    private val getEvidenceForPeriodLevel: GetEvidenceForPeriodLevelUseCase =
+        GetEvidenceForPeriodLevelUseCase(evidenceLevelRepository)
     private val savePeriodLevel: SavePeriodLevelUseCase = SavePeriodLevelUseCase(periodLevelRepository)
 
     @Before
@@ -193,6 +195,25 @@ class ActivityUseCasesTest {
         val counts: Map<String, Int> = getEvidenceStudentCounts(SECTION_ID, activity.periodId).first()
 
         assertThat(counts[activity.id]).isEqualTo(2)
+    }
+
+    @Test
+    fun `evidence for a period level is ordered by activity date`() = runTest {
+        val first: Activity = createActivity()
+        val second: Activity = saveActivity(
+            sectionId = SECTION_ID,
+            activityId = null,
+            name = "Ficha de convivencia",
+            date = LocalDate.of(2026, 3, 20),
+            competencyIds = setOf("PPSS-1"),
+        )
+        recordEvidenceLevel(EvidenceLevelKey(second.id, "student-1", "PPSS-1"), AchievementLevel.B)
+        recordEvidenceLevel(EvidenceLevelKey(first.id, "student-1", "PPSS-1"), AchievementLevel.A)
+
+        val evidence: List<EvidenceRecord> =
+            getEvidenceForPeriodLevel(SECTION_ID, first.periodId, "student-1", "PPSS-1").first()
+
+        assertThat(evidence.map { it.activityId }).containsExactly(first.id, second.id).inOrder()
     }
 
     private suspend fun createActivity(): Activity = saveActivity(

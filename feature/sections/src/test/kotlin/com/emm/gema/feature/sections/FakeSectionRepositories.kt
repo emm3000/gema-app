@@ -5,6 +5,7 @@ import com.emm.gema.core.domain.activity.ActivityRepository
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
 import com.emm.gema.core.domain.activity.EvidenceLevelRepository
+import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.attendance.AttendanceRecord
 import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
@@ -263,6 +264,13 @@ class FakeEvidenceLevelRepository : EvidenceLevelRepository {
 
     override fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
         MutableStateFlow(emptyMap())
+
+    override fun observeForStudentAndCompetency(
+        sectionId: String,
+        periodId: String,
+        studentId: String,
+        competencyId: String,
+    ): Flow<List<EvidenceRecord>> = MutableStateFlow(emptyList())
 
     override suspend fun save(evidenceLevel: EvidenceLevel) {
         levels.value = levels.value.filterNot { it.key == evidenceLevel.key } + evidenceLevel
