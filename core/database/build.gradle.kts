@@ -1,16 +1,6 @@
 plugins {
     id("gema.android.library")
-    alias(libs.plugins.sqldelight)
-}
-
-sqldelight {
-    databases {
-        create("GemaDb") {
-            packageName.set("com.emm.gema.core.database")
-            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
-            verifyMigrations.set(true)
-        }
-    }
+    id("gema.sqldelight")
 }
 
 dependencies {

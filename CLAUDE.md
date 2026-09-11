@@ -66,6 +66,7 @@ Kotlin, Jetpack Compose, Material3, Koin, SQLDelight. No HTTP client and no seri
 
 - `./gradlew detekt` — style and complexity gate.
 - `./gradlew checkModuleBoundaries` — layer boundary gate.
+- `./gradlew checkSqlDelightSnapshots` — fails when a migration has no schema snapshot.
 - `./gradlew testDebugUnitTest` — unit tests.
 - `./gradlew assembleDebug` — debug build.
 
