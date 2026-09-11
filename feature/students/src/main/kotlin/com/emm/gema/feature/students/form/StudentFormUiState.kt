@@ -16,4 +16,6 @@ data class StudentFormUiState(
     val withdrawalDateError: WithdrawalDateError? = null,
     val canSave: Boolean = false,
     val hasSiagieId: Boolean = false,
+    val sectionTitle: String = "",
+    val isStudentCodeValid: Boolean = false,
 )

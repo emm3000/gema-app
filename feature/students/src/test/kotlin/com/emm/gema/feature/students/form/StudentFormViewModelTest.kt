@@ -2,6 +2,10 @@ package com.emm.gema.feature.students.form
 
 import app.cash.turbine.test
 import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.section.GetSectionUseCase
+import com.emm.gema.core.domain.section.Grade
+import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.GetStudentUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
@@ -10,6 +14,7 @@ import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
+import com.emm.gema.feature.students.FakeSectionRepository
 import com.emm.gema.feature.students.FakeStudentRepository
 import com.emm.gema.feature.students.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -33,10 +38,13 @@ class StudentFormViewModelTest {
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
     private val luz = Student(StudentId("student-1"), sectionId, StudentCode(FIRST_CODE), "ACOSTA RIVERA, Luz Maria")
     private val repository = FakeStudentRepository(listOf(luz))
+    private val section = Section(sectionId, SchoolYearId("2026"), Grade.THIRD, "A")
+    private val sectionRepository = FakeSectionRepository(listOf(section))
 
     private fun viewModelFor(studentId: StudentId?): StudentFormViewModel = StudentFormViewModel(
         sectionId = sectionId,
         studentId = studentId,
+        getSection = GetSectionUseCase(sectionRepository),
         getStudent = GetStudentUseCase(repository),
         saveStudent = SaveStudentUseCase(repository, IdGenerator { "student-2" }),
         withdrawStudent = WithdrawStudentUseCase(repository),

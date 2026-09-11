@@ -12,7 +12,7 @@ import org.koin.dsl.module
 val studentsModule: Module = module {
     viewModel { (sectionId: SectionId) -> StudentsViewModel(sectionId, get(), get(), get()) }
     viewModel { (sectionId: SectionId, studentId: StudentId?) ->
-        StudentFormViewModel(sectionId, studentId, get(), get(), get(), get(), get())
+        StudentFormViewModel(sectionId, studentId, get(), get(), get(), get(), get(), get())
     }
     viewModel { (sectionId: SectionId, uri: String) ->
         ImportPreviewViewModel(sectionId, uri, get(), get(), get(), get())
