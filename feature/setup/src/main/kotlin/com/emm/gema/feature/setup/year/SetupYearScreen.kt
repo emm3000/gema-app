@@ -30,6 +30,7 @@ import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
+import com.emm.gema.core.ui.GStepHeader
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
@@ -67,7 +68,13 @@ fun SetupYearScreen(
             contentPadding = PaddingValues(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
-            item { Header() }
+            item {
+                GStepHeader(
+                    step = stringResource(R.string.setup_year_step_label),
+                    title = stringResource(R.string.setup_year_title),
+                    description = stringResource(R.string.setup_year_helper_text),
+                )
+            }
             item {
                 GTextField(
                     value = state.yearLabel,
@@ -129,15 +136,6 @@ fun SetupYearScreen(
 
     if (state.editor != null) {
         PeriodEditorDialog(editor = state.editor, state = state, onIntent = onIntent)
-    }
-}
-
-@Composable
-private fun Header(modifier: Modifier = Modifier) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
-        GText(text = stringResource(R.string.setup_year_step_label), style = GTextStyle.LABEL_MEDIUM)
-        GText(text = stringResource(R.string.setup_year_title), style = GTextStyle.TITLE_MEDIUM)
-        GText(text = stringResource(R.string.setup_year_helper_text), style = GTextStyle.BODY_MEDIUM)
     }
 }
 
