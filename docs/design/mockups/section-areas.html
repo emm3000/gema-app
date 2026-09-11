@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sw-on { width: 52px; height: 32px; border-radius: 16px; background: #3F6836; display: flex; align-items: center; justify-content: flex-end; padding: 0 4px; box-sizing: border-box; flex-shrink: 0; }
+    .sw-on i { width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF; display: block; }
+    .sw-off { width: 52px; height: 32px; border-radius: 16px; background: #ECEFE5; border: 2px solid #73796E; display: flex; align-items: center; justify-content: flex-start; padding: 0 6px; box-sizing: border-box; flex-shrink: 0; }
+    .sw-off i { width: 16px; height: 16px; border-radius: 8px; background: #73796E; display: block; }
+    .arow { display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 16px; border-bottom: 1px solid #DFE4D7; }
+    .aname { font-size: 15px; color: #191D17; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Áreas de 3ro A</span>
+      <span style="font-size: 13px; color: #43483F;">Cada toque se guarda solo</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 0 16px; flex-grow: 1;">
+    <span style="font-size: 13px; color: #43483F;">Apaga las áreas que no dictas. Nada se borra: puedes volver a encenderlas.</span>
+
+    <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px; overflow: hidden;">
+      <div class="arow"><span class="aname">Comunicación</span><span class="sw-on"><i></i></span></div>
+      <div class="arow"><span class="aname">Matemática</span><span class="sw-on"><i></i></span></div>
+      <div class="arow"><span class="aname">Personal Social</span><span class="sw-on"><i></i></span></div>
+      <div class="arow"><span class="aname">Ciencia y Tecnología</span><span class="sw-on"><i></i></span></div>
+      <div class="arow"><span class="aname">Arte y Cultura</span><span class="sw-on"><i></i></span></div>
+      <div class="arow"><span class="aname" style="color: #43483F;">Educación Física</span><span class="sw-off"><i></i></span></div>
+      <div class="arow"><span class="aname">Educación Religiosa</span><span class="sw-on"><i></i></span></div>
+      <div class="arow"><span class="aname" style="color: #43483F;">Inglés</span><span class="sw-off"><i></i></span></div>
+      <div class="arow" style="border-bottom: none;"><span class="aname" style="color: #43483F;">Castellano como segunda lengua</span><span class="sw-off"><i></i></span></div>
+    </div>
+
+    <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; background: #FFF8E1; border-radius: 16px;">
+      <svg class="ico" style="width: 20px; height: 20px; flex-shrink: 0; color: #191D17;" viewBox="0 0 24 24"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+      <span style="font-size: 14px; color: #191D17;">Educación Física tiene 12 niveles registrados. Quedan guardados y dejan de exportarse.</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

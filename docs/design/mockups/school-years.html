@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Años escolares</span>
+      <span style="font-size: 13px; color: #43483F;">Toca un año para activarlo</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 0 16px; flex-grow: 1;">
+    <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; background: #FFFFFF; border: 2px solid #3F6836; border-radius: 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 20px; font-weight: 700; color: #191D17;">2026</span>
+        <span style="font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 12px; background: #C0EFB0; color: #285020;">ACTIVO</span>
+      </div>
+      <span style="font-size: 14px; color: #43483F;">01/03 – 20/12 · 4 bimestres</span>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 10px; border-top: 1px solid #DFE4D7;">
+        <span style="font-size: 14px; color: #43483F;">2 secciones</span>
+        <div style="display: flex; align-items: center; gap: 4px; color: #3F6836;">
+          <span style="font-size: 14px; font-weight: 500;">Periodos</span>
+          <svg class="ico" style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 20px; font-weight: 700; color: #191D17;">2025</span>
+      </div>
+      <span style="font-size: 14px; color: #43483F;">01/03 – 19/12 · 3 trimestres</span>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 10px; border-top: 1px solid #DFE4D7;">
+        <span style="font-size: 14px; color: #43483F;">1 sección</span>
+        <div style="display: flex; align-items: center; gap: 4px; color: #3F6836;">
+          <span style="font-size: 14px; font-weight: 500;">Periodos</span>
+          <svg class="ico" style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position: absolute; right: 16px; bottom: 24px; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 20px 0 16px; background: #C0EFB0; color: #285020; border-radius: 16px; font-size: 15px; font-weight: 500;">
+    <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+    <span>Nuevo año</span>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

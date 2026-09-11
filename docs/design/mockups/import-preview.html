@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .grow { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 16px; border-bottom: 1px solid #DFE4D7; }
+    .glabel { font-size: 16px; color: #191D17; flex-grow: 1; }
+    .gcount { font-size: 16px; font-weight: 700; color: #191D17; }
+    .cbox { width: 22px; height: 22px; border-radius: 6px; background: #3F6836; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Importar de SIAGIE</span>
+      <span style="font-size: 13px; color: #43483F;">Nada se escribe hasta que apliques</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 4px 16px 0 16px; flex-grow: 1;">
+    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #ECEFE5; border-radius: 16px;">
+      <svg class="ico" style="color: #43483F; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 15px; font-weight: 500; color: #191D17;">3 Primaria EBR.xlsx</span>
+        <span style="font-size: 13px; color: #43483F;">3ro A · 30 alumnos en el archivo</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px; overflow: hidden;">
+      <div class="grow">
+        <span class="glabel">Se crearán</span>
+        <span class="gcount">4</span>
+        <svg class="ico" style="width: 20px; height: 20px; color: #43483F;" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+      </div>
+      <div class="grow">
+        <span class="glabel">Se actualizarán</span>
+        <span class="gcount">26</span>
+        <svg class="ico" style="width: 20px; height: 20px; color: #43483F;" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+      </div>
+      <div class="grow" style="border-bottom: none;">
+        <span class="glabel">Se propondrán como retirados</span>
+        <span class="gcount">2</span>
+        <svg class="ico" style="width: 20px; height: 20px; color: #43483F;" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; background: #F2F5EB; border-top: 1px solid #DFE4D7;">
+        <div style="display: flex; align-items: center; gap: 14px; height: 52px; padding: 0 16px;">
+          <span class="cbox"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
+          <span style="font-size: 15px; color: #191D17;">LÓPEZ SILVA, Ana</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; height: 52px; padding: 0 16px;">
+          <span class="cbox"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
+          <span style="font-size: 15px; color: #191D17;">TORRES PINO, Luis</span>
+        </div>
+      </div>
+    </div>
+
+    <span style="font-size: 13px; color: #43483F;">Nada se borra. Los retirados conservan su asistencia y sus niveles.</span>
+  </div>
+
+  <div style="display: flex; gap: 12px; padding: 12px 16px 24px 16px; background: #F8FBF1; border-top: 1px solid #DFE4D7;">
+    <div style="display: flex; align-items: center; justify-content: center; height: 52px; flex: 1 1 0; border: 1px solid #73796E; border-radius: 12px; background: #F8FBF1; color: #3F6836; font-size: 16px; font-weight: 500;">Cancelar</div>
+    <div style="display: flex; align-items: center; justify-content: center; height: 52px; flex: 1 1 0; background: #3F6836; color: #FFFFFF; border-radius: 12px; font-size: 16px; font-weight: 500;">Aplicar</div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

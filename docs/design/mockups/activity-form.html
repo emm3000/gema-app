@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .flabel { font-size: 12px; font-weight: 500; color: #43483F; }
+    .fbox { display: flex; align-items: center; height: 52px; padding: 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; color: #191D17; }
+    .crow { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 10px 16px; border-bottom: 1px solid #DFE4D7; }
+    .cbon { width: 22px; height: 22px; border-radius: 6px; background: #3F6836; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cboff { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #73796E; background: #FFFFFF; box-sizing: border-box; flex-shrink: 0; }
+    .cord { font-size: 13px; font-weight: 700; color: #285020; width: 20px; flex-shrink: 0; }
+    .cname { font-size: 15px; color: #191D17; text-wrap: pretty; }
+    .ghdr { padding: 10px 16px 6px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F; background: #ECEFE5; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Editar actividad</span>
+      <span style="font-size: 13px; color: #43483F;">3ro A · II Bimestre</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; flex-grow: 1;">
+    <div style="display: flex; flex-direction: column; gap: 16px; padding: 8px 16px 16px 16px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="flabel">Nombre</span>
+        <div class="fbox">Debate del aula</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="flabel">Fecha</span>
+        <div class="fbox" style="justify-content: space-between; padding-right: 14px;">
+          <span>22/06/2026</span>
+          <svg class="ico" style="width: 20px; height: 20px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
+        </div>
+        <span style="font-size: 12px; color: #43483F; padding-top: 2px;">Cae en el II Bimestre.</span>
+      </div>
+      <span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F;">COMPETENCIAS TRABAJADAS</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; background: #FFFFFF; border-top: 1px solid #DFE4D7;">
+      <div class="ghdr">PERSONAL SOCIAL</div>
+      <div class="crow">
+        <span class="cbon"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
+        <span class="cord">01</span>
+        <span class="cname">Construye su identidad</span>
+      </div>
+      <div class="crow">
+        <span class="cbon"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
+        <span class="cord">02</span>
+        <span class="cname">Convive y participa democráticamente</span>
+      </div>
+      <div class="ghdr">COMUNICACIÓN</div>
+      <div class="crow" style="border-bottom: none;">
+        <span class="cboff"></span>
+        <span class="cord" style="color: #43483F;">01</span>
+        <span class="cname" style="color: #43483F;">Se comunica oralmente en lengua materna</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding: 12px 16px 16px 16px;">
+      <div style="height: 1px; background: #DFE4D7;"></div>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 52px; border: 1px solid #BA1A1A; border-radius: 12px; background: #F8FBF1; color: #BA1A1A; font-size: 15px; font-weight: 500;">
+        <svg class="ico" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M10 11v6M14 11v6"></path><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"></path><path d="M9 7V4h6v3"></path></svg>
+        <span>Eliminar actividad</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; padding: 12px 16px 24px 16px; background: #F8FBF1; border-top: 1px solid #DFE4D7;">
+    <div style="display: flex; align-items: center; justify-content: center; height: 52px; flex-grow: 1; background: #3F6836; color: #FFFFFF; border-radius: 12px; font-size: 16px; font-weight: 500;">Guardar</div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

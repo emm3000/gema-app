@@ -147,6 +147,7 @@ every Period and discards those corrections. See ADR 0013.
 
 ## 2. SetupSection
 
+Mockup: [html](mockups/setup-section.html) · [png](mockups/setup-section.png)
 Entry: from SetupYear, or from `SchoolYears` when creating a later year.
 Shows Grade, Section name and the Area default. Primary action: *Terminar*.
 
@@ -274,6 +275,7 @@ Both read the same `SectionRow`; neither is destructive, so neither confirms.
 
 ## 4. SchoolYears
 
+Mockup: [html](mockups/school-years.html) · [png](mockups/school-years.png)
 Entry: Home year switcher. Shows every School Year, marks the active one.
 Primary action: FAB *Nuevo ano*.
 
@@ -323,6 +325,7 @@ Note: tapping a year switches the active year; it never deletes or archives.
 
 ## 5. Periods
 
+Mockup: [html](mockups/periods.html) · [png](mockups/periods.png)
 Entry: SchoolYears, or the Home "Fuera de periodo" banner.
 Shows the Periods of one School Year and which contains today.
 Primary action: *Guardar*.
@@ -381,6 +384,7 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 6. SectionForm
 
+Mockup: [html](mockups/section-form.html) · [png](mockups/section-form.png)
 Entry: Home FAB (create), SectionDetail overflow (rename).
 Shows Grade and name. Primary action: *Guardar*.
 
@@ -437,6 +441,7 @@ Note: `deleteConfirmation` non-null renders the dialog naming what is lost
 
 ## 7. SectionAreas
 
+Mockup: [html](mockups/section-areas.html) · [png](mockups/section-areas.png)
 Entry: SectionDetail overflow, or the SetupSection link.
 Shows every primary Area with a switch. Saves on toggle.
 
@@ -485,6 +490,7 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 8. SectionDetail
 
+Mockup: [html](mockups/section-detail.html) · [png](mockups/section-detail.png)
 Entry: Home. The hub for one Section.
 Primary action: *Tomar asistencia de hoy*.
 
@@ -550,6 +556,7 @@ Effects: `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
 
 ## 9. Students
 
+Mockup: [html](mockups/students.html) · [png](mockups/students.png)
 Entry: SectionDetail. Lists Students by surname.
 Primary action: FAB *Agregar alumno*.
 
@@ -612,6 +619,7 @@ Effects: `NavigateToStudentForm(sectionId: SectionId, studentId: StudentId?)`,
 
 ## 10. StudentForm
 
+Mockup: [html](mockups/student-form.html) · [png](mockups/student-form.png)
 Entry: Students. Add or edit one Student. Primary action: *Guardar*.
 
 ```
@@ -673,6 +681,7 @@ Template, so editing the code by hand may break the round-trip.
 
 ## 11. ImportPreview
 
+Mockup: [html](mockups/import-preview.html) · [png](mockups/import-preview.png)
 Entry: the Students top bar, after the system document picker returns a URI.
 Shows what the import will do. Nothing is written until *Aplicar*.
 
@@ -847,6 +856,7 @@ Notes:
 
 ## 13. AttendanceMonth
 
+Mockup: [html](mockups/attendance-month.html) · [png](mockups/attendance-month.png)
 Entry: AttendanceDay footer. Monthly counts per Student, plus the SIAGIE
 attendance export. Primary action: *Exportar el mes*.
 
@@ -909,6 +919,7 @@ grades card in `Export` (#20), which reads a template stored at import time.
 
 ## 14. WorkedCompetencies
 
+Mockup: [html](mockups/worked-competencies.html) · [png](mockups/worked-competencies.png)
 Entry: PeriodLevels empty state or its top bar. One Area, one Period.
 Saves on toggle.
 
@@ -1086,6 +1097,7 @@ Effects: `NavigateToWorkedCompetencies(sectionId: SectionId, areaId: AreaId, per
 
 ## 16. PeriodLevelSheet
 
+Mockup: [html](mockups/period-level-sheet.html) · [png](mockups/period-level-sheet.png)
 A bottom sheet over PeriodLevels for one Student x one Competency.
 Every change persists on selection; the sheet closes with *Listo*.
 
@@ -1162,6 +1174,7 @@ Notes:
 
 ## 17. Activities
 
+Mockup: [html](mockups/activities.html) · [png](mockups/activities.png)
 Entry: SectionDetail. Activities of the current Period, newest first.
 Primary action: FAB *Nueva actividad*.
 
@@ -1215,6 +1228,7 @@ Effects: `NavigateToActivityEvidence(activityId: ActivityId)`,
 
 ## 18. ActivityForm
 
+Mockup: [html](mockups/activity-form.html) · [png](mockups/activity-form.png)
 Entry: Activities. Primary action: *Guardar*.
 
 ```
@@ -1288,6 +1302,7 @@ Notes:
 
 ## 19. ActivityEvidence
 
+Mockup: [html](mockups/activity-evidence.html) · [png](mockups/activity-evidence.png)
 Entry: Activities. One Evidence Level per Student per Competency of this
 Activity. Saves on tap.
 
@@ -1479,6 +1494,7 @@ grades card itself — no separate bottom sheet — and `ExportGradesClicked`
 
 ## 21. Backup
 
+Mockup: [html](mockups/backup.html) · [png](mockups/backup.png)
 Entry: Home overflow or the reminder banner.
 
 ```
