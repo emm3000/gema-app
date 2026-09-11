@@ -11,28 +11,30 @@ import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import java.time.LocalDate
 
+data class CompleteSetupRequest(
+    val yearLabel: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val periodKind: PeriodKind,
+    val grade: Grade,
+    val sectionName: String,
+    val periodDates: List<PeriodDates> = periodKind.divide(startDate, endDate),
+)
+
 class CompleteSetupUseCase(
     private val repository: SetupRepository,
     private val idGenerator: IdGenerator,
 ) {
 
-    suspend operator fun invoke(
-        yearLabel: String,
-        startDate: LocalDate,
-        endDate: LocalDate,
-        periodKind: PeriodKind,
-        grade: Grade,
-        sectionName: String,
-        periodDates: List<PeriodDates> = periodKind.divide(startDate, endDate),
-    ): CompletedSetup {
+    suspend operator fun invoke(request: CompleteSetupRequest): CompletedSetup {
         val schoolYear = SchoolYear(
             id = idGenerator.newId(),
-            label = yearLabel.trim(),
-            startDate = startDate,
-            endDate = endDate,
-            periodKind = periodKind,
+            label = request.yearLabel.trim(),
+            startDate = request.startDate,
+            endDate = request.endDate,
+            periodKind = request.periodKind,
         )
-        val periods: List<Period> = periodDates.map { dates ->
+        val periods: List<Period> = request.periodDates.map { dates ->
             Period(
                 id = idGenerator.newId(),
                 schoolYearId = schoolYear.id,
@@ -44,8 +46,8 @@ class CompleteSetupUseCase(
         val section = Section(
             id = idGenerator.newId(),
             schoolYearId = schoolYear.id,
-            grade = grade,
-            name = sectionName.trim(),
+            grade = request.grade,
+            name = request.sectionName.trim(),
         )
         requirePeriodsFit(schoolYear, periods)
         repository.saveAndActivate(schoolYear, periods, section)
