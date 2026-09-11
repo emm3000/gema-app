@@ -160,6 +160,14 @@ A Student and Competency whose recorded `C` has no Descriptive Conclusion. Every
 Gap of the Section and Period blocks the whole Export until it is filled.
 _Avoid_: error, missing grade, incomplete
 
+**Summary**:
+A PDF or CSV table of Period Levels for a Section and Period, spanning
+every active Area's Worked Competencies. It writes no SIAGIE Template and
+needs none, so it is the only export a Section without one has. Unlike
+Export it is never blocked by an Export Gap; a missing level is simply a
+blank cell.
+_Avoid_: report, resumen, printout
+
 **Backup**:
 A single file containing all teacher data, shared to another device to restore.
 _Avoid_: sync, cloud, export
