@@ -4,13 +4,22 @@
     <string name="sections_detail_students">Alumnos</string>
     <string name="sections_detail_attendance">Asistencia</string>
     <string name="sections_detail_period_levels">Niveles del periodo</string>
-    <string name="sections_detail_export">Entregar</string>
+    <string name="sections_detail_export">Exportar</string>
     <string name="sections_detail_activities">Actividades</string>
     <string name="sections_detail_areas">Áreas</string>
+    <string name="sections_detail_overflow_description">Más opciones</string>
+    <string name="sections_detail_template_loaded">Plantilla SIAGIE cargada</string>
+    <string name="sections_detail_attendance_today_label">ASISTENCIA DE HOY</string>
+    <string name="sections_detail_subtitle_with_period">%1$s · %2$s</string>
 
     <plurals name="sections_detail_missing_levels">
         <item quantity="one">%d falta</item>
         <item quantity="other">%d faltan</item>
+    </plurals>
+
+    <plurals name="sections_detail_subtitle_students">
+        <item quantity="one">%d alumno</item>
+        <item quantity="other">%d alumnos</item>
     </plurals>
 
     <string name="sections_areas_title">Áreas de %1$s</string>

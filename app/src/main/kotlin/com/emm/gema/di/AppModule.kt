@@ -86,6 +86,7 @@ import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionCountsUseCase
 import com.emm.gema.core.domain.section.GetSectionDeletionImpactUseCase
+import com.emm.gema.core.domain.section.GetSectionDetailExtrasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.SectionAreaRepository
@@ -193,6 +194,7 @@ val appModule: Module = module {
     factory<GetMissingPeriodLevelCountUseCase> {
         GetMissingPeriodLevelCountUseCase(get(), get(), get(), get())
     }
+    factory<GetSectionDetailExtrasUseCase> { GetSectionDetailExtrasUseCase(get(), get(), get()) }
     factory<SaveStudentUseCase> { SaveStudentUseCase(get(), get()) }
     factory<SiagieImportPlanner> { SiagieImportPlanner(get(), get(), get(), get()) }
     factory<PreviewSiagieImportUseCase> { PreviewSiagieImportUseCase(get()) }

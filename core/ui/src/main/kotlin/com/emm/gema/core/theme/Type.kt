@@ -11,6 +11,7 @@ val bodyFontFamily: FontFamily = FontFamily.SansSerif
 val displayFontFamily: FontFamily = FontFamily.SansSerif
 
 val gemaCardTitleFontSize: TextUnit = 20.sp
+val gemaCardDateFontSize: TextUnit = 18.sp
 
 val gemaTypography = Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
