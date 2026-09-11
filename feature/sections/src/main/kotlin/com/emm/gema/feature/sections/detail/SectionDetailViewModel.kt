@@ -6,13 +6,13 @@ import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.attendance.AttendanceEntry
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.summarise
-import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.section.GetSectionDetailExtrasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
@@ -36,7 +36,7 @@ class SectionDetailViewModel(
     private val getStudents: GetStudentsUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getCurrentPeriod: GetCurrentPeriodUseCase,
-    private val getMissingPeriodLevelCount: GetMissingPeriodLevelCountUseCase,
+    private val getSectionDetailExtras: GetSectionDetailExtrasUseCase,
     private val getAttendanceDay: GetAttendanceDayUseCase,
     private val clock: Clock,
 ) : ViewModel() {
@@ -97,9 +97,16 @@ class SectionDetailViewModel(
 
         _state.value = _state.value.copy(
             currentPeriodLabel = schoolYear.periodKind.labelFor(currentPeriod.number),
+            hasStoredTemplate = getSectionDetailExtras.hasStoredTemplate(sectionId),
         )
 
-        getMissingPeriodLevelCount(sectionId = sectionId, periodId = currentPeriod.id).collect { missing: Int ->
+        viewModelScope.launch {
+            getSectionDetailExtras.activityCount(sectionId, currentPeriod.id).collect { count: Int ->
+                _state.value = _state.value.copy(activityCount = count)
+            }
+        }
+
+        getSectionDetailExtras.missingPeriodLevelCount(sectionId, currentPeriod.id).collect { missing: Int ->
             _state.value = _state.value.copy(missingPeriodLevelCount = missing)
         }
     }

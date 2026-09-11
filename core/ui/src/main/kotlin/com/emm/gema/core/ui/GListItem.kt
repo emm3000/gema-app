@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -27,6 +28,7 @@ fun GListItem(
     subtitle: String? = null,
     subtitleColor: Color? = null,
     leadingText: String? = null,
+    leadingIcon: ImageVector? = null,
     titleLeading: (@Composable () -> Unit)? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
@@ -41,6 +43,7 @@ fun GListItem(
                 subtitle = subtitle,
                 subtitleColor = subtitleColor,
                 leadingText = leadingText,
+                leadingIcon = leadingIcon,
                 titleLeading = titleLeading,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
@@ -55,6 +58,7 @@ fun GListItem(
                 subtitle = subtitle,
                 subtitleColor = subtitleColor,
                 leadingText = leadingText,
+                leadingIcon = leadingIcon,
                 titleLeading = titleLeading,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
@@ -71,6 +75,7 @@ private fun GListItemBody(
     subtitle: String?,
     subtitleColor: Color?,
     leadingText: String?,
+    leadingIcon: ImageVector?,
     titleLeading: (@Composable () -> Unit)?,
     trailingText: String?,
     hasChevron: Boolean,
@@ -86,15 +91,27 @@ private fun GListItemBody(
             )
         }
     }
-    val leadingContent: (@Composable () -> Unit)? = leadingText?.let { text ->
-        {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.width(GemaSpacing.leadingLabelWidth),
-            )
+    val leadingContent: (@Composable () -> Unit)? = when {
+        leadingIcon != null -> {
+            {
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
+        leadingText != null -> {
+            {
+                Text(
+                    text = leadingText,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.width(GemaSpacing.leadingLabelWidth),
+                )
+            }
+        }
+        else -> null
     }
     val trailingContent: (@Composable () -> Unit)? = gListItemTrailing(
         trailingText = trailingText,

@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.gemaCardDateFontSize
 
 @Composable
 fun GText(
@@ -52,6 +53,10 @@ private fun GTextStyle.toTextStyle(): TextStyle = when (this) {
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp,
     )
+    GTextStyle.TITLE_LARGE_EMPHASIS -> MaterialTheme.typography.titleLarge.copy(
+        fontSize = gemaCardDateFontSize,
+        fontWeight = FontWeight.Bold,
+    )
 }
 
 @PreviewLightDark
@@ -65,6 +70,7 @@ private fun GTextPreview() {
             GText(text = "Encabezado de sección", style = GTextStyle.LABEL_SMALL_EMPHASIS)
             GText(text = "24/30", style = GTextStyle.LABEL_LARGE_EMPHASIS)
             GText(text = "26", style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
+            GText(text = "Martes 10 de setiembre", style = GTextStyle.TITLE_LARGE_EMPHASIS)
         }
     }
 }

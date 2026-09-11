@@ -13,21 +13,29 @@ import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.activity.GetActivitiesUseCase
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.domain.section.GetSectionDetailExtrasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.siagie.ImportedTemplate
+import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
+import com.emm.gema.feature.sections.FakeActivityRepository
 import com.emm.gema.feature.sections.FakeAttendanceRepository
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakePeriodRepository
 import com.emm.gema.feature.sections.FakeSchoolYearRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
+import com.emm.gema.feature.sections.FakeSiagieImportStore
 import com.emm.gema.feature.sections.FakeStudentRepository
 import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.MainDispatcherRule
@@ -74,6 +82,8 @@ class SectionDetailViewModelTest {
         endDate = LocalDate.of(2026, 7, 24),
     )
     private val attendanceRepository = FakeAttendanceRepository()
+    private val activityRepository = FakeActivityRepository()
+    private val siagieImportStore = FakeSiagieImportStore()
     private val clock: Clock = Clock.fixed(
         today.atStartOfDay(ZoneId.of("America/Lima")).toInstant(),
         ZoneId.of("America/Lima"),
@@ -85,11 +95,15 @@ class SectionDetailViewModelTest {
         getStudents = GetStudentsUseCase(studentRepository),
         getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
         getCurrentPeriod = GetCurrentPeriodUseCase(FakePeriodRepository(listOf(period)), clock),
-        getMissingPeriodLevelCount = GetMissingPeriodLevelCountUseCase(
-            sectionAreaRepository = sectionAreaRepository,
-            workedCompetencyRepository = workedCompetencyRepository,
-            studentRepository = studentRepository,
-            periodLevelRepository = periodLevelRepository,
+        getSectionDetailExtras = GetSectionDetailExtrasUseCase(
+            getMissingPeriodLevelCount = GetMissingPeriodLevelCountUseCase(
+                sectionAreaRepository = sectionAreaRepository,
+                workedCompetencyRepository = workedCompetencyRepository,
+                studentRepository = studentRepository,
+                periodLevelRepository = periodLevelRepository,
+            ),
+            getActivities = GetActivitiesUseCase(activityRepository),
+            siagieImportStore = siagieImportStore,
         ),
         getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository),
         clock = clock,
@@ -157,6 +171,38 @@ class SectionDetailViewModelTest {
 
         assertThat(viewModel.state.value.currentPeriodLabel).isEqualTo("II Bimestre")
         assertThat(viewModel.state.value.missingPeriodLevelCount).isEqualTo(2)
+    }
+
+    @Test
+    fun `the template line shows once a SIAGIE grades template is stored`() = runTest {
+        siagieImportStore.apply(
+            students = emptyList(),
+            template = ImportedTemplate(
+                sectionId = sectionId,
+                kind = ImportedTemplateKind.GRADES,
+                fileName = "6 Primaria EBR.xlsx",
+                content = byteArrayOf(1),
+                importedAt = clock.instant(),
+            ),
+        )
+
+        assertThat(viewModel().state.value.hasStoredTemplate).isTrue()
+    }
+
+    @Test
+    fun `the activities row counts activities recorded in the current period`() = runTest {
+        activityRepository.activities.value = listOf(
+            Activity(
+                id = ActivityId("activity-1"),
+                sectionId = sectionId,
+                periodId = PeriodId("period-2"),
+                name = "Feria de ciencias",
+                date = today,
+                competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
+            ),
+        )
+
+        assertThat(viewModel().state.value.activityCount).isEqualTo(1)
     }
 
     @Test
