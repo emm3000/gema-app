@@ -8,7 +8,6 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionArea
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
-import com.emm.gema.feature.sections.label
 import com.emm.gema.feature.sections.title
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -69,7 +68,7 @@ class SectionAreasViewModel(
 
     private fun SectionArea.toRow(): AreaToggleRow = AreaToggleRow(
         id = area,
-        name = area.label(),
+        name = area.officialName,
         isActive = isActive,
         recordedLevelCount = 0,
     )
