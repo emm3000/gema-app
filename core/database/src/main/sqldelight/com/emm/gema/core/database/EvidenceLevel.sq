@@ -6,6 +6,8 @@ CREATE TABLE evidence_level (
     PRIMARY KEY (activity_id, student_id, competency_id)
 );
 
+CREATE INDEX evidence_level_activity ON evidence_level(activity_id);
+
 upsert:
 INSERT OR REPLACE INTO evidence_level (activity_id, student_id, competency_id, achievement_level)
 VALUES (?, ?, ?, ?);

@@ -20,13 +20,12 @@ class SaveActivityUseCase(
         name: String,
         date: LocalDate,
         competencyIds: Set<String>,
-    ): Activity {
+    ): SaveActivityResult {
         val section: Section = requireNotNull(sectionRepository.findById(sectionId)) {
             "There is no section $sectionId"
         }
-        val period: Period = requireNotNull(findPeriodForDate(section.schoolYearId, date)) {
-            "No period contains $date"
-        }
+        val period: Period = findPeriodForDate(section.schoolYearId, date)
+            ?: return SaveActivityResult.DateOutsidePeriods
 
         val activity = Activity(
             id = activityId ?: idGenerator.newId(),
@@ -37,6 +36,6 @@ class SaveActivityUseCase(
             competencyIds = competencyIds,
         )
         activityRepository.save(activity)
-        return activity
+        return SaveActivityResult.Saved(activity)
     }
 }

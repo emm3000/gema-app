@@ -74,6 +74,7 @@ fun ActivityFormScreen(
                         onValueChange = { onIntent(ActivityFormUiIntent.DateChanged(it)) },
                         label = "Fecha",
                         modifier = Modifier.fillMaxWidth(),
+                        errorText = state.dateError,
                     )
                     if (state.resolvedPeriodLabel != null) {
                         Text(

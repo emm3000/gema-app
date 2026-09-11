@@ -44,3 +44,10 @@ Period cannot produce an Evidence Level there.
   (`GetPeriodLevelSheetContextUseCase`). The list is read-only: nothing on the
   sheet copies an Evidence Level into the Period Level, keeping that decision
   the Teacher's alone (ADR 0003).
+- Issue #11 asked for the Period Levels grid to show Evidence Levels "next to
+  each cell". The approved `docs/design/screens.md` places them inside the
+  Period Level sheet instead — one tap away, not inline in the grid — because
+  a grid cell on a 360dp screen has no room for a level plus its evidence
+  without crowding every other cell. This ADR follows `screens.md`, the
+  narrower and later-approved source; the grid cell itself stays exactly what
+  ADR 0015 already specified.

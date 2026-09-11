@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.activity.Activity
 import com.emm.gema.core.domain.activity.DeleteActivityUseCase
 import com.emm.gema.core.domain.activity.GetActivityUseCase
+import com.emm.gema.core.domain.activity.SaveActivityResult
 import com.emm.gema.core.domain.activity.SaveActivityUseCase
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
@@ -100,6 +101,7 @@ class ActivityFormViewModel(
 
         if (period == null) {
             _state.value = _state.value.copy(
+                dateError = OUTSIDE_PERIODS_MESSAGE,
                 resolvedPeriodLabel = null,
                 periodChangeWarning = null,
                 competencyGroups = emptyList(),
@@ -112,6 +114,7 @@ class ActivityFormViewModel(
         val availableIds: Set<String> = competencies.map { it.id }.toSet()
 
         _state.value = _state.value.copy(
+            dateError = null,
             resolvedPeriodLabel = loadedSchoolYear.periodKind.labelFor(period.number),
             periodChangeWarning = changeWarning(period.id),
             competencyGroups = competencies.toGroups(),
@@ -138,16 +141,19 @@ class ActivityFormViewModel(
         if (!current.canSave) return
 
         viewModelScope.launch {
-            runCatching {
-                saveActivity(
+            when (
+                val result: SaveActivityResult = saveActivity(
                     sectionId = sectionId,
                     activityId = activityId,
                     name = current.name,
                     date = date,
                     competencyIds = current.selectedCompetencyIds,
                 )
-            }.onSuccess { saved -> emit(ActivityFormUiEffect.NavigateToActivityEvidence(saved.id)) }
-                .onFailure { emit(ActivityFormUiEffect.ShowMessage(OUTSIDE_PERIODS_MESSAGE)) }
+            ) {
+                is SaveActivityResult.Saved -> emit(ActivityFormUiEffect.NavigateToActivityEvidence(result.activity.id))
+                SaveActivityResult.DateOutsidePeriods ->
+                    _state.value = _state.value.copy(dateError = OUTSIDE_PERIODS_MESSAGE)
+            }
         }
     }
 
