@@ -19,11 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.sp
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.gemaCardTitleFontSize
 
 @Composable
 fun GYearCard(
@@ -32,6 +32,7 @@ fun GYearCard(
     sectionCountLabel: String,
     periodsLabel: String,
     isActive: Boolean,
+    badgeText: String?,
     onClick: () -> Unit,
     onPeriodsClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -57,12 +58,12 @@ fun GYearCard(
             ) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = gemaCardTitleFontSize),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                if (isActive) {
-                    GBadge(text = "ACTIVO")
+                if (badgeText != null) {
+                    GBadge(text = badgeText)
                 }
             }
             Text(
@@ -117,6 +118,7 @@ private fun GYearCardPreview() {
                 sectionCountLabel = "2 secciones",
                 periodsLabel = "Periodos",
                 isActive = true,
+                badgeText = "ACTIVO",
                 onClick = {},
                 onPeriodsClick = {},
             )
@@ -126,6 +128,7 @@ private fun GYearCardPreview() {
                 sectionCountLabel = "1 sección",
                 periodsLabel = "Periodos",
                 isActive = false,
+                badgeText = null,
                 onClick = {},
                 onPeriodsClick = {},
             )

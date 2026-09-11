@@ -30,6 +30,9 @@ fun GScreen(
     fab: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    require(fab == null || bottomAction == null) {
+        "GScreen renders only one bottom slot: pass fab or bottomAction, never both"
+    }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = topBar,

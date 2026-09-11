@@ -122,6 +122,11 @@ background.
 Contract: `GScreen` owns the horizontal gutter once. A screen never adds
 horizontal `screenGutter` to its root column.
 
+Contract (#68): `fab` and `bottomAction` are mutually exclusive. `GScreen`
+renders only one bottom slot, so passing both raises
+`IllegalArgumentException` instead of silently stacking a FAB over a bottom
+action bar. A screen picks one.
+
 Deviation from an earlier draft of this catalog: the built signature carries
 `snackbarHostState: SnackbarHostState?`, not a `floatingAction` slot. There is
 no floating action button anywhere in this app (see "No `GTabRow`" and the
