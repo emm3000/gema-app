@@ -9,6 +9,7 @@ import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
+import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
 import com.emm.gema.feature.sections.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -31,7 +32,11 @@ class SectionFormViewModelTest {
         getSection = GetSectionUseCase(sectionRepository),
         createSection = CreateSectionUseCase(sectionRepository, IdGenerator { "section-2" }),
         updateSection = UpdateSectionUseCase(sectionRepository),
-        deleteSection = DeleteSectionUseCase(sectionRepository, sectionAreaRepository),
+        deleteSection = DeleteSectionUseCase(
+            sectionRepository,
+            sectionAreaRepository,
+            FakeWorkedCompetencyRepository(),
+        ),
     )
 
     @Test

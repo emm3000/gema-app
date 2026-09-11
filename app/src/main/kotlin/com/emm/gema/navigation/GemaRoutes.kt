@@ -1,5 +1,7 @@
 package com.emm.gema.navigation
 
+import com.emm.gema.core.domain.section.Area
+
 object GemaRoutes {
     const val HOME: String = "home"
     const val BACKUP: String = "backup"
@@ -9,9 +11,12 @@ object GemaRoutes {
     const val PERIODS: String = "periods/{schoolYearId}"
     const val SECTION_FORM: String = "section-form?schoolYearId={schoolYearId}&sectionId={sectionId}"
     const val SECTION_AREAS: String = "section-areas/{sectionId}"
+    const val WORKED_COMPETENCIES: String = "worked-competencies/{sectionId}/{periodId}/{area}"
 
     const val SCHOOL_YEAR_ID: String = "schoolYearId"
     const val SECTION_ID: String = "sectionId"
+    const val PERIOD_ID: String = "periodId"
+    const val AREA: String = "area"
 
     fun periodsOf(schoolYearId: String): String = "periods/$schoolYearId"
 
@@ -19,4 +24,7 @@ object GemaRoutes {
         "section-form?schoolYearId=$schoolYearId&sectionId=${sectionId.orEmpty()}"
 
     fun sectionAreasOf(sectionId: String): String = "section-areas/$sectionId"
+
+    fun workedCompetenciesOf(sectionId: String, periodId: String, area: Area): String =
+        "worked-competencies/$sectionId/$periodId/${area.name}"
 }

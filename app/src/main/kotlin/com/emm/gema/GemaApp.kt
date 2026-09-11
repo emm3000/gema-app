@@ -2,6 +2,7 @@ package com.emm.gema
 
 import android.app.Application
 import com.emm.gema.di.appModule
+import com.emm.gema.feature.evaluation.evaluationModule
 import com.emm.gema.feature.sections.sectionsModule
 import com.emm.gema.feature.setup.setupModule
 import org.koin.android.ext.koin.androidContext
@@ -15,7 +16,7 @@ class GemaApp : Application() {
         startKoin {
             androidContext(this@GemaApp)
             androidLogger()
-            modules(appModule, setupModule, sectionsModule)
+            modules(appModule, setupModule, sectionsModule, evaluationModule)
         }
     }
 }
