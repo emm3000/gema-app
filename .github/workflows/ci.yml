@@ -39,3 +39,4 @@ jobs:
           detekt
           testDebugUnitTest
           assembleDebug
+          assembleRelease
