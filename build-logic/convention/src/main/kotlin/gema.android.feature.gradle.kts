@@ -11,6 +11,7 @@ dependencies {
     add("implementation", platform(libs.findLibrary("koin-bom").get()))
     add("implementation", libs.findLibrary("koin-core").get())
     add("implementation", libs.findLibrary("koin-androidx-compose").get())
+    add("implementation", libs.findLibrary("androidx-material-icons-extended").get())
     add("implementation", libs.findLibrary("androidx-lifecycle-runtime-ktx").get())
     add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
     add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
