@@ -3,6 +3,7 @@ package com.emm.gema.core.database.siagie
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.ImportedTemplateQueries
 import com.emm.gema.core.database.StudentQueries
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieImportStore
@@ -24,7 +25,7 @@ class SqlDelightSiagieImportStore(
             database.transaction {
                 students.forEach(::insert)
                 templates.insert(
-                    section_id = template.sectionId,
+                    section_id = template.sectionId.value,
                     kind = template.kind.name,
                     file_name = template.fileName,
                     content = template.content,
@@ -33,19 +34,19 @@ class SqlDelightSiagieImportStore(
             }
         }
 
-    override suspend fun clearSection(sectionId: String): Unit = withContext(dispatcher) {
-        templates.deleteBySection(sectionId)
+    override suspend fun clearSection(sectionId: SectionId): Unit = withContext(dispatcher) {
+        templates.deleteBySection(sectionId.value)
     }
 
-    override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
+    override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
         withContext(dispatcher) {
-            templates.selectBySectionAndKind(sectionId, kind.name).executeAsOneOrNull()?.toDomain()
+            templates.selectBySectionAndKind(sectionId.value, kind.name).executeAsOneOrNull()?.toDomain()
         }
 
     private fun insert(student: Student) {
         studentQueries.insert(
-            id = student.id,
-            section_id = student.sectionId,
+            id = student.id.value,
+            section_id = student.sectionId.value,
             student_code = student.code.value,
             full_name = student.fullName,
             siagie_id = student.siagieId,

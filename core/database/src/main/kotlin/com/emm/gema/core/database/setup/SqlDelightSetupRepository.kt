@@ -21,7 +21,7 @@ class SqlDelightSetupRepository(
     ): Unit = withContext(dispatcher) {
         database.transaction {
             database.schoolYearQueries.insert(
-                id = schoolYear.id,
+                id = schoolYear.id.value,
                 start_date = schoolYear.startDate.toString(),
                 end_date = schoolYear.endDate.toString(),
                 period_kind = schoolYear.periodKind.name,
@@ -29,20 +29,20 @@ class SqlDelightSetupRepository(
             )
             periods.forEach { period ->
                 database.periodQueries.insert(
-                    id = period.id,
-                    school_year_id = period.schoolYearId,
+                    id = period.id.value,
+                    school_year_id = period.schoolYearId.value,
                     number = period.number.toLong(),
                     start_date = period.startDate.toString(),
                     end_date = period.endDate.toString(),
                 )
             }
             database.sectionQueries.insert(
-                id = section.id,
-                school_year_id = section.schoolYearId,
+                id = section.id.value,
+                school_year_id = section.schoolYearId.value,
                 grade = section.grade.name,
                 name = section.name,
             )
-            database.activeSchoolYearQueries.activate(schoolYear.id)
+            database.activeSchoolYearQueries.activate(schoolYear.id.value)
         }
     }
 }

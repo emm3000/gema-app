@@ -1,7 +1,9 @@
 package com.emm.gema.core.siagie
 
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
@@ -13,6 +15,7 @@ import com.emm.gema.core.domain.siagie.SiagieImportRejection
 import com.emm.gema.core.domain.siagie.SiagieImportResult
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.time.Clock
@@ -24,7 +27,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-private const val SECTION_ID: String = "section-1"
+private val sectionId: SectionId = SectionId("section-1")
 private const val FIXTURE_NAME: String = "6 Primaria EBR.xlsx"
 private val withdrawalDate: LocalDate = LocalDate.of(2026, 9, 10)
 
@@ -51,14 +54,14 @@ class SiagieImportFixtureTest {
     fun `the first import of a real template creates the whole section`() = runTest {
         sections.section = sectionOf(Grade.SIXTH)
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, fixture().absolutePath)
-        val result: SiagieImportResult = applyImport(SECTION_ID, fixture().absolutePath, emptySet(), withdrawalDate)
+        val preview: SiagieImportPreview = previewImport(sectionId, fixture().absolutePath)
+        val result: SiagieImportResult = applyImport(sectionId, fixture().absolutePath, emptySet(), withdrawalDate)
 
         val plan: SiagieImportPlan = (preview as SiagieImportPreview.Ready).plan
         assertThat(plan.fileName).isEqualTo(FIXTURE_NAME)
         assertThat(plan.created).hasSize(5)
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 5, updated = 0, withdrawn = 0))
-        assertThat(students.listBySection(SECTION_ID).map { it.fullName })
+        assertThat(students.listBySection(sectionId).map { it.fullName })
             .contains("ALVARADO QUISPE, MARIA FERNANDA")
     }
 
@@ -66,10 +69,10 @@ class SiagieImportFixtureTest {
     fun `the imported file is stored for the export that comes later`() = runTest {
         sections.section = sectionOf(Grade.SIXTH)
 
-        applyImport(SECTION_ID, fixture().absolutePath, emptySet(), withdrawalDate)
+        applyImport(sectionId, fixture().absolutePath, emptySet(), withdrawalDate)
 
         val template: ImportedTemplate =
-            requireNotNull(store.findTemplate(SECTION_ID, ImportedTemplateKind.GRADES))
+            requireNotNull(store.findTemplate(sectionId, ImportedTemplateKind.GRADES))
         assertThat(template.fileName).isEqualTo(FIXTURE_NAME)
         assertThat(template.content).isEqualTo(fixture().readBytes())
     }
@@ -77,24 +80,24 @@ class SiagieImportFixtureTest {
     @Test
     fun `importing the same template twice creates nobody`() = runTest {
         sections.section = sectionOf(Grade.SIXTH)
-        applyImport(SECTION_ID, fixture().absolutePath, emptySet(), withdrawalDate)
+        applyImport(sectionId, fixture().absolutePath, emptySet(), withdrawalDate)
 
-        val result: SiagieImportResult = applyImport(SECTION_ID, fixture().absolutePath, emptySet(), withdrawalDate)
+        val result: SiagieImportResult = applyImport(sectionId, fixture().absolutePath, emptySet(), withdrawalDate)
 
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 0, updated = 0, withdrawn = 0))
-        assertThat(students.listBySection(SECTION_ID)).hasSize(5)
+        assertThat(students.listBySection(sectionId)).hasSize(5)
     }
 
     @Test
     fun `a re-import brings the names siagie changed`() = runTest {
         sections.section = sectionOf(Grade.SIXTH)
-        applyImport(SECTION_ID, fixture().absolutePath, emptySet(), withdrawalDate)
+        applyImport(sectionId, fixture().absolutePath, emptySet(), withdrawalDate)
         val renamed: File = fixtureWith("C4", "ALVARADO QUISPE, MARIA F.")
 
-        val result: SiagieImportResult = applyImport(SECTION_ID, renamed.absolutePath, emptySet(), withdrawalDate)
+        val result: SiagieImportResult = applyImport(sectionId, renamed.absolutePath, emptySet(), withdrawalDate)
 
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 0, updated = 1, withdrawn = 0))
-        assertThat(students.listBySection(SECTION_ID).map { it.fullName })
+        assertThat(students.listBySection(sectionId).map { it.fullName })
             .contains("ALVARADO QUISPE, MARIA F.")
     }
 
@@ -103,21 +106,21 @@ class SiagieImportFixtureTest {
         sections.section = sectionOf(Grade.SIXTH)
         students.save(
             Student(
-                id = "student-typed",
-                sectionId = SECTION_ID,
+                id = StudentId("student-typed"),
+                sectionId = sectionId,
                 code = StudentCode("99999999999999"),
                 fullName = "TORRES PINO, LUIS",
             )
         )
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, fixture().absolutePath)
+        val preview: SiagieImportPreview = previewImport(sectionId, fixture().absolutePath)
         val plan: SiagieImportPlan = (preview as SiagieImportPreview.Ready).plan
         val result: SiagieImportResult =
-            applyImport(SECTION_ID, fixture().absolutePath, setOf("student-typed"), withdrawalDate)
+            applyImport(sectionId, fixture().absolutePath, setOf(StudentId("student-typed")), withdrawalDate)
 
         assertThat(plan.missing.map { it.fullName }).containsExactly("TORRES PINO, LUIS")
         assertThat(result).isEqualTo(SiagieImportResult.Applied(created = 5, updated = 0, withdrawn = 1))
-        val kept: Student = requireNotNull(students.findById("student-typed"))
+        val kept: Student = requireNotNull(students.findById(StudentId("student-typed")))
         assertThat(kept.withdrawalDate).isEqualTo(withdrawalDate)
     }
 
@@ -125,12 +128,12 @@ class SiagieImportFixtureTest {
     fun `a template of another grade is rejected before anything is written`() = runTest {
         sections.section = sectionOf(Grade.THIRD)
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, fixture().absolutePath)
+        val preview: SiagieImportPreview = previewImport(sectionId, fixture().absolutePath)
 
         assertThat(preview).isEqualTo(
             SiagieImportPreview.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6))
         )
-        assertThat(students.listBySection(SECTION_ID)).isEmpty()
+        assertThat(students.listBySection(sectionId)).isEmpty()
     }
 
     @Test
@@ -138,12 +141,10 @@ class SiagieImportFixtureTest {
         sections.section = sectionOf(Grade.SIXTH)
         val broken: File = fixtureWith("B6", "")
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, broken.absolutePath)
+        val preview: SiagieImportPreview = previewImport(sectionId, broken.absolutePath)
 
-        assertThat(preview).isEqualTo(
-            SiagieImportPreview.Rejected(SiagieImportRejection.MalformedRow(row = 6))
-        )
-        assertThat(students.listBySection(SECTION_ID)).isEmpty()
+        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.MalformedRow(row = 6)))
+        assertThat(students.listBySection(sectionId)).isEmpty()
     }
 
     @Test
@@ -152,15 +153,13 @@ class SiagieImportFixtureTest {
         val notATemplate: File = temporaryFolder.newFile("notas.xlsx")
         notATemplate.writeText("these are my notes")
 
-        val preview: SiagieImportPreview = previewImport(SECTION_ID, notATemplate.absolutePath)
+        val preview: SiagieImportPreview = previewImport(sectionId, notATemplate.absolutePath)
 
-        assertThat(preview).isEqualTo(
-            SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate)
-        )
+        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate))
     }
 
     private fun sectionOf(grade: Grade): Section =
-        Section(id = SECTION_ID, schoolYearId = "year-1", grade = grade, name = "A")
+        Section(id = sectionId, schoolYearId = SchoolYearId("year-1"), grade = grade, name = "A")
 
     private fun fixtureWith(reference: String, text: String): File {
         val target: File = File(temporaryFolder.newFolder(), FIXTURE_NAME)

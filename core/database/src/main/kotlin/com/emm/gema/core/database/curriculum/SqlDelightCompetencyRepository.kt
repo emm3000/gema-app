@@ -21,7 +21,7 @@ class SqlDelightCompetencyRepository(
             queries.transaction {
                 competencies.forEach { competency ->
                     queries.upsert(
-                        id = competency.id,
+                        id = competency.id.value,
                         area = competency.area.name,
                         siagie_ordinal = competency.siagieOrdinal.toLong(),
                         name = competency.name,

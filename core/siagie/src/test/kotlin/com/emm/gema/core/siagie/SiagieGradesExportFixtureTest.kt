@@ -11,14 +11,18 @@ import com.emm.gema.core.domain.export.ExportGradesUseCase
 import com.emm.gema.core.domain.export.ExportedFile
 import com.emm.gema.core.domain.export.GetGradesExportPlanUseCase
 import com.emm.gema.core.domain.export.GradesExportResult
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
 import com.emm.gema.core.domain.siagie.SiagieImportPlanner
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.time.Clock
@@ -31,8 +35,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-private const val SECTION_ID: String = "section-1"
-private const val PERIOD_ID: String = "period-1"
+private val sectionId: SectionId = SectionId("section-1")
+private val periodId: PeriodId = PeriodId("period-1")
 private const val FIXTURE_NAME: String = "6 Primaria EBR.xlsx"
 private const val COMU_SHEET_PART: String = "xl/worksheets/sheet1.xml"
 
@@ -71,12 +75,12 @@ class SiagieGradesExportFixtureTest {
     @Test
     fun `the export fills the imported template and keeps its name`() = runTest {
         importFixture()
-        worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
-        record("student-1", Area.COMU, 1, AchievementLevel.AD, "Lee con fluidez")
-        record("student-2", Area.COMU, 1, AchievementLevel.C, "Requiere acompanamiento")
-        recordComment("student-3", Area.COMU, 1, UnworkedComment.NOT_ENOUGH_EVIDENCE)
+        worked.setWorked(sectionId, periodId, Competency.idOf(Area.COMU, 1), true)
+        record(firstStudentId, Area.COMU, 1, AchievementLevel.AD, "Lee con fluidez")
+        record(secondStudentId, Area.COMU, 1, AchievementLevel.C, "Requiere acompanamiento")
+        recordComment(thirdStudentId, Area.COMU, 1, UnworkedComment.NOT_ENOUGH_EVIDENCE)
 
-        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+        val result: GradesExportResult = exportGrades()(sectionId, periodId)
 
         val file: ExportedFile = (result as GradesExportResult.Exported).file
         assertThat(file.name).isEqualTo(FIXTURE_NAME)
@@ -91,11 +95,11 @@ class SiagieGradesExportFixtureTest {
     @Test
     fun `a competency that was not worked keeps its cells empty`() = runTest {
         importFixture()
-        worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
-        record("student-1", Area.COMU, 1, AchievementLevel.A, "")
-        record("student-1", Area.COMU, 2, AchievementLevel.B, "")
+        worked.setWorked(sectionId, periodId, Competency.idOf(Area.COMU, 1), true)
+        record(firstStudentId, Area.COMU, 1, AchievementLevel.A, "")
+        record(firstStudentId, Area.COMU, 2, AchievementLevel.B, "")
 
-        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+        val result: GradesExportResult = exportGrades()(sectionId, periodId)
 
         val cells: Map<String, String> = XlsxTemplate(File(exportedPath(result))).readSheet("COMU")
         assertThat(cells["D4"]).isEqualTo("A")
@@ -105,10 +109,10 @@ class SiagieGradesExportFixtureTest {
     @Test
     fun `every part but the edited sheet stays byte for byte`() = runTest {
         importFixture()
-        worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
-        record("student-1", Area.COMU, 1, AchievementLevel.A, "")
+        worked.setWorked(sectionId, periodId, Competency.idOf(Area.COMU, 1), true)
+        record(firstStudentId, Area.COMU, 1, AchievementLevel.A, "")
 
-        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+        val result: GradesExportResult = exportGrades()(sectionId, periodId)
 
         val original: Map<String, ByteArray> = parts(fixture())
         val written: Map<String, ByteArray> = parts(File(exportedPath(result)))
@@ -121,11 +125,11 @@ class SiagieGradesExportFixtureTest {
     @Test
     fun `every cell of the edited sheet but the written ones stays as it was`() = runTest {
         importFixture()
-        worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
-        record("student-1", Area.COMU, 1, AchievementLevel.AD, "Lee con fluidez")
-        record("student-2", Area.COMU, 1, AchievementLevel.B, "")
+        worked.setWorked(sectionId, periodId, Competency.idOf(Area.COMU, 1), true)
+        record(firstStudentId, Area.COMU, 1, AchievementLevel.AD, "Lee con fluidez")
+        record(secondStudentId, Area.COMU, 1, AchievementLevel.B, "")
 
-        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+        val result: GradesExportResult = exportGrades()(sectionId, periodId)
 
         val written: Set<String> = setOf("D4", "E4", "D5")
         val before: Map<String, String> = XlsxTemplate(fixture()).readSheet("COMU")
@@ -138,10 +142,10 @@ class SiagieGradesExportFixtureTest {
     @Test
     fun `a C without a descriptive conclusion blocks the whole file`() = runTest {
         importFixture()
-        worked.setWorked(SECTION_ID, PERIOD_ID, Competency.idOf(Area.COMU, 1), true)
-        record("student-1", Area.COMU, 1, AchievementLevel.C, "")
+        worked.setWorked(sectionId, periodId, Competency.idOf(Area.COMU, 1), true)
+        record(firstStudentId, Area.COMU, 1, AchievementLevel.C, "")
 
-        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+        val result: GradesExportResult = exportGrades()(sectionId, periodId)
 
         val blocked = result as GradesExportResult.Blocked
         assertThat(blocked.gaps.map { it.studentName }).containsExactly("ALVARADO QUISPE, MARIA FERNANDA")
@@ -150,17 +154,22 @@ class SiagieGradesExportFixtureTest {
 
     @Test
     fun `a section without a stored template cannot export`() = runTest {
-        sections.section = Section(id = SECTION_ID, schoolYearId = "year-1", grade = Grade.SIXTH, name = "A")
+        sections.section = Section(
+            id = sectionId,
+            schoolYearId = SchoolYearId("year-1"),
+            grade = Grade.SIXTH,
+            name = "A",
+        )
         students.save(
             Student(
-                id = "student-1",
-                sectionId = SECTION_ID,
+                id = firstStudentId,
+                sectionId = sectionId,
                 code = StudentCode("10000000000001"),
                 fullName = "ALVARADO QUISPE, MARIA FERNANDA",
             ),
         )
 
-        val result: GradesExportResult = exportGrades()(SECTION_ID, PERIOD_ID)
+        val result: GradesExportResult = exportGrades()(sectionId, periodId)
 
         assertThat(result).isEqualTo(GradesExportResult.Unavailable)
     }
@@ -174,12 +183,17 @@ class SiagieGradesExportFixtureTest {
     )
 
     private suspend fun importFixture() {
-        sections.section = Section(id = SECTION_ID, schoolYearId = "year-1", grade = Grade.SIXTH, name = "A")
-        applyImport(SECTION_ID, fixture().absolutePath, emptySet(), LocalDate.of(2026, 9, 10))
+        sections.section = Section(
+            id = sectionId,
+            schoolYearId = SchoolYearId("year-1"),
+            grade = Grade.SIXTH,
+            name = "A",
+        )
+        applyImport(sectionId, fixture().absolutePath, emptySet(), LocalDate.of(2026, 9, 10))
     }
 
     private suspend fun record(
-        studentId: String,
+        studentId: StudentId,
         area: Area,
         ordinal: Int,
         level: AchievementLevel,
@@ -194,13 +208,13 @@ class SiagieGradesExportFixtureTest {
         )
     }
 
-    private suspend fun recordComment(studentId: String, area: Area, ordinal: Int, comment: UnworkedComment) {
+    private suspend fun recordComment(studentId: StudentId, area: Area, ordinal: Int, comment: UnworkedComment) {
         levels.save(PeriodLevel(key = keyOf(studentId, area, ordinal), unworkedComment = comment))
     }
 
-    private fun keyOf(studentId: String, area: Area, ordinal: Int): PeriodLevelKey = PeriodLevelKey(
-        sectionId = SECTION_ID,
-        periodId = PERIOD_ID,
+    private fun keyOf(studentId: StudentId, area: Area, ordinal: Int): PeriodLevelKey = PeriodLevelKey(
+        sectionId = sectionId,
+        periodId = periodId,
         studentId = studentId,
         competencyId = Competency.idOf(area, ordinal),
     )
@@ -223,3 +237,9 @@ private fun competencyOf(area: Area, ordinal: Int): Competency = Competency(
     siagieOrdinal = ordinal,
     name = "Competencia $ordinal",
 )
+
+private val firstStudentId: StudentId = StudentId("student-1")
+
+private val secondStudentId: StudentId = StudentId("student-2")
+
+private val thirdStudentId: StudentId = StudentId("student-3")

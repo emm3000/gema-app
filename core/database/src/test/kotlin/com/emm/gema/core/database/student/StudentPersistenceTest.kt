@@ -5,10 +5,12 @@ import com.emm.gema.core.database.UuidIdGenerator
 import com.emm.gema.core.database.inMemoryGemaDb
 import com.emm.gema.core.database.section.SqlDelightSectionCascade
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.emm.gema.core.domain.student.GetStudentUseCase
@@ -20,12 +22,12 @@ import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.StudentSaveResult
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.time.LocalDate
 
 private const val FIRST_CODE: String = "12345678901234"
 private const val SECOND_CODE: String = "12345678901235"
@@ -108,9 +110,9 @@ class StudentPersistenceTest {
         assertThat(getStudents(section.id).first()).isEmpty()
     }
 
-    private suspend fun section(): Section = createSection("2026", Grade.THIRD, "A")
+    private suspend fun section(): Section = createSection(SchoolYearId("2026"), Grade.THIRD, "A")
 
-    private suspend fun savedStudent(sectionId: String): Student {
+    private suspend fun savedStudent(sectionId: SectionId): Student {
         val result: StudentSaveResult = saveStudent(sectionId, null, FIRST_CODE, "ACOSTA RIVERA, Luz Maria")
         return (result as StudentSaveResult.Saved).student
     }

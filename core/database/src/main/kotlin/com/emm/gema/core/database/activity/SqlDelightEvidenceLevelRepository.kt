@@ -5,10 +5,15 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.emm.gema.core.database.EvidenceLevelQueries
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.SelectRecordedStudentCountsByPeriod
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
 import com.emm.gema.core.domain.activity.EvidenceLevelRepository
 import com.emm.gema.core.domain.activity.EvidenceRecord
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.StudentId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -22,31 +27,34 @@ class SqlDelightEvidenceLevelRepository(
 
     private val queries: EvidenceLevelQueries = database.evidenceLevelQueries
 
-    override fun observeByActivity(activityId: String): Flow<List<EvidenceLevel>> = queries
-        .selectByActivity(activityId)
+    override fun observeByActivity(activityId: ActivityId): Flow<List<EvidenceLevel>> = queries
+        .selectByActivity(activityId.value)
         .asFlow()
         .mapToList(dispatcher)
         .map { rows -> rows.map { it.toDomain() } }
 
-    override fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
-        queries.selectRecordedStudentCountsByPeriod(section_id = sectionId, period_id = periodId)
+    override fun observeRecordedStudentCountsByPeriod(
+        sectionId: SectionId,
+        periodId: PeriodId,
+    ): Flow<Map<ActivityId, Int>> =
+        queries.selectRecordedStudentCountsByPeriod(section_id = sectionId.value, period_id = periodId.value)
             .asFlow()
             .mapToList(dispatcher)
             .map { rows: List<SelectRecordedStudentCountsByPeriod> ->
-                rows.associate { it.activity_id to it.student_count.toInt() }
+                rows.associate { ActivityId(it.activity_id) to it.student_count.toInt() }
             }
 
     override fun observeForStudentAndCompetency(
-        sectionId: String,
-        periodId: String,
-        studentId: String,
-        competencyId: String,
+        sectionId: SectionId,
+        periodId: PeriodId,
+        studentId: StudentId,
+        competencyId: CompetencyId,
     ): Flow<List<EvidenceRecord>> = queries
         .selectForStudentAndCompetency(
-            section_id = sectionId,
-            period_id = periodId,
-            student_id = studentId,
-            competency_id = competencyId,
+            section_id = sectionId.value,
+            period_id = periodId.value,
+            student_id = studentId.value,
+            competency_id = competencyId.value,
         )
         .asFlow()
         .mapToList(dispatcher)
@@ -54,22 +62,26 @@ class SqlDelightEvidenceLevelRepository(
 
     override suspend fun save(evidenceLevel: EvidenceLevel): Unit = withContext(dispatcher) {
         queries.upsert(
-            activity_id = evidenceLevel.key.activityId,
-            student_id = evidenceLevel.key.studentId,
-            competency_id = evidenceLevel.key.competencyId,
+            activity_id = evidenceLevel.key.activityId.value,
+            student_id = evidenceLevel.key.studentId.value,
+            competency_id = evidenceLevel.key.competencyId.value,
             achievement_level = evidenceLevel.achievementLevel.name,
         )
     }
 
     override suspend fun delete(key: EvidenceLevelKey): Unit = withContext(dispatcher) {
-        queries.delete(activity_id = key.activityId, student_id = key.studentId, competency_id = key.competencyId)
+        queries.delete(
+            activity_id = key.activityId.value,
+            student_id = key.studentId.value,
+            competency_id = key.competencyId.value,
+        )
     }
 
-    override suspend fun deleteByActivity(activityId: String): Unit = withContext(dispatcher) {
-        queries.deleteByActivity(activityId)
+    override suspend fun deleteByActivity(activityId: ActivityId): Unit = withContext(dispatcher) {
+        queries.deleteByActivity(activityId.value)
     }
 
-    override suspend fun clearSection(sectionId: String): Unit = withContext(dispatcher) {
-        queries.deleteBySection(sectionId)
+    override suspend fun clearSection(sectionId: SectionId): Unit = withContext(dispatcher) {
+        queries.deleteBySection(sectionId.value)
     }
 }

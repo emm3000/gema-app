@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.SchoolYearQueries
 import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,7 @@ class SqlDelightSchoolYearRepository(
         .mapToList(dispatcher)
         .map { rows -> rows.map { it.toDomain() } }
 
-    override suspend fun findById(id: String): SchoolYear? = queries.selectById(id)
+    override suspend fun findById(id: SchoolYearId): SchoolYear? = queries.selectById(id.value)
         .asFlow()
         .mapToOneOrNull(dispatcher)
         .map { row -> row?.toDomain() }
@@ -34,7 +35,7 @@ class SqlDelightSchoolYearRepository(
 
     override suspend fun save(schoolYear: SchoolYear): Unit = withContext(dispatcher) {
         queries.insert(
-            id = schoolYear.id,
+            id = schoolYear.id.value,
             start_date = schoolYear.startDate.toString(),
             end_date = schoolYear.endDate.toString(),
             period_kind = schoolYear.periodKind.name,

@@ -15,10 +15,12 @@ import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
 import com.emm.gema.core.domain.attendance.MonthlyAttendanceSummary
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
 import com.emm.gema.core.domain.attendance.StudentAttendanceMonthCount
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.Student
@@ -26,15 +28,15 @@ import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.StudentSaveResult
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.google.common.truth.Truth.assertThat
+import java.time.Clock
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.ZoneOffset
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.time.Clock
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.ZoneOffset
 
 private const val firstCode: String = "12345678901234"
 private const val secondCode: String = "12345678901235"
@@ -139,9 +141,9 @@ class AttendancePersistenceTest {
         assertThat(counts.countsByStatus[AttendanceStatus.ABSENT]).isEqualTo(0)
     }
 
-    private suspend fun section(): Section = createSection("2026", Grade.THIRD, "A")
+    private suspend fun section(): Section = createSection(SchoolYearId("2026"), Grade.THIRD, "A")
 
-    private suspend fun savedStudent(sectionId: String, code: String, fullName: String): Student {
+    private suspend fun savedStudent(sectionId: SectionId, code: String, fullName: String): Student {
         val result: StudentSaveResult = saveStudent(sectionId, null, code, fullName)
         return (result as StudentSaveResult.Saved).student
     }

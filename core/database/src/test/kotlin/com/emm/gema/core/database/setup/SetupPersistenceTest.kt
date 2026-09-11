@@ -87,10 +87,7 @@ class SetupPersistenceTest {
         val second: Period = getPeriods(schoolYear.id).first()[1]
         val getCurrentPeriod = GetCurrentPeriodUseCase(
             repository = periodRepository,
-            clock = Clock.fixed(
-                second.startDate.atStartOfDay(ZoneOffset.UTC).toInstant(),
-                ZoneId.of("UTC"),
-            ),
+            clock = Clock.fixed(second.startDate.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC")),
         )
 
         assertThat(getCurrentPeriod(schoolYear.id)).isEqualTo(second)

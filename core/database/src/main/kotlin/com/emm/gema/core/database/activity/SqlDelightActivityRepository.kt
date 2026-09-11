@@ -5,7 +5,10 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.emm.gema.core.database.ActivityQueries
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.ActivityRepository
+import com.emm.gema.core.domain.schoolyear.PeriodId
+import com.emm.gema.core.domain.section.SectionId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,43 +22,43 @@ class SqlDelightActivityRepository(
 
     private val queries: ActivityQueries = database.activityQueries
 
-    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<Activity>> = queries
-        .selectByPeriod(section_id = sectionId, period_id = periodId)
+    override fun observeByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<List<Activity>> = queries
+        .selectByPeriod(section_id = sectionId.value, period_id = periodId.value)
         .asFlow()
         .mapToList(dispatcher)
         .map { rows -> rows.map { it.toDomain() } }
 
-    override suspend fun findById(id: String): Activity? = withContext(dispatcher) {
-        queries.selectById(id).executeAsOneOrNull()?.toDomain()
+    override suspend fun findById(id: ActivityId): Activity? = withContext(dispatcher) {
+        queries.selectById(id.value).executeAsOneOrNull()?.toDomain()
     }
 
     override suspend fun save(activity: Activity): Unit = withContext(dispatcher) {
         database.transaction {
             queries.upsert(
-                id = activity.id,
-                section_id = activity.sectionId,
-                period_id = activity.periodId,
+                id = activity.id.value,
+                section_id = activity.sectionId.value,
+                period_id = activity.periodId.value,
                 name = activity.name,
                 date = activity.date.toString(),
             )
-            queries.deleteCompetenciesByActivity(activity.id)
+            queries.deleteCompetenciesByActivity(activity.id.value)
             activity.competencyIds.forEach { competencyId ->
-                queries.insertCompetency(activity_id = activity.id, competency_id = competencyId)
+                queries.insertCompetency(activity_id = activity.id.value, competency_id = competencyId.value)
             }
         }
     }
 
-    override suspend fun delete(id: String): Unit = withContext(dispatcher) {
+    override suspend fun delete(id: ActivityId): Unit = withContext(dispatcher) {
         database.transaction {
-            queries.deleteCompetenciesByActivity(id)
-            queries.delete(id)
+            queries.deleteCompetenciesByActivity(id.value)
+            queries.delete(id.value)
         }
     }
 
-    override suspend fun clearSection(sectionId: String): Unit = withContext(dispatcher) {
+    override suspend fun clearSection(sectionId: SectionId): Unit = withContext(dispatcher) {
         database.transaction {
-            queries.deleteCompetenciesBySection(sectionId)
-            queries.deleteBySection(sectionId)
+            queries.deleteCompetenciesBySection(sectionId.value)
+            queries.deleteBySection(sectionId.value)
         }
     }
 }

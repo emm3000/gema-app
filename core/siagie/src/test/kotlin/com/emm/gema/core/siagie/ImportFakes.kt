@@ -1,7 +1,9 @@
 package com.emm.gema.core.siagie
 
 import com.emm.gema.core.domain.id.IdGenerator
+import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
@@ -9,6 +11,7 @@ import com.emm.gema.core.domain.siagie.SiagieDocuments
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
 import java.io.File
@@ -20,18 +23,18 @@ class FakeSectionRepository : SectionRepository {
 
     var section: Section? = null
 
-    override fun observeBySchoolYear(schoolYearId: String): Flow<List<Section>> =
+    override fun observeBySchoolYear(schoolYearId: SchoolYearId): Flow<List<Section>> =
         MutableStateFlow(listOfNotNull(section))
 
-    override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = MutableStateFlow(emptyMap())
+    override fun observeCountsBySchoolYear(): Flow<Map<SchoolYearId, Int>> = MutableStateFlow(emptyMap())
 
-    override suspend fun findById(id: String): Section? = section?.takeIf { it.id == id }
+    override suspend fun findById(id: SectionId): Section? = section?.takeIf { it.id == id }
 
     override suspend fun save(section: Section) {
         this.section = section
     }
 
-    override suspend fun delete(id: String) {
+    override suspend fun delete(id: SectionId) {
         section = null
     }
 }
@@ -40,26 +43,26 @@ class FakeStudentRepository : StudentRepository {
 
     private val students: MutableStateFlow<List<Student>> = MutableStateFlow(emptyList())
 
-    override fun observeBySection(sectionId: String): Flow<List<Student>> = students
+    override fun observeBySection(sectionId: SectionId): Flow<List<Student>> = students
         .map { stored -> stored.filter { it.sectionId == sectionId }.orderedByName() }
 
-    override fun observeCountsBySection(): Flow<Map<String, Int>> = students
+    override fun observeCountsBySection(): Flow<Map<SectionId, Int>> = students
         .map { stored -> stored.groupingBy { it.sectionId }.eachCount() }
 
-    override suspend fun listBySection(sectionId: String): List<Student> = students.value
+    override suspend fun listBySection(sectionId: SectionId): List<Student> = students.value
         .filter { it.sectionId == sectionId }
         .orderedByName()
 
-    override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
+    override suspend fun findById(id: StudentId): Student? = students.value.find { it.id == id }
 
-    override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
+    override suspend fun findByCode(sectionId: SectionId, code: StudentCode): Student? = students.value
         .find { it.sectionId == sectionId && it.code == code }
 
     override suspend fun save(student: Student) {
         students.value = students.value.filterNot { it.id == student.id } + student
     }
 
-    override suspend fun deleteBySection(sectionId: String) {
+    override suspend fun deleteBySection(sectionId: SectionId) {
         students.value = students.value.filterNot { it.sectionId == sectionId }
     }
 }
@@ -73,11 +76,11 @@ class FakeSiagieImportStore(private val students: FakeStudentRepository) : Siagi
         templates["${template.sectionId}/${template.kind}"] = template
     }
 
-    override suspend fun clearSection(sectionId: String) {
+    override suspend fun clearSection(sectionId: SectionId) {
         templates.keys.filter { it.startsWith("$sectionId/") }.forEach(templates::remove)
     }
 
-    override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
+    override suspend fun findTemplate(sectionId: SectionId, kind: ImportedTemplateKind): ImportedTemplate? =
         templates["$sectionId/$kind"]
 }
 
