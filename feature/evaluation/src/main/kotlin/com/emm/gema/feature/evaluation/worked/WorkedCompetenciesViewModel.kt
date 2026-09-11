@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.curriculum.PeriodCompetency
 import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
+import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -32,6 +34,7 @@ class WorkedCompetenciesViewModel(
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getPeriodCompetencies: GetPeriodCompetenciesUseCase,
     private val setCompetencyWorked: SetCompetencyWorkedUseCase,
+    private val getRecordedLevelCounts: GetRecordedLevelCountsUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<WorkedCompetenciesUiState> =
@@ -55,15 +58,18 @@ class WorkedCompetenciesViewModel(
     private suspend fun load() {
         val periodLabel: String = periodLabel()
 
-        getPeriodCompetencies(sectionId = sectionId, periodId = periodId, area = area).collect { competencies ->
-            _state.value = _state.value.copy(
+        combine(
+            getPeriodCompetencies(sectionId = sectionId, periodId = periodId, area = area),
+            getRecordedLevelCounts(sectionId = sectionId, periodId = periodId),
+        ) { competencies: List<PeriodCompetency>, counts: Map<String, Int> ->
+            _state.value.copy(
                 isLoading = false,
                 areaName = area.officialName,
                 periodLabel = periodLabel,
-                competencies = competencies.map { it.toRow() },
+                competencies = competencies.map { it.toRow(counts[it.competency.id] ?: 0) },
                 selectedCount = competencies.count { it.isWorked },
             )
-        }
+        }.collect { _state.value = it }
     }
 
     private suspend fun periodLabel(): String {
@@ -91,11 +97,11 @@ class WorkedCompetenciesViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun PeriodCompetency.toRow(): CompetencyToggleRow = CompetencyToggleRow(
+    private fun PeriodCompetency.toRow(recordedLevelCount: Int): CompetencyToggleRow = CompetencyToggleRow(
         id = competency.id,
         siagieOrdinal = competency.siagieOrdinal,
         name = competency.name,
         isWorked = isWorked,
-        recordedLevelCount = 0,
+        recordedLevelCount = recordedLevelCount,
     )
 }

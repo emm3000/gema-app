@@ -952,7 +952,7 @@ The Student column is pinned; only the competency band scrolls horizontally.
 `C!` marks a C without a Descriptive Conclusion — incomplete, not rejected.
 `*` marks an Unworked Comment. An empty cell is an empty cell.
 
-Tapping a competency header instead of a cell enters **column mode**: a bottom
+Tapping a competency header instead of a cell enters **column mode** (ADR 0013): a bottom
 picker offers AD / A / B / C / Sin nivel for the current Student only, records
 the tap and advances to the next Student automatically, so one competency for
 the whole Section is a straight run of taps with no re-aiming at a grid cell.
@@ -977,7 +977,8 @@ the whole Section is a straight run of taps with no re-aiming at a grid cell.
 +------------------------------------------+
 ```
 
-`[>B<]` marks the current Student's cell while column mode is open. A single
+`[>B<]` marks the current Student's cell while column mode is open, drawn by
+`GLevelChip(isCurrent = true)`. A single
 tap on a level closes that Student's row and reopens the picker for the next
 one; *Listo* or picking a level for the last Student exits column mode. A tap
 on any other cell while column mode is closed still opens `PeriodLevelSheet`
@@ -996,7 +997,7 @@ data class PeriodLevelsUiState(
     val missingCount: Int = 0,
     val isMissingFilterOn: Boolean = false,
     val hasWorkedCompetencies: Boolean = false,
-    val editingCell: PeriodLevelCellKey? = null,
+    val sheet: PeriodLevelSheetUiState? = null,
     val columnMode: ColumnModeUiState? = null,
 )
 
