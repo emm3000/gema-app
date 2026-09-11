@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <clipPath id="page">
+      <rect x="112" y="96" width="288" height="320" rx="28" ry="28"/>
+    </clipPath>
+  </defs>
+  <rect width="1024" height="500" fill="#3F6836"/>
+  <g transform="translate(-4.6,65.9) scale(0.72)">
+    <rect x="112" y="96" width="288" height="320" rx="28" ry="28" fill="#F8FBF1"/>
+    <rect x="112" y="96" width="46" height="320" fill="#C0EFB0" clip-path="url(#page)"/>
+    <rect x="188" y="152" width="168" height="22" rx="11" fill="#C0EFB0"/>
+    <rect x="188" y="204" width="116" height="22" rx="11" fill="#C0EFB0"/>
+    <path d="M188 306 L 232 350 L 356 236" fill="none" stroke="#3F6836" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g font-family="Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif">
+    <text x="360" y="232" font-size="116" font-weight="700" fill="#FFFFFF" letter-spacing="1">Gema</text>
+    <rect x="362" y="262" width="96" height="8" rx="4" fill="#C0EFB0"/>
+    <text x="360" y="330" font-size="42" font-weight="400" fill="#F1F8EA">Registro de asistencia y logros,</text>
+    <text x="360" y="382" font-size="42" font-weight="400" fill="#F1F8EA">sin internet</text>
+  </g>
+</svg>
