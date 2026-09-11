@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "level": "Educación Primaria",
+  "grades": [1, 2, 3, 4, 5, 6],
+  "sources": [
+    "https://www.minedu.gob.pe/curriculo/pdf/curriculo-nacional-2016.pdf",
+    "https://www.minedu.gob.pe/curriculo/pdf/programa-nivel-primaria-ebr.pdf"
+  ],
+  "areas": [
+    {
+      "code": "COMU",
+      "name": "Comunicación",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": null,
+      "competencies": [
+        { "number": 1, "name": "Se comunica oralmente en lengua materna" },
+        { "number": 2, "name": "Lee diversos tipos de textos escritos" },
+        { "number": 3, "name": "Escribe diversos tipos de textos" }
+      ]
+    },
+    {
+      "code": "CAST_SEGNL",
+      "name": "Castellano como segunda lengua",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": "EIB-only: solo Instituciones Educativas Interculturales Bilingües, para estudiantes cuya lengua materna no es el castellano",
+      "competencies": [
+        { "number": 1, "name": "Se comunica oralmente en Castellano como segunda lengua" },
+        { "number": 2, "name": "Lee diversos tipos de textos escritos en Castellano como segunda lengua" },
+        { "number": 3, "name": "Escribe diversos tipos de textos Castellano como segunda lengua" }
+      ]
+    },
+    {
+      "code": "INGLES_EXT",
+      "name": "Inglés como lengua extranjera",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": "No se dicta en Primaria en Instituciones Educativas EIB; el área de Inglés se incorpora en esas IIEE recién en el nivel secundario",
+      "competencies": [
+        { "number": 1, "name": "Se comunica oralmente en Inglés como lengua extranjera" },
+        { "number": 2, "name": "Lee diversos tipos de textos en Inglés como lengua extranjera" },
+        { "number": 3, "name": "Escribe diversos tipos de textos Inglés como lengua extranjera" }
+      ]
+    },
+    {
+      "code": "MATE",
+      "name": "Matemática",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": null,
+      "competencies": [
+        { "number": 1, "name": "Resuelve problemas de cantidad" },
+        { "number": 2, "name": "Resuelve problemas de regularidad, equivalencia y cambio" },
+        { "number": 3, "name": "Resuelve problemas de forma, movimiento y localización" },
+        { "number": 4, "name": "Resuelve problemas de gestión de datos e incertidumbre" }
+      ]
+    },
+    {
+      "code": "CIENC_TEC",
+      "name": "Ciencia y Tecnología",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": null,
+      "competencies": [
+        { "number": 1, "name": "Indaga mediante métodos científicos para construir sus conocimientos" },
+        { "number": 2, "name": "Explica el mundo físico basándose en conocimientos sobre los seres vivos, materia y energía, biodiversidad, Tierra y universo" },
+        { "number": 3, "name": "Diseña y construye soluciones tecnológicas para resolver problemas de su entorno" }
+      ]
+    },
+    {
+      "code": "PPSS",
+      "name": "Personal Social",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": null,
+      "competencies": [
+        { "number": 1, "name": "Construye su identidad" },
+        { "number": 2, "name": "Convive y participa democráticamente" },
+        { "number": 3, "name": "Construye interpretaciones históricas" },
+        { "number": 4, "name": "Gestiona responsablemente el espacio y el ambiente" },
+        { "number": 5, "name": "Gestiona responsablemente los recursos económicos" }
+      ]
+    },
+    {
+      "code": "EFIS",
+      "name": "Educación Física",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": null,
+      "competencies": [
+        { "number": 1, "name": "Se desenvuelve de manera autónoma a través de su motricidad" },
+        { "number": 2, "name": "Asume una vida saludable" },
+        { "number": 3, "name": "Interactúa a través de sus habilidades sociomotrices" }
+      ]
+    },
+    {
+      "code": "ARTE",
+      "name": "Arte y Cultura",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": null,
+      "competencies": [
+        { "number": 1, "name": "Aprecia de manera crítica manifestaciones artístico-culturales" },
+        { "number": 2, "name": "Crea proyectos desde los lenguajes artísticos" }
+      ]
+    },
+    {
+      "code": "EREL",
+      "name": "Educación Religiosa",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "conditionality": "Solo para estudiantes que eligen voluntariamente ser educados en el catolicismo; exonerable por Ley N.° 29635 de Libertad Religiosa",
+      "competencies": [
+        { "number": 1, "name": "Construye su identidad como persona humana, amada por Dios, digna, libre y trascendente, comprendiendo la doctrina de su propia religión, abierto al diálogo con las que le son cercanas" },
+        { "number": 2, "name": "Asume la experiencia del encuentro personal y comunitario con Dios en su proyecto de vida en coherencia con su creencia religiosa" }
+      ]
+    }
+  ],
+  "transversalCompetencies": [
+    {
+      "name": "Se desenvuelve en entornos virtuales generados por las TIC",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "appliesTo": "todas las áreas curriculares",
+      "siagieCode": null
+    },
+    {
+      "name": "Gestiona su aprendizaje de manera autónoma",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "appliesTo": "todas las áreas curriculares",
+      "siagieCode": "GEST_AU"
+    }
+  ],
+  "achievementScale": [
+    {
+      "code": "AD",
+      "label": "Logro destacado",
+      "description": "Cuando el estudiante evidencia un nivel superior a lo esperado respecto a la competencia. Esto quiere decir que demuestra aprendizajes que van más allá del nivel esperado."
+    },
+    {
+      "code": "A",
+      "label": "Logro esperado",
+      "description": "Cuando el estudiante evidencia el nivel esperado respecto a la competencia, demostrando manejo satisfactorio en todas las tareas propuestas y en el tiempo programado."
+    },
+    {
+      "code": "B",
+      "label": "En proceso",
+      "description": "Cuando el estudiante está próximo o cerca al nivel esperado respecto a la competencia, para lo cual requiere acompañamiento durante un tiempo razonable para lograrlo."
+    },
+    {
+      "code": "C",
+      "label": "En inicio",
+      "description": "Cuando el estudiante muestra un progreso mínimo en una competencia de acuerdo al nivel esperado. Evidencia con frecuencia dificultades en el desarrollo de las tareas, por lo que necesita mayor tiempo de acompañamiento e intervención del docente."
+    }
+  ]
+}
