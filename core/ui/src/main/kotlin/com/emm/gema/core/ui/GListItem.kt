@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -24,7 +25,9 @@ fun GListItem(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    subtitleColor: Color? = null,
     leadingText: String? = null,
+    titleLeading: (@Composable () -> Unit)? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
     showDivider: Boolean = true,
@@ -36,7 +39,9 @@ fun GListItem(
             GListItemBody(
                 title = title,
                 subtitle = subtitle,
+                subtitleColor = subtitleColor,
                 leadingText = leadingText,
+                titleLeading = titleLeading,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
                 showDivider = showDivider,
@@ -48,7 +53,9 @@ fun GListItem(
             GListItemBody(
                 title = title,
                 subtitle = subtitle,
+                subtitleColor = subtitleColor,
                 leadingText = leadingText,
+                titleLeading = titleLeading,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
                 showDivider = showDivider,
@@ -62,7 +69,9 @@ fun GListItem(
 private fun GListItemBody(
     title: String,
     subtitle: String?,
+    subtitleColor: Color?,
     leadingText: String?,
+    titleLeading: (@Composable () -> Unit)?,
     trailingText: String?,
     hasChevron: Boolean,
     showDivider: Boolean,
@@ -73,7 +82,7 @@ private fun GListItemBody(
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = subtitleColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -97,11 +106,17 @@ private fun GListItemBody(
         ListItem(
             leadingContent = leadingContent,
             headlineContent = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    titleLeading?.invoke()
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             },
             supportingContent = subtitleContent,
             trailingContent = trailingContent,

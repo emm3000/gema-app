@@ -37,8 +37,8 @@ fun <T> GDropdownPicker(
     options: List<GPickerOption<T>>,
     selected: T?,
     onSelect: (T) -> Unit,
-    label: String,
     modifier: Modifier = Modifier,
+    label: String? = null,
     isEnabled: Boolean = true,
 ) {
     var isExpanded: Boolean by remember { mutableStateOf(false) }
@@ -57,7 +57,7 @@ fun <T> GDropdownPicker(
                 .heightIn(min = GemaSpacing.minimumTouchTarget),
             enabled = isEnabled,
             readOnly = true,
-            label = { Text(text = label, style = MaterialTheme.typography.labelSmall) },
+            label = label?.let { { Text(text = it, style = MaterialTheme.typography.labelSmall) } },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
             shape = GemaShapes.control,
             singleLine = true,
