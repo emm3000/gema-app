@@ -71,7 +71,7 @@ Kotlin, Jetpack Compose, Material3, Koin, SQLDelight. No HTTP client and no seri
 
 ## Test stack
 
-JUnit4, MockK, Turbine, Truth, `kotlinx-coroutines-test`. Test names use backtick descriptions (`` `returns error when course id is blank`() ``). Coroutine-driven tests use a `MainDispatcherRule` to swap `Dispatchers.Main`.
+JUnit4, Turbine, Truth, `kotlinx-coroutines-test`. Test names use backtick descriptions (`` `returns error when course id is blank`() ``). Coroutine-driven tests use a `MainDispatcherRule` to swap `Dispatchers.Main`.
 
 ## Custom slash commands
 
