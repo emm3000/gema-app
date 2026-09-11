@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="0 0 108 108">
+  <defs>
+    <clipPath id="page">
+      <rect x="112" y="96" width="288" height="320" rx="28" ry="28"/>
+    </clipPath>
+  </defs>
+  <g transform="translate(6,6) scale(0.1875)">
+    <rect x="112" y="96" width="288" height="320" rx="28" ry="28" fill="#F8FBF1"/>
+    <rect x="112" y="96" width="46" height="320" fill="#C0EFB0" clip-path="url(#page)"/>
+    <rect x="188" y="152" width="168" height="22" rx="11" fill="#C0EFB0"/>
+    <rect x="188" y="204" width="116" height="22" rx="11" fill="#C0EFB0"/>
+    <path d="M188 306 L 232 350 L 356 236" fill="none" stroke="#3F6836" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
