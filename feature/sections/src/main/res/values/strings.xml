@@ -24,6 +24,7 @@
         <item quantity="one">%1$s tiene %2$d nivel registrado. Queda guardado y deja de exportarse.</item>
         <item quantity="other">%1$s tiene %2$d niveles registrados. Quedan guardados y dejan de exportarse.</item>
     </plurals>
+    <string name="sections_areas_recorded_levels_multiple">%1$s tienen niveles registrados. Quedan guardados y dejan de exportarse.</string>
 
     <string name="sections_form_title_new">Nueva sección</string>
     <string name="sections_form_title_edit">Editar sección</string>

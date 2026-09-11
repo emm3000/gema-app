@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
@@ -79,24 +78,40 @@ fun SectionAreasScreen(
             item {
                 AreaSwitchList(areas = state.areas, onIntent = onIntent)
             }
-            items(
-                state.areas.filter { it.recordedLevelCount > 0 },
-                key = { "recorded-${it.id.name}" },
-            ) { row ->
-                GBanner(
-                    text = pluralStringResource(
-                        R.plurals.sections_areas_recorded_levels,
-                        row.recordedLevelCount,
-                        row.name,
-                        row.recordedLevelCount,
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    tone = GBannerTone.WARNING,
-                    icon = Icons.Filled.Warning,
-                )
+            val recordedAreas: List<AreaToggleRow> = state.areas.filter { it.recordedLevelCount > 0 }
+            if (recordedAreas.isNotEmpty()) {
+                item {
+                    GBanner(
+                        text = recordedAreasBannerText(recordedAreas),
+                        modifier = Modifier.fillMaxWidth(),
+                        tone = GBannerTone.WARNING,
+                        icon = Icons.Filled.Warning,
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun recordedAreasBannerText(recordedAreas: List<AreaToggleRow>): String {
+    if (recordedAreas.size == 1) {
+        val area: AreaToggleRow = recordedAreas.single()
+        return pluralStringResource(
+            R.plurals.sections_areas_recorded_levels,
+            area.recordedLevelCount,
+            area.name,
+            area.recordedLevelCount,
+        )
+    }
+    val areaNames: String = joinAreaNames(recordedAreas.map { it.name })
+    return stringResource(R.string.sections_areas_recorded_levels_multiple, areaNames)
+}
+
+private fun joinAreaNames(names: List<String>): String = when (names.size) {
+    0 -> ""
+    1 -> names.single()
+    else -> "${names.dropLast(1).joinToString(", ")} y ${names.last()}"
 }
 
 @Composable
@@ -136,6 +151,7 @@ private fun SectionAreasScreenPreview() {
                 areas = listOf(
                     AreaToggleRow(Area.COMU, "Comunicación", true, 0),
                     AreaToggleRow(Area.EFIS, "Educación Física", false, 12),
+                    AreaToggleRow(Area.INGLES_EXT, "Inglés", false, 5),
                 ),
             ),
             onIntent = {},
