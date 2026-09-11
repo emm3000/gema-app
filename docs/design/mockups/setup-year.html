@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="display: flex; flex-direction: column; gap: 4px; padding: 24px 16px 8px 16px;">
+    <span style="font-size: 13px; font-weight: 500; color: #43483F;">Paso 1 de 2</span>
+    <span style="font-size: 24px; font-weight: 700; color: #191D17; line-height: 30px;">Tu año escolar</span>
+    <span style="font-size: 14px; color: #43483F;">Solo lo que necesitamos para empezar. Todo se puede corregir después.</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 12px 16px 0 16px; flex-grow: 1;">
+    <div style="display: flex; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+        <span style="font-size: 12px; font-weight: 500; color: #43483F;">Año</span>
+        <div style="display: flex; align-items: center; height: 52px; padding: 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; color: #191D17;">2026</div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+        <span style="font-size: 12px; font-weight: 500; color: #43483F;">Inicio</span>
+        <div style="display: flex; align-items: center; height: 52px; padding: 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; color: #191D17;">01/03/2026</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+        <span style="font-size: 12px; font-weight: 500; color: #43483F;">Fin</span>
+        <div style="display: flex; align-items: center; height: 52px; padding: 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; color: #191D17;">20/12/2026</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 14px; font-weight: 500; color: #191D17;">¿Cómo evalúa tu escuela?</span>
+      <div style="display: flex; height: 52px; border: 1px solid #73796E; border-radius: 12px; overflow: hidden;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-grow: 1; background: #C0EFB0; color: #285020; font-size: 15px; font-weight: 500;">
+          <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg>
+          <span>Bimestres (4)</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; background: #FFFFFF; color: #191D17; font-size: 15px; font-weight: 500; border-left: 1px solid #73796E;">Trimestres (3)</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 14px; font-weight: 500; color: #191D17;">Periodos</span>
+      <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px; overflow: hidden;">
+        <div style="display: flex; align-items: center; height: 48px; padding: 0 16px; gap: 12px; border-bottom: 1px solid #DFE4D7;"><span style="width: 28px; font-weight: 700; color: #285020;">I</span><span style="font-size: 15px; color: #191D17;">01 mar – 15 may</span></div>
+        <div style="display: flex; align-items: center; height: 48px; padding: 0 16px; gap: 12px; border-bottom: 1px solid #DFE4D7;"><span style="width: 28px; font-weight: 700; color: #285020;">II</span><span style="font-size: 15px; color: #191D17;">18 may – 31 jul</span></div>
+        <div style="display: flex; align-items: center; height: 48px; padding: 0 16px; gap: 12px; border-bottom: 1px solid #DFE4D7;"><span style="width: 28px; font-weight: 700; color: #285020;">III</span><span style="font-size: 15px; color: #191D17;">10 ago – 16 oct</span></div>
+        <div style="display: flex; align-items: center; height: 48px; padding: 0 16px; gap: 12px;"><span style="width: 28px; font-weight: 700; color: #285020;">IV</span><span style="font-size: 15px; color: #191D17;">19 oct – 20 dic</span></div>
+      </div>
+      <span style="font-size: 13px; color: #43483F;">Calculados a partir del año. Toca uno para ajustarlo.</span>
+    </div>
+  </div>
+
+  <div style="display: flex; padding: 12px 16px 24px 16px; background: #F8FBF1; border-top: 1px solid #DFE4D7;">
+    <div style="display: flex; align-items: center; justify-content: center; height: 52px; flex-grow: 1; background: #3F6836; color: #FFFFFF; border-radius: 12px; font-size: 16px; font-weight: 500;">Continuar</div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

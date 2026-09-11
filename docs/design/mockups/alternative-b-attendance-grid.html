@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: "Comic Sans MS", "Chalkboard SE", "Segoe Print", cursive, sans-serif; color: #222; }
+    a { color: #222; } a:hover { color: #000; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #FFFFFF; border: 2px solid #222; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 60px; padding: 0 16px; border-bottom: 2px dashed #222;">
+    <span style="font-size: 18px; font-weight: 700;">B · Asistencia en cuadrícula</span>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 16px;">
+    <span style="font-size: 14px;">Un toque por alumno: cambia P → T → F → FJ.</span>
+    <span style="font-size: 14px;">30 alumnos caben en 2 pantallas, sin filas largas.</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 8px 16px; flex-grow: 1;">
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">ACOSTA R.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #EEE;"><span style="font-size: 26px; font-weight: 700;">T</span><span style="font-size: 11px; text-align: center;">BAUTISTA Q.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #222; color: #FFF;"><span style="font-size: 26px; font-weight: 700;">FJ</span><span style="font-size: 11px; text-align: center;">CCAHUANA M.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px dashed #222; border-radius: 10px; background: #FFF;"><span style="font-size: 26px; font-weight: 700; color: #999;">?</span><span style="font-size: 11px; text-align: center;">DELGADO H.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">ESPINOZA V.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">FLORES C.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #FFF; color: #222;"><span style="font-size: 26px; font-weight: 700;">F</span><span style="font-size: 11px; text-align: center;">GARCÍA P.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">HUAMÁN L.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">INGA T.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">JULCA M.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #EEE;"><span style="font-size: 26px; font-weight: 700;">T</span><span style="font-size: 11px; text-align: center;">LÓPEZ A.</span></div>
+    <div style="height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 2px solid #222; border-radius: 10px; background: #D9F2CF;"><span style="font-size: 26px; font-weight: 700;">P</span><span style="font-size: 11px; text-align: center;">MAMANI R.</span></div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px 16px 16px; border-top: 2px dashed #222;">
+    <span style="font-size: 13px; font-weight: 700;">A favor</span>
+    <span style="font-size: 13px;">Menos scroll, se ve toda el aula de un vistazo.</span>
+    <span style="font-size: 13px; font-weight: 700;">En contra</span>
+    <span style="font-size: 13px;">Ciclar 4 estados con un toque invita a errores; nombres cortados.</span>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
