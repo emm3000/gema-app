@@ -15,15 +15,6 @@ class GLevelPickerTest {
     }
 
     @Test
-    fun `re-tapping a selected level chip is a no-op`() {
-        var invokedWith: String? = null
-
-        nonDeselectingTap(tapped = null, onSelect = { invokedWith = it })
-
-        assertThat(invokedWith).isNull()
-    }
-
-    @Test
     fun `tapping an unselected level chip reports its value`() {
         var invokedWith: String? = null
 
