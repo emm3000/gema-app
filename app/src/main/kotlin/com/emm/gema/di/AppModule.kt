@@ -13,6 +13,8 @@ import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepositor
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.setup.SqlDelightSetupRepository
+import com.emm.gema.core.database.siagie.ContentResolverSiagieDocuments
+import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.student.SqlDelightStudentRepository
 import com.emm.gema.core.domain.backup.BackupDocuments
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
@@ -50,6 +52,12 @@ import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
+import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
+import com.emm.gema.core.domain.siagie.PreviewSiagieImportUseCase
+import com.emm.gema.core.domain.siagie.SiagieDocuments
+import com.emm.gema.core.domain.siagie.SiagieImportPlanner
+import com.emm.gema.core.domain.siagie.SiagieImportStore
+import com.emm.gema.core.domain.siagie.SiagieRosterReader
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
@@ -59,6 +67,7 @@ import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
+import com.emm.gema.core.siagie.XlsxSiagieRosterReader
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
 import com.emm.gema.navigation.StartDestinationViewModel
@@ -83,6 +92,9 @@ val appModule: Module = module {
     single<CompetencyRepository> { SqlDelightCompetencyRepository(get()) }
     single<WorkedCompetencyRepository> { SqlDelightWorkedCompetencyRepository(get()) }
     single<StudentRepository> { SqlDelightStudentRepository(get()) }
+    single<SiagieImportStore> { SqlDelightSiagieImportStore(get()) }
+    single<SiagieDocuments> { ContentResolverSiagieDocuments(androidContext().contentResolver) }
+    single<SiagieRosterReader> { XlsxSiagieRosterReader() }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -108,6 +120,9 @@ val appModule: Module = module {
     factory<GetPeriodCompetenciesUseCase> { GetPeriodCompetenciesUseCase(get(), get()) }
     factory<SetCompetencyWorkedUseCase> { SetCompetencyWorkedUseCase(get()) }
     factory<SaveStudentUseCase> { SaveStudentUseCase(get(), get()) }
+    factory<SiagieImportPlanner> { SiagieImportPlanner(get(), get(), get(), get()) }
+    factory<PreviewSiagieImportUseCase> { PreviewSiagieImportUseCase(get()) }
+    factory<ApplySiagieImportUseCase> { ApplySiagieImportUseCase(get(), get(), get(), get(), get()) }
     factory<GetStudentsUseCase> { GetStudentsUseCase(get()) }
     factory<GetStudentUseCase> { GetStudentUseCase(get()) }
     factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }

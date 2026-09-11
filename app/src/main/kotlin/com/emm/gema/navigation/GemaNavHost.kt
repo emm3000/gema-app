@@ -22,6 +22,7 @@ import com.emm.gema.feature.setup.year.SetupYearRoute
 import com.emm.gema.feature.setup.years.SchoolYearsRoute
 import com.emm.gema.feature.students.form.StudentFormRoute
 import com.emm.gema.feature.students.list.StudentsRoute
+import com.emm.gema.feature.students.siagie.ImportPreviewRoute
 import com.emm.gema.home.HomeRoute
 import org.koin.androidx.compose.koinViewModel
 
@@ -124,6 +125,22 @@ fun GemaNavHost(
                 onStudentForm = { sectionId, studentId ->
                     navController.navigate(GemaRoutes.studentForm(sectionId, studentId))
                 },
+                onImportPreview = { sectionId, uri ->
+                    navController.navigate(GemaRoutes.importPreview(sectionId, uri))
+                },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.IMPORT_PREVIEW,
+            arguments = listOf(
+                navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType },
+                navArgument(GemaRoutes.URI) { type = NavType.StringType },
+            ),
+        ) { entry ->
+            ImportPreviewRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                uri = entry.arguments?.getString(GemaRoutes.URI).orEmpty(),
                 onBack = { navController.popBackStack() },
             )
         }

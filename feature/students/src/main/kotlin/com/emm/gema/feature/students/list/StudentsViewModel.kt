@@ -18,6 +18,11 @@ import kotlinx.coroutines.launch
 
 private const val REACTIVATE_FAILED_MESSAGE: String = "No se pudo reincorporar al alumno"
 
+private val siagieMimeTypes: List<String> = listOf(
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-excel",
+)
+
 class StudentsViewModel(
     private val sectionId: String,
     private val getSection: GetSectionUseCase,
@@ -52,6 +57,9 @@ class StudentsViewModel(
             is StudentsUiIntent.StudentClicked ->
                 emit(StudentsUiEffect.NavigateToStudentForm(sectionId, intent.id))
             is StudentsUiIntent.ReactivateClicked -> reactivate(intent.id)
+            is StudentsUiIntent.ImportFilePicked ->
+                emit(StudentsUiEffect.NavigateToImportPreview(sectionId, intent.uri))
+            StudentsUiIntent.ImportClicked -> emit(StudentsUiEffect.OpenDocumentPicker(siagieMimeTypes))
             StudentsUiIntent.AddStudentClicked ->
                 emit(StudentsUiEffect.NavigateToStudentForm(sectionId, null))
             StudentsUiIntent.WithdrawnSectionToggled ->

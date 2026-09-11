@@ -45,6 +45,24 @@ class StudentsViewModelTest {
     )
 
     @Test
+    fun `importing from siagie opens the document picker and then the preview`() = runTest {
+        val viewModel: StudentsViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(StudentsUiIntent.ImportClicked)
+            val picker: StudentsUiEffect = awaitItem()
+
+            viewModel.onIntent(StudentsUiIntent.ImportFilePicked("content://documents/6.xlsx"))
+
+            assertThat(picker).isInstanceOf(StudentsUiEffect.OpenDocumentPicker::class.java)
+            assertThat((picker as StudentsUiEffect.OpenDocumentPicker).mimeTypes).isNotEmpty()
+            assertThat(awaitItem()).isEqualTo(
+                StudentsUiEffect.NavigateToImportPreview(SECTION_ID, "content://documents/6.xlsx")
+            )
+        }
+    }
+
+    @Test
     fun `the section title and the students are shown, withdrawn ones apart`() {
         val state: StudentsUiState = viewModel().state.value
 
