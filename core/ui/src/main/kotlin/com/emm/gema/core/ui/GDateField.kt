@@ -2,10 +2,13 @@ package com.emm.gema.core.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
@@ -38,9 +41,10 @@ private fun Long.toLocalDateUtc(): LocalDate = Instant.ofEpochMilli(this).atZone
 fun GDateField(
     value: LocalDate?,
     onValueChange: (LocalDate) -> Unit,
-    label: String,
     modifier: Modifier = Modifier,
+    label: String? = null,
     errorText: String? = null,
+    isError: Boolean = errorText != null,
     minDate: LocalDate? = null,
     maxDate: LocalDate? = null,
     isEnabled: Boolean = true,
@@ -71,9 +75,16 @@ fun GDateField(
         modifier = modifier,
         enabled = isEnabled,
         readOnly = true,
-        label = { Text(text = label) },
-        isError = errorText != null,
+        label = label?.let { text -> { Text(text = text) } },
+        isError = isError,
         supportingText = supportingContent,
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Filled.DateRange,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
         interactionSource = interactionSource,
         shape = GemaShapes.control,
     )
