@@ -11,6 +11,7 @@ import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
+import com.emm.gema.feature.sections.FakeStudentRepository
 import com.emm.gema.feature.sections.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
@@ -25,6 +26,7 @@ class SectionFormViewModelTest {
     private val existing = Section("section-1", "2026", Grade.THIRD, "A")
     private val sectionRepository = FakeSectionRepository(listOf(existing))
     private val sectionAreaRepository = FakeSectionAreaRepository()
+    private val studentRepository = FakeStudentRepository()
 
     private fun viewModelFor(sectionId: String?): SectionFormViewModel = SectionFormViewModel(
         schoolYearId = "2026",
@@ -36,6 +38,7 @@ class SectionFormViewModelTest {
             sectionRepository,
             sectionAreaRepository,
             FakeWorkedCompetencyRepository(),
+            studentRepository,
         ),
     )
 

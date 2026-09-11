@@ -13,6 +13,7 @@ import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepositor
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.setup.SqlDelightSetupRepository
+import com.emm.gema.core.database.student.SqlDelightStudentRepository
 import com.emm.gema.core.domain.backup.BackupDocuments
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.BackupStore
@@ -51,6 +52,13 @@ import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
+import com.emm.gema.core.domain.student.GetStudentUseCase
+import com.emm.gema.core.domain.student.GetStudentsUseCase
+import com.emm.gema.core.domain.student.ReactivateStudentUseCase
+import com.emm.gema.core.domain.student.SaveStudentUseCase
+import com.emm.gema.core.domain.student.StudentRepository
+import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
 import com.emm.gema.navigation.StartDestinationViewModel
@@ -74,6 +82,7 @@ val appModule: Module = module {
     single<SetupRepository> { SqlDelightSetupRepository(get()) }
     single<CompetencyRepository> { SqlDelightCompetencyRepository(get()) }
     single<WorkedCompetencyRepository> { SqlDelightWorkedCompetencyRepository(get()) }
+    single<StudentRepository> { SqlDelightStudentRepository(get()) }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -89,7 +98,7 @@ val appModule: Module = module {
     factory<GetSchoolYearUseCase> { GetSchoolYearUseCase(get()) }
     factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
     factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
-    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get(), get()) }
+    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get(), get(), get()) }
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
     factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }
@@ -98,6 +107,12 @@ val appModule: Module = module {
     factory<SeedCurriculumUseCase> { SeedCurriculumUseCase(get()) }
     factory<GetPeriodCompetenciesUseCase> { GetPeriodCompetenciesUseCase(get(), get()) }
     factory<SetCompetencyWorkedUseCase> { SetCompetencyWorkedUseCase(get()) }
+    factory<SaveStudentUseCase> { SaveStudentUseCase(get(), get()) }
+    factory<GetStudentsUseCase> { GetStudentsUseCase(get()) }
+    factory<GetStudentUseCase> { GetStudentUseCase(get()) }
+    factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }
+    factory<WithdrawStudentUseCase> { WithdrawStudentUseCase(get()) }
+    factory<ReactivateStudentUseCase> { ReactivateStudentUseCase(get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
     factory<InspectBackupUseCase> { InspectBackupUseCase(get(), get()) }

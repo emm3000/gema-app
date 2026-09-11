@@ -1,0 +1,42 @@
+CREATE TABLE student (
+    id TEXT NOT NULL PRIMARY KEY,
+    section_id TEXT NOT NULL,
+    student_code TEXT NOT NULL,
+    full_name TEXT NOT NULL,
+    siagie_id TEXT,
+    withdrawal_date TEXT
+);
+
+CREATE INDEX student_section_id ON student(section_id);
+
+CREATE UNIQUE INDEX student_section_code ON student(section_id, student_code);
+
+insert:
+INSERT OR REPLACE INTO student (id, section_id, student_code, full_name, siagie_id, withdrawal_date)
+VALUES (?, ?, ?, ?, ?, ?);
+
+selectBySection:
+SELECT *
+FROM student
+WHERE section_id = ?
+ORDER BY full_name, student_code;
+
+selectById:
+SELECT *
+FROM student
+WHERE id = ?;
+
+selectByCode:
+SELECT *
+FROM student
+WHERE section_id = ? AND student_code = ?;
+
+deleteBySection:
+DELETE FROM student
+WHERE section_id = ?;
+
+selectActiveCountsBySection:
+SELECT section_id, COUNT(*) AS student_count
+FROM student
+WHERE withdrawal_date IS NULL
+GROUP BY section_id;

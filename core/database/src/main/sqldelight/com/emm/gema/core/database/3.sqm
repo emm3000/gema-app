@@ -1,0 +1,12 @@
+CREATE TABLE student (
+    id TEXT NOT NULL PRIMARY KEY,
+    section_id TEXT NOT NULL,
+    student_code TEXT NOT NULL,
+    full_name TEXT NOT NULL,
+    siagie_id TEXT,
+    withdrawal_date TEXT
+);
+
+CREATE INDEX student_section_id ON student(section_id);
+
+CREATE UNIQUE INDEX student_section_code ON student(section_id, student_code);

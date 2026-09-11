@@ -1,8 +1,9 @@
 package com.emm.gema.core.domain.section
 
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
-import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
 import com.emm.gema.core.domain.fake.InMemorySectionRepository
+import com.emm.gema.core.domain.fake.InMemoryStudentRepository
+import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
 import com.emm.gema.core.domain.fake.SequentialIdGenerator
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
@@ -16,10 +17,12 @@ class SectionUseCasesTest {
     private val workedCompetencyRepository = InMemoryWorkedCompetencyRepository()
     private val createSection = CreateSectionUseCase(sectionRepository, SequentialIdGenerator("section"))
     private val updateSection = UpdateSectionUseCase(sectionRepository)
+    private val studentRepository = InMemoryStudentRepository()
     private val deleteSection = DeleteSectionUseCase(
         sectionRepository,
         sectionAreaRepository,
         workedCompetencyRepository,
+        studentRepository,
     )
     private val getSections = GetSectionsUseCase(sectionRepository)
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)
