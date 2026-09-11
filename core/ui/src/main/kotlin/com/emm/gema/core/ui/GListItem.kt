@@ -3,6 +3,7 @@ package com.emm.gema.core.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.HorizontalDivider
@@ -23,8 +24,10 @@ fun GListItem(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    leadingText: String? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
+    showDivider: Boolean = true,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
@@ -33,8 +36,10 @@ fun GListItem(
             GListItemBody(
                 title = title,
                 subtitle = subtitle,
+                leadingText = leadingText,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
+                showDivider = showDivider,
                 trailing = trailing,
             )
         }
@@ -43,8 +48,10 @@ fun GListItem(
             GListItemBody(
                 title = title,
                 subtitle = subtitle,
+                leadingText = leadingText,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
+                showDivider = showDivider,
                 trailing = trailing,
             )
         }
@@ -55,8 +62,10 @@ fun GListItem(
 private fun GListItemBody(
     title: String,
     subtitle: String?,
+    leadingText: String?,
     trailingText: String?,
     hasChevron: Boolean,
+    showDivider: Boolean,
     trailing: (@Composable () -> Unit)?,
 ) {
     val subtitleContent: (@Composable () -> Unit)? = subtitle?.let { text ->
@@ -68,6 +77,16 @@ private fun GListItemBody(
             )
         }
     }
+    val leadingContent: (@Composable () -> Unit)? = leadingText?.let { text ->
+        {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.width(GemaSpacing.leadingLabelWidth),
+            )
+        }
+    }
     val trailingContent: (@Composable () -> Unit)? = gListItemTrailing(
         trailingText = trailingText,
         hasChevron = hasChevron,
@@ -76,6 +95,7 @@ private fun GListItemBody(
 
     Column {
         ListItem(
+            leadingContent = leadingContent,
             headlineContent = {
                 Text(
                     text = title,
@@ -86,7 +106,9 @@ private fun GListItemBody(
             supportingContent = subtitleContent,
             trailingContent = trailingContent,
         )
-        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+        if (showDivider) {
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+        }
     }
 }
 
@@ -131,5 +153,16 @@ private fun GListItemPreview() {
             hasChevron = true,
             onClick = {},
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GListItemGroupedPreview() {
+    GemaTheme {
+        Column {
+            GListItem(title = "01 mar – 15 may", leadingText = "I", onClick = {})
+            GListItem(title = "18 may – 31 jul", leadingText = "II", showDivider = false, onClick = {})
+        }
     }
 }

@@ -321,8 +321,10 @@ fun GListItem(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    leadingText: String? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
+    showDivider: Boolean = true,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 )
@@ -330,13 +332,20 @@ fun GListItem(
 
 Wraps `ListItem` inside a clickable `Surface`. Tokens:
 `GemaTypography.bodyLarge` / `bodyMedium`, `colorScheme.onSurface` /
-`onSurfaceVariant`, `GemaSpacing.md` vertical padding, `colorScheme.outline` for
-the hairline divider.
+`onSurfaceVariant`, `colorScheme.primary` for `leadingText`,
+`GemaSpacing.leadingLabelWidth` for its fixed width, `GemaSpacing.md` vertical
+padding, `colorScheme.outline` for the hairline divider.
 
-Tradeoff: no leading avatar or icon slot. Every list in this app is people or
-dated records; an icon column would cost 40dp of a 360dp width and carry no
-information. Names are long — "CCAHUANA MAMANI, Rosa Elena" — and the width is
-better spent on them.
+Tradeoff: no leading avatar or icon slot — `leadingText` is a short label
+(a Roman numeral, an ordinal), not an image slot. Every list in this app is
+people or dated records; an icon column would cost 40dp of a 360dp width and
+carry no information. Names are long — "CCAHUANA MAMANI, Rosa Elena" — and the
+width is better spent on them.
+
+`leadingText` and `showDivider` were added for SetupYear's grouped Periodos
+list (#53): several `GListItem`s stacked inside one `GCard` read as a single
+bordered list only when the last row skips its divider, and the Roman numeral
+needed a fixed-width slot next to the range instead of a stacked subtitle.
 
 ### GCard
 
