@@ -2,6 +2,7 @@ package com.emm.gema.feature.evaluation.levels
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,8 +15,10 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GCheckRow
 import com.emm.gema.core.ui.GLevelPicker
 import com.emm.gema.core.ui.GTextField
+import java.time.format.DateTimeFormatter
 
 private const val CONCLUSION_HINT: String = "Obligatoria para SIAGIE cuando el nivel es C. Puedes guardarla después."
+private val evidenceDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
 @Composable
 fun PeriodLevelSheet(
@@ -64,10 +67,43 @@ fun PeriodLevelSheet(
             modifier = Modifier.fillMaxWidth(),
             supportingText = CONCLUSION_HINT.takeIf { sheet.isConclusionRequiredForExport },
         )
+        if (sheet.evidence.isNotEmpty()) {
+            Text(
+                text = "EVIDENCIAS DE ESTE PERIODO",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
+                sheet.evidence.forEach { evidence -> EvidenceListRow(evidence) }
+            }
+        }
         GButton(
             text = "Listo",
             onClick = { onIntent(PeriodLevelsUiIntent.SheetDismissed) },
             modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun EvidenceListRow(evidence: EvidenceRow) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    ) {
+        Text(
+            text = evidence.date.format(evidenceDateFormatter),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = evidence.activityName,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = evidence.achievementLevel.name,
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

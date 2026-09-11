@@ -2,13 +2,15 @@ package com.emm.gema.feature.evaluation.levels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
-import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelSheetContextUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelGrid
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
+import com.emm.gema.core.domain.evaluation.PeriodLevelSheetContext
 import com.emm.gema.core.domain.evaluation.SavePeriodLevelUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
@@ -45,7 +47,7 @@ class PeriodLevelsViewModel(
     private val getCurrentPeriod: GetCurrentPeriodUseCase,
     private val getSectionAreas: GetSectionAreasUseCase,
     private val getPeriodLevelGrid: GetPeriodLevelGridUseCase,
-    private val getPeriodLevel: GetPeriodLevelUseCase,
+    private val getPeriodLevelSheetContext: GetPeriodLevelSheetContextUseCase,
     private val savePeriodLevel: SavePeriodLevelUseCase,
 ) : ViewModel() {
 
@@ -195,7 +197,8 @@ class PeriodLevelsViewModel(
         val key: PeriodLevelKey = keyOf(cell.studentId, cell.competencyId) ?: return
 
         viewModelScope.launch {
-            val stored: PeriodLevel = getPeriodLevel(key)
+            val context: PeriodLevelSheetContext = getPeriodLevelSheetContext(key)
+            val stored: PeriodLevel = context.periodLevel
 
             _state.value = _state.value.copy(
                 columnMode = null,
@@ -208,6 +211,7 @@ class PeriodLevelsViewModel(
                     unworkedComment = stored.unworkedComment,
                     descriptiveConclusion = stored.descriptiveConclusion,
                     isConclusionRequiredForExport = stored.achievementLevel == AchievementLevel.C,
+                    evidence = context.evidence.map { it.toRow() },
                 ),
             )
         }
@@ -218,7 +222,7 @@ class PeriodLevelsViewModel(
         val key: PeriodLevelKey = keyOf(sheet.studentId, sheet.competencyId) ?: return
 
         viewModelScope.launch {
-            val updated: PeriodLevel = change(getPeriodLevel(key))
+            val updated: PeriodLevel = change(getPeriodLevelSheetContext(key).periodLevel)
 
             _state.value = _state.value.copy(
                 sheet = sheet.copy(
@@ -239,7 +243,8 @@ class PeriodLevelsViewModel(
         val key: PeriodLevelKey = keyOf(student.studentId, mode.competencyId) ?: return
 
         viewModelScope.launch {
-            persist(getPeriodLevel(key).withAchievementLevel(level))
+            val stored: PeriodLevel = getPeriodLevelSheetContext(key).periodLevel
+            persist(stored.withAchievementLevel(level))
             _state.value = _state.value.advancedToNextStudent()
         }
     }
@@ -277,3 +282,10 @@ private fun Competency.toColumn(): CompetencyColumn = CompetencyColumn(
 )
 
 private fun CompetencyColumn.label(): String = "${siagieOrdinal.toString().padStart(2, '0')} $name"
+
+private fun EvidenceRecord.toRow(): EvidenceRow = EvidenceRow(
+    activityId = activityId,
+    activityName = activityName,
+    date = date,
+    achievementLevel = achievementLevel,
+)

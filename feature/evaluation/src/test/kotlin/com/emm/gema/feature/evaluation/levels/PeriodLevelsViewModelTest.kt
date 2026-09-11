@@ -1,10 +1,11 @@
 package com.emm.gema.feature.evaluation.levels
 
+import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
-import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
+import com.emm.gema.core.domain.evaluation.GetPeriodLevelSheetContextUseCase
 import com.emm.gema.core.domain.evaluation.SavePeriodLevelUseCase
 import com.emm.gema.core.domain.evaluation.UnworkedComment
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -21,6 +22,7 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.feature.evaluation.FakeCompetencyRepository
+import com.emm.gema.feature.evaluation.FakeEvidenceLevelRepository
 import com.emm.gema.feature.evaluation.FakePeriodLevelRepository
 import com.emm.gema.feature.evaluation.FakePeriodRepository
 import com.emm.gema.feature.evaluation.FakeSchoolYearRepository
@@ -252,6 +254,25 @@ class PeriodLevelsViewModelTest {
     }
 
     @Test
+    fun `opening a cell loads its evidence read-only`() = runTest {
+        work(firstCompetency)
+        val evidence = EvidenceRecord(
+            activityId = "activity-1",
+            activityName = "Debate del aula",
+            date = LocalDate.of(2026, 6, 10),
+            achievementLevel = AchievementLevel.B,
+        )
+        val viewModel: PeriodLevelsViewModel =
+            createViewModel(evidenceLevelRepository = FakeEvidenceLevelRepository(listOf(evidence)))
+
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey("student-2", firstCompetency)))
+
+        assertThat(viewModel.state.value.sheet?.evidence).containsExactly(
+            EvidenceRow("activity-1", "Debate del aula", LocalDate.of(2026, 6, 10), AchievementLevel.B),
+        )
+    }
+
+    @Test
     fun `finishing the fill column mode closes it`() = runTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
@@ -314,7 +335,10 @@ class PeriodLevelsViewModelTest {
         competencyIds.forEach { workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, it, isWorked = true) }
     }
 
-    private fun createViewModel(initialCell: PeriodLevelCellKey? = null): PeriodLevelsViewModel = PeriodLevelsViewModel(
+    private fun createViewModel(
+        initialCell: PeriodLevelCellKey? = null,
+        evidenceLevelRepository: FakeEvidenceLevelRepository = FakeEvidenceLevelRepository(),
+    ): PeriodLevelsViewModel = PeriodLevelsViewModel(
         sectionId = SECTION_ID,
         initialCell = initialCell,
         getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
@@ -327,7 +351,10 @@ class PeriodLevelsViewModelTest {
             studentRepository = studentRepository,
             periodLevelRepository = periodLevelRepository,
         ),
-        getPeriodLevel = GetPeriodLevelUseCase(periodLevelRepository),
+        getPeriodLevelSheetContext = GetPeriodLevelSheetContextUseCase(
+            periodLevelRepository,
+            evidenceLevelRepository,
+        ),
         savePeriodLevel = SavePeriodLevelUseCase(periodLevelRepository),
     )
 

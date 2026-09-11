@@ -22,6 +22,15 @@ JOIN activity ON activity.id = evidence_level.activity_id
 WHERE activity.section_id = ? AND activity.period_id = ?
 GROUP BY evidence_level.activity_id;
 
+selectForStudentAndCompetency:
+SELECT activity.id AS activity_id, activity.name AS activity_name, activity.date AS date,
+       evidence_level.achievement_level AS achievement_level
+FROM evidence_level
+JOIN activity ON activity.id = evidence_level.activity_id
+WHERE activity.section_id = ? AND activity.period_id = ?
+  AND evidence_level.student_id = ? AND evidence_level.competency_id = ?
+ORDER BY activity.date ASC;
+
 delete:
 DELETE FROM evidence_level
 WHERE activity_id = ? AND student_id = ? AND competency_id = ?;

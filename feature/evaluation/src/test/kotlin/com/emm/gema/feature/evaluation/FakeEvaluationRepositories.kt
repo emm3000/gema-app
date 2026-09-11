@@ -1,5 +1,9 @@
 package com.emm.gema.feature.evaluation
 
+import com.emm.gema.core.domain.activity.EvidenceLevel
+import com.emm.gema.core.domain.activity.EvidenceLevelKey
+import com.emm.gema.core.domain.activity.EvidenceLevelRepository
+import com.emm.gema.core.domain.activity.EvidenceRecord
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
@@ -97,4 +101,29 @@ class FakePeriodLevelRepository : PeriodLevelRepository {
     override suspend fun clearSection(sectionId: String) {
         levels.value = levels.value.filterNot { it.key.sectionId == sectionId }
     }
+}
+
+class FakeEvidenceLevelRepository(initial: List<EvidenceRecord> = emptyList()) : EvidenceLevelRepository {
+
+    private val records: MutableStateFlow<List<EvidenceRecord>> = MutableStateFlow(initial)
+
+    override fun observeByActivity(activityId: String): Flow<List<EvidenceLevel>> = MutableStateFlow(emptyList())
+
+    override fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
+        MutableStateFlow(emptyMap())
+
+    override fun observeForStudentAndCompetency(
+        sectionId: String,
+        periodId: String,
+        studentId: String,
+        competencyId: String,
+    ): Flow<List<EvidenceRecord>> = records
+
+    override suspend fun save(evidenceLevel: EvidenceLevel) = Unit
+
+    override suspend fun delete(key: EvidenceLevelKey) = Unit
+
+    override suspend fun deleteByActivity(activityId: String) = Unit
+
+    override suspend fun clearSection(sectionId: String) = Unit
 }
