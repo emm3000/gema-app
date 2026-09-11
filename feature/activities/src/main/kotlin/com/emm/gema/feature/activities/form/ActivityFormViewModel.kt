@@ -20,6 +20,7 @@ import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.title
 import java.time.Clock
 import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel
@@ -84,6 +85,7 @@ class ActivityFormViewModel(
 
         _state.value = _state.value.copy(
             isLoading = false,
+            sectionTitle = loadedSection.title(),
             name = activity?.name.orEmpty(),
             date = date,
             selectedCompetencyIds = activity?.competencyIds.orEmpty(),

@@ -7,6 +7,7 @@ import java.time.LocalDate
 data class ActivityFormUiState(
     val isLoading: Boolean = true,
     val activityId: ActivityId? = null,
+    val sectionTitle: String = "",
     val name: String = "",
     val date: LocalDate? = null,
     val dateError: ActivityFormMessage? = null,
