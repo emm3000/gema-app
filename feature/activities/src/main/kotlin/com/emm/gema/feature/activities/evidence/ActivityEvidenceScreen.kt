@@ -112,8 +112,8 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (AchievementLevel?) -> U
     ) {
         GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
         GLevelPicker(
-            selected = row.level?.toOption(),
-            onSelect = { option -> onSelect(option?.toAchievementLevel()) },
+            selected = row.level?.name,
+            onSelect = { letter -> onSelect(letter?.let(AchievementLevel::valueOf)) },
             modifier = Modifier.fillMaxWidth(),
         )
     }

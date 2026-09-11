@@ -36,7 +36,7 @@ enum class GLevelChipSize { GRID, INLINE }
 
 @Composable
 fun GLevelChip(
-    level: GLevelOption?,
+    letter: String?,
     modifier: Modifier = Modifier,
     hasUnworkedComment: Boolean = false,
     isIncomplete: Boolean = false,
@@ -66,12 +66,12 @@ fun GLevelChip(
             modifier = Modifier
                 .width(width)
                 .height(height)
-                .semantics { contentDescription = describe(level, hasUnworkedComment, isIncomplete) },
+                .semantics { contentDescription = describe(letter, hasUnworkedComment, isIncomplete) },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = label(level, hasUnworkedComment),
+                text = label(letter, hasUnworkedComment),
                 style = when (size) {
                     GLevelChipSize.GRID -> MaterialTheme.typography.labelSmall
                     GLevelChipSize.INLINE -> MaterialTheme.typography.labelLarge
@@ -111,15 +111,15 @@ fun GLevelChip(
     }
 }
 
-private fun label(level: GLevelOption?, hasUnworkedComment: Boolean): String = when {
-    level != null -> level.letter
+private fun label(letter: String?, hasUnworkedComment: Boolean): String = when {
+    letter != null -> letter
     hasUnworkedComment -> UNWORKED_COMMENT_MARK
     else -> EMPTY_MARK
 }
 
-private fun describe(level: GLevelOption?, hasUnworkedComment: Boolean, isIncomplete: Boolean): String = when {
+private fun describe(letter: String?, hasUnworkedComment: Boolean, isIncomplete: Boolean): String = when {
     isIncomplete -> INCOMPLETE_DESCRIPTION
-    level != null -> level.contentDescription
+    letter != null -> GLevelOption.entries.first { it.letter == letter }.contentDescription
     hasUnworkedComment -> UNWORKED_COMMENT_DESCRIPTION
     else -> EMPTY_DESCRIPTION
 }
@@ -129,11 +129,11 @@ private fun describe(level: GLevelOption?, hasUnworkedComment: Boolean, isIncomp
 private fun GLevelChipPreview() {
     GemaTheme {
         Row(horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-            GLevelChip(level = GLevelOption.AD, size = GLevelChipSize.GRID)
-            GLevelChip(level = GLevelOption.C, isIncomplete = true, size = GLevelChipSize.GRID)
-            GLevelChip(level = null, hasUnworkedComment = true, size = GLevelChipSize.GRID)
-            GLevelChip(level = null, size = GLevelChipSize.GRID)
-            GLevelChip(level = GLevelOption.B, isCurrent = true, size = GLevelChipSize.GRID)
+            GLevelChip(letter = GLevelOption.AD.letter, size = GLevelChipSize.GRID)
+            GLevelChip(letter = GLevelOption.C.letter, isIncomplete = true, size = GLevelChipSize.GRID)
+            GLevelChip(letter = null, hasUnworkedComment = true, size = GLevelChipSize.GRID)
+            GLevelChip(letter = null, size = GLevelChipSize.GRID)
+            GLevelChip(letter = GLevelOption.B.letter, isCurrent = true, size = GLevelChipSize.GRID)
         }
     }
 }

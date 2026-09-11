@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import com.emm.gema.core.ui.GLevelOption
+import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -26,7 +26,7 @@ import com.emm.gema.core.ui.GTextStyle
 fun ColumnModeBar(
     heading: String,
     studentName: String,
-    achievementLevel: GLevelOption?,
+    achievementLevel: AchievementLevel?,
     onIntent: (PeriodLevelsUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -69,8 +69,8 @@ fun ColumnModeBar(
                 )
             }
             GLevelPicker(
-                selected = achievementLevel,
-                onSelect = { onIntent(PeriodLevelsUiIntent.PickLevelForCurrent(it?.toAchievementLevel())) },
+                selected = achievementLevel?.name,
+                onSelect = { onIntent(PeriodLevelsUiIntent.PickLevelForCurrent(it?.let(AchievementLevel::valueOf))) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.UnworkedComment
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.ui.GBottomSheet
@@ -39,8 +40,10 @@ fun PeriodLevelSheet(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GLevelPicker(
-            selected = sheet.achievementLevel?.toOption(),
-            onSelect = { onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(it?.toAchievementLevel())) },
+            selected = sheet.achievementLevel?.name,
+            onSelect = {
+                onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(it?.let(AchievementLevel::valueOf)))
+            },
             modifier = Modifier.fillMaxWidth(),
         )
         GText(

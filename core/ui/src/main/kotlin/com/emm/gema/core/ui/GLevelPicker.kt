@@ -10,18 +10,18 @@ private const val NO_LEVEL_DESCRIPTION: String = "Sin nivel"
 
 @Composable
 fun GLevelPicker(
-    selected: GLevelOption?,
-    onSelect: (GLevelOption?) -> Unit,
+    selected: String?,
+    onSelect: (String?) -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
 ) {
-    val options: List<GSegmentOption<GLevelOption?>> = GLevelOption.entries.map { option ->
-        GSegmentOption<GLevelOption?>(
-            value = option,
+    val options: List<GSegmentOption<String?>> = GLevelOption.entries.map { option ->
+        GSegmentOption<String?>(
+            value = option.letter,
             label = option.letter,
             contentDescription = option.contentDescription,
         )
-    } + GSegmentOption<GLevelOption?>(
+    } + GSegmentOption<String?>(
         value = null,
         label = NO_LEVEL_LABEL,
         contentDescription = NO_LEVEL_DESCRIPTION,
@@ -40,6 +40,6 @@ fun GLevelPicker(
 @Composable
 private fun GLevelPickerPreview() {
     GemaTheme {
-        GLevelPicker(selected = GLevelOption.B, onSelect = {})
+        GLevelPicker(selected = GLevelOption.B.letter, onSelect = {})
     }
 }
