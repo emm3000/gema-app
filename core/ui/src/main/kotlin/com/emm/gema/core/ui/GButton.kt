@@ -1,9 +1,15 @@
 package com.emm.gema.core.ui
 
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -16,14 +22,65 @@ fun GButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    variant: GButtonVariant = GButtonVariant.PRIMARY,
     enabled: Boolean = true,
+    isBusy: Boolean = false,
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget),
-        enabled = enabled,
-        shape = GemaShapes.control,
-    ) {
+    val buttonModifier: Modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget)
+    val isClickable: Boolean = enabled && !isBusy
+
+    when (variant) {
+        GButtonVariant.PRIMARY -> Button(
+            onClick = onClick,
+            modifier = buttonModifier,
+            enabled = isClickable,
+            shape = GemaShapes.control,
+        ) {
+            GButtonLabel(text = text, isBusy = isBusy)
+        }
+
+        GButtonVariant.SECONDARY -> OutlinedButton(
+            onClick = onClick,
+            modifier = buttonModifier,
+            enabled = isClickable,
+            shape = GemaShapes.control,
+        ) {
+            GButtonLabel(text = text, isBusy = isBusy)
+        }
+
+        GButtonVariant.DESTRUCTIVE -> Button(
+            onClick = onClick,
+            modifier = buttonModifier,
+            enabled = isClickable,
+            shape = GemaShapes.control,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError,
+            ),
+        ) {
+            GButtonLabel(text = text, isBusy = isBusy)
+        }
+
+        GButtonVariant.TEXT -> TextButton(
+            onClick = onClick,
+            modifier = buttonModifier,
+            enabled = isClickable,
+            shape = GemaShapes.control,
+        ) {
+            GButtonLabel(text = text, isBusy = isBusy)
+        }
+    }
+}
+
+@Composable
+private fun GButtonLabel(text: String, isBusy: Boolean) {
+    if (isBusy) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(GemaSpacing.medium),
+            strokeWidth = GemaSpacing.indicatorStroke,
+            color = LocalContentColor.current,
+        )
+    } else {
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
