@@ -14,11 +14,14 @@ import com.emm.gema.core.domain.section.Area
 import com.emm.gema.feature.backup.BackupRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
 import com.emm.gema.feature.sections.areas.SectionAreasRoute
+import com.emm.gema.feature.sections.detail.SectionDetailRoute
 import com.emm.gema.feature.sections.form.SectionFormRoute
 import com.emm.gema.feature.setup.periods.PeriodsRoute
 import com.emm.gema.feature.setup.section.SetupSectionRoute
 import com.emm.gema.feature.setup.year.SetupYearRoute
 import com.emm.gema.feature.setup.years.SchoolYearsRoute
+import com.emm.gema.feature.students.form.StudentFormRoute
+import com.emm.gema.feature.students.list.StudentsRoute
 import com.emm.gema.home.HomeRoute
 import org.koin.androidx.compose.koinViewModel
 
@@ -41,7 +44,7 @@ fun GemaNavHost(
                 onSectionForm = { schoolYearId, sectionId ->
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
                 },
-                onSectionAreas = { navController.navigate(GemaRoutes.sectionAreasOf(it)) },
+                onSectionDetail = { navController.navigate(GemaRoutes.sectionDetailOf(it)) },
                 onSchoolYears = { navController.navigate(GemaRoutes.SCHOOL_YEARS) },
                 onPeriods = { navController.navigate(GemaRoutes.periodsOf(it)) },
                 onNavigateToBackup = { navController.navigate(GemaRoutes.BACKUP) },
@@ -95,6 +98,48 @@ fun GemaNavHost(
             SectionFormRoute(
                 schoolYearId = entry.arguments?.getString(GemaRoutes.SCHOOL_YEAR_ID).orEmpty(),
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID)?.takeIf { it.isNotEmpty() },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.SECTION_DETAIL,
+            arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
+        ) { entry ->
+            SectionDetailRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
+                onSectionAreas = { navController.navigate(GemaRoutes.sectionAreasOf(it)) },
+                onSectionForm = { schoolYearId, sectionId ->
+                    navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
+                },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.STUDENTS,
+            arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
+        ) { entry ->
+            StudentsRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onStudentForm = { sectionId, studentId ->
+                    navController.navigate(GemaRoutes.studentForm(sectionId, studentId))
+                },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.STUDENT_FORM,
+            arguments = listOf(
+                navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType },
+                navArgument(GemaRoutes.STUDENT_ID) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { entry ->
+            StudentFormRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                studentId = entry.arguments?.getString(GemaRoutes.STUDENT_ID)?.takeIf { it.isNotEmpty() },
                 onBack = { navController.popBackStack() },
             )
         }

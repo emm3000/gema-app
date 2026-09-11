@@ -7,7 +7,10 @@ import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
+import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
@@ -40,6 +43,7 @@ class SectionFormViewModelTest {
             FakeWorkedCompetencyRepository(),
             studentRepository,
         ),
+        getStudents = GetStudentsUseCase(studentRepository),
     )
 
     @Test
@@ -114,6 +118,19 @@ class SectionFormViewModelTest {
             assertThat(awaitItem()).isEqualTo(SectionFormUiEffect.NavigateBack)
         }
         assertThat(sectionRepository.sections.value).isEmpty()
+    }
+
+    @Test
+    fun `the confirmation counts the students that would be lost`() = runTest {
+        studentRepository.students.value = listOf(
+            Student("student-1", existing.id, StudentCode("12345678901234"), "ACOSTA RIVERA, Luz Maria"),
+            Student("student-2", existing.id, StudentCode("12345678901235"), "BAUTISTA QUISPE, Jose"),
+        )
+        val viewModel: SectionFormViewModel = viewModelFor(existing.id)
+
+        viewModel.onIntent(SectionFormUiIntent.DeleteClicked)
+
+        assertThat(viewModel.state.value.deleteConfirmation?.studentCount).isEqualTo(2)
     }
 
     @Test

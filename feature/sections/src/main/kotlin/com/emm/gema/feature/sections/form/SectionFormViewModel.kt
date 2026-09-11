@@ -8,11 +8,13 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
+import com.emm.gema.core.domain.student.GetStudentsUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,7 @@ class SectionFormViewModel(
     private val createSection: CreateSectionUseCase,
     private val updateSection: UpdateSectionUseCase,
     private val deleteSection: DeleteSectionUseCase,
+    private val getStudents: GetStudentsUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<SectionFormUiState> = MutableStateFlow(SectionFormUiState())
@@ -44,7 +47,7 @@ class SectionFormViewModel(
             is SectionFormUiIntent.GradeSelected -> update { it.copy(grade = intent.grade) }
             is SectionFormUiIntent.SectionNameChanged -> update { it.copy(sectionName = intent.value) }
             SectionFormUiIntent.SaveClicked -> save()
-            SectionFormUiIntent.DeleteClicked -> update { it.copy(deleteConfirmation = countWhatIsLost()) }
+            SectionFormUiIntent.DeleteClicked -> askForConfirmation()
             SectionFormUiIntent.DeleteConfirmed -> delete()
             SectionFormUiIntent.DeleteDismissed -> update { it.copy(deleteConfirmation = null) }
             SectionFormUiIntent.BackClicked -> emit(SectionFormUiEffect.NavigateBack)
@@ -95,8 +98,16 @@ class SectionFormViewModel(
         }
     }
 
-    private fun countWhatIsLost(): DeleteConfirmation = DeleteConfirmation(
-        studentCount = 0,
+    private fun askForConfirmation() {
+        val sectionId: String = _state.value.sectionId ?: return
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(deleteConfirmation = countWhatIsLost(sectionId))
+        }
+    }
+
+    private suspend fun countWhatIsLost(sectionId: String): DeleteConfirmation = DeleteConfirmation(
+        studentCount = getStudents(sectionId).first().size,
         attendanceDayCount = 0,
         periodLevelCount = 0,
     )

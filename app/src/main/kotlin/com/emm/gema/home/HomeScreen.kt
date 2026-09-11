@@ -20,8 +20,6 @@ import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
-import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
@@ -99,15 +97,13 @@ fun HomeScreen(
                 GListItem(
                     title = row.title,
                     modifier = Modifier.fillMaxWidth(),
+                    subtitle = pluralStringResource(
+                        R.plurals.home_section_students,
+                        row.studentCount,
+                        row.studentCount,
+                    ),
                     hasChevron = true,
                     onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
-                    trailing = {
-                        GButton(
-                            text = stringResource(R.string.home_section_areas),
-                            onClick = { onIntent(HomeUiIntent.SectionAreasClicked(row.id)) },
-                            variant = GButtonVariant.TEXT,
-                        )
-                    },
                 )
             }
         }
@@ -135,7 +131,7 @@ private fun HomeScreenPreview() {
                 schoolYearId = "2026",
                 schoolYearLabel = "2026",
                 currentPeriodLabel = "II Bimestre",
-                sections = listOf(SectionRow("a", "3° A"), SectionRow("b", "4° B")),
+                sections = listOf(SectionRow("a", "3° A", 30), SectionRow("b", "4° B", 28)),
             ),
             onIntent = {},
         )

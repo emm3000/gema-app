@@ -4,11 +4,15 @@
     <string name="home_empty_message">Crea tu primera sección para empezar a registrar asistencia y niveles de logro.</string>
     <string name="home_add_section">Nueva sección</string>
     <string name="home_switch_school_year">Cambiar de año escolar</string>
-    <string name="home_section_areas">Áreas</string>
     <string name="home_out_of_period">Hoy está fuera de todos los periodos.</string>
     <string name="home_review_periods">Revisar periodos</string>
     <string name="home_backup_reminder_never">Todavía no respaldaste tus datos</string>
     <string name="home_backup_reminder_action">Respaldar ahora</string>
+
+    <plurals name="home_section_students">
+        <item quantity="one">%d alumno</item>
+        <item quantity="other">%d alumnos</item>
+    </plurals>
 
     <plurals name="home_backup_reminder_days">
         <item quantity="one">Último respaldo hace %d día</item>
