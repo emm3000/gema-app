@@ -20,7 +20,9 @@ import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.student.SqlDelightStudentRepository
 import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
+import com.emm.gema.core.domain.attendance.ExportMonthlyAttendanceUseCase
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
+import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
 import com.emm.gema.core.domain.backup.BackupDocuments
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
@@ -67,6 +69,7 @@ import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
+import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.siagie.PreviewSiagieImportUseCase
 import com.emm.gema.core.domain.siagie.SiagieDocuments
 import com.emm.gema.core.domain.siagie.SiagieImportPlanner
@@ -81,6 +84,7 @@ import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
+import com.emm.gema.core.siagie.XlsxMonthlyAttendanceWriter
 import com.emm.gema.core.siagie.XlsxSiagieRosterReader
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
@@ -111,6 +115,9 @@ val appModule: Module = module {
     single<SiagieRosterReader> { XlsxSiagieRosterReader() }
     single<PeriodLevelRepository> { SqlDelightPeriodLevelRepository(get()) }
     single<AttendanceRepository> { SqlDelightAttendanceRepository(get()) }
+    single<MonthlyAttendanceExporter> {
+        XlsxMonthlyAttendanceWriter(get<SiagieDocuments>(), androidContext().cacheDir.resolve("attendance-exports"))
+    }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -156,6 +163,8 @@ val appModule: Module = module {
     factory<GetAttendanceDayUseCase> { GetAttendanceDayUseCase(get(), get()) }
     factory<RecordAttendanceUseCase> { RecordAttendanceUseCase(get(), get()) }
     factory<CountAttendanceDaysUseCase> { CountAttendanceDaysUseCase(get()) }
+    factory<GetMonthlyAttendanceSummaryUseCase> { GetMonthlyAttendanceSummaryUseCase(get(), get()) }
+    factory<ExportMonthlyAttendanceUseCase> { ExportMonthlyAttendanceUseCase(get(), get(), get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
     factory<InspectBackupUseCase> { InspectBackupUseCase(get(), get()) }

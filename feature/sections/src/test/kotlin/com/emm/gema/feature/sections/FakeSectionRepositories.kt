@@ -25,6 +25,7 @@ import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import java.time.LocalDate
+import java.time.YearMonth
 
 class FakeSectionRepository(initial: List<Section> = emptyList()) : SectionRepository {
 
@@ -205,6 +206,11 @@ class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : 
 
     override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
         records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
+
+    override fun observeBySectionAndMonth(sectionId: String, month: YearMonth): Flow<List<AttendanceRecord>> =
+        records.map { stored ->
+            stored.filter { it.sectionId == sectionId && YearMonth.from(it.date) == month }
+        }
 
     override suspend fun record(record: AttendanceRecord) {
         records.value = records.value

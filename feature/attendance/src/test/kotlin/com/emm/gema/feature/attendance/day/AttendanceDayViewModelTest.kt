@@ -19,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.Clock
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneOffset
 
 private const val sectionId: String = "section-1"
@@ -162,6 +163,18 @@ class AttendanceDayViewModelTest {
             viewModel.onIntent(AttendanceDayUiIntent.StatusSelected(luz.id, AttendanceStatus.ABSENT))
 
             assertThat(awaitItem()).isInstanceOf(AttendanceDayUiEffect.ShowMessage::class.java)
+        }
+    }
+
+    @Test
+    fun `the monthly summary opens on the currently viewed month`() = runTest {
+        val viewModel: AttendanceDayViewModel = viewModel(initialDate = yesterday)
+
+        viewModel.effects.test {
+            viewModel.onIntent(AttendanceDayUiIntent.MonthlySummaryClicked)
+
+            assertThat(awaitItem())
+                .isEqualTo(AttendanceDayUiEffect.NavigateToAttendanceMonth(sectionId, YearMonth.from(yesterday)))
         }
     }
 

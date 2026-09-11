@@ -15,5 +15,7 @@ sealed interface AttendanceDayUiIntent {
 
     data object MarkAllPresent : AttendanceDayUiIntent
 
+    data object MonthlySummaryClicked : AttendanceDayUiIntent
+
     data object BackClicked : AttendanceDayUiIntent
 }

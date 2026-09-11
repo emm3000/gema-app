@@ -2,6 +2,7 @@ package com.emm.gema.navigation
 
 import com.emm.gema.core.domain.section.Area
 import java.time.LocalDate
+import java.time.YearMonth
 
 object GemaRoutes {
     const val HOME: String = "home"
@@ -14,6 +15,7 @@ object GemaRoutes {
     const val SECTION_AREAS: String = "section-areas/{sectionId}"
     const val SECTION_DETAIL: String = "section-detail/{sectionId}"
     const val ATTENDANCE_DAY: String = "attendance/{sectionId}?date={date}"
+    const val ATTENDANCE_MONTH: String = "attendance-month/{sectionId}?month={month}"
     const val STUDENTS: String = "students/{sectionId}"
     const val STUDENT_FORM: String = "student-form/{sectionId}?studentId={studentId}"
     const val IMPORT_PREVIEW: String = "import-preview/{sectionId}/{uri}"
@@ -27,6 +29,7 @@ object GemaRoutes {
     const val URI: String = "uri"
     const val AREA: String = "area"
     const val DATE: String = "date"
+    const val MONTH: String = "month"
 
     fun periodsOf(schoolYearId: String): String = "periods/$schoolYearId"
 
@@ -39,6 +42,9 @@ object GemaRoutes {
 
     fun attendanceDayOf(sectionId: String, date: LocalDate?): String =
         "attendance/$sectionId?date=${date?.toString().orEmpty()}"
+
+    fun attendanceMonthOf(sectionId: String, month: YearMonth?): String =
+        "attendance-month/$sectionId?month=${month?.toString().orEmpty()}"
 
     fun studentsOf(sectionId: String): String = "students/$sectionId"
 
