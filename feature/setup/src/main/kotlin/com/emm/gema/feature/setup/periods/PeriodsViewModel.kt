@@ -106,21 +106,44 @@ class PeriodsViewModel(
         val yearStart: LocalDate = schoolYear?.startDate ?: return state
         val yearEnd: LocalDate = schoolYear?.endDate ?: return state
         val ranges: List<PeriodDates> = state.periods.map { it.toDates() }
-        val errorsByNumber: Map<Int, PeriodRangeError?> = ranges.associate { range ->
-            range.number to range.errorWithin(ranges, yearStart, yearEnd)
+        val errorsById: Map<PeriodId, PeriodRangeError?> = state.periods.associate { row ->
+            row.id to row.toDates().errorWithin(ranges, yearStart, yearEnd)
         }
-        val overlapError: PeriodRangeError? = errorsByNumber.values.firstNotNullOfOrNull { it }
-        val overlappingPeriodIds: Set<PeriodId> = state.periods
-            .filter { errorsByNumber[it.number] != null }
-            .map { it.id }
-            .toSet()
+        val overlapError: PeriodRangeError? = errorsById.values.firstNotNullOfOrNull { it }
+        val overlappingEdges: OverlappingEdges = overlappingEdgesFor(state.periods)
 
         return state.copy(
             overlapError = overlapError,
-            overlappingPeriodIds = overlappingPeriodIds,
+            overlappingStartIds = overlappingEdges.startIds,
+            overlappingEndIds = overlappingEdges.endIds,
             canSave = overlapError == null && state.periods.isNotEmpty(),
         )
     }
+
+    private fun overlappingEdgesFor(periods: List<PeriodRow>): OverlappingEdges {
+        val overlappingPairs: List<Pair<PeriodRow, PeriodRow>> = periods
+            .flatMap { first -> periods.map { second -> first to second } }
+            .filter { (first: PeriodRow, second: PeriodRow) -> first.id != second.id && first.overlapsWith(second) }
+
+        val overlappingStartIds: Set<PeriodId> = overlappingPairs
+            .map { (first: PeriodRow, second: PeriodRow) -> if (first.startDate <= second.startDate) second else first }
+            .map { it.id }
+            .toSet()
+        val overlappingEndIds: Set<PeriodId> = overlappingPairs
+            .map { (first: PeriodRow, second: PeriodRow) -> if (first.startDate <= second.startDate) first else second }
+            .map { it.id }
+            .toSet()
+
+        return OverlappingEdges(startIds = overlappingStartIds, endIds = overlappingEndIds)
+    }
+
+    private fun PeriodRow.overlapsWith(other: PeriodRow): Boolean =
+        startDate <= other.endDate && other.startDate <= endDate
+
+    private data class OverlappingEdges(
+        val startIds: Set<PeriodId>,
+        val endIds: Set<PeriodId>,
+    )
 
     private fun PeriodRow.toDates(): PeriodDates = PeriodDates(number, startDate, endDate)
 }

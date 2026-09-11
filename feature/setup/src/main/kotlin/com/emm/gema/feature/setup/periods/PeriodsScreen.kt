@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.theme.GemaSpacing
@@ -26,6 +28,7 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.setup.R
 import java.time.LocalDate
 
 @Composable
@@ -42,7 +45,7 @@ fun PeriodsScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = "Periodos ${state.schoolYearLabel}",
+                title = stringResource(R.string.setup_periods_title, state.schoolYearLabel),
                 subtitle = periodKindCountLabel,
                 onBackClick = { onIntent(PeriodsUiIntent.BackClicked) },
             )
@@ -78,7 +81,8 @@ fun PeriodsScreen(
             items(state.periods, key = { it.id.value }) { row ->
                 PeriodEditor(
                     row = row,
-                    isOverlapping = row.id in state.overlappingPeriodIds,
+                    isStartOverlapping = row.id in state.overlappingStartIds,
+                    isEndOverlapping = row.id in state.overlappingEndIds,
                     onIntent = onIntent,
                 )
             }
@@ -95,16 +99,21 @@ fun PeriodsScreen(
     }
 }
 
+@Composable
 private fun periodKindCountLabel(periodKindLabel: String, count: Int): String {
-    val lowercaseKindLabel: String = periodKindLabel.lowercase()
-    val pluralSuffix: String = if (count == 1) "" else "s"
-    return "$count $lowercaseKindLabel$pluralSuffix"
+    val pluralsRes: Int = if (periodKindLabel.equals("Trimestre", ignoreCase = true)) {
+        R.plurals.setup_periods_trimester_count
+    } else {
+        R.plurals.setup_periods_bimester_count
+    }
+    return pluralStringResource(pluralsRes, count, count)
 }
 
 @Composable
 private fun PeriodEditor(
     row: PeriodRow,
-    isOverlapping: Boolean,
+    isStartOverlapping: Boolean,
+    isEndOverlapping: Boolean,
     onIntent: (PeriodsUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -123,7 +132,7 @@ private fun PeriodEditor(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (row.isCurrent) {
-                    GBadge(text = "ACTUAL")
+                    GBadge(text = stringResource(R.string.setup_periods_current_badge))
                 }
             }
             Row(
@@ -133,7 +142,7 @@ private fun PeriodEditor(
                 GDateField(
                     value = row.startDate,
                     onValueChange = { onIntent(PeriodsUiIntent.StartDateChanged(row.id, it)) },
-                    isError = isOverlapping,
+                    isError = isStartOverlapping,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
@@ -141,7 +150,7 @@ private fun PeriodEditor(
                 GDateField(
                     value = row.endDate,
                     onValueChange = { onIntent(PeriodsUiIntent.EndDateChanged(row.id, it)) },
-                    isError = isOverlapping,
+                    isError = isEndOverlapping,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
