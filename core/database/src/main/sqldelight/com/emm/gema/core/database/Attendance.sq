@@ -17,6 +17,11 @@ SELECT *
 FROM attendance
 WHERE section_id = ? AND date = ?;
 
+selectBySectionAndDateRange:
+SELECT *
+FROM attendance
+WHERE section_id = ? AND date >= ? AND date <= ?;
+
 countRecordedDays:
 SELECT COUNT(DISTINCT date)
 FROM attendance
