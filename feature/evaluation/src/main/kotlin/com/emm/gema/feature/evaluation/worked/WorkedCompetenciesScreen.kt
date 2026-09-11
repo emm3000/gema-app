@@ -43,7 +43,7 @@ fun WorkedCompetenciesScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(GemaSpacing.screenGutter),
+            contentPadding = PaddingValues(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
             if (message != null) {
