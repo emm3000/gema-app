@@ -2,11 +2,15 @@ package com.emm.gema.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 
 private val baseline: Typography = Typography()
 
 val bodyFontFamily: FontFamily = FontFamily.SansSerif
 val displayFontFamily: FontFamily = FontFamily.SansSerif
+
+val gemaCardTitleFontSize: TextUnit = 20.sp
 
 val gemaTypography = Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
