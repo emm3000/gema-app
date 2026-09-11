@@ -120,7 +120,7 @@ val appModule: Module = module {
     factory<GetSchoolYearUseCase> { GetSchoolYearUseCase(get()) }
     factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
     factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
-    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get(), get(), get(), get(), get()) }
+    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get(), get(), get(), get(), get(), get()) }
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
     factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }

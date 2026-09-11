@@ -29,6 +29,8 @@ import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
+import com.emm.gema.core.database.attendance.SqlDelightAttendanceRepository
+import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Grade
@@ -65,6 +67,7 @@ class SetupPersistenceTest {
         SqlDelightActiveSchoolYearRepository(database, dispatcher)
     private val setupRepository: SetupRepository = SqlDelightSetupRepository(database, dispatcher)
     private val studentRepository: StudentRepository = SqlDelightStudentRepository(database, dispatcher)
+    private val attendanceRepository: AttendanceRepository = SqlDelightAttendanceRepository(database, dispatcher)
 
     private val completeSetup = CompleteSetupUseCase(setupRepository, UuidIdGenerator())
     private val getSchoolYears = GetSchoolYearsUseCase(schoolYearRepository)
@@ -80,6 +83,7 @@ class SetupPersistenceTest {
         studentRepository,
         SqlDelightSiagieImportStore(database, dispatcher),
         SqlDelightPeriodLevelRepository(database, dispatcher),
+        attendanceRepository,
     )
     private val switchSchoolYear = SwitchSchoolYearUseCase(activeSchoolYearRepository)
     private val getActiveSchoolYear = GetActiveSchoolYearUseCase(activeSchoolYearRepository, schoolYearRepository)

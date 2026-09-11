@@ -12,6 +12,7 @@ import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
+import com.emm.gema.feature.sections.FakeAttendanceRepository
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
 import com.emm.gema.feature.sections.FakeSiagieImportStore
@@ -34,6 +35,7 @@ class SectionFormViewModelTest {
     private val sectionAreaRepository = FakeSectionAreaRepository()
     private val studentRepository = FakeStudentRepository()
     private val periodLevelRepository = FakePeriodLevelRepository()
+    private val attendanceRepository = FakeAttendanceRepository()
 
     private fun viewModelFor(sectionId: String?): SectionFormViewModel = SectionFormViewModel(
         schoolYearId = "2026",
@@ -48,6 +50,7 @@ class SectionFormViewModelTest {
             studentRepository,
             FakeSiagieImportStore(),
             periodLevelRepository,
+            attendanceRepository,
         ),
         getStudents = GetStudentsUseCase(studentRepository),
         getPeriodLevelCount = GetPeriodLevelCountUseCase(periodLevelRepository),
