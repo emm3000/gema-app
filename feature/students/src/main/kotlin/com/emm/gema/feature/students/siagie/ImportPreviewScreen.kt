@@ -148,7 +148,7 @@ private fun LazyListScope.withdrawals(state: ImportPreviewUiState, onIntent: (Im
         )
     }
     if (state.expandedGroup == ImportGroup.WITHDRAWN) {
-        items(state.proposedWithdrawals, key = { it.studentId }) { row ->
+        items(state.proposedWithdrawals, key = { it.studentId.value }) { row ->
             GCheckRow(
                 title = row.displayName,
                 isChecked = row.isSelected,

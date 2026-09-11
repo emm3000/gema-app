@@ -72,7 +72,7 @@ fun ActivityEvidenceScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = GemaSpacing.small),
             ) {
-                items(state.rows, key = { it.studentId }) { row ->
+                items(state.rows, key = { it.studentId.value }) { row ->
                     StudentRow(row = row, onSelect = { level ->
                         onIntent(ActivityEvidenceUiIntent.LevelSelected(row.studentId, level))
                     })

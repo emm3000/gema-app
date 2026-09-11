@@ -80,7 +80,7 @@ fun PeriodsScreen(
                     )
                 }
             }
-            items(state.periods, key = { it.id }) { row ->
+            items(state.periods, key = { it.id.value }) { row ->
                 PeriodEditor(row = row, onIntent = onIntent)
             }
         }

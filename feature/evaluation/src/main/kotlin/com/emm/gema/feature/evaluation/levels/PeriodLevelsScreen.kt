@@ -159,7 +159,7 @@ private fun Grid(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) ->
         GridHeader(columns = state.columns, bandScroll = bandScroll, onIntent = onIntent)
         HorizontalDivider()
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(state.visibleRows, key = { it.studentId }) { row ->
+            items(state.visibleRows, key = { it.studentId.value }) { row ->
                 GridRow(row = row, bandScroll = bandScroll, currentCell = state.currentCell(), onIntent = onIntent)
                 HorizontalDivider()
             }

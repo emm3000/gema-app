@@ -65,7 +65,7 @@ fun WorkedCompetenciesScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            items(state.competencies, key = { it.id }) { row ->
+            items(state.competencies, key = { it.id.value }) { row ->
                 GCheckRow(
                     title = row.name,
                     isChecked = row.isWorked,

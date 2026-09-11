@@ -91,7 +91,7 @@ fun AttendanceDayScreen(
                     )
                 }
             }
-            items(state.rows, key = { it.studentId }) { row: AttendanceRow ->
+            items(state.rows, key = { it.studentId.value }) { row: AttendanceRow ->
                 StudentRow(row = row, onIntent = onIntent)
             }
             item {

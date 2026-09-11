@@ -86,7 +86,7 @@ fun StudentsScreen(
                     )
                 }
             }
-            items(state.activeStudents, key = { it.id }) { row ->
+            items(state.activeStudents, key = { it.id.value }) { row ->
                 GListItem(
                     title = row.displayName,
                     modifier = Modifier.fillMaxWidth(),
@@ -105,7 +105,7 @@ fun StudentsScreen(
                 }
             }
             if (state.isWithdrawnExpanded) {
-                items(state.withdrawnStudents, key = { it.id }) { row ->
+                items(state.withdrawnStudents, key = { it.id.value }) { row ->
                     WithdrawnStudentItem(row = row, onIntent = onIntent)
                 }
             }

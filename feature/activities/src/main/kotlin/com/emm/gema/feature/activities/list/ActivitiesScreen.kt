@@ -77,7 +77,7 @@ fun ActivitiesScreen(
                 )
             } else {
                 LazyColumn(contentPadding = PaddingValues(vertical = GemaSpacing.small)) {
-                    items(state.activities, key = { it.id }) { row ->
+                    items(state.activities, key = { it.id.value }) { row ->
                         GListItem(
                             title = row.name,
                             subtitle = row.subtitle(),
