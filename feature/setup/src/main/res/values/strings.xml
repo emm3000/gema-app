@@ -8,4 +8,8 @@
     <string name="setup_period_range_error_inverted">Este periodo termina antes de empezar</string>
     <string name="setup_period_range_error_outside_year">Este periodo se sale del año escolar</string>
     <string name="setup_period_range_error_overlap">Este periodo se superpone con otro</string>
+    <string name="setup_year_step_label">Paso 1 de 2</string>
+    <string name="setup_year_title">Tu año escolar</string>
+    <string name="setup_year_helper_text">Solo lo que necesitamos para empezar. Todo se puede corregir después.</string>
+    <string name="setup_year_periods_caption">Calculados a partir del año. Toca uno para ajustarlo.</string>
 </resources>

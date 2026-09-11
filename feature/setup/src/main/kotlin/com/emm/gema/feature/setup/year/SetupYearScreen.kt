@@ -37,13 +37,6 @@ import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.setup.shortRangeLabel
 import java.time.LocalDate
 
-private const val STEP_LABEL: String = "Paso 1 de 2"
-private const val TITLE: String = "Tu año escolar"
-private const val HELPER_TEXT: String =
-    "Solo lo que necesitamos para empezar. Todo se puede corregir después."
-private const val PERIODS_CAPTION: String =
-    "Calculados a partir del año. Toca uno para ajustarlo."
-
 @Composable
 fun SetupYearScreen(
     state: SetupYearUiState,
@@ -125,7 +118,10 @@ fun SetupYearScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
                     GText(text = "Periodos", style = GTextStyle.LABEL_MEDIUM)
                     PeriodsList(periods = state.periods, onIntent = onIntent)
-                    GText(text = PERIODS_CAPTION, style = GTextStyle.BODY_SMALL)
+                    GText(
+                        text = stringResource(R.string.setup_year_periods_caption),
+                        style = GTextStyle.BODY_SMALL,
+                    )
                 }
             }
         }
@@ -139,9 +135,9 @@ fun SetupYearScreen(
 @Composable
 private fun Header(modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
-        GText(text = STEP_LABEL, style = GTextStyle.LABEL_MEDIUM)
-        GText(text = TITLE, style = GTextStyle.TITLE_MEDIUM)
-        GText(text = HELPER_TEXT, style = GTextStyle.BODY_MEDIUM)
+        GText(text = stringResource(R.string.setup_year_step_label), style = GTextStyle.LABEL_MEDIUM)
+        GText(text = stringResource(R.string.setup_year_title), style = GTextStyle.TITLE_MEDIUM)
+        GText(text = stringResource(R.string.setup_year_helper_text), style = GTextStyle.BODY_MEDIUM)
     }
 }
 

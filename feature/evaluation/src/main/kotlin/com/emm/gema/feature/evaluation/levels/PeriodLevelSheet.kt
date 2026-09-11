@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.evaluation.UnworkedComment
 import com.emm.gema.core.theme.GemaSpacing
@@ -17,9 +18,9 @@ import com.emm.gema.core.ui.GLevelPicker
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
+import com.emm.gema.feature.evaluation.R
 import java.time.format.DateTimeFormatter
 
-private const val CONCLUSION_HINT: String = "Obligatoria para SIAGIE cuando el nivel es C. Puedes guardarla después."
 private val evidenceDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
 @Composable
@@ -69,7 +70,8 @@ fun PeriodLevelSheet(
             onValueChange = { onIntent(PeriodLevelsUiIntent.SheetDescriptiveConclusionChanged(it)) },
             label = "Conclusión descriptiva",
             modifier = Modifier.fillMaxWidth(),
-            supportingText = CONCLUSION_HINT.takeIf { sheet.isConclusionRequiredForExport },
+            supportingText = stringResource(R.string.period_levels_sheet_conclusion_hint)
+                .takeIf { sheet.isConclusionRequiredForExport },
         )
         if (sheet.evidence.isNotEmpty()) {
             GText(

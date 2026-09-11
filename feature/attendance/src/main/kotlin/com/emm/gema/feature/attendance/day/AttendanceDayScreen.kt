@@ -16,8 +16,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.feature.attendance.R
 import com.emm.gema.feature.attendance.asStatus
 import com.emm.gema.feature.attendance.asToggleOption
 import com.emm.gema.core.theme.GemaSpacing
@@ -38,8 +40,6 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
 import java.time.LocalDate
 
-private const val SAVES_ITSELF_SUBTITLE: String = "Cada toque se guarda solo"
-
 @Composable
 fun AttendanceDayScreen(
     state: AttendanceDayUiState,
@@ -52,7 +52,7 @@ fun AttendanceDayScreen(
         topBar = {
             GTopBar(
                 title = "Asistencia · ${state.sectionTitle}",
-                subtitle = SAVES_ITSELF_SUBTITLE,
+                subtitle = stringResource(R.string.attendance_day_subtitle_saves_itself),
                 onBackClick = { onIntent(AttendanceDayUiIntent.BackClicked) },
             )
         },

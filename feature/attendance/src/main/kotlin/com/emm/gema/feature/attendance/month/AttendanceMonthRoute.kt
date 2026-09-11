@@ -23,8 +23,6 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-private const val CHOOSER_TITLE: String = "Compartir asistencia"
-
 @Composable
 fun AttendanceMonthRoute(
     sectionId: String,
@@ -37,6 +35,7 @@ fun AttendanceMonthRoute(
     val context: Context = LocalContext.current
     var message: String? by remember { mutableStateOf(null) }
     val messages: Map<AttendanceMonthMessage, String> = attendanceMonthMessages()
+    val chooserTitle: String = stringResource(R.string.attendance_month_chooser_title)
 
     val pickTemplate = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         if (uri != null) viewModel.onIntent(AttendanceMonthUiIntent.TemplatePicked(uri.toString()))
@@ -47,7 +46,7 @@ fun AttendanceMonthRoute(
             when (effect) {
                 is AttendanceMonthUiEffect.OpenDocumentPicker -> pickTemplate.launch(effect.mimeTypes.toTypedArray())
                 is AttendanceMonthUiEffect.ShareFile ->
-                    context.shareFile(File(effect.path), effect.mimeType, CHOOSER_TITLE)
+                    context.shareFile(File(effect.path), effect.mimeType, chooserTitle)
                 is AttendanceMonthUiEffect.ShowMessage -> message = messages.getValue(effect.message)
                 AttendanceMonthUiEffect.NavigateBack -> onBack()
             }

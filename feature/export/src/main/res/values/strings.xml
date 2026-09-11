@@ -14,4 +14,5 @@
     <string name="export_summary_title">Resumen para imprimir</string>
     <string name="export_summary_pdf">PDF</string>
     <string name="export_summary_csv">CSV</string>
+    <string name="export_period_badge_current">Actual</string>
 </resources>
