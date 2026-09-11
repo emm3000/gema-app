@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val TOGGLE_FAILED_MESSAGE: String = "No se pudo guardar el cambio"
-
 class SectionAreasViewModel(
     private val sectionId: String,
     private val getSection: GetSectionUseCase,
@@ -64,7 +62,7 @@ class SectionAreasViewModel(
     private fun toggle(area: Area, isActive: Boolean) {
         viewModelScope.launch {
             runCatching { setAreaVisibility(sectionId = sectionId, area = area, isActive = isActive) }
-                .onFailure { _effects.send(SectionAreasUiEffect.ShowMessage(TOGGLE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(SectionAreasUiEffect.ShowMessage(SectionAreasMessage.TOGGLE_FAILED)) }
         }
     }
 

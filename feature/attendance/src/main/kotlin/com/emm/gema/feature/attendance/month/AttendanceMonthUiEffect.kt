@@ -6,7 +6,7 @@ sealed interface AttendanceMonthUiEffect {
 
     data class ShareFile(val path: String, val mimeType: String) : AttendanceMonthUiEffect
 
-    data class ShowMessage(val text: String) : AttendanceMonthUiEffect
+    data class ShowMessage(val message: AttendanceMonthMessage) : AttendanceMonthUiEffect
 
     data object NavigateBack : AttendanceMonthUiEffect
 }

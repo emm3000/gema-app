@@ -4,7 +4,7 @@ import java.time.YearMonth
 
 sealed interface AttendanceDayUiEffect {
 
-    data class ShowMessage(val text: String) : AttendanceDayUiEffect
+    data class ShowMessage(val message: AttendanceDayMessage) : AttendanceDayUiEffect
 
     data class NavigateToAttendanceMonth(val sectionId: String, val month: YearMonth) : AttendanceDayUiEffect
 

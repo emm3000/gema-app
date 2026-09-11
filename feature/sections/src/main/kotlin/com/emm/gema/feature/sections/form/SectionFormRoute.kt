@@ -8,10 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import com.emm.gema.feature.sections.R
 
 @Composable
 fun SectionFormRoute(
@@ -22,13 +24,13 @@ fun SectionFormRoute(
 ) {
     val viewModel: SectionFormViewModel = koinViewModel { parametersOf(schoolYearId, sectionId) }
     val state: State<SectionFormUiState> = viewModel.state.collectAsStateWithLifecycle()
-    var message: String? by remember { mutableStateOf(null) }
+    var message: SectionFormMessage? by remember { mutableStateOf(null) }
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 SectionFormUiEffect.NavigateBack -> onBack()
-                is SectionFormUiEffect.ShowMessage -> message = effect.text
+                is SectionFormUiEffect.ShowMessage -> message = effect.message
             }
         }
     }
@@ -37,7 +39,13 @@ fun SectionFormRoute(
         state = state.value,
         onIntent = viewModel::onIntent,
         modifier = modifier,
-        message = message,
+        message = message?.let { stringResource(sectionFormMessageRes(it)) },
         onMessageDismissed = { message = null },
     )
+}
+
+internal fun sectionFormMessageRes(message: SectionFormMessage): Int = when (message) {
+    SectionFormMessage.MISSING_NAME -> R.string.sections_form_message_missing_name
+    SectionFormMessage.SAVE_FAILED -> R.string.sections_form_message_save_failed
+    SectionFormMessage.DELETE_FAILED -> R.string.sections_form_message_delete_failed
 }

@@ -23,8 +23,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-private const val TOGGLE_FAILED_MESSAGE: String = "No se pudo guardar el cambio"
-
 class WorkedCompetenciesViewModel(
     private val sectionId: String,
     private val periodId: String,
@@ -89,7 +87,9 @@ class WorkedCompetenciesViewModel(
                     competencyId = competencyId,
                     isWorked = isWorked,
                 )
-            }.onFailure { _effects.send(WorkedCompetenciesUiEffect.ShowMessage(TOGGLE_FAILED_MESSAGE)) }
+            }.onFailure {
+                _effects.send(WorkedCompetenciesUiEffect.ShowMessage(WorkedCompetenciesMessage.TOGGLE_FAILED))
+            }
         }
     }
 

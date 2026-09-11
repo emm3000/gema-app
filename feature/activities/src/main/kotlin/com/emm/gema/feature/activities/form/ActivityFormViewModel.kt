@@ -27,9 +27,6 @@ import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.LocalDate
 
-private const val SAVE_FAILED_MESSAGE: String = "No se pudo guardar la actividad"
-private const val OUTSIDE_PERIODS_MESSAGE: String = "Esa fecha no cae dentro de ningún periodo"
-
 class ActivityFormViewModel(
     private val sectionId: String,
     private val activityId: String?,
@@ -101,9 +98,9 @@ class ActivityFormViewModel(
 
         if (period == null) {
             _state.value = _state.value.copy(
-                dateError = OUTSIDE_PERIODS_MESSAGE,
+                dateError = ActivityFormMessage.OUTSIDE_PERIODS,
                 resolvedPeriodLabel = null,
-                periodChangeWarning = null,
+                hasPeriodChangeWarning = false,
                 competencyGroups = emptyList(),
                 selectedCompetencyIds = emptySet(),
             )
@@ -116,16 +113,15 @@ class ActivityFormViewModel(
         _state.value = _state.value.copy(
             dateError = null,
             resolvedPeriodLabel = loadedSchoolYear.periodKind.labelFor(period.number),
-            periodChangeWarning = changeWarning(period.id),
+            hasPeriodChangeWarning = hasPeriodChanged(period.id),
             competencyGroups = competencies.toGroups(),
             selectedCompetencyIds = _state.value.selectedCompetencyIds.filter { it in availableIds }.toSet(),
         )
     }
 
-    private fun changeWarning(resolvedPeriodId: String): String? {
-        val original: String = originalPeriodId ?: return null
-        if (original == resolvedPeriodId) return null
-        return "Esta actividad se moverá a otro periodo."
+    private fun hasPeriodChanged(resolvedPeriodId: String): Boolean {
+        val original: String = originalPeriodId ?: return false
+        return original != resolvedPeriodId
     }
 
     private fun toggleCompetency(competencyId: String, isSelected: Boolean) {
@@ -152,7 +148,7 @@ class ActivityFormViewModel(
             ) {
                 is SaveActivityResult.Saved -> emit(ActivityFormUiEffect.NavigateToActivityEvidence(result.activity.id))
                 SaveActivityResult.DateOutsidePeriods ->
-                    _state.value = _state.value.copy(dateError = OUTSIDE_PERIODS_MESSAGE)
+                    _state.value = _state.value.copy(dateError = ActivityFormMessage.OUTSIDE_PERIODS)
             }
         }
     }
@@ -163,7 +159,7 @@ class ActivityFormViewModel(
         viewModelScope.launch {
             runCatching { deleteActivity(id) }
                 .onSuccess { emit(ActivityFormUiEffect.NavigateBack) }
-                .onFailure { emit(ActivityFormUiEffect.ShowMessage(SAVE_FAILED_MESSAGE)) }
+                .onFailure { emit(ActivityFormUiEffect.ShowMessage(ActivityFormMessage.SAVE_FAILED)) }
         }
     }
 

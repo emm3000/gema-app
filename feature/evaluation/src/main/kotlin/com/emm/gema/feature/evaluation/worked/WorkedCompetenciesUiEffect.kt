@@ -4,5 +4,5 @@ sealed interface WorkedCompetenciesUiEffect {
 
     data object NavigateBack : WorkedCompetenciesUiEffect
 
-    data class ShowMessage(val text: String) : WorkedCompetenciesUiEffect
+    data class ShowMessage(val message: WorkedCompetenciesMessage) : WorkedCompetenciesUiEffect
 }

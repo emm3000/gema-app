@@ -9,6 +9,7 @@ import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.PeriodDates
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
+import com.emm.gema.feature.setup.PeriodRangeError
 import com.emm.gema.feature.setup.errorWithin
 import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.core.domain.schoolyear.labelFor
@@ -20,8 +21,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-
-private const val SAVE_FAILED_MESSAGE: String = "No se pudieron guardar los periodos"
 
 class PeriodsViewModel(
     private val schoolYearId: String,
@@ -93,7 +92,7 @@ class PeriodsViewModel(
         viewModelScope.launch {
             runCatching { updatePeriods(schoolYearId, current.periods.map { it.toDates() }) }
                 .onSuccess { _effects.send(PeriodsUiEffect.NavigateBack) }
-                .onFailure { _effects.send(PeriodsUiEffect.ShowMessage(SAVE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(PeriodsUiEffect.ShowMessage(PeriodsMessage.SAVE_FAILED)) }
         }
     }
 
@@ -105,7 +104,7 @@ class PeriodsViewModel(
         val yearStart: LocalDate = schoolYear?.startDate ?: return state
         val yearEnd: LocalDate = schoolYear?.endDate ?: return state
         val ranges: List<PeriodDates> = state.periods.map { it.toDates() }
-        val overlapError: String? = ranges.firstNotNullOfOrNull { it.errorWithin(ranges, yearStart, yearEnd) }
+        val overlapError: PeriodRangeError? = ranges.firstNotNullOfOrNull { it.errorWithin(ranges, yearStart, yearEnd) }
 
         return state.copy(
             overlapError = overlapError,

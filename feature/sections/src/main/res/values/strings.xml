@@ -17,6 +17,8 @@
     <string name="sections_areas_understood">Entendido</string>
     <string name="sections_areas_hint">Apaga las áreas que no dictas. Nada se borra: puedes volver a encenderlas.</string>
 
+    <string name="sections_areas_message_toggle_failed">No se pudo guardar el cambio</string>
+
     <plurals name="sections_areas_recorded_levels">
         <item quantity="one">%d nivel registrado. Queda guardado.</item>
         <item quantity="other">%d niveles registrados. Quedan guardados.</item>
@@ -33,4 +35,7 @@
     <string name="sections_form_delete_confirm">Eliminar</string>
     <string name="sections_form_delete_cancel">Cancelar</string>
     <string name="sections_form_delete_message">Se perderán %1$d estudiantes, %2$d días de asistencia y %3$d niveles de logro.</string>
+    <string name="sections_form_message_missing_name">Escribe el nombre de la sección</string>
+    <string name="sections_form_message_save_failed">No se pudo guardar la sección</string>
+    <string name="sections_form_message_delete_failed">No se pudo eliminar la sección</string>
 </resources>

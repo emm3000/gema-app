@@ -1,0 +1,5 @@
+<resources>
+    <string name="attendance_day_message_future_date">Todavía no puedes tomar asistencia de un día futuro</string>
+    <string name="attendance_day_message_record_failed">No se pudo guardar la asistencia</string>
+    <string name="attendance_month_message_export_failed">No se pudo generar el archivo de asistencia</string>
+</resources>

@@ -10,5 +10,5 @@ sealed interface StudentsUiEffect {
 
     data object NavigateBack : StudentsUiEffect
 
-    data class ShowMessage(val text: String) : StudentsUiEffect
+    data class ShowMessage(val message: StudentsMessage) : StudentsUiEffect
 }

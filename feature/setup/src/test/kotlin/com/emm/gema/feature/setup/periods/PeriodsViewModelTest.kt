@@ -12,6 +12,7 @@ import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.divide
 import com.emm.gema.feature.setup.MainDispatcherRule
+import com.emm.gema.feature.setup.PeriodRangeError
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,7 +98,7 @@ class PeriodsViewModelTest {
 
         viewModel.onIntent(PeriodsUiIntent.EndDateChanged("period-1", storedPeriods[1].startDate))
 
-        assertThat(viewModel.state.value.overlapError).isNotNull()
+        assertThat(viewModel.state.value.overlapError).isEqualTo(PeriodRangeError.OVERLAP)
         assertThat(viewModel.state.value.canSave).isFalse()
 
         viewModel.effects.test {
@@ -113,7 +114,7 @@ class PeriodsViewModelTest {
 
         viewModel.onIntent(PeriodsUiIntent.StartDateChanged("period-1", schoolYear.startDate.minusDays(2)))
 
-        assertThat(viewModel.state.value.overlapError).isNotNull()
+        assertThat(viewModel.state.value.overlapError).isEqualTo(PeriodRangeError.OUTSIDE_YEAR)
         assertThat(viewModel.state.value.canSave).isFalse()
     }
 

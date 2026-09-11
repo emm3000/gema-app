@@ -1,0 +1,12 @@
+<resources>
+    <string name="students_message_reactivate_failed">No se pudo reincorporar al alumno</string>
+
+    <string name="import_preview_message_failed">No se pudo importar la plantilla</string>
+    <string name="import_preview_message_applied">%1$d nuevos, %2$d actualizados, %3$d retirados</string>
+
+    <string name="student_form_error_invalid_code">El código del estudiante tiene %1$d dígitos</string>
+    <string name="student_form_error_duplicate_code">Ese código ya es de otro alumno de la sección</string>
+    <string name="student_form_error_missing_name">Escribe los apellidos y nombres</string>
+    <string name="student_form_error_missing_withdrawal_date">Elige la fecha de retiro</string>
+    <string name="student_form_message_save_failed">No se pudo guardar al alumno</string>
+</resources>

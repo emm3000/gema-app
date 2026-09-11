@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.schoolyear.PeriodDates
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.divide
+import com.emm.gema.feature.setup.PeriodRangeError
 import com.emm.gema.feature.setup.errorWithin
 import com.emm.gema.core.domain.schoolyear.labelFor
 import kotlinx.coroutines.channels.Channel
@@ -17,10 +18,6 @@ import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-
-private const val MISSING_LABEL_ERROR: String = "Escribe un nombre para el año escolar"
-private const val INVALID_RANGE_ERROR: String = "El año escolar termina después de empezar"
-private const val TOO_SHORT_ERROR: String = "El año escolar es muy corto para sus periodos"
 
 class SetupYearViewModel(clock: Clock) : ViewModel() {
 
@@ -111,10 +108,10 @@ class SetupYearViewModel(clock: Clock) : ViewModel() {
     }
 
     private fun validate(state: SetupYearUiState): SetupYearUiState {
-        val errors: Map<Int, String?> = errorsFor(state)
+        val errors: Map<Int, PeriodRangeError?> = errorsFor(state)
         val periods: List<PeriodDraftRow> = state.periods.map { row -> row.copy(error = errors[row.ordinal]) }
-        val dateRangeError: String? = dateRangeErrorFor(state)
-        val yearLabelError: String? = MISSING_LABEL_ERROR.takeIf { state.yearLabel.isBlank() }
+        val dateRangeError: SetupYearMessage? = dateRangeErrorFor(state)
+        val yearLabelError: SetupYearMessage? = SetupYearMessage.MISSING_LABEL.takeIf { state.yearLabel.isBlank() }
 
         return state.copy(
             periods = periods,
@@ -128,20 +125,20 @@ class SetupYearViewModel(clock: Clock) : ViewModel() {
         )
     }
 
-    private fun dateRangeErrorFor(state: SetupYearUiState): String? {
+    private fun dateRangeErrorFor(state: SetupYearUiState): SetupYearMessage? {
         val startDate: LocalDate = state.startDate ?: return null
         val endDate: LocalDate = state.endDate ?: return null
-        if (!endDate.isAfter(startDate)) return INVALID_RANGE_ERROR
-        if (!isLongEnough(startDate, endDate, state.periodKind)) return TOO_SHORT_ERROR
+        if (!endDate.isAfter(startDate)) return SetupYearMessage.INVALID_RANGE
+        if (!isLongEnough(startDate, endDate, state.periodKind)) return SetupYearMessage.TOO_SHORT
         return null
     }
 
-    private fun editorErrorFor(editor: PeriodEditorState, state: SetupYearUiState): String? {
+    private fun editorErrorFor(editor: PeriodEditorState, state: SetupYearUiState): PeriodRangeError? {
         val edited: PeriodDates = PeriodDates(editor.ordinal, editor.startDate, editor.endDate)
         return errorsFor(state, edited)[editor.ordinal]
     }
 
-    private fun errorsFor(state: SetupYearUiState, replacement: PeriodDates? = null): Map<Int, String?> {
+    private fun errorsFor(state: SetupYearUiState, replacement: PeriodDates? = null): Map<Int, PeriodRangeError?> {
         val startDate: LocalDate = state.startDate ?: return emptyMap()
         val endDate: LocalDate = state.endDate ?: return emptyMap()
         val ranges: List<PeriodDates> = state.periods.map { row ->

@@ -1,0 +1,11 @@
+<resources>
+    <string name="setup_year_error_missing_label">Escribe un nombre para el año escolar</string>
+    <string name="setup_year_error_invalid_range">El año escolar termina después de empezar</string>
+    <string name="setup_year_error_too_short">El año escolar es muy corto para sus periodos</string>
+    <string name="setup_section_error_missing_name">Escribe el nombre de la sección</string>
+    <string name="setup_section_message_save_failed">No se pudo guardar la configuración. Inténtalo otra vez.</string>
+    <string name="setup_periods_message_save_failed">No se pudieron guardar los periodos</string>
+    <string name="setup_period_range_error_inverted">Este periodo termina antes de empezar</string>
+    <string name="setup_period_range_error_outside_year">Este periodo se sale del año escolar</string>
+    <string name="setup_period_range_error_overlap">Este periodo se superpone con otro</string>
+</resources>

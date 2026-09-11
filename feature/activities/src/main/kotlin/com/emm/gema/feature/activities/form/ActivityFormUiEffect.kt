@@ -6,5 +6,5 @@ sealed interface ActivityFormUiEffect {
 
     data object NavigateBack : ActivityFormUiEffect
 
-    data class ShowMessage(val text: String) : ActivityFormUiEffect
+    data class ShowMessage(val message: ActivityFormMessage) : ActivityFormUiEffect
 }

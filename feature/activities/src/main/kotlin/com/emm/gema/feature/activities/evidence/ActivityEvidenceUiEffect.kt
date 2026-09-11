@@ -6,5 +6,5 @@ sealed interface ActivityEvidenceUiEffect {
 
     data object NavigateBack : ActivityEvidenceUiEffect
 
-    data class ShowMessage(val text: String) : ActivityEvidenceUiEffect
+    data class ShowMessage(val message: ActivityEvidenceMessage) : ActivityEvidenceUiEffect
 }

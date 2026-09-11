@@ -98,7 +98,7 @@ fun SectionFormScreen(
                 onValueChange = { onIntent(SectionFormUiIntent.SectionNameChanged(it)) },
                 label = stringResource(R.string.sections_form_name_label),
                 modifier = Modifier.fillMaxWidth(),
-                errorText = state.sectionNameError,
+                errorText = state.sectionNameError?.let { stringResource(sectionFormMessageRes(it)) },
             )
             if (state.canDelete) {
                 GButton(

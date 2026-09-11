@@ -11,7 +11,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.emm.gema.feature.students.R
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -30,6 +32,7 @@ fun StudentsRoute(
     }
     val state: State<StudentsUiState> = viewModel.state.collectAsStateWithLifecycle()
     var message: String? by remember { mutableStateOf(null) }
+    val messages: Map<StudentsMessage, String> = studentsMessages()
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
@@ -38,7 +41,7 @@ fun StudentsRoute(
                 is StudentsUiEffect.OpenDocumentPicker -> pickTemplate.launch(effect.mimeTypes.toTypedArray())
                 is StudentsUiEffect.NavigateToImportPreview -> onImportPreview(effect.sectionId, effect.uri)
                 StudentsUiEffect.NavigateBack -> onBack()
-                is StudentsUiEffect.ShowMessage -> message = effect.text
+                is StudentsUiEffect.ShowMessage -> message = messages.getValue(effect.message)
             }
         }
     }
@@ -51,3 +54,8 @@ fun StudentsRoute(
         onMessageDismissed = { message = null },
     )
 }
+
+@Composable
+private fun studentsMessages(): Map<StudentsMessage, String> = mapOf(
+    StudentsMessage.REACTIVATE_FAILED to stringResource(R.string.students_message_reactivate_failed),
+)

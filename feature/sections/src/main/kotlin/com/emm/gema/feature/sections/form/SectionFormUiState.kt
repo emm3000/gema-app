@@ -7,7 +7,7 @@ data class SectionFormUiState(
     val sectionId: String? = null,
     val grade: Grade? = null,
     val sectionName: String = "",
-    val sectionNameError: String? = null,
+    val sectionNameError: SectionFormMessage? = null,
     val canSave: Boolean = false,
     val canDelete: Boolean = false,
     val deleteConfirmation: DeleteConfirmation? = null,

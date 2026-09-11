@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
-private const val RECORD_FAILED_MESSAGE: String = "No se pudo guardar la evidencia"
 private val activityDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 class ActivityEvidenceViewModel(
@@ -140,7 +139,7 @@ class ActivityEvidenceViewModel(
 
         viewModelScope.launch {
             runCatching { recordEvidenceLevel(key, level) }
-                .onFailure { emit(ActivityEvidenceUiEffect.ShowMessage(RECORD_FAILED_MESSAGE)) }
+                .onFailure { emit(ActivityEvidenceUiEffect.ShowMessage(ActivityEvidenceMessage.RECORD_FAILED)) }
         }
     }
 

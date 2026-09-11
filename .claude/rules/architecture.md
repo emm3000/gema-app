@@ -56,6 +56,14 @@ Naming lives in `naming.md`. This is the flow.
 - **The route wires everything.** `<Feature>Route` obtains the ViewModel through Koin, collects state, passes the dispatch lambda down, and consumes effects.
 - **Intents describe what the user did**, not what the ViewModel should do. Local UI state that has no business meaning — a card's flipped face, an expanded section — may stay as `remember` inside the composable.
 
+## ViewModels never hold literal UI copy
+
+A ViewModel never carries a literal string of user-facing copy, Spanish or otherwise, in state or effects. It emits an enum or another typed value; the screen resolves that value to text with `stringResource` at the UI layer.
+
+This keeps copy in one place (`res/values/strings.xml`), keeps ViewModels free of locale concerns, and keeps assertions in ViewModel tests about *what happened*, not about *which string was chosen*.
+
+Reference pattern: `feature:backup`. `BackupMessage` is a plain enum of message kinds; `BackupViewModel` emits `BackupUiEffect.ShowMessage(BackupMessage.BACKUP_CREATED)`, never a string; `BackupRoute` builds a `Map<BackupMessage, String>` with `stringResource(...)` per entry and resolves the enum to text via `messages.getValue(effect.message)`.
+
 ## When a new dependency crosses a layer
 
 Before adding a dependency to any package, check the direction above. If the change needs `core:domain` to reach outward, the design is wrong: invert it with an interface in `core:domain`.

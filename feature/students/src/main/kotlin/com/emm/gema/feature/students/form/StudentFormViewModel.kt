@@ -19,12 +19,6 @@ import kotlinx.coroutines.launch
 import java.time.Clock
 import java.time.LocalDate
 
-private const val INVALID_CODE_ERROR: String = "El código del estudiante tiene ${StudentCode.LENGTH} dígitos"
-private const val DUPLICATE_CODE_ERROR: String = "Ese código ya es de otro alumno de la sección"
-private const val MISSING_NAME_ERROR: String = "Escribe los apellidos y nombres"
-private const val MISSING_WITHDRAWAL_DATE_ERROR: String = "Elige la fecha de retiro"
-private const val SAVE_FAILED_MESSAGE: String = "No se pudo guardar al alumno"
-
 class StudentFormViewModel(
     private val sectionId: String,
     private val studentId: String?,
@@ -78,7 +72,7 @@ class StudentFormViewModel(
         viewModelScope.launch {
             runCatching { persist(current) }
                 .onSuccess { result -> onSaved(result) }
-                .onFailure { _effects.send(StudentFormUiEffect.ShowMessage(SAVE_FAILED_MESSAGE)) }
+                .onFailure { _effects.send(StudentFormUiEffect.ShowMessage(StudentFormMessage.SAVE_FAILED)) }
         }
     }
 
@@ -96,11 +90,11 @@ class StudentFormViewModel(
                 _effects.send(StudentFormUiEffect.NavigateBack)
             }
             StudentSaveResult.DuplicateCode -> _state.value = _state.value.copy(
-                studentCodeError = DUPLICATE_CODE_ERROR,
+                studentCodeError = StudentCodeError.DuplicateCode,
                 canSave = false,
             )
             StudentSaveResult.InvalidCode, StudentSaveResult.BlankName ->
-                _effects.send(StudentFormUiEffect.ShowMessage(SAVE_FAILED_MESSAGE))
+                _effects.send(StudentFormUiEffect.ShowMessage(StudentFormMessage.SAVE_FAILED))
         }
     }
 
@@ -131,9 +125,10 @@ class StudentFormViewModel(
     }
 
     private fun validate(state: StudentFormUiState): StudentFormUiState {
-        val studentCodeError: String? = INVALID_CODE_ERROR.takeIf { !StudentCode.isValid(state.studentCode) }
-        val fullNameError: String? = MISSING_NAME_ERROR.takeIf { state.fullName.isBlank() }
-        val withdrawalDateError: String? = MISSING_WITHDRAWAL_DATE_ERROR
+        val studentCodeError: StudentCodeError? = StudentCodeError.InvalidLength(StudentCode.LENGTH)
+            .takeIf { !StudentCode.isValid(state.studentCode) }
+        val fullNameError: FullNameError? = FullNameError.BLANK.takeIf { state.fullName.isBlank() }
+        val withdrawalDateError: WithdrawalDateError? = WithdrawalDateError.MISSING
             .takeIf { state.isWithdrawn && state.withdrawalDate == null }
         return state.copy(
             studentCodeError = studentCodeError.takeIf { !state.isLoading && state.studentCode.isNotEmpty() },

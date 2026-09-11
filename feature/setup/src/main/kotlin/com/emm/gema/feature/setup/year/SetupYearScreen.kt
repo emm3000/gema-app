@@ -13,9 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.kindLabel
+import com.emm.gema.feature.setup.R
+import com.emm.gema.feature.setup.resolve
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -78,7 +81,7 @@ fun SetupYearScreen(
                     onValueChange = { onIntent(SetupYearUiIntent.YearLabelChanged(it)) },
                     label = "Año",
                     modifier = Modifier.fillMaxWidth(),
-                    errorText = state.yearLabelError,
+                    errorText = state.yearLabelError?.resolve(),
                 )
             }
             item {
@@ -97,7 +100,7 @@ fun SetupYearScreen(
                         onValueChange = { onIntent(SetupYearUiIntent.EndDateChanged(it)) },
                         label = "Fin",
                         modifier = Modifier.weight(1f),
-                        errorText = state.dateRangeError,
+                        errorText = state.dateRangeError?.resolve(),
                     )
                 }
             }
@@ -156,7 +159,7 @@ private fun PeriodsList(
     ) {
         periods.forEachIndexed { index, row ->
             GListItem(
-                title = row.error ?: shortRangeLabel(row.startDate, row.endDate),
+                title = row.error?.resolve() ?: shortRangeLabel(row.startDate, row.endDate),
                 leadingText = row.ordinal.toRomanNumeral(),
                 showDivider = index < periods.lastIndex,
                 onClick = { onIntent(SetupYearUiIntent.PeriodClicked(row.ordinal)) },
@@ -166,6 +169,13 @@ private fun PeriodsList(
 }
 
 private fun Int.toRomanNumeral(): String = listOf("I", "II", "III", "IV")[this - 1]
+
+@Composable
+private fun SetupYearMessage.resolve(): String = when (this) {
+    SetupYearMessage.MISSING_LABEL -> stringResource(R.string.setup_year_error_missing_label)
+    SetupYearMessage.INVALID_RANGE -> stringResource(R.string.setup_year_error_invalid_range)
+    SetupYearMessage.TOO_SHORT -> stringResource(R.string.setup_year_error_too_short)
+}
 
 @Composable
 private fun PeriodEditorDialog(
@@ -198,7 +208,7 @@ private fun PeriodEditorDialog(
                 onValueChange = { onIntent(SetupYearUiIntent.EditorEndDateChanged(it)) },
                 label = "Fin",
                 modifier = Modifier.weight(1f),
-                errorText = editor.error,
+                errorText = editor.error?.resolve(),
                 minDate = state.startDate,
                 maxDate = state.endDate,
             )
