@@ -35,8 +35,8 @@ fun PeriodLevelSheet(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GLevelPicker(
-            selected = sheet.achievementLevel,
-            onSelect = { onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(it)) },
+            selected = sheet.achievementLevel?.toOption(),
+            onSelect = { onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(it?.toAchievementLevel())) },
             modifier = Modifier.fillMaxWidth(),
         )
         Text(

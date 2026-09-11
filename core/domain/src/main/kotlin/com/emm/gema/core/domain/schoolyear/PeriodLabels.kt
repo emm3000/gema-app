@@ -1,6 +1,4 @@
-package com.emm.gema.feature.setup
-
-import com.emm.gema.core.domain.schoolyear.PeriodKind
+package com.emm.gema.core.domain.schoolyear
 
 private val romanOrdinals: List<String> = listOf("I", "II", "III", "IV")
 

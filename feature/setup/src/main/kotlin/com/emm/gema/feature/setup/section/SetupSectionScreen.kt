@@ -25,7 +25,7 @@ import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTopBar
-import com.emm.gema.feature.setup.label
+import com.emm.gema.core.domain.section.label
 
 @Composable
 fun SetupSectionScreen(

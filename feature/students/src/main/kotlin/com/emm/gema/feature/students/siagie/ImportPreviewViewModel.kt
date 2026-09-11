@@ -12,7 +12,7 @@ import com.emm.gema.core.domain.siagie.SiagieImportPlan
 import com.emm.gema.core.domain.siagie.SiagieImportPreview
 import com.emm.gema.core.domain.siagie.SiagieImportRejection
 import com.emm.gema.core.domain.siagie.SiagieImportResult
-import com.emm.gema.feature.students.title
+import com.emm.gema.core.domain.section.title
 import java.time.Clock
 import java.time.LocalDate
 import kotlinx.coroutines.channels.Channel

@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
-import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -29,12 +28,15 @@ import com.emm.gema.core.theme.GemaTheme
 private const val UNWORKED_COMMENT_MARK: String = "*"
 private const val INCOMPLETE_MARK: String = "!"
 private const val EMPTY_MARK: String = ""
+private const val INCOMPLETE_DESCRIPTION: String = "En inicio sin conclusión descriptiva"
+private const val UNWORKED_COMMENT_DESCRIPTION: String = "Competencia no evaluada"
+private const val EMPTY_DESCRIPTION: String = "Sin nivel"
 
 enum class GLevelChipSize { GRID, INLINE }
 
 @Composable
 fun GLevelChip(
-    level: AchievementLevel?,
+    level: GLevelOption?,
     modifier: Modifier = Modifier,
     hasUnworkedComment: Boolean = false,
     isIncomplete: Boolean = false,
@@ -51,7 +53,6 @@ fun GLevelChip(
         GLevelChipSize.INLINE -> GemaSpacing.minimumTouchTarget
     }
     val markerColor: Color = MaterialTheme.colorScheme.error
-    val shape = GemaShapes.control
     val border = BorderStroke(
         width = if (isCurrent) GemaSpacing.indicatorStroke else GemaBorder.hairline,
         color = when {
@@ -93,7 +94,7 @@ fun GLevelChip(
     if (onClick == null) {
         Surface(
             modifier = modifier,
-            shape = shape,
+            shape = GemaShapes.control,
             color = MaterialTheme.colorScheme.surfaceVariant,
             border = border,
             content = content,
@@ -102,7 +103,7 @@ fun GLevelChip(
         Surface(
             onClick = onClick,
             modifier = modifier,
-            shape = shape,
+            shape = GemaShapes.control,
             color = MaterialTheme.colorScheme.surfaceVariant,
             border = border,
             content = content,
@@ -110,17 +111,17 @@ fun GLevelChip(
     }
 }
 
-private fun label(level: AchievementLevel?, hasUnworkedComment: Boolean): String = when {
-    level != null -> level.name
+private fun label(level: GLevelOption?, hasUnworkedComment: Boolean): String = when {
+    level != null -> level.letter
     hasUnworkedComment -> UNWORKED_COMMENT_MARK
     else -> EMPTY_MARK
 }
 
-private fun describe(level: AchievementLevel?, hasUnworkedComment: Boolean, isIncomplete: Boolean): String = when {
-    isIncomplete -> "En inicio sin conclusión descriptiva"
-    level != null -> level.officialName
-    hasUnworkedComment -> "Competencia no evaluada"
-    else -> "Sin nivel"
+private fun describe(level: GLevelOption?, hasUnworkedComment: Boolean, isIncomplete: Boolean): String = when {
+    isIncomplete -> INCOMPLETE_DESCRIPTION
+    level != null -> level.contentDescription
+    hasUnworkedComment -> UNWORKED_COMMENT_DESCRIPTION
+    else -> EMPTY_DESCRIPTION
 }
 
 @PreviewLightDark
@@ -128,11 +129,11 @@ private fun describe(level: AchievementLevel?, hasUnworkedComment: Boolean, isIn
 private fun GLevelChipPreview() {
     GemaTheme {
         Row(horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-            GLevelChip(level = AchievementLevel.AD, size = GLevelChipSize.GRID)
-            GLevelChip(level = AchievementLevel.C, isIncomplete = true, size = GLevelChipSize.GRID)
+            GLevelChip(level = GLevelOption.AD, size = GLevelChipSize.GRID)
+            GLevelChip(level = GLevelOption.C, isIncomplete = true, size = GLevelChipSize.GRID)
             GLevelChip(level = null, hasUnworkedComment = true, size = GLevelChipSize.GRID)
             GLevelChip(level = null, size = GLevelChipSize.GRID)
-            GLevelChip(level = AchievementLevel.B, isCurrent = true, size = GLevelChipSize.GRID)
+            GLevelChip(level = GLevelOption.B, isCurrent = true, size = GLevelChipSize.GRID)
         }
     }
 }

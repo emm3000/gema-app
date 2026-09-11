@@ -6,7 +6,7 @@ import com.emm.gema.core.domain.schoolyear.PeriodDates
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.divide
 import com.emm.gema.feature.setup.errorWithin
-import com.emm.gema.feature.setup.labelFor
+import com.emm.gema.core.domain.schoolyear.labelFor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

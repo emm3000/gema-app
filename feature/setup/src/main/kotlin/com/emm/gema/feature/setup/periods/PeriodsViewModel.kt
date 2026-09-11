@@ -10,8 +10,8 @@ import com.emm.gema.core.domain.schoolyear.PeriodDates
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.feature.setup.errorWithin
-import com.emm.gema.feature.setup.kindLabel
-import com.emm.gema.feature.setup.labelFor
+import com.emm.gema.core.domain.schoolyear.kindLabel
+import com.emm.gema.core.domain.schoolyear.labelFor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
