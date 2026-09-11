@@ -286,12 +286,37 @@ class PeriodLevelsViewModelTest {
             .isEqualTo(PeriodLevelsUiEffect.ShowMessage("No se pudo guardar el nivel"))
     }
 
+    @Test
+    fun `an incoming cell opens its area and its sheet`() = runTest {
+        work(firstCompetency)
+        workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, mathCompetency, isWorked = true)
+
+        val viewModel: PeriodLevelsViewModel = createViewModel(
+            PeriodLevelCellKey(studentId = "student-2", competencyId = mathCompetency),
+        )
+
+        assertThat(viewModel.state.value.selectedArea).isEqualTo(Area.MATE)
+        val sheet: PeriodLevelSheetUiState = requireNotNull(viewModel.state.value.sheet)
+        assertThat(sheet.studentId).isEqualTo("student-2")
+        assertThat(sheet.competencyId).isEqualTo(mathCompetency)
+    }
+
+    @Test
+    fun `the grid opens without a sheet when no cell comes in`() = runTest {
+        work(firstCompetency)
+
+        val viewModel: PeriodLevelsViewModel = createViewModel()
+
+        assertThat(viewModel.state.value.sheet).isNull()
+    }
+
     private suspend fun work(vararg competencyIds: String) {
         competencyIds.forEach { workedCompetencyRepository.setWorked(SECTION_ID, PERIOD_ID, it, isWorked = true) }
     }
 
-    private fun createViewModel(): PeriodLevelsViewModel = PeriodLevelsViewModel(
+    private fun createViewModel(initialCell: PeriodLevelCellKey? = null): PeriodLevelsViewModel = PeriodLevelsViewModel(
         sectionId = SECTION_ID,
+        initialCell = initialCell,
         getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
         getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
         getPeriods = GetPeriodsUseCase(FakePeriodRepository(periods)),

@@ -18,6 +18,7 @@ import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
+import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
@@ -56,6 +57,7 @@ class GradesExportTest {
         importStore = importStore,
         writer = writer,
         exportStore = exportStore,
+        students = students,
     )
 
     @Test
@@ -156,6 +158,39 @@ class GradesExportTest {
         assertThat(exportStore.written.single()).isEqualTo(TEMPLATE_NAME)
     }
 
+    @Test
+    fun `a competency that was not worked is never exported`() = runTest {
+        seedSection()
+        storeTemplate()
+        record("student-1", "COMU-2", AchievementLevel.A)
+
+        val plan: GradesExportPlan = getPlan(SECTION_ID, PERIOD_ID).first()
+
+        assertThat(plan.entries.map { it.siagieOrdinal }).doesNotContain(2)
+        assertThat(plan.entries).isEmpty()
+    }
+
+    @Test
+    fun `a template missing an area or a student blocks the export`() = runTest {
+        seedSection()
+        storeTemplate()
+        record("student-1", "COMU-1", AchievementLevel.A)
+        writer.unmapped = SiagieGradesWriteResult.Unmapped(
+            areas = listOf(Area.MATE),
+            studentCodes = listOf(StudentCode("10000000000002")),
+        )
+
+        val result: GradesExportResult = exportGrades(SECTION_ID, PERIOD_ID)
+
+        assertThat(result).isEqualTo(
+            GradesExportResult.TemplateMismatch(
+                areas = listOf(Area.MATE),
+                studentNames = listOf("BAUTISTA HUAMAN, JOSE"),
+            ),
+        )
+        assertThat(exportStore.written).isEmpty()
+    }
+
     private suspend fun seedSection() {
         competencies.seed(
             listOf(competencyOf(Area.COMU, 1), competencyOf(Area.COMU, 2), competencyOf(Area.MATE, 1)),
@@ -216,9 +251,11 @@ private class RecordingGradesWriter : SiagieGradesWriter {
 
     val calls: MutableList<List<SiagieGradeEntry>> = mutableListOf()
 
-    override fun write(template: ByteArray, entries: List<SiagieGradeEntry>): ByteArray {
+    var unmapped: SiagieGradesWriteResult.Unmapped? = null
+
+    override fun write(template: ByteArray, entries: List<SiagieGradeEntry>): SiagieGradesWriteResult {
         calls.add(entries)
-        return template + byteArrayOf(9)
+        return unmapped ?: SiagieGradesWriteResult.Written(template + byteArrayOf(9))
     }
 }
 

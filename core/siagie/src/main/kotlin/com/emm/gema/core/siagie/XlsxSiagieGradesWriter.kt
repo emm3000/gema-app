@@ -2,7 +2,9 @@ package com.emm.gema.core.siagie
 
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
+import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
+import com.emm.gema.core.domain.student.StudentCode
 import java.io.File
 import java.nio.file.Files
 
@@ -15,54 +17,67 @@ private const val FIRST_LETTER: Char = 'A'
 
 class XlsxSiagieGradesWriter : SiagieGradesWriter {
 
-    override fun write(template: ByteArray, entries: List<SiagieGradeEntry>): ByteArray {
+    override fun write(template: ByteArray, entries: List<SiagieGradeEntry>): SiagieGradesWriteResult {
         val source: File = temporaryFile("source")
         val target: File = temporaryFile("target")
         try {
             source.writeBytes(template)
             val workbook = XlsxTemplate(source)
-            workbook.fill(target, editsOf(workbook, entries))
-            return target.readBytes()
+            val plan: SheetPlan = planOf(workbook, entries)
+            if (plan.isUnmapped) {
+                return SiagieGradesWriteResult.Unmapped(
+                    areas = plan.missingAreas,
+                    studentCodes = plan.missingStudentCodes,
+                )
+            }
+            workbook.fill(target, plan.edits)
+            return SiagieGradesWriteResult.Written(target.readBytes())
         } finally {
             source.delete()
             target.delete()
         }
     }
 
-    private fun editsOf(
-        workbook: XlsxTemplate,
-        entries: List<SiagieGradeEntry>,
-    ): Map<String, Map<String, String>> {
+    private fun planOf(workbook: XlsxTemplate, entries: List<SiagieGradeEntry>): SheetPlan {
         val sheetNames: List<String> = workbook.sheetNames()
-
-        return entries
-            .groupBy { sheetNameOf(it.area) }
+        val bySheet: Map<String, List<SiagieGradeEntry>> = entries.groupBy { sheetNameOf(it.area) }
+        val missingAreas: List<Area> = bySheet
+            .filterKeys { it !in sheetNames }
+            .values
+            .flatMap { sheetEntries -> sheetEntries.map { it.area } }
+            .distinct()
+        val sheetPlans: Map<String, SheetEdits> = bySheet
             .filterKeys { it in sheetNames }
             .mapValues { (sheetName: String, sheetEntries: List<SiagieGradeEntry>) ->
                 sheetEditsOf(workbook.readSheet(sheetName), sheetEntries)
             }
-            .filterValues { it.isNotEmpty() }
+
+        return SheetPlan(
+            edits = sheetPlans.mapValues { it.value.cells }.filterValues { it.isNotEmpty() },
+            missingAreas = missingAreas,
+            missingStudentCodes = sheetPlans.values.flatMap { it.missingStudentCodes }.distinct(),
+        )
     }
 
-    private fun sheetEditsOf(
-        cells: Map<String, String>,
-        entries: List<SiagieGradeEntry>,
-    ): Map<String, String> {
+    private fun sheetEditsOf(cells: Map<String, String>, entries: List<SiagieGradeEntry>): SheetEdits {
         val rows: Map<String, Int> = rowsByCode(cells)
         val columns: Map<Int, String> = columnsByOrdinal(cells)
         val edits: MutableMap<String, String> = LinkedHashMap()
+        val missing: MutableList<StudentCode> = mutableListOf()
 
         entries.forEach { entry: SiagieGradeEntry ->
             val row: Int? = rows[entry.studentCode.value]
             val column: String? = columns[entry.siagieOrdinal]
-            if (row != null && column != null) {
+            if (row == null) {
+                missing.add(entry.studentCode)
+            } else if (column != null) {
                 edits["$column$row"] = entry.achievementValue
                 if (entry.descriptiveConclusion.isNotBlank()) {
                     edits["${nextColumn(column)}$row"] = entry.descriptiveConclusion
                 }
             }
         }
-        return edits
+        return SheetEdits(cells = edits, missingStudentCodes = missing)
     }
 
     private fun rowsByCode(cells: Map<String, String>): Map<String, Int> = cells
@@ -105,5 +120,18 @@ class XlsxSiagieGradesWriter : SiagieGradesWriter {
     private fun temporaryFile(prefix: String): File =
         Files.createTempFile("siagie-$prefix", ".xlsx").toFile()
 }
+
+private class SheetPlan(
+    val edits: Map<String, Map<String, String>>,
+    val missingAreas: List<Area>,
+    val missingStudentCodes: List<StudentCode>,
+) {
+    val isUnmapped: Boolean get() = missingAreas.isNotEmpty() || missingStudentCodes.isNotEmpty()
+}
+
+private class SheetEdits(
+    val cells: Map<String, String>,
+    val missingStudentCodes: List<StudentCode>,
+)
 
 private val competencyHeader: Regex = Regex("""Competencia\s+(\d{$ORDINAL_DIGITS})\s+NL""", RegexOption.IGNORE_CASE)

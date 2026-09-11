@@ -38,6 +38,7 @@ private const val SAVE_FAILED_MESSAGE: String = "No se pudo guardar el nivel"
 
 class PeriodLevelsViewModel(
     private val sectionId: String,
+    private val initialCell: PeriodLevelCellKey? = null,
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getPeriods: GetPeriodsUseCase,
@@ -55,6 +56,8 @@ class PeriodLevelsViewModel(
     val effects: Flow<PeriodLevelsUiEffect> = _effects.receiveAsFlow()
 
     private val selection: MutableStateFlow<GridSelection?> = MutableStateFlow(null)
+
+    private var pendingCell: PeriodLevelCellKey? = initialCell
 
     init {
         viewModelScope.launch { load() }
@@ -90,7 +93,7 @@ class PeriodLevelsViewModel(
         val currentPeriod: Period? = getCurrentPeriod(section.schoolYearId)
         val areas: List<SectionArea> = getSectionAreas(sectionId).first().filter { it.isActive }
         val selectedPeriodId: String? = (currentPeriod ?: periods.firstOrNull())?.id
-        val selectedArea: Area? = areas.firstOrNull()?.area
+        val selectedArea: Area? = initialArea(areas) ?: areas.firstOrNull()?.area
 
         _state.value = _state.value.copy(
             isLoading = false,
@@ -143,6 +146,21 @@ class PeriodLevelsViewModel(
             missingCount = grid.missingCount,
             hasWorkedCompetencies = grid.columns.isNotEmpty(),
         )
+        openPendingCell()
+    }
+
+    private fun initialArea(areas: List<SectionArea>): Area? = initialCell
+        ?.let { Competency.areaOf(it.competencyId) }
+        ?.takeIf { area: Area -> areas.any { it.area == area } }
+
+    private fun openPendingCell() {
+        val cell: PeriodLevelCellKey = pendingCell ?: return
+        val isVisible: Boolean = _state.value.rows.any { it.studentId == cell.studentId } &&
+            _state.value.columns.any { it.id == cell.competencyId }
+        if (!isVisible) return
+
+        pendingCell = null
+        openCell(cell)
     }
 
     private fun select(area: Area? = null, periodId: String? = null) {

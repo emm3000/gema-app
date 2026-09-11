@@ -2,6 +2,7 @@ package com.emm.gema.core.siagie
 
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
+import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.student.StudentCode
 import com.google.common.truth.Truth.assertThat
 import java.io.File
@@ -56,27 +57,39 @@ class XlsxSiagieGradesWriterTest {
     }
 
     @Test
-    fun `ignores an area the template has no sheet for`() {
-        val filled: File = write(entryOf(Area.EFIS, 1, "10000000000001", "A", ""))
+    fun `reports an area the template has no sheet for instead of dropping it`() {
+        val result: SiagieGradesWriteResult = writer.write(
+            fixture().readBytes(),
+            listOf(
+                entryOf(Area.COMU, 1, "10000000000001", "A", ""),
+                entryOf(Area.EFIS, 1, "10000000000001", "A", ""),
+            ),
+        )
 
-        val original: Map<String, ByteArray> = parts(fixture())
-        val written: Map<String, ByteArray> = parts(filled)
-        assertThat(written.keys).containsExactlyElementsIn(original.keys).inOrder()
-        original.forEach { (name, payload) -> assertThat(written[name]).isEqualTo(payload) }
+        assertThat(result).isEqualTo(
+            SiagieGradesWriteResult.Unmapped(areas = listOf(Area.EFIS), studentCodes = emptyList()),
+        )
     }
 
     @Test
-    fun `ignores a student the template does not carry`() {
-        val filled: File = write(entryOf(Area.COMU, 1, "99999999999999", "A", ""))
+    fun `reports a student the template does not carry instead of dropping them`() {
+        val result: SiagieGradesWriteResult = writer.write(
+            fixture().readBytes(),
+            listOf(entryOf(Area.COMU, 1, "99999999999999", "A", "")),
+        )
 
-        assertThat(XlsxTemplate(filled).readSheet("COMU"))
-            .containsExactlyEntriesIn(XlsxTemplate(fixture()).readSheet("COMU"))
+        assertThat(result).isEqualTo(
+            SiagieGradesWriteResult.Unmapped(
+                areas = emptyList(),
+                studentCodes = listOf(StudentCode("99999999999999")),
+            ),
+        )
     }
 
     private fun write(vararg entries: SiagieGradeEntry): File {
-        val filled: ByteArray = writer.write(fixture().readBytes(), entries.toList())
+        val written = writer.write(fixture().readBytes(), entries.toList()) as SiagieGradesWriteResult.Written
         val target: File = File(temporaryFolder.newFolder(), FIXTURE_NAME)
-        target.writeBytes(filled)
+        target.writeBytes(written.content)
         return target
     }
 

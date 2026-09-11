@@ -7,7 +7,13 @@ data class ExportUiState(
     val selectedPeriodId: String? = null,
     val templateFileName: String? = null,
     val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
+    val templateMismatch: TemplateMismatchUi? = null,
     val isExporting: Boolean = false,
+)
+
+data class TemplateMismatchUi(
+    val areaNames: List<String>,
+    val studentNames: List<String>,
 )
 
 data class PeriodOption(
@@ -29,6 +35,5 @@ data class ExportGapRow(
     val studentId: String,
     val studentName: String,
     val competencyId: String,
-    val areaName: String,
-    val siagieOrdinal: Int,
+    val competencyLabel: String,
 )

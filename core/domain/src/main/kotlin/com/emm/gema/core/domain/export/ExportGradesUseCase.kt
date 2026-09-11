@@ -2,8 +2,11 @@ package com.emm.gema.core.domain.export
 
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
+import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
 import com.emm.gema.core.domain.siagie.SiagieImportStore
+import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.core.domain.student.StudentRepository
 import kotlinx.coroutines.flow.first
 
 class ExportGradesUseCase(
@@ -11,6 +14,7 @@ class ExportGradesUseCase(
     private val importStore: SiagieImportStore,
     private val writer: SiagieGradesWriter,
     private val exportStore: SiagieExportStore,
+    private val students: StudentRepository,
 ) {
 
     suspend operator fun invoke(sectionId: String, periodId: String): GradesExportResult {
@@ -19,7 +23,20 @@ class ExportGradesUseCase(
         val plan: GradesExportPlan = getPlan(sectionId, periodId).first()
         if (!plan.isReady) return GradesExportResult.Blocked(plan.gaps)
 
-        val filled: ByteArray = writer.write(template.content, plan.entries)
-        return GradesExportResult.Exported(exportStore.write(template.fileName, filled))
+        return when (val written: SiagieGradesWriteResult = writer.write(template.content, plan.entries)) {
+            is SiagieGradesWriteResult.Unmapped -> mismatchOf(sectionId, written)
+            is SiagieGradesWriteResult.Written ->
+                GradesExportResult.Exported(exportStore.write(template.fileName, written.content))
+        }
     }
+
+    private suspend fun mismatchOf(
+        sectionId: String,
+        unmapped: SiagieGradesWriteResult.Unmapped,
+    ): GradesExportResult.TemplateMismatch = GradesExportResult.TemplateMismatch(
+        areas = unmapped.areas,
+        studentNames = unmapped.studentCodes.map { code: StudentCode ->
+            students.findByCode(sectionId, code)?.fullName ?: code.value
+        },
+    )
 }

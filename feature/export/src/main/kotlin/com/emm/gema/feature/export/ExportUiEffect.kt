@@ -4,7 +4,11 @@ sealed interface ExportUiEffect {
 
     data class ShareFile(val path: String, val mimeType: String) : ExportUiEffect
 
-    data class NavigateToPeriodLevels(val sectionId: String) : ExportUiEffect
+    data class NavigateToPeriodLevelCell(
+        val sectionId: String,
+        val studentId: String,
+        val competencyId: String,
+    ) : ExportUiEffect
 
     data class NavigateToStudents(val sectionId: String) : ExportUiEffect
 
