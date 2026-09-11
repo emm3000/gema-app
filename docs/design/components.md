@@ -412,7 +412,7 @@ It exists as its own composable rather than a call-site configuration of
 mode bar and on Activity Evidence. Three screens building the same list
 independently is how they drift.
 
-### GAttendanceToggle (planned)
+### GAttendanceToggle
 
 ```kotlin
 @Composable

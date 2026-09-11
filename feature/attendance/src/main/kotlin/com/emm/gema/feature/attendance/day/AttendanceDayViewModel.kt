@@ -61,7 +61,7 @@ class AttendanceDayViewModel(
             is AttendanceDayUiIntent.DatePicked -> moveTo(intent.value)
             AttendanceDayUiIntent.PreviousDayClicked -> moveTo(date.value.minusDays(1))
             AttendanceDayUiIntent.NextDayClicked -> moveTo(date.value.plusDays(1))
-            AttendanceDayUiIntent.MarkAllPresentClicked -> markAllPresent()
+            AttendanceDayUiIntent.MarkAllPresent -> markAllPresent()
             AttendanceDayUiIntent.BackClicked -> emit(AttendanceDayUiEffect.NavigateBack)
         }
     }

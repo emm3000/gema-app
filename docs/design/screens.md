@@ -511,11 +511,11 @@ data class SectionDetailUiState(
     val missingPeriodLevelCount: Int = 0,
     val activityCount: Int = 0,
 )
+```
 
 `todayAttendanceSummary` reads *Sin tomar* until the first Student of the day is
 recorded, then *N de M presentes*. `currentPeriodLabel`, `hasStoredTemplate`,
 `missingPeriodLevelCount` and `activityCount` arrive with their own tickets.
-```
 
 Intents: `TakeAttendanceClicked`, `StudentsClicked`, `AttendanceClicked`,
 `PeriodLevelsClicked`, `ActivitiesClicked`, `ExportClicked`, `AreasClicked`,

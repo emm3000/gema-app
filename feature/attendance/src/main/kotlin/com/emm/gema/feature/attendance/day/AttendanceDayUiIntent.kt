@@ -13,7 +13,7 @@ sealed interface AttendanceDayUiIntent {
 
     data object NextDayClicked : AttendanceDayUiIntent
 
-    data object MarkAllPresentClicked : AttendanceDayUiIntent
+    data object MarkAllPresent : AttendanceDayUiIntent
 
     data object BackClicked : AttendanceDayUiIntent
 }

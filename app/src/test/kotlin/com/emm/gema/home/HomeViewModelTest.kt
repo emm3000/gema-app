@@ -2,6 +2,10 @@ package com.emm.gema.home
 
 import app.cash.turbine.test
 import com.emm.gema.MainDispatcherRule
+import com.emm.gema.core.domain.attendance.AttendanceRecord
+import com.emm.gema.core.domain.attendance.AttendanceRepository
+import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.backup.BackupSettings
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
@@ -65,6 +69,7 @@ class HomeViewModelTest {
         )
     )
     private val activeSchoolYearRepository = FakeActiveSchoolYearRepository(schoolYear.id)
+    private val attendanceRepository = FakeAttendanceRepository()
     private val studentRepository = FakeStudentRepository(
         listOf(
             student("student-1", "section-1", "12345678901234"),
@@ -101,13 +106,27 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `each section card says whether today's attendance is taken`() = runTest {
+        assertThat(homeAt(schoolYear.startDate).state.value.sections.map { it.attendanceSummary })
+            .containsExactly("Sin tomar", "Sin tomar")
+
+        attendanceRepository.record(
+            AttendanceRecord("section-1", "student-1", schoolYear.startDate, AttendanceStatus.ABSENT),
+        )
+
+        assertThat(homeAt(schoolYear.startDate).state.value.sections.map { it.attendanceSummary })
+            .containsExactly("1 de 2 presentes", "Sin tomar")
+    }
+
+    @Test
     fun `the section card takes attendance for today without opening the hub`() = runTest {
         val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
 
         viewModel.effects.test {
             viewModel.onIntent(HomeUiIntent.TakeAttendanceClicked("section-1"))
 
-            assertThat(awaitItem()).isEqualTo(HomeUiEffect.NavigateToAttendanceDay("section-1"))
+            assertThat(awaitItem())
+                .isEqualTo(HomeUiEffect.NavigateToAttendanceDay("section-1", schoolYear.startDate))
         }
     }
 
@@ -181,6 +200,8 @@ class HomeViewModelTest {
             ),
             getStudentCounts = GetStudentCountsUseCase(studentRepository),
             observeBackupStatus = ObserveBackupStatusUseCase(settings, backupClock),
+            getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository),
+            clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC")),
         )
     }
 
@@ -263,6 +284,28 @@ class HomeViewModelTest {
         override suspend fun save(student: Student) = Unit
 
         override suspend fun deleteBySection(sectionId: String) = Unit
+    }
+
+    private class FakeAttendanceRepository : AttendanceRepository {
+
+        private val records: MutableStateFlow<List<AttendanceRecord>> = MutableStateFlow(emptyList())
+
+        override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
+            records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
+
+        override suspend fun record(record: AttendanceRecord) {
+            records.value = records.value
+                .filterNot { it.studentId == record.studentId && it.date == record.date } + record
+        }
+
+        override suspend fun countRecordedDays(sectionId: String): Int = records.value
+            .filter { it.sectionId == sectionId }
+            .distinctBy { it.date }
+            .size
+
+        override suspend fun deleteBySection(sectionId: String) {
+            records.value = records.value.filterNot { it.sectionId == sectionId }
+        }
     }
 
     private class FakeActiveSchoolYearRepository(initial: String?) : ActiveSchoolYearRepository {

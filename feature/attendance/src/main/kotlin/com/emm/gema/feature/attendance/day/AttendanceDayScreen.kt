@@ -141,7 +141,7 @@ private fun DaySummary(
             trailing = {
                 GButton(
                     text = "Todos presentes",
-                    onClick = { onIntent(AttendanceDayUiIntent.MarkAllPresentClicked) },
+                    onClick = { onIntent(AttendanceDayUiIntent.MarkAllPresent) },
                     variant = GButtonVariant.TEXT,
                     enabled = state.canMarkAllPresent,
                 )

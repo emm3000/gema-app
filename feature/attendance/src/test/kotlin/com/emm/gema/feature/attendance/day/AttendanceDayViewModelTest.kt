@@ -84,7 +84,7 @@ class AttendanceDayViewModelTest {
         val viewModel: AttendanceDayViewModel = viewModel()
         viewModel.onIntent(AttendanceDayUiIntent.StatusSelected(luz.id, AttendanceStatus.LATE))
 
-        viewModel.onIntent(AttendanceDayUiIntent.MarkAllPresentClicked)
+        viewModel.onIntent(AttendanceDayUiIntent.MarkAllPresent)
 
         val state: AttendanceDayUiState = viewModel.state.value
         assertThat(state.rows.single { it.studentId == luz.id }.status).isEqualTo(AttendanceStatus.LATE)

@@ -49,7 +49,9 @@ fun GemaNavHost(
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
                 },
                 onSectionDetail = { navController.navigate(GemaRoutes.sectionDetailOf(it)) },
-                onAttendanceDay = { navController.navigate(GemaRoutes.attendanceDayOf(it, null)) },
+                onAttendanceDay = { sectionId, date ->
+                    navController.navigate(GemaRoutes.attendanceDayOf(sectionId, date))
+                },
                 onSchoolYears = { navController.navigate(GemaRoutes.SCHOOL_YEARS) },
                 onPeriods = { navController.navigate(GemaRoutes.periodsOf(it)) },
                 onNavigateToBackup = { navController.navigate(GemaRoutes.BACKUP) },

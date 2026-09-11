@@ -13,6 +13,7 @@ data class SectionRow(
     val id: String,
     val title: String,
     val studentCount: Int,
+    val attendanceSummary: String = "",
 )
 
 data class BackupReminder(
