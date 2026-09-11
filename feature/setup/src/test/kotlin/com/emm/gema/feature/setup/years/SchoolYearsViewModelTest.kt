@@ -75,8 +75,9 @@ class SchoolYearsViewModelTest {
     fun `a school year shows its date range and its period kind`() {
         val row: SchoolYearRow = viewModel.state.value.years.first()
 
-        assertThat(row.dateRangeLabel).isEqualTo("02/03/2026 - 18/12/2026")
-        assertThat(row.periodKindLabel).isEqualTo("Bimestre")
+        assertThat(row.startDate).isEqualTo(LocalDate.of(2026, 3, 2))
+        assertThat(row.endDate).isEqualTo(LocalDate.of(2026, 12, 18))
+        assertThat(row.periodKind).isEqualTo(PeriodKind.BIMESTER)
     }
 
     @Test
