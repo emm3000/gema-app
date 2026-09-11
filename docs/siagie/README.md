@@ -55,14 +55,43 @@ Rules:
 
 ## Attendance template (monthly)
 
-File name pattern: `AsistenciaIE_<ie>_<grado>_<seccion>.xls`.
+File name pattern: `AsistenciaIE_<ie>_<grado>_<seccion>.xls`. The instructive
+names the extension `.xls`; our reader and writer only speak the OPC/`.xlsx`
+zip format (ADR 0005), so the fixture below uses `.xlsx` and this is a second
+open question alongside the codes.
+
 Sheet 1 `Generalidades` (school and section info, must not be edited).
-Sheet 2: one row per student, one column per day of the month; values are
-attendance codes (present, absent, justified, late — exact codes pending
-verification against a real file).
+Sheet 2: one row per student, one column per day of the month.
+
+**This structure is modelled from the instructive, not observed in a real
+generated file** — same status as the grades template (see above). The fixture
+under `core/siagie/src/test/resources/AsistenciaIE_12345_6_A.xlsx`, generated
+by `core/siagie/tools/generate_attendance_fixture.py`, mirrors the grades
+fixture's layout: header rows 1-3, data from row 4, columns A `ID`,
+B `CodEstudiante`, C `Nombres`, then one column per day starting at D.
+
+### Attendance status codes — PENDING CONFIRMATION AGAINST A REAL FILE
+
+We do not have a real SIAGIE-generated attendance file. The codes below are our
+own choice, kept in one place (`AttendanceSiagieCode` in `core:siagie`) so a
+correction is a one-line edit once a real file is available:
+
+| App status (`AttendanceStatus`) | SIAGIE code written |
+|----------------------------------|----------------------|
+| `PRESENT`                        | `P`                  |
+| `LATE`                           | `T`                  |
+| `ABSENT`                         | `F`                  |
+| `JUSTIFIED`                      | `FJ`                 |
+
+An attendance day the Teacher never marked (ADR 0016) writes nothing: the
+export leaves that day's cell exactly as the template had it, because an
+absent row is not a claim about what happened.
 
 ## Pending
 
-- Obtain a real generated `.xlsx` for a primary section (needs a teacher's SIAGIE account).
-- Confirm exact attendance codes and whether the grades file is `.xlsx` or `.xls`.
+- Obtain a real generated `.xlsx` (or confirm `.xls`) for a primary section's
+  grades and attendance templates (needs a teacher's SIAGIE account).
+- Confirm exact attendance codes in the table above against that file.
 - Confirm the hidden ID column mapping so exports can round-trip.
+- Confirm the attendance sheet names, the sheet order, and the day-column
+  headers (numbers vs. dates) against a real file.

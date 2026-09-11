@@ -126,6 +126,11 @@ A Student with no Attendance row for the open date. The Teacher sees how many
 are unmarked and can record Present for all of them in one action.
 _Avoid_: pending, missing
 
+**Monthly Attendance Summary**:
+Counts per Attendance Status per Student for one month, computed only from
+recorded Attendance; an unmarked school day is not counted as anything.
+_Avoid_: monthly report, attendance stats
+
 ### SIAGIE exchange
 
 **SIAGIE Template**:
@@ -145,7 +150,9 @@ _Avoid_: sync, generate, upload
 **Imported Template**:
 The SIAGIE Template a Teacher imported for a Section, stored with its original
 name and bytes so the Export can fill that exact file later. One per Section
-and kind.
+and kind. The monthly attendance Export does not use this: SIAGIE issues a new
+attendance file every month, so the Teacher picks that month's file at Export
+time instead of one being stored (ADR 0019).
 _Avoid_: file, attachment, saved excel
 
 **Backup**:
