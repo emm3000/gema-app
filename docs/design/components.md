@@ -62,9 +62,10 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GBadge` | `Surface` + `Text` | school years | built |
 | `GTableHeaderBand` | `Surface` + `HorizontalDivider` | attendance month | built |
 | `GTableRow` | `Box` + `HorizontalDivider` | attendance month | built |
+| `GMonthPickerDialog` | `AlertDialog` (`GDialog`) + `Surface` month chips | attendance month | built |
 
-(Twenty-six rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
-rather than widgets, which is why the working widget set is twenty-two.
+(Twenty-seven rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
+rather than widgets, which is why the working widget set is twenty-three.
 `GTableHeaderBand`/`GTableRow` currently back one screen; the period levels
 grid drifts on the same shape and is its own migration ticket.)
 
@@ -115,6 +116,7 @@ fun GScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState? = null,
     bottomAction: (@Composable () -> Unit)? = null,
+    contentGutter: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 )
 ```
@@ -130,6 +132,12 @@ Contract (#68): `fab` and `bottomAction` are mutually exclusive. `GScreen`
 renders only one bottom slot, so passing both raises
 `IllegalArgumentException` instead of silently stacking a FAB over a bottom
 action bar. A screen picks one.
+
+`contentGutter` (default `true`) turns that padding off for `content` when a
+screen's body is full-bleed by design — a table with an edge-to-edge header
+band and dividers, for instance — and the inner cells carry their own
+horizontal inset instead (attendance month). `bottomAction` keeps its gutter
+regardless of `contentGutter`; the primary button is never full-bleed.
 
 Deviation from an earlier draft of this catalog: the built signature carries
 `snackbarHostState: SnackbarHostState?`, not a `floatingAction` slot. There is
@@ -182,22 +190,24 @@ fun GButton(
     variant: GButtonVariant = GButtonVariant.PRIMARY,
     enabled: Boolean = true,
     isBusy: Boolean = false,
+    icon: ImageVector? = null,
 )
 ```
 
 Wraps `Button` (primary), `OutlinedButton` (secondary), `Button` with
 `colorScheme.error` (destructive), `TextButton` (text). Tokens:
 `GemaShapes.control`, `GemaSpacing.md` horizontal padding,
-`GemaSpacing.minTouchTarget` height floor, `GemaTypography.labelLarge`.
+`GemaSpacing.minTouchTarget` height floor, `GemaTypography.labelLarge`,
+`GemaSpacing.sm` between `icon` and label when `icon` is set.
 
 Deviation from an earlier draft of this catalog: the built parameter is
 `enabled`, matching Compose's own `Button`/`OutlinedButton`/`TextButton`
 convention, not `isEnabled` (the `is`-prefix convention `naming.md` uses for
 booleans elsewhere in this codebase — `GTextField`, `GDateField`,
 `GSegmentedPicker` and the rest of this catalog all use `isEnabled`, so
-`GButton` is the one outlier). There is also no `leadingIcon` parameter; no
-built screen has needed one yet, and adding it before a second real use would
-be YAGNI (`.claude/rules/principles.md`).
+`GButton` is the one outlier). `icon` was added for the attendance month
+export action (docs/design/mockups/attendance-month.html); `isBusy` hides it,
+matching the plain-text busy state.
 
 Tradeoff: `isBusy` exists but is used on exactly three actions — create Backup,
 restore Backup and produce an export file. Everything else in this app writes to
@@ -763,11 +773,51 @@ instant — there is no debounce parameter, since there is no query to throttle.
 
 ---
 
+### GMonthPickerDialog
+
+```kotlin
+@Composable
+fun GMonthPickerDialog(
+    value: YearMonth,
+    onConfirm: (YearMonth) -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    minimum: YearMonth? = null,
+    maximum: YearMonth? = null,
+)
+```
+
+Wraps `GDialog` with a year stepper (`GIconButton` pair around a `GText` year
+label) and a 3×4 grid of month chips using `MonthNames.short`. Tapping a chip
+selects it without closing the dialog; `GDialog`'s confirm button commits the
+selection. Months outside `[minimum, maximum]` are disabled and dimmed to
+`outlineVariant`, and the year stepper cannot cross into a year with no
+in-bounds month — the attendance month screen passes
+`maximum = YearMonth.now()` for "no future months", the same rule its own
+stepper's forward arrow already enforces.
+
+A 12-cell grid rather than Material3's day-grid `DatePicker` (the one
+`GDateField` wraps): picking a month from a calendar of days is the wrong
+mental model, and a day grid cannot express a month-only bound cleanly.
+
+### MonthNames
+
+`core.ui.MonthNames.short` is the twelve lowercase three-letter Spanish month
+abbreviations (`ene` … `dic`), used by `GMonthPickerDialog`. It duplicates the
+private list `feature/attendance/AttendanceLabels.kt` already has because that
+one is feature-scoped and `core:ui` cannot depend on a feature module; #86
+(moving these labels to string resources) is the ticket to collapse both into
+one source.
+
+---
+
 ## What is deliberately not in the catalog
 
-- **No `GTable`.** The Period Levels grid is the only tabular surface and its
-  pinned-column layout is specific to it. It lives in the evaluation feature
-  package; `GLevelChip` is the shared part.
+- **No general `GTable`.** `GTableHeaderBand`/`GTableRow` are a header-band
+  and row shell, not a full grid component — they own no columns, no pinned
+  name column and no horizontal scroll. The Period Levels grid's pinned-column,
+  scrollable layout is still specific to it and lives in the evaluation
+  feature package; `GLevelChip` is the shared part there.
 - **No `GLoadingIndicator`, `GSkeleton` or `GShimmer`.** Every read is a local
   database read. A designed loading state for a query that resolves in one frame
   would be a flash, and shimmer placeholders are pure recomposition cost on a
