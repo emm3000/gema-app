@@ -3,8 +3,6 @@ import java.util.Properties
 
 plugins {
     id("gema.android.application")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -62,9 +60,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material.icons.extended)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)

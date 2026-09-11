@@ -3,16 +3,15 @@ import org.gradle.api.artifacts.VersionCatalog
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
 extensions.configure<ApplicationExtension> {
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 37
     }
 
     compileOptions {
@@ -22,12 +21,6 @@ extensions.configure<ApplicationExtension> {
 
     buildFeatures {
         compose = true
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
