@@ -19,7 +19,8 @@ import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
-import com.emm.gema.core.domain.schoolyear.UpdatePeriodDatesUseCase
+import com.emm.gema.core.domain.schoolyear.PeriodDates
+import com.emm.gema.core.domain.schoolyear.UpdatePeriodsUseCase
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
@@ -66,7 +67,7 @@ class SetupPersistenceTest {
     private val deleteSection = DeleteSectionUseCase(sectionRepository, sectionAreaRepository)
     private val switchSchoolYear = SwitchSchoolYearUseCase(activeSchoolYearRepository)
     private val getActiveSchoolYear = GetActiveSchoolYearUseCase(activeSchoolYearRepository, schoolYearRepository)
-    private val updatePeriodDates = UpdatePeriodDatesUseCase(periodRepository, schoolYearRepository)
+    private val updatePeriods = UpdatePeriodsUseCase(periodRepository, schoolYearRepository)
 
     @Test
     fun `setup persists the school year, its periods and its first section`() = runTest {
@@ -96,12 +97,18 @@ class SetupPersistenceTest {
     @Test
     fun `edited period dates are persisted`() = runTest {
         val schoolYear: SchoolYear = runSetup()
-        val first: Period = getPeriods(schoolYear.id).first().first()
+        val stored: List<Period> = getPeriods(schoolYear.id).first()
 
-        updatePeriodDates(first.id, schoolYear.startDate, first.endDate.minusDays(5))
+        updatePeriods(
+            schoolYearId = schoolYear.id,
+            periodDates = stored.mapIndexed { index, period ->
+                val dates = PeriodDates(period.number, period.startDate, period.endDate)
+                if (index == 0) dates.copy(endDate = dates.endDate.minusDays(5)) else dates
+            },
+        )
 
         assertThat(getPeriods(schoolYear.id).first().first().endDate)
-            .isEqualTo(first.endDate.minusDays(5))
+            .isEqualTo(stored.first().endDate.minusDays(5))
     }
 
     @Test
@@ -140,7 +147,7 @@ class SetupPersistenceTest {
             periodKind = PeriodKind.TRIMESTER,
             grade = Grade.FOURTH,
             sectionName = "Unica",
-        )
+        ).schoolYear
 
         assertThat(getSchoolYears().first()).containsExactly(second, first).inOrder()
         assertThat(getSections(first.id).first().single().name).isEqualTo("A")
@@ -158,5 +165,5 @@ class SetupPersistenceTest {
         periodKind = PeriodKind.BIMESTER,
         grade = Grade.THIRD,
         sectionName = "A",
-    )
+    ).schoolYear
 }

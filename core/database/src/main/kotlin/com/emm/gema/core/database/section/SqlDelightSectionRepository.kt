@@ -25,6 +25,11 @@ class SqlDelightSectionRepository(
             .mapToList(dispatcher)
             .map { rows -> rows.map { it.toDomain() }.sortedWith(compareBy({ it.grade.number }, { it.name })) }
 
+    override fun observeCountsBySchoolYear(): Flow<Map<String, Int>> = queries.selectCountsBySchoolYear()
+        .asFlow()
+        .mapToList(dispatcher)
+        .map { rows -> rows.associate { it.school_year_id to it.section_count.toInt() } }
+
     override suspend fun findById(id: String): Section? = withContext(dispatcher) {
         queries.selectById(id).executeAsOneOrNull()?.toDomain()
     }

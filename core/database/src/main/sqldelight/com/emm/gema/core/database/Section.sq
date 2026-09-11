@@ -25,3 +25,8 @@ WHERE id = ?;
 deleteById:
 DELETE FROM section
 WHERE id = ?;
+
+selectCountsBySchoolYear:
+SELECT school_year_id, COUNT(*) AS section_count
+FROM section
+GROUP BY school_year_id;

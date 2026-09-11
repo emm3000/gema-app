@@ -4,15 +4,30 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
+import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
+import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
+import com.emm.gema.core.domain.schoolyear.SchoolYear
+import com.emm.gema.core.domain.section.GetSectionsUseCase
+import com.emm.gema.core.domain.section.Section
+import com.emm.gema.feature.setup.label
+import com.emm.gema.feature.setup.labelFor
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
+    getActiveSchoolYear: GetActiveSchoolYearUseCase,
+    private val getSections: GetSectionsUseCase,
+    private val getCurrentPeriod: GetCurrentPeriodUseCase,
     private val observeBackupStatus: ObserveBackupStatusUseCase,
 ) : ViewModel() {
 
@@ -24,23 +39,50 @@ class HomeViewModel(
 
     init {
         viewModelScope.launch {
+            getActiveSchoolYear()
+                .flatMapLatest { schoolYear -> schoolYearState(schoolYear) }
+                .collect { schoolYearState -> _state.value = merge(schoolYearState) }
+        }
+        viewModelScope.launch {
             observeBackupStatus().collect(::onBackupStatus)
         }
     }
 
     fun onIntent(intent: HomeUiIntent) {
         when (intent) {
-            HomeUiIntent.BackupReminderClicked -> viewModelScope.launch {
-                _effects.send(HomeUiEffect.NavigateToBackup)
+            is HomeUiIntent.SectionClicked -> withSchoolYear {
+                HomeUiEffect.NavigateToSectionForm(it, intent.id)
             }
+            is HomeUiIntent.SectionAreasClicked -> emit(HomeUiEffect.NavigateToSectionAreas(intent.id))
+            HomeUiIntent.AddSectionClicked -> withSchoolYear { HomeUiEffect.NavigateToSectionForm(it, null) }
+            HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
+            HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }
+            HomeUiIntent.BackupReminderClicked -> emit(HomeUiEffect.NavigateToBackup)
         }
     }
 
+    private suspend fun schoolYearState(schoolYear: SchoolYear?): Flow<HomeUiState> {
+        if (schoolYear == null) return flowOf(HomeUiState(isLoading = false))
+
+        val currentPeriodLabel: String? = getCurrentPeriod(schoolYear.id)
+            ?.let { period -> schoolYear.periodKind.labelFor(period.number) }
+
+        return getSections(schoolYear.id).map { sections ->
+            HomeUiState(
+                isLoading = false,
+                schoolYearId = schoolYear.id,
+                schoolYearLabel = schoolYear.label,
+                currentPeriodLabel = currentPeriodLabel,
+                sections = sections.map { it.toRow() },
+            )
+        }
+    }
+
+    private fun merge(schoolYearState: HomeUiState): HomeUiState =
+        schoolYearState.copy(backupReminder = _state.value.backupReminder)
+
     private fun onBackupStatus(status: BackupStatus) {
-        _state.value = _state.value.copy(
-            isLoading = false,
-            backupReminder = reminderOf(status),
-        )
+        _state.value = _state.value.copy(backupReminder = reminderOf(status))
     }
 
     private fun reminderOf(status: BackupStatus): BackupReminder? {
@@ -50,4 +92,15 @@ class HomeViewModel(
             hasEverBackedUp = status.lastBackupAt != null,
         )
     }
+
+    private fun withSchoolYear(effect: (String) -> HomeUiEffect) {
+        val schoolYearId: String = _state.value.schoolYearId ?: return
+        emit(effect(schoolYearId))
+    }
+
+    private fun emit(effect: HomeUiEffect) {
+        viewModelScope.launch { _effects.send(effect) }
+    }
+
+    private fun Section.toRow(): SectionRow = SectionRow(id = id, title = "${grade.label()} $name")
 }

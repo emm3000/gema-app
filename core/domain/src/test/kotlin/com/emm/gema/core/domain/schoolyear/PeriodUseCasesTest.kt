@@ -24,7 +24,7 @@ class PeriodUseCasesTest {
     private val schoolYearRepository = InMemorySchoolYearRepository()
     private val periodRepository = InMemoryPeriodRepository()
     private val getPeriods = GetPeriodsUseCase(periodRepository)
-    private val updatePeriodDates = UpdatePeriodDatesUseCase(periodRepository, schoolYearRepository)
+    private val updatePeriods = UpdatePeriodsUseCase(periodRepository, schoolYearRepository)
 
     @Before
     fun seedSchoolYear() = runTest {
@@ -68,44 +68,49 @@ class PeriodUseCasesTest {
 
     @Test
     fun `edited period dates are kept`() = runTest {
-        updatePeriodDates(
-            periodId = "period-1",
-            startDate = LocalDate.of(2026, 1, 5),
-            endDate = LocalDate.of(2026, 3, 20),
+        val stored: List<Period> = getPeriods(schoolYear.id).first()
+
+        updatePeriods(
+            schoolYearId = schoolYear.id,
+            periodDates = stored.map { PeriodDates(it.number, it.startDate, it.endDate) }
+                .mapIndexed { index, dates ->
+                    if (index == 0) dates.copy(endDate = dates.endDate.minusDays(10)) else dates
+                },
         )
 
-        val first: Period = getPeriods(schoolYear.id).first().first()
-        assertThat(first.startDate).isEqualTo(LocalDate.of(2026, 1, 5))
-        assertThat(first.endDate).isEqualTo(LocalDate.of(2026, 3, 20))
+        assertThat(getPeriods(schoolYear.id).first().first().endDate)
+            .isEqualTo(stored.first().endDate.minusDays(10))
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `a period that overlaps another one is rejected`() = runTest {
-        val second: Period = getPeriods(schoolYear.id).first()[1]
+    fun `periods that overlap each other are rejected`() = runTest {
+        val stored: List<Period> = getPeriods(schoolYear.id).first()
 
-        updatePeriodDates(
-            periodId = "period-1",
-            startDate = LocalDate.of(2026, 1, 1),
-            endDate = second.startDate,
+        updatePeriods(
+            schoolYearId = schoolYear.id,
+            periodDates = stored.map { PeriodDates(it.number, it.startDate, it.endDate) }
+                .mapIndexed { index, dates ->
+                    if (index == 0) dates.copy(endDate = stored[1].startDate) else dates
+                },
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `a period that leaves the school year is rejected`() = runTest {
-        updatePeriodDates(
-            periodId = "period-1",
-            startDate = LocalDate.of(2025, 12, 28),
-            endDate = LocalDate.of(2026, 2, 20),
+        val stored: List<Period> = getPeriods(schoolYear.id).first()
+
+        updatePeriods(
+            schoolYearId = schoolYear.id,
+            periodDates = stored.map { PeriodDates(it.number, it.startDate, it.endDate) }
+                .mapIndexed { index, dates ->
+                    if (index == 0) dates.copy(startDate = schoolYear.startDate.minusDays(3)) else dates
+                },
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `editing a period that does not exist is rejected`() = runTest {
-        updatePeriodDates(
-            periodId = "missing",
-            startDate = LocalDate.of(2026, 1, 1),
-            endDate = LocalDate.of(2026, 2, 1),
-        )
+    fun `editing a school year that does not exist is rejected`() = runTest {
+        updatePeriods(schoolYearId = "missing", periodDates = emptyList())
     }
 
     private fun clockAt(date: LocalDate): Clock = Clock.fixed(

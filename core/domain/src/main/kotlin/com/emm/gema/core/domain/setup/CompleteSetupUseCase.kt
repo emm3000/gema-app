@@ -24,7 +24,7 @@ class CompleteSetupUseCase(
         grade: Grade,
         sectionName: String,
         periodDates: List<PeriodDates> = periodKind.divide(startDate, endDate),
-    ): SchoolYear {
+    ): CompletedSetup {
         val schoolYear = SchoolYear(
             id = idGenerator.newId(),
             label = yearLabel.trim(),
@@ -49,6 +49,6 @@ class CompleteSetupUseCase(
         )
         requirePeriodsFit(schoolYear, periods)
         repository.saveAndActivate(schoolYear, periods, section)
-        return schoolYear
+        return CompletedSetup(schoolYear, section)
     }
 }

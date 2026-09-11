@@ -6,6 +6,8 @@ interface SectionRepository {
 
     fun observeBySchoolYear(schoolYearId: String): Flow<List<Section>>
 
+    fun observeCountsBySchoolYear(): Flow<Map<String, Int>>
+
     suspend fun findById(id: String): Section?
 
     suspend fun save(section: Section)
