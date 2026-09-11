@@ -12,6 +12,8 @@ sealed interface SectionDetailUiIntent {
 
     data object ExportClicked : SectionDetailUiIntent
 
+    data object ActivitiesClicked : SectionDetailUiIntent
+
     data object AreasClicked : SectionDetailUiIntent
 
     data object RenameClicked : SectionDetailUiIntent

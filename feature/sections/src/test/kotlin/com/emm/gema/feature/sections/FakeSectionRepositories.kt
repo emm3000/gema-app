@@ -1,5 +1,10 @@
 package com.emm.gema.feature.sections
 
+import com.emm.gema.core.domain.activity.Activity
+import com.emm.gema.core.domain.activity.ActivityRepository
+import com.emm.gema.core.domain.activity.EvidenceLevel
+import com.emm.gema.core.domain.activity.EvidenceLevelKey
+import com.emm.gema.core.domain.activity.EvidenceLevelRepository
 import com.emm.gema.core.domain.attendance.AttendanceRecord
 import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
@@ -224,5 +229,54 @@ class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : 
 
     override suspend fun deleteBySection(sectionId: String) {
         records.value = records.value.filterNot { it.sectionId == sectionId }
+    }
+}
+
+class FakeActivityRepository : ActivityRepository {
+
+    val activities: MutableStateFlow<List<Activity>> = MutableStateFlow(emptyList())
+
+    override fun observeByPeriod(sectionId: String, periodId: String): Flow<List<Activity>> = activities
+        .map { stored -> stored.filter { it.sectionId == sectionId && it.periodId == periodId } }
+
+    override suspend fun findById(id: String): Activity? = activities.value.find { it.id == id }
+
+    override suspend fun save(activity: Activity) {
+        activities.value = activities.value.filterNot { it.id == activity.id } + activity
+    }
+
+    override suspend fun delete(id: String) {
+        activities.value = activities.value.filterNot { it.id == id }
+    }
+
+    override suspend fun clearSection(sectionId: String) {
+        activities.value = activities.value.filterNot { it.sectionId == sectionId }
+    }
+}
+
+class FakeEvidenceLevelRepository : EvidenceLevelRepository {
+
+    val levels: MutableStateFlow<List<EvidenceLevel>> = MutableStateFlow(emptyList())
+
+    override fun observeByActivity(activityId: String): Flow<List<EvidenceLevel>> = levels
+        .map { stored -> stored.filter { it.key.activityId == activityId } }
+
+    override fun observeRecordedStudentCountsByPeriod(sectionId: String, periodId: String): Flow<Map<String, Int>> =
+        MutableStateFlow(emptyMap())
+
+    override suspend fun save(evidenceLevel: EvidenceLevel) {
+        levels.value = levels.value.filterNot { it.key == evidenceLevel.key } + evidenceLevel
+    }
+
+    override suspend fun delete(key: EvidenceLevelKey) {
+        levels.value = levels.value.filterNot { it.key == key }
+    }
+
+    override suspend fun deleteByActivity(activityId: String) {
+        levels.value = levels.value.filterNot { it.key.activityId == activityId }
+    }
+
+    override suspend fun clearSection(sectionId: String) {
+        levels.value = emptyList()
     }
 }

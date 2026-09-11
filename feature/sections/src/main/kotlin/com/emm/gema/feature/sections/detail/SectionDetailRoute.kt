@@ -17,6 +17,7 @@ fun SectionDetailRoute(
     onStudents: (String) -> Unit,
     onPeriodLevels: (String) -> Unit,
     onExport: (String) -> Unit,
+    onActivities: (String) -> Unit,
     onSectionAreas: (String) -> Unit,
     onSectionForm: (String, String) -> Unit,
     onBack: () -> Unit,
@@ -33,6 +34,7 @@ fun SectionDetailRoute(
                 is SectionDetailUiEffect.NavigateToStudents -> onStudents(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToPeriodLevels -> onPeriodLevels(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToExport -> onExport(effect.sectionId)
+                is SectionDetailUiEffect.NavigateToActivities -> onActivities(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToSectionAreas -> onSectionAreas(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToSectionForm ->
                     onSectionForm(effect.schoolYearId, effect.sectionId)

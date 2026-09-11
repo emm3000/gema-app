@@ -83,6 +83,12 @@ fun SectionDetailScreen(
                 onClick = { onIntent(SectionDetailUiIntent.ExportClicked) },
             )
             GListItem(
+                title = "Actividades",
+                modifier = Modifier.fillMaxWidth(),
+                hasChevron = true,
+                onClick = { onIntent(SectionDetailUiIntent.ActivitiesClicked) },
+            )
+            GListItem(
                 title = "Áreas",
                 modifier = Modifier.fillMaxWidth(),
                 hasChevron = true,

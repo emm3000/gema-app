@@ -23,12 +23,16 @@ object GemaRoutes {
         "period-levels/{sectionId}?studentId={studentId}&competencyId={competencyId}"
     const val EXPORT: String = "export/{sectionId}"
     const val WORKED_COMPETENCIES: String = "worked-competencies/{sectionId}/{periodId}/{area}"
+    const val ACTIVITIES: String = "activities/{sectionId}"
+    const val ACTIVITY_FORM: String = "activity-form/{sectionId}?activityId={activityId}"
+    const val ACTIVITY_EVIDENCE: String = "activity-evidence/{activityId}"
 
     const val SCHOOL_YEAR_ID: String = "schoolYearId"
     const val SECTION_ID: String = "sectionId"
     const val STUDENT_ID: String = "studentId"
     const val PERIOD_ID: String = "periodId"
     const val COMPETENCY_ID: String = "competencyId"
+    const val ACTIVITY_ID: String = "activityId"
     const val URI: String = "uri"
     const val AREA: String = "area"
     const val DATE: String = "date"
@@ -65,6 +69,13 @@ object GemaRoutes {
 
     fun workedCompetenciesOf(sectionId: String, periodId: String, area: Area): String =
         "worked-competencies/$sectionId/$periodId/${area.name}"
+
+    fun activitiesOf(sectionId: String): String = "activities/$sectionId"
+
+    fun activityForm(sectionId: String, activityId: String?): String =
+        "activity-form/$sectionId?activityId=${activityId.orEmpty()}"
+
+    fun activityEvidenceOf(activityId: String): String = "activity-evidence/$activityId"
 }
 
 private const val UNRESERVED: String = "-._~"
