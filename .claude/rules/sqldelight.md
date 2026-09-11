@@ -12,7 +12,7 @@ paths:
 
 - A change to any `.sq` that alters a `CREATE` statement ships three artifacts in the same commit: the `.sq` edit, `com/emm/gema/core/database/N.sqm` where `N` is the version before the bump, and `databases/(N+1).db`.
 - Generate the snapshot with `./gradlew :core:database:generateDebugGemaDbSchema`. It writes the current version to `databases/`.
-- `./gradlew verifySqlDelightMigration` is the floor, not the proof. It replays every existing snapshot forward but cannot notice a snapshot that was never written. `checkSqlDelightSnapshots`, registered by the `gema.sqldelight` convention plugin, runs before it and fails on any `N.sqm` without its `(N+1).db`. It is part of the CI gate and `verifySqlDelightMigration` depends on it.
+- `./gradlew verifySqlDelightMigration` is the floor, not the proof. It replays every existing snapshot forward but cannot notice a snapshot that was never written. `checkSqlDelightSnapshots`, registered by the `gema.sqldelight` convention plugin, runs before it and fails on any `N.sqm` without its `(N+1).db`, and on any snapshot other than the baseline whose migration is gone. It is part of the CI gate and `verifySqlDelightMigration` depends on it.
 - Never delete or regenerate a committed `.db`. Each one is the exact schema a shipped build wrote to disk.
 
 ## Writing the migration
