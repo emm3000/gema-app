@@ -100,9 +100,6 @@ class AttendanceMonthViewModel(
     private fun StudentAttendanceMonthCount.toRow(): AttendanceMonthRow = AttendanceMonthRow(
         studentId = studentId,
         displayName = displayName,
-        presentCount = presentCount,
-        lateCount = lateCount,
-        absentCount = absentCount,
-        justifiedCount = justifiedCount,
+        countsByStatus = countsByStatus,
     )
 }

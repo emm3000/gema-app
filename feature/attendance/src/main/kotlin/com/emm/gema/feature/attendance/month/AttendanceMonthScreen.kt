@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.attendance.AttendanceSiagieCode
+import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -26,7 +28,8 @@ import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
 
-private const val COLUMN_HEADER: String = "P      T      F      FJ"
+private const val NAME_COLUMN_WEIGHT: Float = 2f
+private const val STAT_COLUMN_WEIGHT: Float = 1f
 
 @Composable
 fun AttendanceMonthScreen(
@@ -77,7 +80,9 @@ fun AttendanceMonthScreen(
             }
             if (state.rows.isNotEmpty()) {
                 item {
-                    GListItem(title = "", modifier = Modifier.fillMaxWidth(), trailingText = COLUMN_HEADER)
+                    AttendanceMonthColumns(modifier = Modifier.fillMaxWidth()) { status: AttendanceStatus ->
+                        GListItem(title = AttendanceSiagieCode.of(status), modifier = Modifier.fillMaxWidth())
+                    }
                 }
             }
             if (state.rows.isEmpty() && !state.isLoading) {
@@ -89,11 +94,7 @@ fun AttendanceMonthScreen(
                 }
             }
             items(state.rows, key = { it.studentId }) { row: AttendanceMonthRow ->
-                GListItem(
-                    title = row.displayName,
-                    modifier = Modifier.fillMaxWidth(),
-                    trailingText = row.countsLabel(),
-                )
+                AttendanceMonthRow(row = row, modifier = Modifier.fillMaxWidth())
             }
             item {
                 GListItem(
@@ -105,8 +106,36 @@ fun AttendanceMonthScreen(
     }
 }
 
-private fun AttendanceMonthRow.countsLabel(): String =
-    "$presentCount      $lateCount      $absentCount      $justifiedCount"
+@Composable
+private fun AttendanceMonthColumns(
+    modifier: Modifier = Modifier,
+    name: @Composable () -> Unit = { GListItem(title = "", modifier = Modifier.fillMaxWidth()) },
+    stat: @Composable (AttendanceStatus) -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(modifier = Modifier.weight(NAME_COLUMN_WEIGHT)) { name() }
+        AttendanceStatus.entries.forEach { status: AttendanceStatus ->
+            Row(modifier = Modifier.weight(STAT_COLUMN_WEIGHT)) { stat(status) }
+        }
+    }
+}
+
+@Composable
+private fun AttendanceMonthRow(row: AttendanceMonthRow, modifier: Modifier = Modifier) {
+    AttendanceMonthColumns(
+        modifier = modifier,
+        name = { GListItem(title = row.displayName, modifier = Modifier.fillMaxWidth()) },
+    ) { status: AttendanceStatus ->
+        GListItem(
+            title = (row.countsByStatus[status] ?: 0).toString(),
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
 
 @Composable
 private fun MonthStepper(
@@ -145,8 +174,26 @@ private fun AttendanceMonthScreenPreview() {
                 recordedDayCount = 20,
                 canExport = true,
                 rows = listOf(
-                    AttendanceMonthRow("1", "ACOSTA RIVERA, Luz M.", 18, 1, 0, 1),
-                    AttendanceMonthRow("2", "BAUTISTA QUISPE, Jose", 15, 2, 3, 0),
+                    AttendanceMonthRow(
+                        studentId = "1",
+                        displayName = "ACOSTA RIVERA, Luz M.",
+                        countsByStatus = mapOf(
+                            AttendanceStatus.PRESENT to 18,
+                            AttendanceStatus.LATE to 1,
+                            AttendanceStatus.ABSENT to 0,
+                            AttendanceStatus.JUSTIFIED to 1,
+                        ),
+                    ),
+                    AttendanceMonthRow(
+                        studentId = "2",
+                        displayName = "BAUTISTA QUISPE, Jose",
+                        countsByStatus = mapOf(
+                            AttendanceStatus.PRESENT to 15,
+                            AttendanceStatus.LATE to 2,
+                            AttendanceStatus.ABSENT to 3,
+                            AttendanceStatus.JUSTIFIED to 0,
+                        ),
+                    ),
                 ),
             ),
             onIntent = {},

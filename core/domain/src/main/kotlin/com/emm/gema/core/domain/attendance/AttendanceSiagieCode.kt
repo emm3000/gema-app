@@ -1,6 +1,4 @@
-package com.emm.gema.core.siagie
-
-import com.emm.gema.core.domain.attendance.AttendanceStatus
+package com.emm.gema.core.domain.attendance
 
 object AttendanceSiagieCode {
 

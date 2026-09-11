@@ -3,10 +3,7 @@ package com.emm.gema.core.domain.attendance
 data class StudentAttendanceMonthCount(
     val studentId: String,
     val displayName: String,
-    val presentCount: Int,
-    val lateCount: Int,
-    val absentCount: Int,
-    val justifiedCount: Int,
+    val countsByStatus: Map<AttendanceStatus, Int>,
 )
 
 data class MonthlyAttendanceSummary(

@@ -1,5 +1,6 @@
 package com.emm.gema.core.siagie
 
+import com.emm.gema.core.domain.attendance.AttendanceSiagieCode
 import com.emm.gema.core.domain.siagie.AttendanceExportEntry
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter

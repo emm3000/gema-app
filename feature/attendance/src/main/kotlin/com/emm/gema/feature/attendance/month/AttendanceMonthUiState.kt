@@ -1,5 +1,6 @@
 package com.emm.gema.feature.attendance.month
 
+import com.emm.gema.core.domain.attendance.AttendanceStatus
 import java.time.YearMonth
 
 data class AttendanceMonthUiState(
@@ -17,8 +18,5 @@ data class AttendanceMonthUiState(
 data class AttendanceMonthRow(
     val studentId: String,
     val displayName: String,
-    val presentCount: Int,
-    val lateCount: Int,
-    val absentCount: Int,
-    val justifiedCount: Int,
+    val countsByStatus: Map<AttendanceStatus, Int>,
 )
