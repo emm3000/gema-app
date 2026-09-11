@@ -53,6 +53,10 @@ class FakeStudentRepository(initial: List<Student> = emptyList()) : StudentRepos
     override fun observeCountsBySection(): Flow<Map<String, Int>> = students
         .map { stored -> stored.filterNot { it.isWithdrawn }.groupingBy { it.sectionId }.eachCount() }
 
+    override suspend fun listBySection(sectionId: String): List<Student> = students.value
+        .filter { it.sectionId == sectionId }
+        .orderedByName()
+
     override suspend fun findById(id: String): Student? = students.value.find { it.id == id }
 
     override suspend fun findByCode(sectionId: String, code: StudentCode): Student? = students.value
