@@ -1,6 +1,9 @@
 package com.emm.gema.feature.sections.detail
 
 import app.cash.turbine.test
+import com.emm.gema.core.domain.attendance.AttendanceRecord
+import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -15,6 +18,7 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
+import com.emm.gema.feature.sections.FakeAttendanceRepository
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakePeriodRepository
 import com.emm.gema.feature.sections.FakeSchoolYearRepository
@@ -32,6 +36,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 private const val SECTION_ID: String = "section-1"
+private val today: LocalDate = LocalDate.of(2026, 6, 1)
 
 class SectionDetailViewModelTest {
 
@@ -64,8 +69,9 @@ class SectionDetailViewModelTest {
         startDate = LocalDate.of(2026, 5, 11),
         endDate = LocalDate.of(2026, 7, 24),
     )
+    private val attendanceRepository = FakeAttendanceRepository()
     private val clock: Clock = Clock.fixed(
-        LocalDate.of(2026, 6, 1).atStartOfDay(ZoneId.of("America/Lima")).toInstant(),
+        today.atStartOfDay(ZoneId.of("America/Lima")).toInstant(),
         ZoneId.of("America/Lima"),
     )
 
@@ -81,6 +87,8 @@ class SectionDetailViewModelTest {
             studentRepository = studentRepository,
             periodLevelRepository = periodLevelRepository,
         ),
+        getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository),
+        clock = clock,
     )
 
     @Test
@@ -144,6 +152,30 @@ class SectionDetailViewModelTest {
             viewModel.onIntent(SectionDetailUiIntent.RenameClicked)
 
             assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToSectionForm("2026", SECTION_ID))
+        }
+    }
+
+    @Test
+    fun `today is announced as untaken until the first student is recorded`() = runTest {
+        assertThat(viewModel().state.value.todayAttendanceSummary).isEqualTo("Sin tomar")
+
+        attendanceRepository.record(
+            AttendanceRecord(SECTION_ID, "student-1", today, AttendanceStatus.ABSENT),
+        )
+
+        assertThat(viewModel().state.value.todayAttendanceSummary).isEqualTo("1 de 2 presentes")
+    }
+
+    @Test
+    fun `the attendance row and the primary action both open today`() = runTest {
+        val viewModel: SectionDetailViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(SectionDetailUiIntent.TakeAttendanceClicked)
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToAttendanceDay(SECTION_ID, today))
+
+            viewModel.onIntent(SectionDetailUiIntent.AttendanceClicked)
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToAttendanceDay(SECTION_ID, today))
         }
     }
 }

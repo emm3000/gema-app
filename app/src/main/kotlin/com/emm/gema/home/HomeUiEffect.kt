@@ -6,6 +6,8 @@ sealed interface HomeUiEffect {
 
     data class NavigateToSectionDetail(val sectionId: String) : HomeUiEffect
 
+    data class NavigateToAttendanceDay(val sectionId: String) : HomeUiEffect
+
     data object NavigateToSchoolYears : HomeUiEffect
 
     data class NavigateToPeriods(val schoolYearId: String) : HomeUiEffect

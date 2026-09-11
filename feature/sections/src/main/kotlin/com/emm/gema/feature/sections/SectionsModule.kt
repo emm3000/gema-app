@@ -12,5 +12,7 @@ val sectionsModule: Module = module {
         SectionFormViewModel(schoolYearId, sectionId, get(), get(), get(), get(), get(), get())
     }
     viewModel { (sectionId: String) -> SectionAreasViewModel(sectionId, get(), get(), get(), get()) }
-    viewModel { (sectionId: String) -> SectionDetailViewModel(sectionId, get(), get(), get(), get(), get()) }
+    viewModel { (sectionId: String) ->
+        SectionDetailViewModel(sectionId, get(), get(), get(), get(), get(), get(), get())
+    }
 }

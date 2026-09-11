@@ -1,6 +1,7 @@
 package com.emm.gema.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,8 @@ import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
+import com.emm.gema.core.ui.GButton
+import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
@@ -94,19 +97,35 @@ fun HomeScreen(
                 }
             }
             items(state.sections, key = { it.id }) { row ->
-                GListItem(
-                    title = row.title,
-                    modifier = Modifier.fillMaxWidth(),
-                    subtitle = pluralStringResource(
-                        R.plurals.home_section_students,
-                        row.studentCount,
-                        row.studentCount,
-                    ),
-                    hasChevron = true,
-                    onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
-                )
+                SectionCard(row = row, onIntent = onIntent)
             }
         }
+    }
+}
+
+@Composable
+private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
+    ) {
+        GListItem(
+            title = row.title,
+            modifier = Modifier.fillMaxWidth(),
+            subtitle = pluralStringResource(
+                R.plurals.home_section_students,
+                row.studentCount,
+                row.studentCount,
+            ),
+            hasChevron = true,
+            onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
+        )
+        GButton(
+            text = stringResource(R.string.home_take_attendance),
+            onClick = { onIntent(HomeUiIntent.TakeAttendanceClicked(row.id)) },
+            modifier = Modifier.fillMaxWidth(),
+            variant = GButtonVariant.SECONDARY,
+        )
     }
 }
 

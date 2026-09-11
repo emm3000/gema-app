@@ -2,6 +2,7 @@ package com.emm.gema.feature.sections.form
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
@@ -32,6 +33,7 @@ class SectionFormViewModel(
     private val deleteSection: DeleteSectionUseCase,
     private val getStudents: GetStudentsUseCase,
     private val getPeriodLevelCount: GetPeriodLevelCountUseCase,
+    private val countAttendanceDays: CountAttendanceDaysUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<SectionFormUiState> = MutableStateFlow(SectionFormUiState())
@@ -110,7 +112,7 @@ class SectionFormViewModel(
 
     private suspend fun countWhatIsLost(sectionId: String): DeleteConfirmation = DeleteConfirmation(
         studentCount = getStudents(sectionId).first().size,
-        attendanceDayCount = 0,
+        attendanceDayCount = countAttendanceDays(sectionId),
         periodLevelCount = getPeriodLevelCount(sectionId).first(),
     )
 

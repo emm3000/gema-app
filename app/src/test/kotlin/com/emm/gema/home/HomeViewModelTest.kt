@@ -101,6 +101,17 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `the section card takes attendance for today without opening the hub`() = runTest {
+        val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
+
+        viewModel.effects.test {
+            viewModel.onIntent(HomeUiIntent.TakeAttendanceClicked("section-1"))
+
+            assertThat(awaitItem()).isEqualTo(HomeUiEffect.NavigateToAttendanceDay("section-1"))
+        }
+    }
+
+    @Test
     fun `adding a section opens an empty form for the active year`() = runTest {
         val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
 

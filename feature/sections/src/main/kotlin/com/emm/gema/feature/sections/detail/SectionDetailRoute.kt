@@ -8,10 +8,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import java.time.LocalDate
 
 @Composable
 fun SectionDetailRoute(
     sectionId: String,
+    onAttendanceDay: (String, LocalDate) -> Unit,
     onStudents: (String) -> Unit,
     onPeriodLevels: (String) -> Unit,
     onSectionAreas: (String) -> Unit,
@@ -25,6 +27,8 @@ fun SectionDetailRoute(
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
+                is SectionDetailUiEffect.NavigateToAttendanceDay ->
+                    onAttendanceDay(effect.sectionId, effect.date)
                 is SectionDetailUiEffect.NavigateToStudents -> onStudents(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToPeriodLevels -> onPeriodLevels(effect.sectionId)
                 is SectionDetailUiEffect.NavigateToSectionAreas -> onSectionAreas(effect.sectionId)

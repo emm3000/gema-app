@@ -2,6 +2,10 @@ package com.emm.gema.feature.sections.detail
 
 sealed interface SectionDetailUiIntent {
 
+    data object TakeAttendanceClicked : SectionDetailUiIntent
+
+    data object AttendanceClicked : SectionDetailUiIntent
+
     data object StudentsClicked : SectionDetailUiIntent
 
     data object PeriodLevelsClicked : SectionDetailUiIntent

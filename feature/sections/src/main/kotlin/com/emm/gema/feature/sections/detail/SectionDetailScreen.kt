@@ -46,12 +46,27 @@ fun SectionDetailScreen(
                 .padding(vertical = GemaSpacing.small),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
         ) {
+            GButton(
+                text = "Tomar asistencia de hoy",
+                onClick = { onIntent(SectionDetailUiIntent.TakeAttendanceClicked) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = GemaSpacing.screenGutter),
+            )
             GListItem(
                 title = "Alumnos",
                 modifier = Modifier.fillMaxWidth(),
                 trailingText = state.studentCount.toString(),
                 hasChevron = true,
                 onClick = { onIntent(SectionDetailUiIntent.StudentsClicked) },
+            )
+            GListItem(
+                title = "Asistencia",
+                modifier = Modifier.fillMaxWidth(),
+                subtitle = state.todayLabel,
+                trailingText = state.todayAttendanceSummary,
+                hasChevron = true,
+                onClick = { onIntent(SectionDetailUiIntent.AttendanceClicked) },
             )
             GListItem(
                 title = "Niveles del periodo",
@@ -85,6 +100,8 @@ private fun SectionDetailScreenPreview() {
                 studentCount = 30,
                 currentPeriodLabel = "II Bimestre",
                 missingPeriodLevelCount = 12,
+                todayLabel = "Jueves 10 de setiembre",
+                todayAttendanceSummary = "Sin tomar",
             ),
             onIntent = {},
         )

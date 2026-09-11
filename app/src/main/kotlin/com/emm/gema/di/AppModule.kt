@@ -3,6 +3,7 @@ package com.emm.gema.di
 import com.emm.gema.core.database.GemaDatabase
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
+import com.emm.gema.core.database.attendance.SqlDelightAttendanceRepository
 import com.emm.gema.core.database.backup.ContentResolverBackupDocuments
 import com.emm.gema.core.database.backup.SharedPreferencesBackupSettingsRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightActiveSchoolYearRepository
@@ -17,6 +18,10 @@ import com.emm.gema.core.database.setup.SqlDelightSetupRepository
 import com.emm.gema.core.database.siagie.ContentResolverSiagieDocuments
 import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.student.SqlDelightStudentRepository
+import com.emm.gema.core.domain.attendance.AttendanceRepository
+import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
+import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
+import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
 import com.emm.gema.core.domain.backup.BackupDocuments
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.BackupStore
@@ -105,6 +110,7 @@ val appModule: Module = module {
     single<SiagieDocuments> { ContentResolverSiagieDocuments(androidContext().contentResolver) }
     single<SiagieRosterReader> { XlsxSiagieRosterReader() }
     single<PeriodLevelRepository> { SqlDelightPeriodLevelRepository(get()) }
+    single<AttendanceRepository> { SqlDelightAttendanceRepository(get()) }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -147,6 +153,9 @@ val appModule: Module = module {
     factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }
     factory<WithdrawStudentUseCase> { WithdrawStudentUseCase(get()) }
     factory<ReactivateStudentUseCase> { ReactivateStudentUseCase(get()) }
+    factory<GetAttendanceDayUseCase> { GetAttendanceDayUseCase(get(), get()) }
+    factory<RecordAttendanceUseCase> { RecordAttendanceUseCase(get(), get()) }
+    factory<CountAttendanceDaysUseCase> { CountAttendanceDaysUseCase(get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
     factory<InspectBackupUseCase> { InspectBackupUseCase(get(), get()) }
