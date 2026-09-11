@@ -73,6 +73,10 @@ class FakeSiagieImportStore(private val students: FakeStudentRepository) : Siagi
         templates["${template.sectionId}/${template.kind}"] = template
     }
 
+    override suspend fun clearSection(sectionId: String) {
+        templates.keys.filter { it.startsWith("$sectionId/") }.forEach(templates::remove)
+    }
+
     override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
         templates["$sectionId/$kind"]
 }

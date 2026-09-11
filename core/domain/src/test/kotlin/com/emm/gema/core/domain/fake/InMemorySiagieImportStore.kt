@@ -4,9 +4,10 @@ import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.domain.student.StudentRepository
 
 class InMemorySiagieImportStore(
-    private val students: InMemoryStudentRepository,
+    private val students: StudentRepository,
 ) : SiagieImportStore {
 
     private val templates: MutableMap<String, ImportedTemplate> = mutableMapOf()
@@ -14,6 +15,10 @@ class InMemorySiagieImportStore(
     override suspend fun apply(students: List<Student>, template: ImportedTemplate) {
         students.forEach { this.students.save(it) }
         templates[key(template.sectionId, template.kind)] = template
+    }
+
+    override suspend fun clearSection(sectionId: String) {
+        templates.keys.filter { it.startsWith("$sectionId/") }.forEach(templates::remove)
     }
 
     override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =

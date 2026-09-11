@@ -2,10 +2,14 @@ package com.emm.gema.core.domain.section
 
 import com.emm.gema.core.domain.fake.InMemorySectionAreaRepository
 import com.emm.gema.core.domain.fake.InMemorySectionRepository
+import com.emm.gema.core.domain.fake.InMemorySiagieImportStore
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
 import com.emm.gema.core.domain.fake.InMemoryWorkedCompetencyRepository
 import com.emm.gema.core.domain.fake.SequentialIdGenerator
+import com.emm.gema.core.domain.siagie.ImportedTemplate
+import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.google.common.truth.Truth.assertThat
+import java.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -18,15 +22,38 @@ class SectionUseCasesTest {
     private val createSection = CreateSectionUseCase(sectionRepository, SequentialIdGenerator("section"))
     private val updateSection = UpdateSectionUseCase(sectionRepository)
     private val studentRepository = InMemoryStudentRepository()
+    private val siagieImportStore = InMemorySiagieImportStore(studentRepository)
     private val deleteSection = DeleteSectionUseCase(
         sectionRepository,
         sectionAreaRepository,
         workedCompetencyRepository,
         studentRepository,
+        siagieImportStore,
     )
     private val getSections = GetSectionsUseCase(sectionRepository)
     private val getSectionAreas = GetSectionAreasUseCase(sectionAreaRepository)
     private val setAreaVisibility = SetAreaVisibilityUseCase(sectionAreaRepository)
+
+    @Test
+    fun `deleting a section drops the siagie template imported for it`() = runTest {
+        val section: Section = createSection("2026", Grade.THIRD, "A").let {
+            getSections("2026").first().single()
+        }
+        siagieImportStore.apply(
+            emptyList(),
+            ImportedTemplate(
+                sectionId = section.id,
+                kind = ImportedTemplateKind.GRADES,
+                fileName = "3 Primaria EBR.xlsx",
+                content = byteArrayOf(1, 2, 3),
+                importedAt = Instant.parse("2026-09-10T12:00:00Z"),
+            ),
+        )
+
+        deleteSection(section.id)
+
+        assertThat(siagieImportStore.findTemplate(section.id, ImportedTemplateKind.GRADES)).isNull()
+    }
 
     @Test
     fun `a created section is listed under its school year`() = runTest {

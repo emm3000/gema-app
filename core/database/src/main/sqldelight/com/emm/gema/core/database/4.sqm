@@ -1,0 +1,8 @@
+CREATE TABLE imported_template (
+    section_id TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    content BLOB NOT NULL,
+    imported_at TEXT NOT NULL,
+    PRIMARY KEY (section_id, kind)
+);

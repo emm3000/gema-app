@@ -1,0 +1,21 @@
+CREATE TABLE imported_template (
+    section_id TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    content BLOB NOT NULL,
+    imported_at TEXT NOT NULL,
+    PRIMARY KEY (section_id, kind)
+);
+
+insert:
+INSERT OR REPLACE INTO imported_template (section_id, kind, file_name, content, imported_at)
+VALUES (?, ?, ?, ?, ?);
+
+selectBySectionAndKind:
+SELECT *
+FROM imported_template
+WHERE section_id = ? AND kind = ?;
+
+deleteBySection:
+DELETE FROM imported_template
+WHERE section_id = ?;

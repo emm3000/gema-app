@@ -6,5 +6,7 @@ interface SiagieImportStore {
 
     suspend fun apply(students: List<Student>, template: ImportedTemplate)
 
+    suspend fun clearSection(sectionId: String)
+
     suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate?
 }

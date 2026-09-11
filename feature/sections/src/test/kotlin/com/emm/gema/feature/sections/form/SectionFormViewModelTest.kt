@@ -12,6 +12,7 @@ import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
+import com.emm.gema.feature.sections.FakeSiagieImportStore
 import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
 import com.emm.gema.feature.sections.FakeStudentRepository
@@ -42,6 +43,7 @@ class SectionFormViewModelTest {
             sectionAreaRepository,
             FakeWorkedCompetencyRepository(),
             studentRepository,
+            FakeSiagieImportStore(),
         ),
         getStudents = GetStudentsUseCase(studentRepository),
     )
