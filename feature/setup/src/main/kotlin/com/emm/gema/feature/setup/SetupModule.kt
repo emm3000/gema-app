@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val setupModule: Module = module {
     single<SetupDraftStore> { SetupDraftStore() }
-    viewModel { SetupYearViewModel() }
+    viewModel { SetupYearViewModel(get()) }
     viewModel { (draft: SchoolYearDraft) -> SetupSectionViewModel(draft, get()) }
     viewModel { (schoolYearId: String) -> PeriodsViewModel(schoolYearId, get(), get(), get(), get()) }
     viewModel { SchoolYearsViewModel(get(), get(), get(), get()) }
