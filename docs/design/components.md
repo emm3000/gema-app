@@ -41,7 +41,9 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GIconButton` | `IconButton` | top bars, date stepper | built |
 | `GTextField` | `OutlinedTextField` | setup, student form, activity form, conclusion, backup | built |
 | `GDateField` | `OutlinedTextField` + `DatePickerDialog` | setup, periods, student form, activity form | built |
-| `GSegmentedPicker` | `SingleChoiceSegmentedButtonRow` | period kind, grade, attendance status, level pickers | built |
+| `GSegmentedPicker` | `SingleChoiceSegmentedButtonRow` | period kind, attendance status, level pickers | built |
+| `GChoiceChipRow` | `Surface` row | grade picker | built |
+| `GStepHeader` | `Column` + `GText` | setup year, setup section | built |
 | `GListItem` | `ListItem` inside `Surface` | home, sections, students, activities, export gaps | built |
 | `GCard` | `Surface` | home banner, export cards, section detail | built |
 | `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows | built |
@@ -555,20 +557,65 @@ persistent on/off configuration and Worked Competencies are a selection within a
 Period. The controls differ because the meanings differ; using one for both
 would make "hide an Area forever" look like "tick this for now".
 
+### GStepHeader
+
+```kotlin
+@Composable
+fun GStepHeader(
+    step: String,
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier,
+)
+```
+
+The content header used by a setup step that has no top bar: "Paso N de M"
+above a title, then a one-line description. Shared by `SetupYearScreen` and
+`SetupSectionScreen`.
+
+### GChoiceChipRow
+
+```kotlin
+data class GChoiceChipOption<T>(val value: T, val label: String, val contentDescription: String)
+
+@Composable
+fun <T> GChoiceChipRow(
+    options: List<GChoiceChipOption<T>>,
+    selected: T?,
+    onSelect: (T?) -> Unit,
+    modifier: Modifier = Modifier,
+)
+```
+
+A row of separate rounded chips, one per option, equally weighted. The
+selected chip fills with `primaryContainer` and a 2dp `primary` border; the
+rest are outlined. Differs from `GSegmentedPicker`, which renders one joined
+bar — use this when the mockup shows distinct chips with a gap between them,
+as the grade picker does.
+
 ### GBanner
 
 ```kotlin
 enum class GBannerTone { INFO, WARNING, ERROR }
+enum class GBannerActionStyle { BUTTON, LINK }
 
 @Composable
 fun GBanner(
     text: String,
     modifier: Modifier = Modifier,
     tone: GBannerTone = GBannerTone.INFO,
+    icon: ImageVector? = null,
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null,
+    actionStyle: GBannerActionStyle = GBannerActionStyle.BUTTON,
 )
 ```
+
+`icon` renders a leading glyph when the mockup calls for one; omitted by
+default so existing banners are unaffected. `actionStyle` picks how the
+action renders: `BUTTON` (default, a full-width text button, for a dismissal
+like "Entendido") or `LINK` (an inline text-plus-chevron row that navigates,
+for an affordance like "No dicto todas las áreas ›").
 
 Wraps `Surface`. Tokens: `GemaShapes.container`, `colorScheme.surfaceVariant`
 (INFO), `colorScheme.errorContainer` (ERROR), `GemaTypography.bodyMedium`.
