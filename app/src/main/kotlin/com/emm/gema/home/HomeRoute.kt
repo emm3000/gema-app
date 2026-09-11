@@ -12,6 +12,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeRoute(
     onSectionForm: (String, String?) -> Unit,
     onSectionDetail: (String) -> Unit,
+    onAttendanceDay: (String) -> Unit,
     onSchoolYears: () -> Unit,
     onPeriods: (String) -> Unit,
     onNavigateToBackup: () -> Unit,
@@ -25,6 +26,7 @@ fun HomeRoute(
             when (effect) {
                 is HomeUiEffect.NavigateToSectionForm -> onSectionForm(effect.schoolYearId, effect.sectionId)
                 is HomeUiEffect.NavigateToSectionDetail -> onSectionDetail(effect.sectionId)
+                is HomeUiEffect.NavigateToAttendanceDay -> onAttendanceDay(effect.sectionId)
                 HomeUiEffect.NavigateToSchoolYears -> onSchoolYears()
                 is HomeUiEffect.NavigateToPeriods -> onPeriods(effect.schoolYearId)
                 HomeUiEffect.NavigateToBackup -> onNavigateToBackup()

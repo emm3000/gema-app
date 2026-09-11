@@ -1,6 +1,9 @@
 package com.emm.gema.feature.sections.form
 
 import app.cash.turbine.test
+import com.emm.gema.core.domain.attendance.AttendanceRecord
+import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
 import com.emm.gema.core.domain.section.CreateSectionUseCase
@@ -24,6 +27,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 
 class SectionFormViewModelTest {
 
@@ -54,6 +58,7 @@ class SectionFormViewModelTest {
         ),
         getStudents = GetStudentsUseCase(studentRepository),
         getPeriodLevelCount = GetPeriodLevelCountUseCase(periodLevelRepository),
+        countAttendanceDays = CountAttendanceDaysUseCase(attendanceRepository),
     )
 
     @Test
@@ -136,11 +141,15 @@ class SectionFormViewModelTest {
             Student("student-1", existing.id, StudentCode("12345678901234"), "ACOSTA RIVERA, Luz Maria"),
             Student("student-2", existing.id, StudentCode("12345678901235"), "BAUTISTA QUISPE, Jose"),
         )
+        attendanceRepository.record(
+            AttendanceRecord(existing.id, "student-1", LocalDate.of(2026, 9, 10), AttendanceStatus.ABSENT),
+        )
         val viewModel: SectionFormViewModel = viewModelFor(existing.id)
 
         viewModel.onIntent(SectionFormUiIntent.DeleteClicked)
 
         assertThat(viewModel.state.value.deleteConfirmation?.studentCount).isEqualTo(2)
+        assertThat(viewModel.state.value.deleteConfirmation?.attendanceDayCount).isEqualTo(1)
     }
 
     @Test

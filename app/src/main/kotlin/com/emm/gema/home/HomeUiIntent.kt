@@ -4,6 +4,8 @@ sealed interface HomeUiIntent {
 
     data class SectionClicked(val id: String) : HomeUiIntent
 
+    data class TakeAttendanceClicked(val id: String) : HomeUiIntent
+
     data object AddSectionClicked : HomeUiIntent
 
     data object SchoolYearSwitcherClicked : HomeUiIntent

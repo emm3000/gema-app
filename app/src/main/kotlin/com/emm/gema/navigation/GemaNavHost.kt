@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.feature.attendance.day.AttendanceDayRoute
 import com.emm.gema.feature.backup.BackupRoute
 import com.emm.gema.feature.evaluation.levels.PeriodLevelsRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
@@ -26,6 +27,7 @@ import com.emm.gema.feature.students.list.StudentsRoute
 import com.emm.gema.feature.students.siagie.ImportPreviewRoute
 import com.emm.gema.home.HomeRoute
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 
 @Composable
 fun GemaNavHost(
@@ -47,6 +49,7 @@ fun GemaNavHost(
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
                 },
                 onSectionDetail = { navController.navigate(GemaRoutes.sectionDetailOf(it)) },
+                onAttendanceDay = { navController.navigate(GemaRoutes.attendanceDayOf(it, null)) },
                 onSchoolYears = { navController.navigate(GemaRoutes.SCHOOL_YEARS) },
                 onPeriods = { navController.navigate(GemaRoutes.periodsOf(it)) },
                 onNavigateToBackup = { navController.navigate(GemaRoutes.BACKUP) },
@@ -109,12 +112,33 @@ fun GemaNavHost(
         ) { entry ->
             SectionDetailRoute(
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onAttendanceDay = { sectionId, date ->
+                    navController.navigate(GemaRoutes.attendanceDayOf(sectionId, date))
+                },
                 onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
                 onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
                 onSectionAreas = { navController.navigate(GemaRoutes.sectionAreasOf(it)) },
                 onSectionForm = { schoolYearId, sectionId ->
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
                 },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.ATTENDANCE_DAY,
+            arguments = listOf(
+                navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType },
+                navArgument(GemaRoutes.DATE) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { entry ->
+            AttendanceDayRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                date = entry.arguments?.getString(GemaRoutes.DATE)
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let(LocalDate::parse),
                 onBack = { navController.popBackStack() },
             )
         }

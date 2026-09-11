@@ -54,6 +54,7 @@ class HomeViewModel(
     fun onIntent(intent: HomeUiIntent) {
         when (intent) {
             is HomeUiIntent.SectionClicked -> emit(HomeUiEffect.NavigateToSectionDetail(intent.id))
+            is HomeUiIntent.TakeAttendanceClicked -> emit(HomeUiEffect.NavigateToAttendanceDay(intent.id))
             HomeUiIntent.AddSectionClicked -> withSchoolYear { HomeUiEffect.NavigateToSectionForm(it, null) }
             HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
             HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }

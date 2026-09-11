@@ -3,6 +3,7 @@
     <string name="home_empty_title">Aún no hay nada</string>
     <string name="home_empty_message">Crea tu primera sección para empezar a registrar asistencia y niveles de logro.</string>
     <string name="home_add_section">Nueva sección</string>
+    <string name="home_take_attendance">Tomar asistencia de hoy</string>
     <string name="home_switch_school_year">Cambiar de año escolar</string>
     <string name="home_out_of_period">Hoy está fuera de todos los periodos.</string>
     <string name="home_review_periods">Revisar periodos</string>
