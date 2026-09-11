@@ -91,9 +91,7 @@ fun PeriodLevelsScreen(
             if (message != null) {
                 GBanner(
                     text = message,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = GemaSpacing.screenGutter),
+                    modifier = Modifier.fillMaxWidth(),
                     tone = GBannerTone.ERROR,
                     actionText = "Entendido",
                     onActionClick = onMessageDismissed,
@@ -123,7 +121,7 @@ private fun Selectors(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiInten
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+            .padding(vertical = GemaSpacing.small),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
         GDropdownPicker(
@@ -257,7 +255,7 @@ private fun GridRow(
 private fun Legend() {
     GText(
         text = "C! falta la conclusión descriptiva. * comentario. Vacío es sin nivel.",
-        modifier = Modifier.padding(GemaSpacing.screenGutter),
+        modifier = Modifier.padding(vertical = GemaSpacing.screenGutter),
         style = GTextStyle.BODY_MEDIUM,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
