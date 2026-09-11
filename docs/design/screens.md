@@ -679,6 +679,9 @@ Shows what the import will do. Nothing is written until *Aplicar*.
 +------------------------------------------+
 ```
 
+A roster whose Student Code is missing or malformed in the middle is rejected
+with the row number, never truncated at that row.
+
 Rejection state replaces the body:
 
 ```

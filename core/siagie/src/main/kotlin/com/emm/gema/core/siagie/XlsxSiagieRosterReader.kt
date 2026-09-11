@@ -17,6 +17,13 @@ private const val NAME_HEADER: String = "Nombres"
 private val gradeInTitle: Regex = Regex("""(\d)\s*(?:ro|do|to|mo|vo|°)?\s*primaria""", RegexOption.IGNORE_CASE)
 private val sectionInTitle: Regex = Regex("""secci[oó]n\s*:?\s*([A-Za-z0-9]+)""", RegexOption.IGNORE_CASE)
 
+private sealed interface RosterRows {
+
+    data class Students(val students: List<SiagieRosterStudent>) : RosterRows
+
+    data class Malformed(val row: Int) : RosterRows
+}
+
 class XlsxSiagieRosterReader : SiagieRosterReader {
 
     override fun read(fileName: String, content: ByteArray): SiagieRosterResult =
@@ -31,16 +38,23 @@ class XlsxSiagieRosterReader : SiagieRosterReader {
                 ?: return SiagieRosterResult.NotASiagieTemplate
             val cells: Map<String, String> = template.readSheet(sheetName)
             if (!hasRosterHeader(cells)) return SiagieRosterResult.NotASiagieTemplate
-            return SiagieRosterResult.Parsed(rosterOf(cells, fileName))
+            return when (val rows: RosterRows = rowsOf(cells)) {
+                is RosterRows.Malformed -> SiagieRosterResult.Malformed(rows.row)
+                is RosterRows.Students -> SiagieRosterResult.Parsed(rosterOf(cells, fileName, rows.students))
+            }
         } finally {
             workbook.delete()
         }
     }
 
-    private fun rosterOf(cells: Map<String, String>, fileName: String): SiagieRoster = SiagieRoster(
+    private fun rosterOf(
+        cells: Map<String, String>,
+        fileName: String,
+        students: List<SiagieRosterStudent>,
+    ): SiagieRoster = SiagieRoster(
         gradeNumber = gradeNumberOf(cells, fileName),
         sectionName = sectionNameOf(cells),
-        students = studentsOf(cells),
+        students = students,
     )
 
     private fun hasRosterHeader(cells: Map<String, String>): Boolean =
@@ -63,17 +77,24 @@ class XlsxSiagieRosterReader : SiagieRosterReader {
         .values
         .toList()
 
-    private fun studentsOf(cells: Map<String, String>): List<SiagieRosterStudent> =
+    private fun rowsOf(cells: Map<String, String>): RosterRows {
+        val students: MutableList<SiagieRosterStudent> = mutableListOf()
         generateSequence(FIRST_DATA_ROW) { row: Int -> row + 1 }
-            .map { row: Int -> studentAt(cells, row) }
-            .takeWhile { student: SiagieRosterStudent? -> student != null }
-            .filterNotNull()
-            .toList()
+            .takeWhile { row: Int -> isPopulated(cells, row) }
+            .forEach { row: Int ->
+                val student: SiagieRosterStudent = studentAt(cells, row)
+                    ?: return RosterRows.Malformed(row)
+                students.add(student)
+            }
+        return RosterRows.Students(students)
+    }
+
+    private fun isPopulated(cells: Map<String, String>, row: Int): Boolean =
+        textOf(cells, "B$row") != null || textOf(cells, "C$row") != null
 
     private fun studentAt(cells: Map<String, String>, row: Int): SiagieRosterStudent? {
-        val code: StudentCode = cells["B$row"]?.trim()?.let(StudentCode::orNull) ?: return null
-        val fullName: String = cells["C$row"]?.trim().orEmpty()
-        if (fullName.isEmpty()) return null
+        val code: StudentCode = textOf(cells, "B$row")?.let(StudentCode::orNull) ?: return null
+        val fullName: String = textOf(cells, "C$row") ?: return null
         return SiagieRosterStudent(textOf(cells, "A$row"), code, fullName)
     }
 
