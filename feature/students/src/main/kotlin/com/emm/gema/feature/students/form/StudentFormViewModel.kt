@@ -2,7 +2,10 @@ package com.emm.gema.feature.students.form
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.section.GetSectionUseCase
+import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.SaveStudentUseCase
@@ -24,6 +27,7 @@ import kotlinx.coroutines.launch
 class StudentFormViewModel(
     private val sectionId: SectionId,
     private val studentId: StudentId?,
+    private val getSection: GetSectionUseCase,
     private val getStudent: GetStudentUseCase,
     private val saveStudent: SaveStudentUseCase,
     private val withdrawStudent: WithdrawStudentUseCase,
@@ -54,6 +58,7 @@ class StudentFormViewModel(
 
     private suspend fun load() {
         val student: Student? = studentId?.let { getStudent(it) }
+        val section: Section? = getSection(sectionId)
         _state.value = validate(
             _state.value.copy(
                 isLoading = false,
@@ -63,6 +68,7 @@ class StudentFormViewModel(
                 isWithdrawn = student?.isWithdrawn == true,
                 withdrawalDate = student?.withdrawalDate,
                 hasSiagieId = student?.siagieId != null,
+                sectionTitle = section?.title().orEmpty(),
             )
         )
     }
@@ -135,6 +141,7 @@ class StudentFormViewModel(
         return state.copy(
             studentCodeError = studentCodeError.takeIf { !state.isLoading && state.studentCode.isNotEmpty() },
             studentCodeHint = "${state.studentCode.length} de ${StudentCode.LENGTH} dígitos",
+            isStudentCodeValid = StudentCode.isValid(state.studentCode),
             fullNameError = fullNameError.takeIf { !state.isLoading && state.fullName.isNotEmpty() },
             withdrawalDateError = withdrawalDateError.takeIf { !state.isLoading },
             canSave = studentCodeError == null && fullNameError == null && withdrawalDateError == null,

@@ -20,11 +20,16 @@ import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
+import com.emm.gema.core.ui.GCompactNote
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GScreen
-import com.emm.gema.core.ui.GSwitchRow
+import com.emm.gema.core.ui.GSegmentOption
+import com.emm.gema.core.ui.GSegmentedPicker
+import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.core.ui.GValidatedHelperText
 import com.emm.gema.feature.students.R
 import java.time.LocalDate
 
@@ -40,6 +45,7 @@ fun StudentFormScreen(
         topBar = {
             GTopBar(
                 title = if (state.studentId == null) "Nuevo alumno" else "Editar alumno",
+                subtitle = state.sectionTitle.ifBlank { null },
                 onBackClick = { onIntent(StudentFormUiIntent.BackClicked) },
             )
         },
@@ -70,22 +76,21 @@ fun StudentFormScreen(
                     onActionClick = onMessageDismissed,
                 )
             }
-            if (state.hasSiagieId) {
-                GBanner(
-                    text = "Este alumno vino de la plantilla SIAGIE. " +
-                        "Si cambias su código, la exportación puede fallar.",
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            val studentCodeErrorText: String? = state.studentCodeError.asText()
             GTextField(
                 value = state.studentCode,
                 onValueChange = { onIntent(StudentFormUiIntent.StudentCodeChanged(it)) },
                 label = "Código del estudiante",
                 modifier = Modifier.fillMaxWidth(),
-                supportingText = state.studentCodeHint,
-                errorText = state.studentCodeError.asText(),
+                errorText = studentCodeErrorText,
                 keyboardType = KeyboardType.Number,
             )
+            if (studentCodeErrorText == null) {
+                GValidatedHelperText(
+                    text = state.studentCodeHint,
+                    isValid = state.isStudentCodeValid,
+                )
+            }
             GTextField(
                 value = state.fullName,
                 onValueChange = { onIntent(StudentFormUiIntent.FullNameChanged(it)) },
@@ -94,13 +99,22 @@ fun StudentFormScreen(
                 supportingText = "Apellidos primero, como en SIAGIE.",
                 errorText = state.fullNameError.asText(),
             )
+            if (state.hasSiagieId) {
+                GCompactNote(
+                    text = "Vino de la plantilla SIAGIE. Cambiar el código a mano puede romper la exportación.",
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             HorizontalDivider()
-            GSwitchRow(
-                title = "Retirado",
-                isChecked = state.isWithdrawn,
-                onCheckedChange = { onIntent(StudentFormUiIntent.WithdrawnToggled(it)) },
+            GText(text = "Estado", style = GTextStyle.TITLE_SMALL)
+            GSegmentedPicker(
+                options = listOf(
+                    GSegmentOption(value = false, label = "Activo", contentDescription = "Activo"),
+                    GSegmentOption(value = true, label = "Retirado", contentDescription = "Retirado"),
+                ),
+                selected = state.isWithdrawn,
+                onSelect = { onIntent(StudentFormUiIntent.WithdrawnToggled(it ?: state.isWithdrawn)) },
                 modifier = Modifier.fillMaxWidth(),
-                subtitle = "Conserva su asistencia y sus niveles",
             )
             if (state.isWithdrawn) {
                 GDateField(
@@ -109,6 +123,10 @@ fun StudentFormScreen(
                     label = "Fecha de retiro",
                     modifier = Modifier.fillMaxWidth(),
                     errorText = state.withdrawalDateError.asText(),
+                )
+                GText(
+                    text = "Conserva su asistencia y sus niveles. Deja de aparecer en las listas.",
+                    style = GTextStyle.LABEL_SMALL,
                 )
             }
         }
@@ -148,6 +166,9 @@ private fun StudentFormScreenPreview() {
                 isWithdrawn = true,
                 withdrawalDate = LocalDate.of(2026, 9, 4),
                 canSave = true,
+                hasSiagieId = true,
+                sectionTitle = "3ro A",
+                isStudentCodeValid = true,
             ),
             onIntent = {},
         )
