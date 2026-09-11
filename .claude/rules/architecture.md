@@ -1,49 +1,46 @@
 ---
 paths:
   - "app/src/main/kotlin/**"
-  - "domain/**"
-  - "data/**"
-  - "feature/**"
+  - "core/*/src/*/kotlin/**"
+  - "feature/*/src/*/kotlin/**"
 ---
 
 # Architecture rules
 
-Clean Architecture, target layering. Today everything lives in the single `:app` module; a later foundation ticket splits it into `domain` / `data` / `app` (plus `feature` modules). These rules state the shape new code must already respect, so the split is mechanical when it happens.
+Clean Architecture across the module layout in `CLAUDE.md`. `./gradlew checkModuleBoundaries` enforces the direction; these rules explain it.
 
 ## Layers and dependency direction
 
 | Layer | Contains |
 |---|---|
-| `domain` | Pure Kotlin. Models, value objects, use cases, and the **interfaces** the outer layers implement. |
-| `data` | Implementations of the domain interfaces: SQLDelight, local identity, mappers. |
-| `app` / `feature` | Presentation. MVI features, Compose UI, navigation, Koin wiring, startup. |
+| `core:domain` | Pure Kotlin. Models, value objects, use cases, and the **interfaces** the outer layers implement. |
+| `core:database` | Implementations of the domain interfaces: SQLDelight, local identity, mappers. |
+| `app` / `feature:*` | Presentation. MVI features, Compose UI, navigation, Koin wiring, startup. |
 
 Allowed dependencies, and nothing else:
 
 ```
-app -> data
-app -> domain
-data -> domain
+app        -> core:domain, core:database, core:siagie, core:ui, feature:*
+feature:*  -> core:domain, core:ui
+core:database -> core:domain
+core:siagie   -> core:domain
 ```
 
-- `domain` is **JVM-only**. No Android imports, no SQLDelight, no `Context`. If a use case needs the current time, it takes a `Clock`; it does not call `System.currentTimeMillis()`.
-- `data` never depends on `app` or a feature package.
+- `core:domain` is **JVM-only**. No Android imports, no SQLDelight, no `Context`. If a use case needs the current time, it takes a `Clock`; it does not call `System.currentTimeMillis()`.
+- `core:database` never depends on `app` or a feature module, and no feature module depends on another.
 - `GemaDb` is the source of truth for reads and writes.
-
-Until the foundation split lands, honor this boundary through package structure (`domain/`, `data/` packages under `app/src/main/kotlin/com/emm/gema/`) rather than module boundaries. A file under `domain/` still may not import Android or SQLDelight types, even while it physically sits inside `:app`.
 
 ## Dependency inversion is the seam
 
 The domain declares the contract; the infrastructure obeys it. The domain never imports an implementation.
 
-Repository interfaces live in `domain`. Implementations live in `data`.
+Repository interfaces live in `core:domain`. Implementations live in `core:database`.
 
 ## Each layer owns its own model
 
 A database entity, a network DTO, a domain model and a `UiState` are four different things even when their fields match. Mappers convert between them.
 
 - A SQLDelight row never reaches a `UiState`.
-- A network DTO never reaches `domain`.
 - A domain model never carries presentation concerns (formatted strings, resource ids, colors).
 
 This is not duplication to be removed. See `principles.md`, DRY.
@@ -61,4 +58,4 @@ Naming lives in `naming.md`. This is the flow.
 
 ## When a new dependency crosses a layer
 
-Before adding a dependency to any package, check the direction above. If the change needs `domain` to reach outward, the design is wrong: invert it with an interface in `domain`.
+Before adding a dependency to any package, check the direction above. If the change needs `core:domain` to reach outward, the design is wrong: invert it with an interface in `core:domain`.

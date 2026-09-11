@@ -1,9 +1,8 @@
 ---
 paths:
   - "app/src/main/kotlin/**"
-  - "domain/**"
-  - "data/**"
-  - "feature/**"
+  - "core/*/src/*/kotlin/**"
+  - "feature/*/src/*/kotlin/**"
 ---
 
 # Design principles
