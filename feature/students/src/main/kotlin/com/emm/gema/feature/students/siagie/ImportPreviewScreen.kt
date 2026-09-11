@@ -1,6 +1,8 @@
 package com.emm.gema.feature.students.siagie
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,15 +20,23 @@ import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
+import com.emm.gema.core.ui.GBorderedContainer
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
+import com.emm.gema.core.ui.GExpandableGroupRow
+import com.emm.gema.core.ui.GFileCard
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
+import com.emm.gema.core.ui.GTintedGroupContent
 import com.emm.gema.core.ui.GTopBar
 
 private const val NOTHING_IS_LOST: String =
     "Nada se borra. Los retirados conservan su asistencia y sus niveles."
+
+private const val NOTHING_IS_WRITTEN: String = "Nada se escribe hasta que apliques"
 
 @Composable
 fun ImportPreviewScreen(
@@ -39,7 +49,7 @@ fun ImportPreviewScreen(
         topBar = {
             GTopBar(
                 title = "Importar de SIAGIE",
-                subtitle = state.sectionTitle,
+                subtitle = NOTHING_IS_WRITTEN,
                 onBackClick = { onIntent(ImportPreviewUiIntent.BackClicked) },
             )
         },
@@ -87,75 +97,97 @@ private fun LazyListScope.rejection(rejection: ImportRejection) {
 
 private fun LazyListScope.plan(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {
     item {
-        GListItem(
+        GFileCard(
             title = state.fileName,
             subtitle = "${state.sectionTitle} · ${state.rosterSize} alumnos en el archivo",
         )
     }
-    group(
-        title = "Se crearán",
-        group = ImportGroup.CREATED,
-        rows = state.created,
-        state = state,
-        onIntent = onIntent,
-    )
-    group(
-        title = "Se actualizarán",
-        group = ImportGroup.UPDATED,
-        rows = state.updated,
-        state = state,
-        onIntent = onIntent,
-    )
-    withdrawals(state = state, onIntent = onIntent)
     item {
-        GBanner(text = NOTHING_IS_LOST, modifier = Modifier.fillMaxWidth())
+        GBorderedContainer {
+            group(
+                title = "Se crearán",
+                group = ImportGroup.CREATED,
+                rows = state.created,
+                state = state,
+                onIntent = onIntent,
+            )
+            group(
+                title = "Se actualizarán",
+                group = ImportGroup.UPDATED,
+                rows = state.updated,
+                state = state,
+                onIntent = onIntent,
+            )
+            withdrawals(state = state, onIntent = onIntent)
+        }
+    }
+    item {
+        GText(
+            text = NOTHING_IS_LOST,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = GemaSpacing.medium),
+            style = GTextStyle.BODY_SMALL,
+        )
     }
 }
 
-private fun LazyListScope.group(
+@Composable
+private fun ColumnScope.group(
     title: String,
     group: ImportGroup,
     rows: List<ImportStudentRow>,
     state: ImportPreviewUiState,
     onIntent: (ImportPreviewUiIntent) -> Unit,
 ) {
-    item {
-        GListItem(
-            title = title,
-            modifier = Modifier.fillMaxWidth(),
-            trailingText = rows.size.toString(),
-            onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(group)) },
-        )
-    }
-    if (state.expandedGroup == group) {
-        items(rows, key = { it.studentCode }) { row ->
-            GListItem(
-                title = row.displayName,
-                modifier = Modifier.fillMaxWidth(),
-                subtitle = row.studentCode,
-            )
+    val isExpanded: Boolean = state.expandedGroup == group
+    GExpandableGroupRow(
+        title = title,
+        count = rows.size,
+        isExpanded = isExpanded,
+        onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(group)) },
+    )
+    if (isExpanded) {
+        GTintedGroupContent {
+            rows.forEach { row: ImportStudentRow ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.small),
+                ) {
+                    GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
+                    GText(
+                        text = row.studentCode,
+                        style = GTextStyle.BODY_SMALL,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }
 
-private fun LazyListScope.withdrawals(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {
-    item {
-        GListItem(
-            title = "Se propondrán como retirados",
-            modifier = Modifier.fillMaxWidth(),
-            trailingText = state.proposedWithdrawals.size.toString(),
-            onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(ImportGroup.WITHDRAWN)) },
-        )
-    }
-    if (state.expandedGroup == ImportGroup.WITHDRAWN) {
-        items(state.proposedWithdrawals, key = { it.studentId.value }) { row ->
-            GCheckRow(
-                title = row.displayName,
-                isChecked = row.isSelected,
-                onCheckedChange = { isSelected ->
-                    onIntent(ImportPreviewUiIntent.WithdrawalToggled(row.studentId, isSelected))
-                },
-            )
+@Composable
+private fun ColumnScope.withdrawals(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {
+    val isExpanded: Boolean = state.expandedGroup == ImportGroup.WITHDRAWN
+    GExpandableGroupRow(
+        title = "Se propondrán como retirados",
+        count = state.proposedWithdrawals.size,
+        isExpanded = isExpanded,
+        showDivider = false,
+        onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(ImportGroup.WITHDRAWN)) },
+    )
+    if (isExpanded) {
+        GTintedGroupContent {
+            state.proposedWithdrawals.forEach { row: ImportWithdrawalRow ->
+                GCheckRow(
+                    title = row.displayName,
+                    isChecked = row.isSelected,
+                    onCheckedChange = { isSelected: Boolean ->
+                        onIntent(ImportPreviewUiIntent.WithdrawalToggled(row.studentId, isSelected))
+                    },
+                )
+            }
         }
     }
 }

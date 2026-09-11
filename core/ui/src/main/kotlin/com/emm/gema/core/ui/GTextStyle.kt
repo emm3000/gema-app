@@ -2,6 +2,7 @@ package com.emm.gema.core.ui
 
 enum class GTextStyle {
     TITLE_MEDIUM,
+    TITLE_MEDIUM_EMPHASIS,
     TITLE_SMALL,
     BODY_LARGE,
     BODY_MEDIUM,
