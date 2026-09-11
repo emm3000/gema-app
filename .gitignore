@@ -19,6 +19,8 @@ local.properties
 /keystore.properties
 *.jks
 *.keystore
+*.p12
+*.pem
 
 # Gentle AI skill registry cache
 .atl/
