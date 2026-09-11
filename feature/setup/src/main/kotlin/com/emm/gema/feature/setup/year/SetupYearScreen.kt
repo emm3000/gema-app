@@ -16,15 +16,23 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GButton
+import com.emm.gema.core.ui.GCard
 import com.emm.gema.core.ui.GDateField
+import com.emm.gema.core.ui.GDialog
+import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.setup.kindLabel
+import com.emm.gema.feature.setup.rangeLabel
 import java.time.LocalDate
+
+private const val REASSURANCE_TEXT: String =
+    "Calculamos los periodos por ti. Toca uno para ajustar sus fechas, y puedes corregirlas después."
 
 @Composable
 fun SetupYearScreen(
@@ -57,6 +65,9 @@ fun SetupYearScreen(
             contentPadding = PaddingValues(GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
+            item {
+                GBanner(text = REASSURANCE_TEXT, modifier = Modifier.fillMaxWidth())
+            }
             item {
                 GTextField(
                     value = state.yearLabel,
@@ -93,41 +104,74 @@ fun SetupYearScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+            item {
+                Text(
+                    text = "Periodos",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
             items(state.periods, key = { it.ordinal }) { row ->
-                PeriodDraftEditor(row = row, onIntent = onIntent)
+                PeriodRow(row = row, onIntent = onIntent)
             }
         }
+    }
+
+    if (state.editor != null) {
+        PeriodEditorDialog(editor = state.editor, state = state, onIntent = onIntent)
     }
 }
 
 @Composable
-private fun PeriodDraftEditor(
+private fun PeriodRow(
     row: PeriodDraftRow,
     onIntent: (SetupYearUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    GCard(modifier = modifier.fillMaxWidth()) {
+        GListItem(
+            title = row.label,
+            subtitle = row.error ?: rangeLabel(row.startDate, row.endDate),
+            hasChevron = true,
+            onClick = { onIntent(SetupYearUiIntent.PeriodClicked(row.ordinal)) },
+        )
+    }
+}
+
+@Composable
+private fun PeriodEditorDialog(
+    editor: PeriodEditorState,
+    state: SetupYearUiState,
+    onIntent: (SetupYearUiIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    GDialog(
+        title = editor.label,
+        confirmText = "Guardar",
+        onConfirm = { onIntent(SetupYearUiIntent.EditorConfirmed) },
+        onDismiss = { onIntent(SetupYearUiIntent.EditorDismissed) },
+        modifier = modifier,
+        dismissText = "Cancelar",
     ) {
-        Text(
-            text = row.label,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        GDateField(
-            value = row.startDate,
-            onValueChange = { onIntent(SetupYearUiIntent.PeriodStartDateChanged(row.ordinal, it)) },
-            label = "Empieza",
-            modifier = Modifier.fillMaxWidth(),
-        )
-        GDateField(
-            value = row.endDate,
-            onValueChange = { onIntent(SetupYearUiIntent.PeriodEndDateChanged(row.ordinal, it)) },
-            label = "Termina",
-            modifier = Modifier.fillMaxWidth(),
-            errorText = row.error,
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
+            GDateField(
+                value = editor.startDate,
+                onValueChange = { onIntent(SetupYearUiIntent.EditorStartDateChanged(it)) },
+                label = "Empieza",
+                modifier = Modifier.fillMaxWidth(),
+                minDate = state.startDate,
+                maxDate = state.endDate,
+            )
+            GDateField(
+                value = editor.endDate,
+                onValueChange = { onIntent(SetupYearUiIntent.EditorEndDateChanged(it)) },
+                label = "Termina",
+                modifier = Modifier.fillMaxWidth(),
+                errorText = editor.error,
+                minDate = state.startDate,
+                maxDate = state.endDate,
+            )
+        }
     }
 }
 
@@ -138,10 +182,11 @@ private fun SetupYearScreenPreview() {
         SetupYearScreen(
             state = SetupYearUiState(
                 yearLabel = "2026",
-                startDate = LocalDate.of(2026, 3, 2),
-                endDate = LocalDate.of(2026, 12, 18),
+                startDate = LocalDate.of(2026, 3, 1),
+                endDate = LocalDate.of(2026, 12, 20),
                 periods = listOf(
-                    PeriodDraftRow(1, "I Bimestre", LocalDate.of(2026, 3, 2), LocalDate.of(2026, 5, 13), null),
+                    PeriodDraftRow(1, "I Bimestre", LocalDate.of(2026, 3, 1), LocalDate.of(2026, 5, 13), null),
+                    PeriodDraftRow(2, "II Bimestre", LocalDate.of(2026, 5, 14), LocalDate.of(2026, 7, 26), null),
                 ),
                 canContinue = true,
             ),

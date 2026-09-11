@@ -13,9 +13,15 @@ sealed interface SetupYearUiIntent {
 
     data class PeriodKindSelected(val kind: PeriodKind) : SetupYearUiIntent
 
-    data class PeriodStartDateChanged(val ordinal: Int, val value: LocalDate) : SetupYearUiIntent
+    data class PeriodClicked(val ordinal: Int) : SetupYearUiIntent
 
-    data class PeriodEndDateChanged(val ordinal: Int, val value: LocalDate) : SetupYearUiIntent
+    data class EditorStartDateChanged(val value: LocalDate) : SetupYearUiIntent
+
+    data class EditorEndDateChanged(val value: LocalDate) : SetupYearUiIntent
+
+    data object EditorConfirmed : SetupYearUiIntent
+
+    data object EditorDismissed : SetupYearUiIntent
 
     data object ContinueClicked : SetupYearUiIntent
 

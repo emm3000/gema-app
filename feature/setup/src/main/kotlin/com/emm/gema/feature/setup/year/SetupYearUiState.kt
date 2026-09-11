@@ -10,12 +10,21 @@ data class SetupYearUiState(
     val endDate: LocalDate? = null,
     val periodKind: PeriodKind = PeriodKind.BIMESTER,
     val periods: List<PeriodDraftRow> = emptyList(),
+    val editor: PeriodEditorState? = null,
     val yearLabelError: String? = null,
     val dateRangeError: String? = null,
     val canContinue: Boolean = false,
 )
 
 data class PeriodDraftRow(
+    val ordinal: Int,
+    val label: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val error: String?,
+)
+
+data class PeriodEditorState(
     val ordinal: Int,
     val label: String,
     val startDate: LocalDate,

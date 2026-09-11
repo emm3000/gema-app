@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -21,9 +22,9 @@ private const val MISSING_LABEL_ERROR: String = "Escribe un nombre para el año 
 private const val INVALID_RANGE_ERROR: String = "El año escolar termina después de empezar"
 private const val TOO_SHORT_ERROR: String = "El año escolar es muy corto para sus periodos"
 
-class SetupYearViewModel : ViewModel() {
+class SetupYearViewModel(clock: Clock) : ViewModel() {
 
-    private val _state: MutableStateFlow<SetupYearUiState> = MutableStateFlow(SetupYearUiState())
+    private val _state: MutableStateFlow<SetupYearUiState> = MutableStateFlow(prefilledState(clock))
     val state: StateFlow<SetupYearUiState> = _state.asStateFlow()
 
     private val _effects: Channel<SetupYearUiEffect> = Channel(Channel.BUFFERED)
@@ -35,15 +36,46 @@ class SetupYearViewModel : ViewModel() {
             is SetupYearUiIntent.StartDateChanged -> redivide { it.copy(startDate = intent.value) }
             is SetupYearUiIntent.EndDateChanged -> redivide { it.copy(endDate = intent.value) }
             is SetupYearUiIntent.PeriodKindSelected -> redivide { it.copy(periodKind = intent.kind) }
-            is SetupYearUiIntent.PeriodStartDateChanged -> editPeriod(intent.ordinal) {
-                it.copy(startDate = intent.value)
-            }
-            is SetupYearUiIntent.PeriodEndDateChanged -> editPeriod(intent.ordinal) {
-                it.copy(endDate = intent.value)
-            }
+            is SetupYearUiIntent.PeriodClicked -> openEditor(intent.ordinal)
+            is SetupYearUiIntent.EditorStartDateChanged -> editEditor { it.copy(startDate = intent.value) }
+            is SetupYearUiIntent.EditorEndDateChanged -> editEditor { it.copy(endDate = intent.value) }
+            SetupYearUiIntent.EditorConfirmed -> confirmEditor()
+            SetupYearUiIntent.EditorDismissed -> update { it.copy(editor = null) }
             SetupYearUiIntent.ContinueClicked -> continueToSection()
             SetupYearUiIntent.BackClicked -> emit(SetupYearUiEffect.NavigateBack)
         }
+    }
+
+    private fun openEditor(ordinal: Int) = update { current ->
+        val row: PeriodDraftRow = current.periods.firstOrNull { it.ordinal == ordinal } ?: return@update current
+        current.copy(
+            editor = PeriodEditorState(
+                ordinal = row.ordinal,
+                label = row.label,
+                startDate = row.startDate,
+                endDate = row.endDate,
+                error = row.error,
+            ),
+        )
+    }
+
+    private fun editEditor(edit: (PeriodEditorState) -> PeriodEditorState) = update { current ->
+        val editor: PeriodEditorState = current.editor ?: return@update current
+        current.copy(editor = edit(editor))
+    }
+
+    private fun confirmEditor() = update { current ->
+        val editor: PeriodEditorState = current.editor ?: return@update current
+        current.copy(
+            editor = null,
+            periods = current.periods.map { row ->
+                if (row.ordinal == editor.ordinal) {
+                    row.copy(startDate = editor.startDate, endDate = editor.endDate)
+                } else {
+                    row
+                }
+            },
+        )
     }
 
     private fun continueToSection() {
@@ -65,15 +97,9 @@ class SetupYearViewModel : ViewModel() {
         )
     }
 
-    private fun editPeriod(ordinal: Int, edit: (PeriodDraftRow) -> PeriodDraftRow) = update { current ->
-        current.copy(
-            periods = current.periods.map { row -> if (row.ordinal == ordinal) edit(row) else row },
-        )
-    }
-
     private fun redivide(change: (SetupYearUiState) -> SetupYearUiState) = update { current ->
         val changed: SetupYearUiState = change(current)
-        changed.copy(periods = dividePeriods(changed))
+        changed.copy(periods = dividePeriods(changed), editor = null)
     }
 
     private fun update(change: (SetupYearUiState) -> SetupYearUiState) {
@@ -82,22 +108,6 @@ class SetupYearViewModel : ViewModel() {
 
     private fun emit(effect: SetupYearUiEffect) {
         viewModelScope.launch { _effects.send(effect) }
-    }
-
-    private fun dividePeriods(state: SetupYearUiState): List<PeriodDraftRow> {
-        val startDate: LocalDate = state.startDate ?: return emptyList()
-        val endDate: LocalDate = state.endDate ?: return emptyList()
-        if (!isLongEnough(startDate, endDate, state.periodKind)) return emptyList()
-
-        return state.periodKind.divide(startDate, endDate).map { dates ->
-            PeriodDraftRow(
-                ordinal = dates.number,
-                label = state.periodKind.labelFor(dates.number),
-                startDate = dates.startDate,
-                endDate = dates.endDate,
-                error = null,
-            )
-        }
     }
 
     private fun validate(state: SetupYearUiState): SetupYearUiState {
@@ -110,6 +120,7 @@ class SetupYearViewModel : ViewModel() {
 
         return state.copy(
             periods = periods,
+            editor = state.editor?.let { editor -> editor.copy(error = editorErrorFor(editor, ranges, state)) },
             yearLabelError = yearLabelError,
             dateRangeError = dateRangeError,
             canContinue = yearLabelError == null &&
@@ -127,6 +138,16 @@ class SetupYearViewModel : ViewModel() {
         return null
     }
 
+    private fun editorErrorFor(
+        editor: PeriodEditorState,
+        ranges: List<PeriodDates>,
+        state: SetupYearUiState,
+    ): String? {
+        val edited: PeriodDates = PeriodDates(editor.ordinal, editor.startDate, editor.endDate)
+        val others: List<PeriodDates> = ranges.filterNot { it.number == editor.ordinal }
+        return errorFor(edited, others + edited, state)
+    }
+
     private fun errorFor(period: PeriodDates, periods: List<PeriodDates>, state: SetupYearUiState): String? {
         val startDate: LocalDate = state.startDate ?: return null
         val endDate: LocalDate = state.endDate ?: return null
@@ -135,4 +156,30 @@ class SetupYearViewModel : ViewModel() {
 
     private fun isLongEnough(startDate: LocalDate, endDate: LocalDate, periodKind: PeriodKind): Boolean =
         ChronoUnit.DAYS.between(startDate, endDate) + 1 >= periodKind.periodCount
+
+    private fun prefilledState(clock: Clock): SetupYearUiState {
+        val prefill: SchoolYearPrefill = schoolYearPrefillFrom(clock)
+        val state = SetupYearUiState(
+            yearLabel = prefill.label,
+            startDate = prefill.startDate,
+            endDate = prefill.endDate,
+        )
+        return validate(state.copy(periods = dividePeriods(state)))
+    }
+
+    private fun dividePeriods(state: SetupYearUiState): List<PeriodDraftRow> {
+        val startDate: LocalDate = state.startDate ?: return emptyList()
+        val endDate: LocalDate = state.endDate ?: return emptyList()
+        if (!isLongEnough(startDate, endDate, state.periodKind)) return emptyList()
+
+        return state.periodKind.divide(startDate, endDate).map { dates ->
+            PeriodDraftRow(
+                ordinal = dates.number,
+                label = state.periodKind.labelFor(dates.number),
+                startDate = dates.startDate,
+                endDate = dates.endDate,
+                error = null,
+            )
+        }
+    }
 }

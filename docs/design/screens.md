@@ -75,19 +75,19 @@ Tapping a Period row opens a small editor over this screen:
 |  | 01/03/2026    |  | 15/05/2026     |   |
 |  +---------------+  +----------------+   |
 |                                          |
-|             [   Guardar   ]              |
+|          [ Cancelar ]  [ Guardar ]       |
 +------------------------------------------+
 ```
 
 ```kotlin
 data class SetupYearUiState(
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val yearLabel: String = "",
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
     val periodKind: PeriodKind = PeriodKind.BIMESTER,
     val periods: List<PeriodDraftRow> = emptyList(),
-    val editingPeriod: PeriodDraftRow? = null,
+    val editor: PeriodEditorState? = null,
     val yearLabelError: String? = null,
     val dateRangeError: String? = null,
     val canContinue: Boolean = false,
@@ -100,25 +100,35 @@ data class PeriodDraftRow(
     val endDate: LocalDate,
     val error: String?,
 )
+
+data class PeriodEditorState(
+    val ordinal: Int,
+    val label: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val error: String?,
+)
 ```
 
 Intents: `YearLabelChanged(value: String)`, `StartDateChanged(value: LocalDate)`,
 `EndDateChanged(value: LocalDate)`, `PeriodKindSelected(kind: PeriodKind)`,
-`PeriodRowClicked(ordinal: Int)`, `PeriodEditorStartDateChanged(value: LocalDate)`,
-`PeriodEditorEndDateChanged(value: LocalDate)`, `PeriodEditorSaveClicked`,
-`PeriodEditorDismissed`, `ContinueClicked`, `BackClicked`.
+`PeriodClicked(ordinal: Int)`, `EditorStartDateChanged(value: LocalDate)`,
+`EditorEndDateChanged(value: LocalDate)`, `EditorConfirmed`, `EditorDismissed`,
+`ContinueClicked`, `BackClicked`.
 
 Effects: `NavigateToSetupSection(draft: SchoolYearDraft)`, `NavigateBack`.
 
 Note: nothing is persisted here. The draft travels to step 2 and both are
 written in one transaction, so an abandoned setup leaves no orphan year.
 
-Note: `yearLabel` is prefilled from the device date on first render, so the
-Teacher can accept it with zero typing; it stays editable for a wrong device
-clock or a year that starts before January. The eight raw Period date fields
-that used to sit inline are gone — every `PeriodDraftRow` date is computed by
-dividing `startDate..endDate` evenly, shown as a compact list, and corrected
-one Period at a time through `editingPeriod`.
+Note: the whole year is prefilled from the device date on first render — the
+label is that year, the range is 1 March to 20 December of it — so the Teacher
+can accept it with zero typing; every field stays editable for a wrong device
+clock or a school that starts elsewhere. The eight raw Period date fields that
+used to sit inline are gone — every `PeriodDraftRow` date is computed by
+dividing `startDate..endDate` evenly, shown as a compact list, and corrected one
+Period at a time through `editor`. Changing the range or the kind recomputes
+every Period and discards those corrections. See ADR 0013.
 
 ---
 
