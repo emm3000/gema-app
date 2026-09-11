@@ -21,3 +21,5 @@ CREATE TABLE evidence_level (
     achievement_level TEXT NOT NULL,
     PRIMARY KEY (activity_id, student_id, competency_id)
 );
+
+CREATE INDEX evidence_level_activity ON evidence_level(activity_id);

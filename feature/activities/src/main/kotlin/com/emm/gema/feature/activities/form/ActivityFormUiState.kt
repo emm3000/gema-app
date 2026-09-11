@@ -7,6 +7,7 @@ data class ActivityFormUiState(
     val activityId: String? = null,
     val name: String = "",
     val date: LocalDate? = null,
+    val dateError: String? = null,
     val resolvedPeriodLabel: String? = null,
     val periodChangeWarning: String? = null,
     val competencyGroups: List<CompetencyGroup> = emptyList(),

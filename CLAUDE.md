@@ -21,7 +21,7 @@ core:siagie   -> core:domain
 - `core:database` — `GemaDb`, the SQLDelight schema, repository implementations, the Android driver and the in-memory JVM driver used by tests.
 - `core:siagie` — **JVM-only** SIAGIE workbook import and export.
 - `core:ui` — theme tokens and the `G*` components.
-- `feature:<name>` — one MVI screen group each: `setup`, `sections`, `students`, `attendance`, `evaluation`, `export`, `backup`.
+- `feature:<name>` — one MVI screen group each: `setup`, `sections`, `students`, `attendance`, `evaluation`, `activities`, `export`, `backup`.
 - `app` — navigation, Koin wiring and startup.
 
 A feature module never depends on another feature module, and only `app` may depend on a feature module. `./gradlew checkModuleBoundaries` fails the build when that is broken.

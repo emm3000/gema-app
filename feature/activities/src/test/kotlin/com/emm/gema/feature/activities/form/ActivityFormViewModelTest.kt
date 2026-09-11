@@ -119,6 +119,42 @@ class ActivityFormViewModelTest {
     }
 
     @Test
+    fun `a date that stops falling into any period is reported, not thrown`() = runTest {
+        workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
+        val periods: MutableList<Period> = mutableListOf(firstPeriod, secondPeriod)
+        val viewModel = ActivityFormViewModel(
+            sectionId = SECTION_ID,
+            activityId = null,
+            clock = clock,
+            getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
+            getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
+            findPeriodForDate = FindPeriodForDateUseCase(FakePeriodRepository(periods)),
+            getWorkedCompetencies = GetWorkedCompetenciesUseCase(
+                competencyRepository,
+                workedCompetencyRepository,
+                FakeSectionAreaRepository(),
+            ),
+            getActivity = GetActivityUseCase(activityRepository),
+            saveActivity = SaveActivityUseCase(
+                FakeSectionRepository(listOf(section)),
+                FindPeriodForDateUseCase(FakePeriodRepository(periods)),
+                activityRepository,
+                IdGenerator { "activity-new" },
+            ),
+            deleteActivity = DeleteActivityUseCase(activityRepository, evidenceLevelRepository),
+        )
+        viewModel.onIntent(ActivityFormUiIntent.NameChanged("Debate del aula"))
+        viewModel.onIntent(ActivityFormUiIntent.CompetencyToggled(Competency.idOf(Area.PPSS, 1), true))
+        assertThat(viewModel.state.value.canSave).isTrue()
+
+        periods.clear()
+        viewModel.onIntent(ActivityFormUiIntent.SaveClicked)
+
+        assertThat(viewModel.state.value.dateError).isEqualTo("Esa fecha no cae dentro de ningún periodo")
+        assertThat(activityRepository.activities.value).isEmpty()
+    }
+
+    @Test
     fun `deleting an activity deletes its evidence levels too`() = runTest {
         workedCompetencyRepository.setWorked(SECTION_ID, FIRST_PERIOD_ID, Competency.idOf(Area.PPSS, 1), true)
         val existing = Activity(

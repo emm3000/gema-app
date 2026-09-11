@@ -67,7 +67,7 @@ class ActivityUseCasesTest {
 
     @Test
     fun `creating an activity derives its period from the date`() = runTest {
-        val activity: Activity = saveActivity(
+        val activity: Activity = saveActivityOk(
             sectionId = SECTION_ID,
             activityId = null,
             name = "Debate del aula",
@@ -81,7 +81,7 @@ class ActivityUseCasesTest {
 
     @Test
     fun `changing the date moves the activity to another period`() = runTest {
-        val created: Activity = saveActivity(
+        val created: Activity = saveActivityOk(
             sectionId = SECTION_ID,
             activityId = null,
             name = "Debate del aula",
@@ -89,7 +89,7 @@ class ActivityUseCasesTest {
             competencyIds = setOf("PPSS-1"),
         )
 
-        val moved: Activity = saveActivity(
+        val moved: Activity = saveActivityOk(
             sectionId = SECTION_ID,
             activityId = created.id,
             name = created.name,
@@ -102,15 +102,18 @@ class ActivityUseCasesTest {
         assertThat(getActivities(SECTION_ID, SECOND_PERIOD_ID).first()).containsExactly(moved)
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    fun `a date outside every period is rejected`() = runTest {
-        saveActivity(
+    @Test
+    fun `a date outside every period is reported, not thrown`() = runTest {
+        val result: SaveActivityResult = saveActivity(
             sectionId = SECTION_ID,
             activityId = null,
             name = "Debate del aula",
             date = LocalDate.of(2027, 1, 1),
             competencyIds = setOf("PPSS-1"),
         )
+
+        assertThat(result).isEqualTo(SaveActivityResult.DateOutsidePeriods)
+        assertThat(getActivities(SECTION_ID, FIRST_PERIOD_ID).first()).isEmpty()
     }
 
     @Test
@@ -162,7 +165,7 @@ class ActivityUseCasesTest {
         val periodLevelKey = PeriodLevelKey(SECTION_ID, activity.periodId, "student-1", "PPSS-1")
         savePeriodLevel(PeriodLevel(periodLevelKey).withAchievementLevel(AchievementLevel.B))
 
-        saveActivity(
+        saveActivityOk(
             sectionId = SECTION_ID,
             activityId = activity.id,
             name = "Nuevo nombre",
@@ -200,7 +203,7 @@ class ActivityUseCasesTest {
     @Test
     fun `evidence for a period level is ordered by activity date`() = runTest {
         val first: Activity = createActivity()
-        val second: Activity = saveActivity(
+        val second: Activity = saveActivityOk(
             sectionId = SECTION_ID,
             activityId = null,
             name = "Ficha de convivencia",
@@ -216,11 +219,22 @@ class ActivityUseCasesTest {
         assertThat(evidence.map { it.activityId }).containsExactly(first.id, second.id).inOrder()
     }
 
-    private suspend fun createActivity(): Activity = saveActivity(
+    private suspend fun createActivity(): Activity = saveActivityOk(
         sectionId = SECTION_ID,
         activityId = null,
         name = "Debate del aula",
         date = LocalDate.of(2026, 3, 10),
         competencyIds = setOf("PPSS-1"),
     )
+
+    private suspend fun saveActivityOk(
+        sectionId: String,
+        activityId: String?,
+        name: String,
+        date: LocalDate,
+        competencyIds: Set<String>,
+    ): Activity {
+        val result: SaveActivityResult = saveActivity(sectionId, activityId, name, date, competencyIds)
+        return (result as SaveActivityResult.Saved).activity
+    }
 }
