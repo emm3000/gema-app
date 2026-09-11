@@ -106,10 +106,18 @@ class PeriodsViewModel(
         val yearStart: LocalDate = schoolYear?.startDate ?: return state
         val yearEnd: LocalDate = schoolYear?.endDate ?: return state
         val ranges: List<PeriodDates> = state.periods.map { it.toDates() }
-        val overlapError: PeriodRangeError? = ranges.firstNotNullOfOrNull { it.errorWithin(ranges, yearStart, yearEnd) }
+        val errorsByNumber: Map<Int, PeriodRangeError?> = ranges.associate { range ->
+            range.number to range.errorWithin(ranges, yearStart, yearEnd)
+        }
+        val overlapError: PeriodRangeError? = errorsByNumber.values.firstNotNullOfOrNull { it }
+        val overlappingPeriodIds: Set<PeriodId> = state.periods
+            .filter { errorsByNumber[it.number] != null }
+            .map { it.id }
+            .toSet()
 
         return state.copy(
             overlapError = overlapError,
+            overlappingPeriodIds = overlappingPeriodIds,
             canSave = overlapError == null && state.periods.isNotEmpty(),
         )
     }
