@@ -1,0 +1,12 @@
+CREATE TABLE period_level (
+    section_id TEXT NOT NULL,
+    period_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    achievement_level TEXT,
+    unworked_comment TEXT,
+    descriptive_conclusion TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (section_id, period_id, student_id, competency_id)
+);
+
+CREATE INDEX period_level_section_period ON period_level(section_id, period_id);
