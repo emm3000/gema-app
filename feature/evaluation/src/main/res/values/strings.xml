@@ -4,4 +4,16 @@
     <string name="period_levels_badge_current">ACTUAL</string>
     <string name="period_levels_column_student">ALUMNO</string>
     <string name="worked_competencies_message_toggle_failed">No se pudo guardar el cambio</string>
+    <string name="worked_competencies_hint">Marca solo las competencias que trabajaste. Solo esas se exportan.</string>
+    <string name="worked_competencies_understood">Entendido</string>
+
+    <plurals name="worked_competencies_marked_count">
+        <item quantity="one">%1$d de %2$d marcada</item>
+        <item quantity="other">%1$d de %2$d marcadas</item>
+    </plurals>
+
+    <plurals name="worked_competencies_recorded_levels_warning">
+        <item quantity="one">La %1$s tiene niveles registrados. Queda guardado y deja de exportarse.</item>
+        <item quantity="other">Las %1$s tienen niveles registrados. Quedan guardados y dejan de exportarse.</item>
+    </plurals>
 </resources>
