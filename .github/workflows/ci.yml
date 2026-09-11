@@ -36,6 +36,7 @@ jobs:
           ./gradlew
           checkModuleBoundaries
           checkSqlDelightSnapshots
+          checkLazyListKeys
           detekt
           testDebugUnitTest
           assembleDebug
