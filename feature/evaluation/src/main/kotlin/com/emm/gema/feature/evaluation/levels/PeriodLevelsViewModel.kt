@@ -20,8 +20,8 @@ import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionArea
-import com.emm.gema.feature.evaluation.labelFor
-import com.emm.gema.feature.evaluation.title
+import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.section.title
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -66,7 +66,9 @@ class PeriodLevelsViewModel(
             is PeriodLevelsUiIntent.AreaSelected -> select(area = intent.area)
             is PeriodLevelsUiIntent.PeriodSelected -> select(periodId = intent.periodId)
             is PeriodLevelsUiIntent.CellClicked -> openCell(intent.key)
-            is PeriodLevelsUiIntent.EnterColumnMode -> enterColumnMode(intent.competencyId)
+            is PeriodLevelsUiIntent.EnterColumnMode ->
+                _state.value = _state.value.enteringColumnMode(intent.competencyId)
+
             PeriodLevelsUiIntent.MissingFilterToggled -> toggleMissingFilter()
             PeriodLevelsUiIntent.WorkedCompetenciesClicked -> openWorkedCompetencies()
             is PeriodLevelsUiIntent.SheetAchievementLevelSelected -> editSheet { it.withAchievementLevel(intent.level) }
@@ -76,7 +78,7 @@ class PeriodLevelsViewModel(
 
             PeriodLevelsUiIntent.SheetDismissed -> _state.value = _state.value.copy(sheet = null)
             is PeriodLevelsUiIntent.PickLevelForCurrent -> recordAndAdvance(intent.level)
-            PeriodLevelsUiIntent.ExitColumnMode -> _state.value = _state.value.copy(columnMode = null)
+            PeriodLevelsUiIntent.ExitColumnMode -> _state.value = _state.value.leavingColumnMode()
             PeriodLevelsUiIntent.BackClicked -> emit(PeriodLevelsUiEffect.NavigateBack)
         }
     }
@@ -212,16 +214,6 @@ class PeriodLevelsViewModel(
         }
     }
 
-    private fun enterColumnMode(competencyId: String) {
-        val current: PeriodLevelsUiState = _state.value
-        if (current.columns.none { it.id == competencyId } || current.visibleRows.isEmpty()) return
-
-        _state.value = current.copy(
-            sheet = null,
-            columnMode = ColumnModeUiState(competencyId = competencyId, currentStudentIndex = 0),
-        )
-    }
-
     private fun recordAndAdvance(level: AchievementLevel?) {
         val current: PeriodLevelsUiState = _state.value
         val mode: ColumnModeUiState = current.columnMode ?: return
@@ -230,18 +222,8 @@ class PeriodLevelsViewModel(
 
         viewModelScope.launch {
             persist(getPeriodLevel(key).withAchievementLevel(level))
-            advanceColumnMode()
+            _state.value = _state.value.advancedToNextStudent()
         }
-    }
-
-    private fun advanceColumnMode() {
-        val current: PeriodLevelsUiState = _state.value
-        val mode: ColumnModeUiState = current.columnMode ?: return
-        val nextIndex: Int = mode.currentStudentIndex + 1
-
-        _state.value = current.copy(
-            columnMode = mode.copy(currentStudentIndex = nextIndex).takeIf { nextIndex < current.visibleRows.size },
-        )
     }
 
     private suspend fun persist(periodLevel: PeriodLevel) {

@@ -42,16 +42,16 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GSegmentedPicker` | `SingleChoiceSegmentedButtonRow` | period kind, grade, attendance status, level pickers | built |
 | `GListItem` | `ListItem` inside `Surface` | home, sections, students, activities, blockers | built |
 | `GCard` | `Surface` | home banner, export cards, section detail | built |
-| `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows | planned |
-| `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence | planned |
+| `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows | built |
+| `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence | built |
 | `GAttendanceToggle` | `GSegmentedPicker` | attendance day | planned |
 | `GCheckRow` | `Row` + `Checkbox` | worked competencies, activity form, import preview | built |
 | `GSwitchRow` | `Row` + `Switch` | section areas | built |
 | `GBanner` | `Surface` | backup reminder, import rejection, export blocked, period warnings | built |
 | `GEmptyState` | `Column` | students, activities, period levels, sections | built |
 | `GDialog` | `AlertDialog` | delete section, restore backup, apply import | built |
-| `GBottomSheet` | `ModalBottomSheet` | period level sheet, export blockers | planned |
-| `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors | planned |
+| `GBottomSheet` | `ModalBottomSheet` | period level sheet, export blockers | built |
+| `GDropdownPicker` | `ExposedDropdownMenuBox` | area, period and month selectors | built |
 | `GSearchField` | `OutlinedTextField` | students | planned |
 
 (Twenty rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
@@ -327,7 +327,7 @@ passive container; a clickable variant of the whole card was never needed, and
 a caller that wants a tap target wraps its own `Modifier.clickable` on the
 content rather than the catalog adding a parameter with no current caller.
 
-### GLevelChip (planned)
+### GLevelChip
 
 Purpose: display one Achievement Level, one Unworked Comment, or an empty slot.
 Read-only.
@@ -335,9 +335,16 @@ Read-only.
 ```kotlin
 enum class GLevelChipSize { GRID, INLINE }
 
+enum class GLevelOption(val letter: String, val contentDescription: String) {
+    AD("AD", "Logro destacado"),
+    A("A", "Logro esperado"),
+    B("B", "En proceso"),
+    C("C", "En inicio"),
+}
+
 @Composable
 fun GLevelChip(
-    level: AchievementLevel?,
+    level: GLevelOption?,
     modifier: Modifier = Modifier,
     hasUnworkedComment: Boolean = false,
     isIncomplete: Boolean = false,
@@ -363,7 +370,7 @@ Tradeoffs, and this is the one place where the obvious choice is wrong:
   the **letter**, in one neutral surface, at a size that is legible without
   colour. Distinguishing levels is the Teacher's reading job, which they do
   fluently; the app's job is not to editorialise.
-- **`isCurrent` is a border, not a fill.** Column mode (ADR 0013) has to say
+- **`isCurrent` is a border, not a fill.** Column mode (ADR 0015) has to say
   which cell the bottom picker is bound to. It thickens the border to
   `GemaSpacing.indicatorStroke` in `colorScheme.primary`, so the letter itself
   is untouched and the marker survives next to `isIncomplete`, which wins the
@@ -375,14 +382,21 @@ Tradeoffs, and this is the one place where the obvious choice is wrong:
 - **Two sizes, not a free `dp`.** GRID has to fit three columns plus a pinned
   name column at 360dp. A caller passing an arbitrary size would eventually
   break that arithmetic.
+- **`GLevelOption`, not `AchievementLevel`.** `core:ui` is the design system and
+  depends on no domain module, the same boundary `GAttendanceOption` keeps for
+  `GAttendanceToggle`. The chip and the picker take a `core:ui` type carrying the
+  letter and the `contentDescription`, and `feature:evaluation` maps
+  `AchievementLevel` to it. The cost is one exhaustive `when` in the feature
+  module; the gain is a design system that a second app, or a redesign, can
+  take without the CNEB scale coming along.
 
-### GLevelPicker (planned)
+### GLevelPicker
 
 ```kotlin
 @Composable
 fun GLevelPicker(
-    selected: AchievementLevel?,
-    onSelect: (AchievementLevel?) -> Unit,
+    selected: GLevelOption?,
+    onSelect: (GLevelOption?) -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
 )
@@ -393,8 +407,9 @@ Tokens: inherited.
 
 It exists as its own composable rather than a call-site configuration of
 `GSegmentedPicker` because the option list, their order and their
-`contentDescription`s must be identical on the Period Level sheet and on Activity
-Evidence. Two screens building the same list independently is how they drift.
+`contentDescription`s must be identical on the Period Level sheet, on the column
+mode bar and on Activity Evidence. Three screens building the same list
+independently is how they drift.
 
 ### GAttendanceToggle (planned)
 
@@ -545,7 +560,7 @@ Wraps `AlertDialog`. Tokens: `GemaShapes.container`, `colorScheme.surface`,
 list — what deleting a Section destroys, what restoring a Backup replaces. A
 confirmation that names quantities is a confirmation; "Estas seguro?" is not.
 
-### GBottomSheet (planned)
+### GBottomSheet
 
 ```kotlin
 @Composable
@@ -566,7 +581,7 @@ stays visible behind it and the Teacher keeps their place in a thirty-row list.
 The cost is that the sheet must scroll internally when the evidence list is
 long; `content` is scrollable and the level pickers are pinned above it.
 
-### GDropdownPicker (planned)
+### GDropdownPicker
 
 ```kotlin
 @Composable

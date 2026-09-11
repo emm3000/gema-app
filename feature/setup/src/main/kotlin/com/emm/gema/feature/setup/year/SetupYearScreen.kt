@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodKind
+import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -27,7 +28,6 @@ import com.emm.gema.core.ui.GSegmentOption
 import com.emm.gema.core.ui.GSegmentedPicker
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTopBar
-import com.emm.gema.feature.setup.kindLabel
 import com.emm.gema.feature.setup.rangeLabel
 import java.time.LocalDate
 

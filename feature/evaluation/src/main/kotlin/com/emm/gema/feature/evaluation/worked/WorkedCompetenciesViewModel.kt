@@ -13,7 +13,7 @@ import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.feature.evaluation.labelFor
+import com.emm.gema.core.domain.schoolyear.labelFor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

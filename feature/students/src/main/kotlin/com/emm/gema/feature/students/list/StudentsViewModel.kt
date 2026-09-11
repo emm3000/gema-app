@@ -7,7 +7,7 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.ReactivateStudentUseCase
 import com.emm.gema.core.domain.student.Student
-import com.emm.gema.feature.students.title
+import com.emm.gema.core.domain.section.title
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

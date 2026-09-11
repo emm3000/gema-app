@@ -952,7 +952,7 @@ The Student column is pinned; only the competency band scrolls horizontally.
 `C!` marks a C without a Descriptive Conclusion — incomplete, not rejected.
 `*` marks an Unworked Comment. An empty cell is an empty cell.
 
-Tapping a competency header instead of a cell enters **column mode** (ADR 0013): a bottom
+Tapping a competency header instead of a cell enters **column mode** (ADR 0015): a bottom
 picker offers AD / A / B / C / Sin nivel for the current Student only, records
 the tap and advances to the next Student automatically, so one competency for
 the whole Section is a straight run of taps with no re-aiming at a grid cell.
@@ -1119,6 +1119,9 @@ Notes:
   an action, not a long-press or a swipe.
 - `evidence` is read-only. There is no control on this sheet that copies an
   Evidence Level into the Period Level.
+- `evidence` does not exist yet. Evidence Levels arrive with Activities, so
+  ticket #11 adds the field and the section that renders it; until then the
+  sheet has neither, rather than an empty placeholder.
 
 ---
 

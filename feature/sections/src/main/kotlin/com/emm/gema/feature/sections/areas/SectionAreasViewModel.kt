@@ -9,7 +9,7 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionArea
 import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
-import com.emm.gema.feature.sections.title
+import com.emm.gema.core.domain.section.title
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

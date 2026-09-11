@@ -35,6 +35,7 @@ import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GLevelChip
 import com.emm.gema.core.ui.GLevelChipSize
+import com.emm.gema.core.ui.GLevelOption
 import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
@@ -57,6 +58,11 @@ fun PeriodLevelsScreen(
                 subtitle = state.periodLabel,
                 onBackClick = { onIntent(PeriodLevelsUiIntent.BackClicked) },
                 actions = {
+                    GButton(
+                        text = "Competencias",
+                        onClick = { onIntent(PeriodLevelsUiIntent.WorkedCompetenciesClicked) },
+                        variant = GButtonVariant.TEXT,
+                    )
                     GButton(
                         text = "Faltan ${state.missingCount}",
                         onClick = { onIntent(PeriodLevelsUiIntent.MissingFilterToggled) },
@@ -228,7 +234,7 @@ private fun GridRow(
         ) {
             row.cells.forEach { cell ->
                 GLevelChip(
-                    level = cell.achievementLevel,
+                    level = cell.achievementLevel?.toOption(),
                     hasUnworkedComment = cell.unworkedComment != null,
                     isIncomplete = cell.isIncomplete,
                     isCurrent = cell.competencyId == currentCell?.competencyId &&
@@ -262,7 +268,7 @@ private fun Int.toSiagieOrdinal(): String = toString().padStart(2, '0')
 private data class ColumnModeBarState(
     val heading: String,
     val studentName: String,
-    val achievementLevel: AchievementLevel?,
+    val achievementLevel: GLevelOption?,
 )
 
 private fun PeriodLevelsUiState.currentCell(): PeriodLevelCellKey? {
@@ -281,7 +287,9 @@ private fun PeriodLevelsUiState.columnModeBar(): ColumnModeBarState? {
     return ColumnModeBarState(
         heading = "${column.siagieOrdinal.toSiagieOrdinal()} ${column.name} - $position de ${visibleRows.size}",
         studentName = student.displayName,
-        achievementLevel = student.cells.find { it.competencyId == mode.competencyId }?.achievementLevel,
+        achievementLevel = student.cells.find { it.competencyId == mode.competencyId }
+            ?.achievementLevel
+            ?.toOption(),
     )
 }
 

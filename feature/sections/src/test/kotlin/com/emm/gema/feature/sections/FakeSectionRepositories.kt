@@ -135,6 +135,8 @@ class FakeSiagieImportStore : SiagieImportStore {
 
     override suspend fun findTemplate(sectionId: String, kind: ImportedTemplateKind): ImportedTemplate? =
         templates[sectionId]?.takeIf { it.kind == kind }
+}
+
 class FakePeriodLevelRepository : PeriodLevelRepository {
 
     private val levels: MutableStateFlow<List<PeriodLevel>> = MutableStateFlow(emptyList())

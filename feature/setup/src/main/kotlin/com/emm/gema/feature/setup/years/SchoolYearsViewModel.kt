@@ -7,7 +7,7 @@ import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
 import com.emm.gema.core.domain.section.GetSectionCountsUseCase
-import com.emm.gema.feature.setup.kindLabel
+import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.feature.setup.rangeLabel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

@@ -10,8 +10,8 @@ import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
-import com.emm.gema.feature.setup.label
-import com.emm.gema.feature.setup.labelFor
+import com.emm.gema.core.domain.section.label
+import com.emm.gema.core.domain.schoolyear.labelFor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
