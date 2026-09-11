@@ -2,6 +2,7 @@ package com.emm.gema.feature.activities.evidence
 
 import com.emm.gema.core.domain.activity.Activity
 import com.emm.gema.core.domain.activity.ActivityId
+import com.emm.gema.core.domain.activity.EvidenceMark
 import com.emm.gema.core.domain.activity.GetActivityUseCase
 import com.emm.gema.core.domain.activity.GetEvidenceForActivityUseCase
 import com.emm.gema.core.domain.activity.RecordEvidenceLevelUseCase
@@ -94,11 +95,14 @@ class ActivityEvidenceViewModelTest {
     fun `evidence is optional per student`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), true)
         val viewModel: ActivityEvidenceViewModel = viewModel()
-        viewModel.onIntent(ActivityEvidenceUiIntent.LevelSelected(StudentId("student-1"), AchievementLevel.B))
+        viewModel.onIntent(
+            ActivityEvidenceUiIntent.LevelSelected(StudentId("student-1"), EvidenceMark.Level(AchievementLevel.B)),
+        )
 
         val state: ActivityEvidenceUiState = viewModel.state.value
-        assertThat(state.rows.find { it.studentId == StudentId("student-1") }?.level).isEqualTo(AchievementLevel.B)
-        assertThat(state.rows.find { it.studentId == StudentId("student-2") }?.level).isNull()
+        assertThat(state.rows.find { it.studentId == StudentId("student-1") }?.mark)
+            .isEqualTo(EvidenceMark.Level(AchievementLevel.B))
+        assertThat(state.rows.find { it.studentId == StudentId("student-2") }?.mark).isNull()
         assertThat(state.recordedCount).isEqualTo(1)
         assertThat(state.totalCount).isEqualTo(2)
     }
@@ -107,11 +111,29 @@ class ActivityEvidenceViewModelTest {
     fun `recording no level clears a previously recorded one`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), true)
         val viewModel: ActivityEvidenceViewModel = viewModel()
-        viewModel.onIntent(ActivityEvidenceUiIntent.LevelSelected(StudentId("student-1"), AchievementLevel.B))
+        viewModel.onIntent(
+            ActivityEvidenceUiIntent.LevelSelected(StudentId("student-1"), EvidenceMark.Level(AchievementLevel.B)),
+        )
 
         viewModel.onIntent(ActivityEvidenceUiIntent.LevelSelected(StudentId("student-1"), null))
 
         assertThat(evidenceLevelRepository.levels.value).isEmpty()
+    }
+
+    @Test
+    fun `marking a student with explicit no evidence tints nothing and keeps the row recorded`() = runTest {
+        workedCompetencyRepository.setWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), true)
+        val viewModel: ActivityEvidenceViewModel = viewModel()
+
+        viewModel.onIntent(
+            ActivityEvidenceUiIntent.LevelSelected(StudentId("student-1"), EvidenceMark.NoEvidence),
+        )
+
+        val state: ActivityEvidenceUiState = viewModel.state.value
+        assertThat(state.rows.find { it.studentId == StudentId("student-1") }?.mark)
+            .isEqualTo(EvidenceMark.NoEvidence)
+        assertThat(state.rows.find { it.studentId == StudentId("student-2") }?.mark).isNull()
+        assertThat(state.recordedCount).isEqualTo(1)
     }
 
     private fun viewModel(): ActivityEvidenceViewModel = ActivityEvidenceViewModel(

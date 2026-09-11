@@ -1,0 +1,18 @@
+CREATE TABLE evidence_level_new (
+    activity_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    competency_id TEXT NOT NULL,
+    achievement_level TEXT,
+    PRIMARY KEY (activity_id, student_id, competency_id)
+);
+
+INSERT INTO evidence_level_new (activity_id, student_id, competency_id, achievement_level)
+SELECT activity_id, student_id, competency_id, achievement_level FROM evidence_level;
+
+DROP INDEX evidence_level_activity;
+
+DROP TABLE evidence_level;
+
+ALTER TABLE evidence_level_new RENAME TO evidence_level;
+
+CREATE INDEX evidence_level_activity ON evidence_level(activity_id);

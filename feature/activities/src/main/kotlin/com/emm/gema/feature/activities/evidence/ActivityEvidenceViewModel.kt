@@ -6,13 +6,13 @@ import com.emm.gema.core.domain.activity.Activity
 import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.activity.EvidenceLevel
 import com.emm.gema.core.domain.activity.EvidenceLevelKey
+import com.emm.gema.core.domain.activity.EvidenceMark
 import com.emm.gema.core.domain.activity.GetActivityUseCase
 import com.emm.gema.core.domain.activity.GetEvidenceForActivityUseCase
 import com.emm.gema.core.domain.activity.RecordEvidenceLevelUseCase
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
-import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
@@ -69,7 +69,7 @@ class ActivityEvidenceViewModel(
     fun onIntent(intent: ActivityEvidenceUiIntent) {
         when (intent) {
             is ActivityEvidenceUiIntent.CompetencySelected -> select(intent.id)
-            is ActivityEvidenceUiIntent.LevelSelected -> record(intent.studentId, intent.level)
+            is ActivityEvidenceUiIntent.LevelSelected -> record(intent.studentId, intent.mark)
             ActivityEvidenceUiIntent.EditActivityClicked -> {
                 val loaded: Activity = activity ?: return
                 emit(ActivityEvidenceUiEffect.NavigateToActivityForm(loaded.sectionId, loaded.id))
@@ -114,9 +114,9 @@ class ActivityEvidenceViewModel(
                     getEvidenceForActivity(activityId),
                 ) { competencyId: CompetencyId?, students: List<Student>, evidence: List<EvidenceLevel> ->
                     val activeStudents: List<Student> = students.filterNot { it.isWithdrawn }.orderedByName()
-                    val recorded: Map<StudentId, AchievementLevel> = evidence
+                    val recorded: Map<StudentId, EvidenceMark> = evidence
                         .filter { it.key.competencyId == competencyId }
-                        .associate { it.key.studentId to it.achievementLevel }
+                        .associate { it.key.studentId to it.toMark() }
 
                     Triple(
                         activeStudents.map { EvidenceLevelRow(it.id, it.fullName, recorded[it.id]) },
@@ -135,12 +135,12 @@ class ActivityEvidenceViewModel(
         selectedCompetencyId.value = competencyId
     }
 
-    private fun record(studentId: StudentId, level: AchievementLevel?) {
+    private fun record(studentId: StudentId, mark: EvidenceMark?) {
         val competencyId: CompetencyId = _state.value.selectedCompetencyId ?: return
         val key = EvidenceLevelKey(activityId = activityId, studentId = studentId, competencyId = competencyId)
 
         viewModelScope.launch {
-            runCatching { recordEvidenceLevel(key, level) }
+            runCatching { recordEvidenceLevel(key, mark) }
                 .onFailure { emit(ActivityEvidenceUiEffect.ShowMessage(ActivityEvidenceMessage.RECORD_FAILED)) }
         }
     }
@@ -152,3 +152,6 @@ class ActivityEvidenceViewModel(
 
 private fun Competency.toColumn(): CompetencyColumn =
     CompetencyColumn(id = id, label = "${area.name} ${siagieOrdinal.toString().padStart(2, '0')}")
+
+private fun EvidenceLevel.toMark(): EvidenceMark =
+    achievementLevel?.let(EvidenceMark::Level) ?: EvidenceMark.NoEvidence

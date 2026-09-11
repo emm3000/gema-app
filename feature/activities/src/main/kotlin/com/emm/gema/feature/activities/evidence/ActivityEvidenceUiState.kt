@@ -1,7 +1,7 @@
 package com.emm.gema.feature.activities.evidence
 
+import com.emm.gema.core.domain.activity.EvidenceMark
 import com.emm.gema.core.domain.curriculum.CompetencyId
-import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.StudentId
 
@@ -26,5 +26,5 @@ data class CompetencyColumn(
 data class EvidenceLevelRow(
     val studentId: StudentId,
     val displayName: String,
-    val level: AchievementLevel?,
+    val mark: EvidenceMark?,
 )

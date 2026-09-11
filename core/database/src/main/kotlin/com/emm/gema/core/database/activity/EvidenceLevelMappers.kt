@@ -17,12 +17,12 @@ fun EvidenceLevelRow.toDomain(): EvidenceLevel = EvidenceLevel(
         studentId = StudentId(student_id),
         competencyId = CompetencyId(competency_id),
     ),
-    achievementLevel = AchievementLevel.valueOf(achievement_level),
+    achievementLevel = achievement_level?.let(AchievementLevel::valueOf),
 )
 
 fun SelectForStudentAndCompetency.toDomain(): EvidenceRecord = EvidenceRecord(
     activityId = ActivityId(activity_id),
     activityName = activity_name,
     date = LocalDate.parse(date),
-    achievementLevel = AchievementLevel.valueOf(achievement_level),
+    achievementLevel = AchievementLevel.valueOf(requireNotNull(achievement_level)),
 )

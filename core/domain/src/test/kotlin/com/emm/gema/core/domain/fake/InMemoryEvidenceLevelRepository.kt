@@ -49,6 +49,7 @@ class InMemoryEvidenceLevelRepository(
 
         stored
             .filter { it.key.studentId == studentId && it.key.competencyId == competencyId }
+            .filter { it.achievementLevel != null }
             .mapNotNull { level -> activitiesById[level.key.activityId]?.let { level to it } }
             .sortedBy { (_, activity) -> activity.date }
             .map { (level, activity) ->
@@ -56,7 +57,7 @@ class InMemoryEvidenceLevelRepository(
                     activityId = activity.id,
                     activityName = activity.name,
                     date = activity.date,
-                    achievementLevel = level.achievementLevel,
+                    achievementLevel = requireNotNull(level.achievementLevel),
                 )
             }
     }
