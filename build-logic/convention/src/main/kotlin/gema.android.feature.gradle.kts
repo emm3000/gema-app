@@ -12,4 +12,6 @@ dependencies {
     add("implementation", libs.findLibrary("koin-core").get())
     add("implementation", libs.findLibrary("koin-androidx-compose").get())
     add("implementation", libs.findLibrary("androidx-lifecycle-runtime-ktx").get())
+    add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
+    add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
 }

@@ -14,6 +14,7 @@ object GemaSpacing {
     val screenGutter: Dp = 16.dp
     val minimumTouchTarget: Dp = 48.dp
     val indicatorStroke: Dp = 2.dp
+    val narrowFieldWidth: Dp = 112.dp
 }
 
 object GemaShapes {
