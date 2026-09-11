@@ -1,5 +1,6 @@
 package com.emm.gema.core.theme
 
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
@@ -18,7 +19,11 @@ object GemaSpacing {
 }
 
 object GemaShapes {
-    val control: Shape = RoundedCornerShape(12.dp)
+    val control: CornerBasedShape = RoundedCornerShape(12.dp)
     val container: Shape = RoundedCornerShape(16.dp)
     val pill: Shape = RoundedCornerShape(percent = 50)
+}
+
+object GemaBorder {
+    val hairline: Dp = 1.dp
 }
