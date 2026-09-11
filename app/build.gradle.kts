@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":feature:students"))
     implementation(project(":feature:attendance"))
     implementation(project(":feature:evaluation"))
+    implementation(project(":feature:activities"))
     implementation(project(":feature:export"))
     implementation(project(":feature:backup"))
 

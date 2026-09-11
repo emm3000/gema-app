@@ -11,6 +11,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.feature.activities.evidence.ActivityEvidenceRoute
+import com.emm.gema.feature.activities.form.ActivityFormRoute
+import com.emm.gema.feature.activities.list.ActivitiesRoute
 import com.emm.gema.feature.attendance.day.AttendanceDayRoute
 import com.emm.gema.feature.attendance.month.AttendanceMonthRoute
 import com.emm.gema.feature.backup.BackupRoute
@@ -123,6 +126,7 @@ fun GemaNavHost(
                 onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
                 onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
                 onExport = { navController.navigate(GemaRoutes.exportOf(it)) },
+                onActivities = { navController.navigate(GemaRoutes.activitiesOf(it)) },
                 onSectionAreas = { navController.navigate(GemaRoutes.sectionAreasOf(it)) },
                 onSectionForm = { schoolYearId, sectionId ->
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
@@ -273,6 +277,52 @@ fun GemaNavHost(
                 sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
                 periodId = entry.arguments?.getString(GemaRoutes.PERIOD_ID).orEmpty(),
                 area = Area.valueOf(entry.arguments?.getString(GemaRoutes.AREA).orEmpty()),
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.ACTIVITIES,
+            arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
+        ) { entry ->
+            ActivitiesRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onActivityEvidence = { navController.navigate(GemaRoutes.activityEvidenceOf(it)) },
+                onActivityForm = { sectionId, activityId ->
+                    navController.navigate(GemaRoutes.activityForm(sectionId, activityId))
+                },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.ACTIVITY_FORM,
+            arguments = listOf(
+                navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType },
+                navArgument(GemaRoutes.ACTIVITY_ID) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { entry ->
+            ActivityFormRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                activityId = entry.arguments?.getString(GemaRoutes.ACTIVITY_ID)?.takeIf { it.isNotEmpty() },
+                onActivityEvidence = {
+                    navController.navigate(GemaRoutes.activityEvidenceOf(it)) {
+                        popUpTo(GemaRoutes.ACTIVITIES) { inclusive = false }
+                    }
+                },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.ACTIVITY_EVIDENCE,
+            arguments = listOf(navArgument(GemaRoutes.ACTIVITY_ID) { type = NavType.StringType }),
+        ) { entry ->
+            ActivityEvidenceRoute(
+                activityId = entry.arguments?.getString(GemaRoutes.ACTIVITY_ID).orEmpty(),
+                onActivityForm = { sectionId, activityId ->
+                    navController.navigate(GemaRoutes.activityForm(sectionId, activityId))
+                },
                 onBack = { navController.popBackStack() },
             )
         }

@@ -3,6 +3,8 @@ package com.emm.gema.di
 import com.emm.gema.core.database.GemaDatabase
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
+import com.emm.gema.core.database.activity.SqlDelightActivityRepository
+import com.emm.gema.core.database.activity.SqlDelightEvidenceLevelRepository
 import com.emm.gema.core.database.attendance.SqlDelightAttendanceRepository
 import com.emm.gema.core.database.backup.ContentResolverBackupDocuments
 import com.emm.gema.core.database.backup.SharedPreferencesBackupSettingsRepository
@@ -25,6 +27,15 @@ import com.emm.gema.core.domain.attendance.ExportMonthlyAttendanceUseCase
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
 import com.emm.gema.core.domain.attendance.RecordAttendanceUseCase
+import com.emm.gema.core.domain.activity.ActivityRepository
+import com.emm.gema.core.domain.activity.DeleteActivityUseCase
+import com.emm.gema.core.domain.activity.EvidenceLevelRepository
+import com.emm.gema.core.domain.activity.GetActivitiesUseCase
+import com.emm.gema.core.domain.activity.GetActivityEvidenceStudentCountsUseCase
+import com.emm.gema.core.domain.activity.GetActivityUseCase
+import com.emm.gema.core.domain.activity.GetEvidenceForActivityUseCase
+import com.emm.gema.core.domain.activity.RecordEvidenceLevelUseCase
+import com.emm.gema.core.domain.activity.SaveActivityUseCase
 import com.emm.gema.core.domain.backup.BackupDocuments
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.BackupStore
@@ -36,6 +47,7 @@ import com.emm.gema.core.domain.backup.SetReminderThresholdUseCase
 import com.emm.gema.core.domain.backup.ValidateBackupUseCase
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
 import com.emm.gema.core.domain.curriculum.GetPeriodCompetenciesUseCase
+import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
 import com.emm.gema.core.domain.curriculum.SeedCurriculumUseCase
 import com.emm.gema.core.domain.curriculum.SetCompetencyWorkedUseCase
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
@@ -57,6 +69,7 @@ import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
 import com.emm.gema.core.domain.export.SiagieExportStore
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
+import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.GetPeriodUseCase
@@ -138,6 +151,8 @@ val appModule: Module = module {
     single<MonthlyAttendanceExporter> {
         XlsxMonthlyAttendanceWriter(get<SiagieDocuments>(), androidContext().cacheDir.resolve("attendance-exports"))
     }
+    single<ActivityRepository> { SqlDelightActivityRepository(get()) }
+    single<EvidenceLevelRepository> { SqlDelightEvidenceLevelRepository(get()) }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
@@ -149,11 +164,14 @@ val appModule: Module = module {
     factory<GetPeriodsUseCase> { GetPeriodsUseCase(get()) }
     factory<GetPeriodUseCase> { GetPeriodUseCase(get()) }
     factory<GetCurrentPeriodUseCase> { GetCurrentPeriodUseCase(get(), get()) }
+    factory<FindPeriodForDateUseCase> { FindPeriodForDateUseCase(get()) }
     factory<UpdatePeriodsUseCase> { UpdatePeriodsUseCase(get(), get()) }
     factory<GetSchoolYearUseCase> { GetSchoolYearUseCase(get()) }
     factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
     factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
-    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get(), get(), get(), get(), get(), get()) }
+    factory<DeleteSectionUseCase> {
+        DeleteSectionUseCase(get(), get(), get(), get(), get(), get(), get(), get(), get())
+    }
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
     factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }
@@ -162,6 +180,7 @@ val appModule: Module = module {
     factory<SeedCurriculumUseCase> { SeedCurriculumUseCase(get()) }
     factory<GetPeriodCompetenciesUseCase> { GetPeriodCompetenciesUseCase(get(), get()) }
     factory<SetCompetencyWorkedUseCase> { SetCompetencyWorkedUseCase(get()) }
+    factory<GetWorkedCompetenciesUseCase> { GetWorkedCompetenciesUseCase(get(), get(), get()) }
     factory<GetPeriodLevelGridUseCase> { GetPeriodLevelGridUseCase(get(), get(), get()) }
     factory<GetPeriodLevelUseCase> { GetPeriodLevelUseCase(get()) }
     factory<SavePeriodLevelUseCase> { SavePeriodLevelUseCase(get()) }
@@ -190,6 +209,13 @@ val appModule: Module = module {
     factory<CountAttendanceDaysUseCase> { CountAttendanceDaysUseCase(get()) }
     factory<GetMonthlyAttendanceSummaryUseCase> { GetMonthlyAttendanceSummaryUseCase(get(), get()) }
     factory<ExportMonthlyAttendanceUseCase> { ExportMonthlyAttendanceUseCase(get(), get(), get()) }
+    factory<SaveActivityUseCase> { SaveActivityUseCase(get(), get(), get(), get()) }
+    factory<DeleteActivityUseCase> { DeleteActivityUseCase(get(), get()) }
+    factory<GetActivitiesUseCase> { GetActivitiesUseCase(get()) }
+    factory<GetActivityUseCase> { GetActivityUseCase(get()) }
+    factory<RecordEvidenceLevelUseCase> { RecordEvidenceLevelUseCase(get()) }
+    factory<GetEvidenceForActivityUseCase> { GetEvidenceForActivityUseCase(get()) }
+    factory<GetActivityEvidenceStudentCountsUseCase> { GetActivityEvidenceStudentCountsUseCase(get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
     factory<InspectBackupUseCase> { InspectBackupUseCase(get(), get()) }

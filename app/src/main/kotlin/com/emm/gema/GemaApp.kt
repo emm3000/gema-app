@@ -2,6 +2,7 @@ package com.emm.gema
 
 import android.app.Application
 import com.emm.gema.di.appModule
+import com.emm.gema.feature.activities.activitiesModule
 import com.emm.gema.feature.attendance.attendanceModule
 import com.emm.gema.feature.evaluation.evaluationModule
 import com.emm.gema.feature.export.exportModule
@@ -27,6 +28,7 @@ class GemaApp : Application() {
                 attendanceModule,
                 evaluationModule,
                 exportModule,
+                activitiesModule,
             )
         }
     }
