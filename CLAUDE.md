@@ -10,19 +10,23 @@ The product is an **offline-first, single-device** gradebook. Don't assume a bac
 
 ## Modules
 
-Currently **one module, `:app`**. A later foundation ticket splits it into:
-
 ```
-app -> data
-app -> domain
-data -> domain
+app        -> core:domain, core:database, core:siagie, core:ui, feature:*
+feature:*  -> core:domain, core:ui
+core:database -> core:domain
+core:siagie   -> core:domain
 ```
 
-- `app` — UI, navigation, DI, startup, feature screens
-- `data` — repositories, SQLDelight, mappers
-- `domain` — **JVM-only** models and use cases. No Android, no DB, no network.
+- `core:domain` — **JVM-only** models, value objects, use cases and repository interfaces. No Android, no SQLDelight, no network.
+- `core:database` — `GemaDb`, the SQLDelight schema, repository implementations, the Android driver and the in-memory JVM driver used by tests.
+- `core:siagie` — **JVM-only** SIAGIE workbook import and export.
+- `core:ui` — theme tokens and the `G*` components.
+- `feature:<name>` — one MVI screen group each: `setup`, `sections`, `students`, `attendance`, `evaluation`, `export`, `backup`.
+- `app` — navigation, Koin wiring and startup.
 
-Until the split lands, honor the same boundary through package structure under `app/src/main/kotlin/com/emm/gema/{domain,data,feature}`. A `domain` package file may not import Android or SQLDelight types even while it lives inside `:app`.
+A feature module never depends on another feature module, and only `app` may depend on a feature module. `./gradlew checkModuleBoundaries` fails the build when that is broken.
+
+Shared Gradle configuration lives in convention plugins under `build-logic/`: `gema.android.application`, `gema.android.library`, `gema.android.compose`, `gema.android.feature` and `gema.jvm.library`. A module build file applies its plugin and declares its own dependencies, nothing else. `gradle/libs.versions.toml` is the only place a version is written.
 
 ## Product
 
@@ -34,9 +38,9 @@ These bind on every change, including a new file created before any Kotlin has b
 
 - **No comments.** No KDoc, no `//`, no banners, no commented-out code. The code explains itself or it gets renamed. Three narrow exceptions in `.claude/rules/kotlin-style.md`.
 - **Explicit types** on every property and local `val` / `var`, and the supertype when the abstraction is what matters. Omit only when the right-hand side is a constructor call that already names the type.
-- **Only `core/ui/G*` components** in feature screens (target convention — see `.claude/rules/ui-components.md`). Never raw Material3.
+- **Only `core:ui` `G*` components** in feature screens (see `.claude/rules/ui-components.md`). Never raw Material3.
 - **MVI per feature**: one `UiState` (all `val`), one `onIntent(intent)` entry point, effects consumed once and never stored in state.
-- **`domain` stays JVM-only**, package or module. If it needs to reach outward, invert with an interface in `domain`.
+- **`core:domain` stays JVM-only**. If it needs to reach outward, invert with an interface in `core:domain`.
 - **`./gradlew detekt testDebugUnitTest` green** before every commit.
 - **Never add `Co-Authored-By`** from Claude, Anthropic or any AI assistant to a commit message. Applies to `git commit`, `--amend`, rebases and any generated message flow.
 
@@ -55,11 +59,12 @@ Path-scoped, loaded when Kotlin files are touched:
 
 ## Stack
 
-Kotlin, Jetpack Compose, Material3, Koin, SQLDelight. Retrofit is present today and slated for removal once the backend-facing code is retired in the foundation ticket — do not build new features on it.
+Kotlin, Jetpack Compose, Material3, Koin, SQLDelight. No HTTP client and no serialization library: the device is the only source of truth.
 
 ## Commands
 
 - `./gradlew detekt` — style and complexity gate.
+- `./gradlew checkModuleBoundaries` — layer boundary gate.
 - `./gradlew testDebugUnitTest` — unit tests.
 - `./gradlew assembleDebug` — debug build.
 

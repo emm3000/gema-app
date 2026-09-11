@@ -6,11 +6,11 @@ allowed-tools: Read Write Bash(ls:*) Bash(./gradlew:*)
 disable-model-invocation: true
 ---
 
-Scaffold a new feature called **$ARGUMENTS** under `app/src/main/kotlin/com/emm/gema/feature/$ARGUMENTS/`.
+Scaffold a new feature called **$ARGUMENTS** under `feature/$ARGUMENTS/src/main/kotlin/com/emm/gema/feature/$ARGUMENTS/`.
 
 ## Before creating anything
 
-1. Confirm the feature name is PascalCase and not already used (`ls app/src/main/kotlin/com/emm/gema/feature/`).
+1. Confirm the feature name is PascalCase and that `feature/$ARGUMENTS/` exists in `settings.gradle.kts`.
 2. Read 1-2 existing features to copy idiomatic patterns (state shape, intent grouping, route DI).
 3. Confirm with me which existing feature you used as the template.
 
@@ -38,8 +38,8 @@ Placeholder copy in the screen is a literal string. Move it to `values/strings.x
 
 ## Wiring
 
-- Register the ViewModel in `app/src/main/kotlin/com/emm/gema/di/NewModule.kt`: `viewModel { $ARGUMENTSViewModel() }`, one `get()` per constructor dependency.
-- Register the destination in `app/src/main/kotlin/com/emm/gema/feature/NewRoot.kt`: `entry<$ARGUMENTSRoute> { $ARGUMENTSDestination(navigator) }`.
+- Register the ViewModel in the feature module's Koin module and include it from `app/src/main/kotlin/com/emm/gema/di/AppModule.kt`: `viewModel { $ARGUMENTSViewModel() }`, one `get()` per constructor dependency.
+- Register the destination in `app/src/main/kotlin/com/emm/gema/navigation/GemaNavHost.kt`.
 
 ## Hard rules (from `CLAUDE.md` and `.claude/rules/`)
 

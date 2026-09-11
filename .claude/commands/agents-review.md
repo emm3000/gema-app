@@ -9,8 +9,8 @@ Review the pending changes (staged + unstaged) against `CLAUDE.md` and `.claude/
 ## Checklist
 
 1. **Layer boundaries**
-   - Any file under `domain/` (package or module) importing Android, SQLDelight, or network types?
-   - Any file under `data/` importing a feature or `app` package?
+   - Any file under `core/domain/` or `core/siagie/` importing Android or SQLDelight types?
+   - Any file under `core/` importing a feature or `app` package, or a feature module importing another feature module?
    - Allowed dependencies: `app -> data`, `app -> domain`, `data -> domain`.
 
 2. **MVI**
