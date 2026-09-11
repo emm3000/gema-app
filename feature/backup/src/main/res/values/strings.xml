@@ -5,10 +5,10 @@
     <string name="backup_last_today">hoy</string>
     <string name="backup_create">Crear respaldo</string>
     <string name="backup_create_hint">Se crea un archivo .gema y se abre el menú para compartir.</string>
-    <string name="backup_restore_title">Restaurar</string>
+    <string name="backup_restore_title">RESTAURAR</string>
     <string name="backup_restore_choose">Elegir archivo .gema</string>
     <string name="backup_restore_warning">Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app.</string>
-    <string name="backup_reminder_label">Recordarme cada</string>
+    <string name="backup_reminder_label">RECORDARME CADA</string>
     <string name="backup_reminder_days">días</string>
     <string name="backup_reminder_error">Elige entre %1$d y %2$d días</string>
     <string name="backup_overdue_subtitle">%1$s · pasaste tu recordatorio de %2$d días</string>

@@ -83,7 +83,8 @@ private fun LastBackupCard(state: BackupUiState, onIntent: (BackupUiIntent) -> U
     Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
         if (state.isBackupOverdue) {
             GBanner(
-                text = overdueBackupText(state),
+                title = overdueBackupTitle(state),
+                text = overdueBackupSubtitle(state),
                 tone = GBannerTone.ERROR,
                 icon = Icons.Filled.Warning,
             )
@@ -212,12 +213,16 @@ private fun lastBackupLabel(state: BackupUiState): String {
 }
 
 @Composable
-private fun overdueBackupText(state: BackupUiState): String {
+private fun overdueBackupTitle(state: BackupUiState): String {
     val days: Int = state.daysSinceLastBackup ?: 0
-    val title: String = pluralStringResource(R.plurals.backup_last_days_ago, days, days)
+    val elapsed: String = pluralStringResource(R.plurals.backup_last_days_ago, days, days)
+    return "${stringResource(R.string.backup_last_title)} $elapsed"
+}
+
+@Composable
+private fun overdueBackupSubtitle(state: BackupUiState): String {
     val date: String = state.lastBackupDate?.format(lastBackupDateFormat).orEmpty()
-    val subtitle: String = stringResource(R.string.backup_overdue_subtitle, date, state.reminderThresholdDays)
-    return "${stringResource(R.string.backup_last_title)} $title\n$subtitle"
+    return stringResource(R.string.backup_overdue_subtitle, date, state.reminderThresholdDays)
 }
 
 @Composable
