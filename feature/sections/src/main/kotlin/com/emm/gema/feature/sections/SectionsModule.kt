@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val sectionsModule: Module = module {
     viewModel { (schoolYearId: SchoolYearId, sectionId: SectionId?) ->
-        SectionFormViewModel(schoolYearId, sectionId, get(), get(), get(), get(), get(), get(), get())
+        SectionFormViewModel(schoolYearId, sectionId, get(), get(), get(), get(), get(), get())
     }
     viewModel { (sectionId: SectionId) -> SectionAreasViewModel(sectionId, get(), get(), get(), get()) }
     viewModel { (sectionId: SectionId) ->

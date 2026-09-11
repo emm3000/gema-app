@@ -2,17 +2,17 @@ package com.emm.gema.feature.sections.form
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.emm.gema.core.domain.attendance.CountAttendanceDaysUseCase
-import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
+import com.emm.gema.core.domain.section.GetSectionDeletionImpactUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionDeletionImpact
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
-import com.emm.gema.core.domain.student.GetStudentsUseCase
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,9 +29,8 @@ class SectionFormViewModel(
     private val createSection: CreateSectionUseCase,
     private val updateSection: UpdateSectionUseCase,
     private val deleteSection: DeleteSectionUseCase,
-    private val getStudents: GetStudentsUseCase,
-    private val getPeriodLevelCount: GetPeriodLevelCountUseCase,
-    private val countAttendanceDays: CountAttendanceDaysUseCase,
+    private val getStudentCounts: GetStudentCountsUseCase,
+    private val getSectionDeletionImpact: GetSectionDeletionImpactUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<SectionFormUiState> = MutableStateFlow(SectionFormUiState())
@@ -58,7 +57,7 @@ class SectionFormViewModel(
 
     private suspend fun load() {
         val section: Section? = sectionId?.let { getSection(it) }
-        val studentCount: Int = section?.let { getStudents(it.id).first().size } ?: 0
+        val studentCount: Int = section?.let { getStudentCounts().first()[it.id] ?: 0 } ?: 0
         _state.value = validate(
             _state.value.copy(
                 isLoading = false,
@@ -110,11 +109,14 @@ class SectionFormViewModel(
         }
     }
 
-    private suspend fun countWhatIsLost(sectionId: SectionId): DeleteConfirmation = DeleteConfirmation(
-        studentCount = getStudents(sectionId).first().size,
-        attendanceDayCount = countAttendanceDays(sectionId),
-        periodLevelCount = getPeriodLevelCount(sectionId).first(),
-    )
+    private suspend fun countWhatIsLost(sectionId: SectionId): DeleteConfirmation {
+        val impact: SectionDeletionImpact = getSectionDeletionImpact(sectionId)
+        return DeleteConfirmation(
+            studentCount = impact.studentCount,
+            attendanceDayCount = impact.attendanceDayCount,
+            periodLevelCount = impact.periodLevelCount,
+        )
+    }
 
     private fun update(change: (SectionFormUiState) -> SectionFormUiState) {
         _state.value = validate(change(_state.value))
