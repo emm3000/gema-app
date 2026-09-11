@@ -10,7 +10,8 @@ data class PeriodsUiState(
     val periodKindLabel: String = "",
     val periods: List<PeriodRow> = emptyList(),
     val overlapError: PeriodRangeError? = null,
-    val overlappingPeriodIds: Set<PeriodId> = emptySet(),
+    val overlappingStartIds: Set<PeriodId> = emptySet(),
+    val overlappingEndIds: Set<PeriodId> = emptySet(),
     val canSave: Boolean = false,
 )
 
