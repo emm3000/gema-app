@@ -13,8 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 
@@ -27,11 +31,26 @@ fun GCheckRow(
     prefix: String? = null,
     subtitle: String? = null,
     isEnabled: Boolean = true,
+    showBottomDivider: Boolean = false,
 ) {
+    val dividerColor: Color = MaterialTheme.colorScheme.outlineVariant
+    val dividerModifier: Modifier = if (showBottomDivider) {
+        Modifier.drawBehind {
+            drawLine(
+                color = dividerColor,
+                start = Offset(0f, size.height),
+                end = Offset(size.width, size.height),
+                strokeWidth = GemaBorder.hairline.toPx(),
+            )
+        }
+    } else {
+        Modifier
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = GemaSpacing.minimumTouchTarget)
+            .then(dividerModifier)
             .toggleable(
                 value = isChecked,
                 enabled = isEnabled,
