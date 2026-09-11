@@ -1,0 +1,34 @@
+<resources>
+    <string name="backup_title">Respaldo</string>
+    <string name="backup_last_title">Último respaldo</string>
+    <string name="backup_last_never">Todavía no creaste ningún respaldo</string>
+    <string name="backup_last_today">hoy</string>
+    <string name="backup_create">Crear respaldo</string>
+    <string name="backup_create_hint">Se crea un archivo .gema y se abre el menú para compartir.</string>
+    <string name="backup_restore_title">Restaurar</string>
+    <string name="backup_restore_choose">Elegir archivo .gema</string>
+    <string name="backup_restore_warning">Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app.</string>
+    <string name="backup_reminder_label">Recordarme cada</string>
+    <string name="backup_reminder_days">días</string>
+    <string name="backup_reminder_error">Elige entre %1$d y %2$d días</string>
+    <string name="backup_restore_confirm_title">¿Restaurar este respaldo?</string>
+    <string name="backup_restore_confirm_file">%1$s reemplazará los datos de este teléfono.</string>
+    <string name="backup_restore_confirm">Restaurar</string>
+    <string name="backup_restore_cancel">Cancelar</string>
+    <string name="backup_message_created">Respaldo creado</string>
+    <string name="backup_message_failed">No se pudo crear el respaldo</string>
+    <string name="backup_message_not_a_backup">Ese archivo no es un respaldo de Gema</string>
+    <string name="backup_message_newer_app">Ese respaldo viene de una versión más nueva de Gema</string>
+    <string name="backup_message_restore_failed">No se pudo restaurar el respaldo</string>
+    <string name="backup_share_title">Compartir respaldo</string>
+
+    <plurals name="backup_last_days_ago">
+        <item quantity="one">hace %d día</item>
+        <item quantity="other">hace %d días</item>
+    </plurals>
+
+    <plurals name="backup_restore_confirm_school_years">
+        <item quantity="one">Se reemplazará %d año escolar guardado en este teléfono.</item>
+        <item quantity="other">Se reemplazarán %d años escolares guardados en este teléfono.</item>
+    </plurals>
+</resources>
