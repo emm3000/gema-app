@@ -100,6 +100,7 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 - `docs/cneb/primary.json` — official CNEB areas, competencies and the AD/A/B/C scale. The seed source for `core:domain`.
 - `docs/siagie/` — SIAGIE template structure and official instructives.
 - `docs/play/` — store listing, privacy policy and Play Console form answers.
+- `docs/release.md` — version bump step, upload keystore wizard, the CI secrets and what the release build minifies.
 
 ### Domain docs
 
