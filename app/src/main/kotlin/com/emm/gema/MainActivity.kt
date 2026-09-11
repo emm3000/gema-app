@@ -8,7 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Modifier
-import com.emm.gema.ui.theme.GemaTheme
+import com.emm.gema.core.theme.GemaTheme
 
 class MainActivity : ComponentActivity() {
 
