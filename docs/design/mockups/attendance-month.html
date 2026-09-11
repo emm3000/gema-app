@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .mrow { display: flex; align-items: center; height: 52px; border-bottom: 1px solid #DFE4D7; }
+    .mname { flex-grow: 1; padding: 0 8px 0 16px; font-size: 14px; color: #191D17; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mc { width: 36px; text-align: center; font-size: 15px; color: #191D17; }
+    .mz { width: 36px; text-align: center; font-size: 15px; color: #C3C8BC; }
+    .mh { width: 36px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F; }
+  </style>
+</helmet>
+<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Asistencia · 3ro A</span>
+      <span style="font-size: 13px; color: #43483F;">Resumen del mes</span>
+    </div>
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #43483F;">
+      <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 8px 8px 8px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+    </div>
+    <span style="font-size: 16px; font-weight: 500; color: #191D17;">setiembre 2026</span>
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #C3C8BC;">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; flex-grow: 1; border-top: 1px solid #DFE4D7;">
+    <div style="display: flex; align-items: center; height: 44px; background: #ECEFE5; border-bottom: 1px solid #DFE4D7;">
+      <span style="flex-grow: 1; padding: 0 8px 0 16px; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F;">ALUMNO</span>
+      <span class="mh">P</span><span class="mh">T</span><span class="mh">F</span><span class="mh">FJ</span>
+      <span style="width: 4px;"></span>
+    </div>
+
+    <div class="mrow"><span class="mname">ACOSTA RIVERA, Luz M.</span><span class="mc">18</span><span class="mc">1</span><span class="mz">0</span><span class="mc">1</span><span style="width: 4px;"></span></div>
+    <div class="mrow"><span class="mname">BAUTISTA QUISPE, José</span><span class="mc">15</span><span class="mc">2</span><span class="mc">3</span><span class="mz">0</span><span style="width: 4px;"></span></div>
+    <div class="mrow"><span class="mname">CCAHUANA MAMANI, Rosa</span><span class="mc">20</span><span class="mz">0</span><span class="mz">0</span><span class="mz">0</span><span style="width: 4px;"></span></div>
+    <div class="mrow"><span class="mname">DELGADO HUAMÁN, Pedro</span><span class="mc">12</span><span class="mc">1</span><span class="mc">6</span><span class="mc">1</span><span style="width: 4px;"></span></div>
+    <div class="mrow"><span class="mname">ESPINOZA VEGA, Ana</span><span class="mc">19</span><span class="mc">1</span><span class="mz">0</span><span class="mz">0</span><span style="width: 4px;"></span></div>
+    <div class="mrow"><span class="mname">FLORES CANO, Miguel</span><span class="mc">17</span><span class="mz">0</span><span class="mc">2</span><span class="mc">1</span><span style="width: 4px;"></span></div>
+    <div class="mrow"><span class="mname">GUTIÉRREZ ROJAS, Sara</span><span class="mc">20</span><span class="mz">0</span><span class="mz">0</span><span class="mz">0</span><span style="width: 4px;"></span></div>
+
+    <div style="display: flex; align-items: center; padding: 14px 16px;">
+      <span style="font-size: 13px; color: #43483F;">20 días de clase registrados</span>
+    </div>
+  </div>
+
+  <div style="display: flex; padding: 12px 16px 24px 16px; background: #F8FBF1; border-top: 1px solid #DFE4D7;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; flex-grow: 1; background: #3F6836; color: #FFFFFF; border-radius: 12px; font-size: 16px; font-weight: 500;">
+      <svg class="ico" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 15V3"></path><path d="M7 8l5-5 5 5"></path><path d="M5 21h14"></path><path d="M5 17v4M19 17v4"></path></svg>
+      <span>Exportar el mes</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
