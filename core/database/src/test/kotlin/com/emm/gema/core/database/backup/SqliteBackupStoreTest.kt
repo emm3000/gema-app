@@ -9,7 +9,6 @@ import com.emm.gema.core.domain.backup.BackupFile
 import com.emm.gema.core.domain.backup.BackupStore
 import com.emm.gema.core.domain.backup.BackupValidation
 import com.emm.gema.core.domain.backup.ValidateBackupUseCase
-import com.emm.gema.core.domain.schoolyear.CreateSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
@@ -129,7 +128,15 @@ class SqliteBackupStoreTest {
         )
 
         suspend fun createSchoolYear(startDate: LocalDate, endDate: LocalDate, periodKind: PeriodKind) {
-            CreateSchoolYearUseCase(repository, UuidIdGenerator())(startDate, endDate, periodKind)
+            repository.save(
+                SchoolYear(
+                    id = UuidIdGenerator().newId(),
+                    label = startDate.year.toString(),
+                    startDate = startDate,
+                    endDate = endDate,
+                    periodKind = periodKind,
+                )
+            )
         }
 
         suspend fun schoolYears(): List<SchoolYear> = repository.observeAll().first()

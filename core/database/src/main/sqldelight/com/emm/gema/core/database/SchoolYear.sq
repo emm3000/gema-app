@@ -2,12 +2,13 @@ CREATE TABLE school_year (
     id TEXT NOT NULL PRIMARY KEY,
     start_date TEXT NOT NULL,
     end_date TEXT NOT NULL,
-    period_kind TEXT NOT NULL
+    period_kind TEXT NOT NULL,
+    label TEXT NOT NULL DEFAULT ''
 );
 
 insert:
-INSERT INTO school_year (id, start_date, end_date, period_kind)
-VALUES (?, ?, ?, ?);
+INSERT OR REPLACE INTO school_year (id, start_date, end_date, period_kind, label)
+VALUES (?, ?, ?, ?, ?);
 
 selectAll:
 SELECT *

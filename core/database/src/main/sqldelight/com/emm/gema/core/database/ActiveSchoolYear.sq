@@ -1,0 +1,13 @@
+CREATE TABLE active_school_year (
+    id INTEGER NOT NULL PRIMARY KEY CHECK (id = 0),
+    school_year_id TEXT NOT NULL
+);
+
+activate:
+INSERT OR REPLACE INTO active_school_year (id, school_year_id)
+VALUES (0, ?);
+
+select:
+SELECT school_year_id
+FROM active_school_year
+WHERE id = 0;

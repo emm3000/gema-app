@@ -5,7 +5,12 @@ import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
 import com.emm.gema.core.database.backup.ContentResolverBackupDocuments
 import com.emm.gema.core.database.backup.SharedPreferencesBackupSettingsRepository
+import com.emm.gema.core.database.schoolyear.SqlDelightActiveSchoolYearRepository
+import com.emm.gema.core.database.schoolyear.SqlDelightPeriodRepository
 import com.emm.gema.core.database.schoolyear.SqlDelightSchoolYearRepository
+import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
+import com.emm.gema.core.database.section.SqlDelightSectionRepository
+import com.emm.gema.core.database.setup.SqlDelightSetupRepository
 import com.emm.gema.core.domain.backup.BackupDocuments
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.BackupStore
@@ -16,9 +21,25 @@ import com.emm.gema.core.domain.backup.RestoreBackupUseCase
 import com.emm.gema.core.domain.backup.SetReminderThresholdUseCase
 import com.emm.gema.core.domain.backup.ValidateBackupUseCase
 import com.emm.gema.core.domain.id.IdGenerator
-import com.emm.gema.core.domain.schoolyear.CreateSchoolYearUseCase
+import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
+import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
+import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
+import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
+import com.emm.gema.core.domain.schoolyear.PeriodRepository
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
+import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
+import com.emm.gema.core.domain.schoolyear.UpdatePeriodDatesUseCase
+import com.emm.gema.core.domain.section.CreateSectionUseCase
+import com.emm.gema.core.domain.section.DeleteSectionUseCase
+import com.emm.gema.core.domain.section.GetSectionAreasUseCase
+import com.emm.gema.core.domain.section.GetSectionsUseCase
+import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionRepository
+import com.emm.gema.core.domain.section.SetAreaVisibilityUseCase
+import com.emm.gema.core.domain.section.UpdateSectionUseCase
+import com.emm.gema.core.domain.setup.CompleteSetupUseCase
+import com.emm.gema.core.domain.setup.SetupRepository
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
 import org.koin.android.ext.koin.androidContext
@@ -33,12 +54,28 @@ val appModule: Module = module {
     single<Clock> { Clock.systemDefaultZone() }
     single<IdGenerator> { UuidIdGenerator() }
     single<SchoolYearRepository> { SqlDelightSchoolYearRepository(get()) }
+    single<PeriodRepository> { SqlDelightPeriodRepository(get()) }
+    single<SectionRepository> { SqlDelightSectionRepository(get()) }
+    single<SectionAreaRepository> { SqlDelightSectionAreaRepository(get()) }
+    single<ActiveSchoolYearRepository> { SqlDelightActiveSchoolYearRepository(get()) }
+    single<SetupRepository> { SqlDelightSetupRepository(get()) }
     single<BackupStore> { get<GemaDatabase>().backupStore }
     single<BackupDocuments> { ContentResolverBackupDocuments(androidContext().contentResolver) }
     single<BackupSettingsRepository> { SharedPreferencesBackupSettingsRepository(androidContext()) }
 
-    factory<CreateSchoolYearUseCase> { CreateSchoolYearUseCase(get(), get()) }
+    factory<CompleteSetupUseCase> { CompleteSetupUseCase(get(), get()) }
     factory<GetSchoolYearsUseCase> { GetSchoolYearsUseCase(get()) }
+    factory<GetActiveSchoolYearUseCase> { GetActiveSchoolYearUseCase(get(), get()) }
+    factory<SwitchSchoolYearUseCase> { SwitchSchoolYearUseCase(get()) }
+    factory<GetPeriodsUseCase> { GetPeriodsUseCase(get()) }
+    factory<GetCurrentPeriodUseCase> { GetCurrentPeriodUseCase(get(), get()) }
+    factory<UpdatePeriodDatesUseCase> { UpdatePeriodDatesUseCase(get(), get()) }
+    factory<CreateSectionUseCase> { CreateSectionUseCase(get(), get()) }
+    factory<UpdateSectionUseCase> { UpdateSectionUseCase(get()) }
+    factory<DeleteSectionUseCase> { DeleteSectionUseCase(get(), get()) }
+    factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
+    factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
+    factory<SetAreaVisibilityUseCase> { SetAreaVisibilityUseCase(get()) }
     factory<ValidateBackupUseCase> { ValidateBackupUseCase(get<GemaDatabase>().schemaVersion) }
     factory<CreateBackupUseCase> { CreateBackupUseCase(get(), get(), get()) }
     factory<InspectBackupUseCase> { InspectBackupUseCase(get(), get()) }

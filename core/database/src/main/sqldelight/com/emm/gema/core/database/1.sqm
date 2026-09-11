@@ -1,0 +1,33 @@
+ALTER TABLE school_year ADD COLUMN label TEXT NOT NULL DEFAULT '';
+
+UPDATE school_year SET label = substr(start_date, 1, 4) WHERE label = '';
+
+CREATE TABLE period (
+    id TEXT NOT NULL PRIMARY KEY,
+    school_year_id TEXT NOT NULL,
+    number INTEGER NOT NULL,
+    start_date TEXT NOT NULL,
+    end_date TEXT NOT NULL
+);
+
+CREATE INDEX period_school_year_id ON period(school_year_id);
+
+CREATE TABLE section (
+    id TEXT NOT NULL PRIMARY KEY,
+    school_year_id TEXT NOT NULL,
+    grade TEXT NOT NULL,
+    name TEXT NOT NULL
+);
+
+CREATE INDEX section_school_year_id ON section(school_year_id);
+
+CREATE TABLE section_hidden_area (
+    section_id TEXT NOT NULL,
+    area TEXT NOT NULL,
+    PRIMARY KEY (section_id, area)
+);
+
+CREATE TABLE active_school_year (
+    id INTEGER NOT NULL PRIMARY KEY CHECK (id = 0),
+    school_year_id TEXT NOT NULL
+);
