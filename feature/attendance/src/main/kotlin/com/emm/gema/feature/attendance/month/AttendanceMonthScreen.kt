@@ -94,7 +94,7 @@ fun AttendanceMonthScreen(
                     )
                 }
             }
-            items(state.rows, key = { it.studentId }) { row: AttendanceMonthRow ->
+            items(state.rows, key = { it.studentId.value }) { row: AttendanceMonthRow ->
                 AttendanceMonthRow(row = row, modifier = Modifier.fillMaxWidth())
             }
             item {

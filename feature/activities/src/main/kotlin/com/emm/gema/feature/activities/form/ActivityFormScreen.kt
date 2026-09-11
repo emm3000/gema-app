@@ -107,7 +107,7 @@ fun ActivityFormScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                items(group.competencies, key = { it.id }) { competency ->
+                items(group.competencies, key = { it.id.value }) { competency ->
                     GCheckRow(
                         title = competency.name,
                         isChecked = competency.id in state.selectedCompetencyIds,

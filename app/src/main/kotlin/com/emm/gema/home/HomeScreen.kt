@@ -99,7 +99,7 @@ fun HomeScreen(
                     )
                 }
             }
-            items(state.sections, key = { it.id }) { row ->
+            items(state.sections, key = { it.id.value }) { row ->
                 SectionCard(row = row, onIntent = onIntent)
             }
         }

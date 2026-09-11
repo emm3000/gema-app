@@ -48,7 +48,7 @@ fun SchoolYearsScreen(
             contentPadding = PaddingValues(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            items(state.years, key = { it.id }) { row ->
+            items(state.years, key = { it.id.value }) { row ->
                 SchoolYearItem(row = row, onIntent = onIntent)
             }
         }
