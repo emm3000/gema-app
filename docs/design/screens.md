@@ -33,6 +33,9 @@ Shows the year, its kind and its Periods. Primary action: *Continuar*.
 |  Configura tu ano escolar                |
 |  Paso 1 de 2                             |
 +------------------------------------------+
+|  Calculamos las fechas de tus periodos   |
+|  por ti. Puedes ajustar cualquiera.      |
+|                                          |
 |  Ano                                     |
 |  +------------------------------------+  |
 |  | 2026                               |  |
@@ -50,14 +53,29 @@ Shows the year, its kind and its Periods. Primary action: *Continuar*.
 |                                          |
 |  Periodos                                |
 |  +------------------------------------+  |
-|  | I    01/03/2026  -  15/05/2026     |  |
-|  | II   18/05/2026  -  31/07/2026     |  |
-|  | III  10/08/2026  -  16/10/2026     |  |
-|  | IV   19/10/2026  -  20/12/2026     |  |
+|  | I    01/03/2026  -  15/05/2026   > |  |
+|  | II   18/05/2026  -  31/07/2026   > |  |
+|  | III  10/08/2026  -  16/10/2026   > |  |
+|  | IV   19/10/2026  -  20/12/2026   > |  |
 |  +------------------------------------+  |
-|  Puedes corregir estas fechas despues.   |
 +------------------------------------------+
 |            [    Continuar    ]           |
++------------------------------------------+
+```
+
+Tapping a Period row opens a small editor over this screen:
+
+```
++------------------------------------------+
+|  Editar periodo                          |
+|  I Bimestre                              |
++------------------------------------------+
+|  Inicio              Fin                 |
+|  +---------------+  +----------------+   |
+|  | 01/03/2026    |  | 15/05/2026     |   |
+|  +---------------+  +----------------+   |
+|                                          |
+|             [   Guardar   ]              |
 +------------------------------------------+
 ```
 
@@ -69,6 +87,7 @@ data class SetupYearUiState(
     val endDate: LocalDate? = null,
     val periodKind: PeriodKind = PeriodKind.BIMESTER,
     val periods: List<PeriodDraftRow> = emptyList(),
+    val editingPeriod: PeriodDraftRow? = null,
     val yearLabelError: String? = null,
     val dateRangeError: String? = null,
     val canContinue: Boolean = false,
@@ -85,14 +104,21 @@ data class PeriodDraftRow(
 
 Intents: `YearLabelChanged(value: String)`, `StartDateChanged(value: LocalDate)`,
 `EndDateChanged(value: LocalDate)`, `PeriodKindSelected(kind: PeriodKind)`,
-`PeriodStartDateChanged(ordinal: Int, value: LocalDate)`,
-`PeriodEndDateChanged(ordinal: Int, value: LocalDate)`, `ContinueClicked`,
-`BackClicked`.
+`PeriodRowClicked(ordinal: Int)`, `PeriodEditorStartDateChanged(value: LocalDate)`,
+`PeriodEditorEndDateChanged(value: LocalDate)`, `PeriodEditorSaveClicked`,
+`PeriodEditorDismissed`, `ContinueClicked`, `BackClicked`.
 
 Effects: `NavigateToSetupSection(draft: SchoolYearDraft)`, `NavigateBack`.
 
 Note: nothing is persisted here. The draft travels to step 2 and both are
 written in one transaction, so an abandoned setup leaves no orphan year.
+
+Note: `yearLabel` is prefilled from the device date on first render, so the
+Teacher can accept it with zero typing; it stays editable for a wrong device
+clock or a year that starts before January. The eight raw Period date fields
+that used to sit inline are gone — every `PeriodDraftRow` date is computed by
+dividing `startDate..endDate` evenly, shown as a compact list, and corrected
+one Period at a time through `editingPeriod`.
 
 ---
 
@@ -168,9 +194,11 @@ Primary action: FAB *Nueva seccion*.
 |  +--------------------------------------+|
 |  | 3ro A                     30 alumnos ||
 |  | Asistencia de hoy: sin tomar         ||
+|  |      [ Tomar asistencia de hoy ]     ||
 |  +--------------------------------------+|
 |  | 4to B                     27 alumnos ||
 |  | Asistencia de hoy: 25 presentes      ||
+|  |      [ Tomar asistencia de hoy ]     ||
 |  +--------------------------------------+|
 |                                          |
 |                                          |
@@ -201,15 +229,21 @@ data class BackupReminder(
 )
 ```
 
-Intents: `SectionClicked(id: SectionId)`, `AddSectionClicked`,
-`SchoolYearSwitcherClicked`, `BackupReminderClicked`, `SettingsClicked`.
+Intents: `SectionClicked(id: SectionId)`, `TakeAttendanceClicked(id: SectionId)`,
+`AddSectionClicked`, `SchoolYearSwitcherClicked`, `BackupReminderClicked`,
+`SettingsClicked`.
 
-Effects: `NavigateToSectionDetail(id: SectionId)`, `NavigateToSectionForm`,
-`NavigateToSchoolYears`, `NavigateToBackup`.
+Effects: `NavigateToSectionDetail(id: SectionId)`,
+`NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
+`NavigateToSectionForm`, `NavigateToSchoolYears`, `NavigateToBackup`.
 
 Note: `currentPeriodLabel` is null when today falls outside every Period
 (holidays, or a year whose dates were mistyped). The banner then reads
 "Fuera de periodo" and links to `Periods` rather than hiding.
+
+Note: the card title opens `SectionDetail`. The inline button takes today's
+attendance for that Section in one tap, without a detour through the hub.
+Both read the same `SectionRow`; neither is destructive, so neither confirms.
 
 ---
 
@@ -699,16 +733,18 @@ The daily workhorse. Every tap persists one row; there is no save button.
 |  <   Asistencia - 3ro A            [cal] |
 +------------------------------------------+
 |   <    Mar 10 set 2026    >   28/30      |
+|  [ Todos presentes ]        3 sin marcar |
+|  Cada toque guarda al instante.          |
 +------------------------------------------+
 |  ACOSTA RIVERA, Luz Maria                |
 |  +------+------+------+------+           |
 |  |  P   |  T   |  F   |  FJ  |           |
 |  +======+------+------+------+           |
 |                                          |
-|  BAUTISTA QUISPE, Jose                   |
-|  +------+------+------+------+           |
-|  |  P   |  T   |  F   |  FJ  |           |
-|  +------+======+------+------+           |
+| :BAUTISTA QUISPE, Jose : sin marcar      |
+| :+------+------+------+------+:          |
+| :|  P   |  T   |  F   |  FJ  |:          |
+| :+------+------+------+------+:          |
 |                                          |
 |  CCAHUANA MAMANI, Rosa                   |
 |  +------+------+------+------+           |
@@ -721,7 +757,9 @@ The daily workhorse. Every tap persists one row; there is no save button.
 
 `P` presente, `T` tardanza, `F` falta, `FJ` falta justificada. The double border
 marks the selected segment; the selected segment also carries a filled
-background, so the state is not colour-only.
+background, so the state is not colour-only. The `:`-bordered row is an
+unmarked Student: a warm surface colour and a dashed outline, not colour alone,
+so it stands out on a low-end screen in daylight.
 
 ```kotlin
 data class AttendanceDayUiState(
@@ -732,6 +770,7 @@ data class AttendanceDayUiState(
     val canGoForward: Boolean = false,
     val presentCount: Int = 0,
     val totalCount: Int = 0,
+    val unmarkedCount: Int = 0,
     val rows: List<AttendanceRow> = emptyList(),
 )
 
@@ -744,8 +783,8 @@ data class AttendanceRow(
 ```
 
 Intents: `StatusSelected(studentId: StudentId, status: AttendanceStatus)`,
-`PreviousDayClicked`, `NextDayClicked`, `DatePicked(value: LocalDate)`,
-`MonthlySummaryClicked`, `BackClicked`.
+`MarkAllPresent`, `PreviousDayClicked`, `NextDayClicked`,
+`DatePicked(value: LocalDate)`, `MonthlySummaryClicked`, `BackClicked`.
 
 Effects: `NavigateToAttendanceMonth(sectionId: SectionId, month: YearMonth)`,
 `NavigateBack`, `ShowMessage(text: String)`.
@@ -753,7 +792,11 @@ Effects: `NavigateToAttendanceMonth(sectionId: SectionId, month: YearMonth)`,
 Notes:
 
 - `isRecorded = false` means the row is showing the present default and nothing
-  is stored yet (US 25, 26). The first tap creates the row.
+  is stored yet (US 25, 26). The first tap creates the row. `unmarkedCount`
+  counts these rows and drives the header's "N sin marcar" pill.
+- `MarkAllPresent` records present for every `isRecorded = false` row in one
+  action; a row already marked (present, late, absent or justified) is left as
+  the Teacher set it.
 - `canGoForward` is false on today; future dates are unreachable rather than
   rejected after the fact.
 - Withdrawn Students are absent from `rows` for dates on or after their
@@ -894,6 +937,37 @@ The Student column is pinned; only the competency band scrolls horizontally.
 `C!` marks a C without a Descriptive Conclusion — incomplete, not rejected.
 `*` marks an Unworked Comment. An empty cell is an empty cell.
 
+Tapping a competency header instead of a cell enters **column mode**: a bottom
+picker offers AD / A / B / C / Sin nivel for the current Student only, records
+the tap and advances to the next Student automatically, so one competency for
+the whole Section is a straight run of taps with no re-aiming at a grid cell.
+
+```
++------------------------------------------+
+|  <   Niveles - 3ro A          [faltan 12]|
++------------------------------------------+
+|  Personal Social v   |  II Bimestre v    |
++------------------------------------------+
+|  Competencia 02 - 3 de 30                |
+|                  |  01   [ 02 ]   05  >> |
+|  ACOSTA RIVERA   | [AD ] [ A ] [   ]     |
+|  BAUTISTA QUISPE | [ B ] [>B<] [ C!]     |
+|  CCAHUANA MAMANI | [ A ] [   ] [ A ]     |
++------------------------------------------+
+|  BAUTISTA QUISPE, Jose                   |
+|  +-----+ +-----+ +=====+ +-----+ +-----+ |
+|  | AD  | |  A  | |  B  | |  C  | | --- | |
+|  +-----+ +-----+ +=====+ +-----+ +-----+ |
+|             [        Listo        ]      |
++------------------------------------------+
+```
+
+`[>B<]` marks the current Student's cell while column mode is open. A single
+tap on a level closes that Student's row and reopens the picker for the next
+one; *Listo* or picking a level for the last Student exits column mode. A tap
+on any other cell while column mode is closed still opens `PeriodLevelSheet`
+for that one Student x Competency, Descriptive Conclusion included.
+
 ```kotlin
 data class PeriodLevelsUiState(
     val isLoading: Boolean = true,
@@ -908,6 +982,12 @@ data class PeriodLevelsUiState(
     val isMissingFilterOn: Boolean = false,
     val hasWorkedCompetencies: Boolean = false,
     val editingCell: PeriodLevelCellKey? = null,
+    val columnMode: ColumnModeUiState? = null,
+)
+
+data class ColumnModeUiState(
+    val competencyId: CompetencyId,
+    val currentStudentIndex: Int,
 )
 
 data class AreaOption(val id: AreaId, val name: String)
@@ -942,8 +1022,9 @@ data class PeriodLevelCellKey(
 
 Intents: `AreaSelected(id: AreaId)`, `PeriodSelected(id: PeriodId)`,
 `CellClicked(key: PeriodLevelCellKey)`, `MissingFilterToggled`,
-`ColumnHeaderClicked(id: CompetencyId)`, `WorkedCompetenciesClicked`,
-`BackClicked`.
+`EnterColumnMode(competencyId: CompetencyId)`,
+`PickLevelForCurrent(level: AchievementLevel?)`, `ExitColumnMode`,
+`WorkedCompetenciesClicked`, `BackClicked`.
 
 Effects: `NavigateToWorkedCompetencies(sectionId: SectionId, areaId: AreaId, periodId: PeriodId)`,
 `NavigateBack`, `ShowMessage(text: String)`.
@@ -1218,7 +1299,7 @@ Entry: SectionDetail. All three outputs for one Section and Period.
 
 ```
 +------------------------------------------+
-|  <   Exportar - 3ro A                    |
+|  <   Entregar - 3ro A                    |
 +------------------------------------------+
 |  II Bimestre v                           |
 |                                          |
@@ -1226,7 +1307,11 @@ Entry: SectionDetail. All three outputs for one Section and Period.
 |  | Notas para SIAGIE                    ||
 |  | 3 Primaria EBR.xlsx                  ||
 |  | ! 2 conclusiones descriptivas faltan ||
-|  |             [  Revisar faltantes  ]  ||
+|  |   BAUTISTA QUISPE, Jose            > ||
+|  |   Personal Social - 02                ||
+|  |   DELGADO HUAMAN, Pedro            > ||
+|  |   Comunicacion - 01                   ||
+|  |          [  Generar archivo  ]       ||
 |  +--------------------------------------+|
 |                                          |
 |  +--------------------------------------+|
@@ -1242,6 +1327,15 @@ Entry: SectionDetail. All three outputs for one Section and Period.
 |                                          |
 |  El archivo conserva su nombre original. |
 +------------------------------------------+
+```
+
+When there are no blockers, the grades card drops the gap list and its
+*Generar archivo* button enables:
+
+```
+|  | Notas para SIAGIE                    ||
+|  | 3 Primaria EBR.xlsx                  ||
+|  |          [  Generar archivo  ]       ||
 ```
 
 When no Template is stored, the first card reads:
@@ -1269,47 +1363,8 @@ data class ExportUiState(
 sealed interface GradesExportState {
     data object Unavailable : GradesExportState
     data object Ready : GradesExportState
-    data class Blocked(val gapCount: Int) : GradesExportState
+    data class Blocked(val gaps: List<ExportGapRow>) : GradesExportState
 }
-```
-
-Intents: `PeriodSelected(id: PeriodId)`, `ExportGradesClicked`,
-`ReviewBlockersClicked`, `ExportAttendanceClicked`, `ExportPdfClicked`,
-`ExportCsvClicked`, `ImportTemplateClicked`, `BackClicked`.
-
-Effects: `ShareFile(path: String, mimeType: String)`,
-`ShowBlockers(gaps: List<ExportGapRow>)`,
-`NavigateToStudents(sectionId: SectionId)`, `NavigateBack`,
-`ShowMessage(text: String)`.
-
----
-
-## 21. ExportBlockers
-
-A bottom sheet over Export. Every Student x Competency whose C has no
-Descriptive Conclusion. Each row opens the sheet that fixes it.
-
-```
-+------------------------------------------+
-|  Faltan 2 conclusiones descriptivas      |
-|  SIAGIE rechaza un C sin conclusion.     |
-+------------------------------------------+
-|  | BAUTISTA QUISPE, Jose               > |
-|  | Personal Social - 02                  |
-|  +--------------------------------------+
-|  | DELGADO HUAMAN, Pedro               > |
-|  | Comunicacion - 01                     |
-|  +--------------------------------------+
-|                                          |
-|             [   Cerrar    ]              |
-+------------------------------------------+
-```
-
-```kotlin
-data class ExportBlockersUiState(
-    val isLoading: Boolean = true,
-    val gaps: List<ExportGapRow> = emptyList(),
-)
 
 data class ExportGapRow(
     val studentId: StudentId,
@@ -1320,14 +1375,24 @@ data class ExportGapRow(
 )
 ```
 
-Intents: `GapClicked(row: ExportGapRow)`, `CloseClicked`, `DismissRequested`.
+Intents: `PeriodSelected(id: PeriodId)`, `ExportGradesClicked`,
+`GapRowClicked(row: ExportGapRow)`, `ExportAttendanceClicked`, `ExportPdfClicked`,
+`ExportCsvClicked`, `ImportTemplateClicked`, `BackClicked`.
 
-Effects: `NavigateToPeriodLevelCell(studentId: StudentId, competencyId: CompetencyId)`,
-`Dismiss`.
+Effects: `ShareFile(path: String, mimeType: String)`,
+`NavigateToPeriodLevelCell(studentId: StudentId, competencyId: CompetencyId)`,
+`NavigateToStudents(sectionId: SectionId)`, `NavigateBack`,
+`ShowMessage(text: String)`.
+
+Note: screen title is "Entregar", because that is the Teacher's goal, not the
+file format. Every blocking gap now lists as a tap-through row inside the
+grades card itself — no separate bottom sheet — and `ExportGradesClicked`
+(now labelled *Generar archivo*) is enabled only when `gradesExportState` is
+`Ready`, i.e. nothing is pending.
 
 ---
 
-## 22. Backup
+## 21. Backup
 
 Entry: Home overflow or the reminder banner.
 
