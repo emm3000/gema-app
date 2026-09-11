@@ -21,9 +21,22 @@ Dates are `kotlinx.datetime.LocalDate` / `YearMonth`.
 `isLoading: Boolean` appears on every state because the MVI template defines it;
 on this app it is true for roughly one frame, so no wireframe draws it.
 
+## Mockups
+
+Some screens carry a link to a rendered HTML mockup under `mockups/`. That
+mockup html carries the exact spacing, sizes and colors; the ASCII wireframe
+below it is only the structure. When they disagree, the mockup wins.
+
+`mockups/alternative-b-attendance-grid.html` and
+`mockups/alternative-c-levels-per-student.html` are low-fidelity exploration
+artboards for the attendance and levels flows. They do not map to a numbered
+screen below and are not the accepted proposal.
+
 ---
 
 ## 1. SetupYear
+
+Mockup: [html](mockups/setup-year.html) · [png](mockups/setup-year.png)
 
 First screen of a cold start with no School Year. Entry: app launch.
 Shows the year, its kind and its Periods. Primary action: *Continuar*.
@@ -184,6 +197,8 @@ Effects: `NavigateToHome`, `NavigateToSectionAreas(sectionId: SectionId)`,
 ---
 
 ## 3. Home
+
+Mockup: [html](mockups/home.html) · [png](mockups/home.png)
 
 Entry: launch with an existing School Year, or up from any Section.
 Shows the active year, the current Period, the Backup reminder and the Sections.
@@ -746,6 +761,8 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 12. AttendanceDay
 
+Mockup: [html](mockups/attendance-day.html) · [png](mockups/attendance-day.png)
+
 Entry: SectionDetail primary action, or the Attendance row.
 The daily workhorse. Every tap persists one row; there is no save button.
 
@@ -942,6 +959,8 @@ deletes; the levels stop being exported and reappear if it is remarked.
 ---
 
 ## 15. PeriodLevels
+
+Mockup: [html](mockups/period-levels.html) · [png](mockups/period-levels.png)
 
 Entry: SectionDetail. The grid for one Section x Period x Area.
 Primary action: tap a cell.
@@ -1329,6 +1348,8 @@ Effects: `NavigateToActivityForm(sectionId: SectionId, activityId: ActivityId?)`
 ---
 
 ## 20. Export
+
+Mockup: [html](mockups/export.html) · [png](mockups/export.png)
 
 Entry: SectionDetail. All three outputs for one Section and Period.
 
