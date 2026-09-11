@@ -41,6 +41,7 @@ These bind on every change, including a new file created before any Kotlin has b
 - **Only `core:ui` `G*` components** in feature screens (see `.claude/rules/ui-components.md`). Never raw Material3.
 - **MVI per feature**: one `UiState` (all `val`), one `onIntent(intent)` entry point, effects consumed once and never stored in state.
 - **`core:domain` stays JVM-only**. If it needs to reach outward, invert with an interface in `core:domain`.
+- **Rebuild, never adapt.** When existing code, config or structure does not fit the target architecture, replace it with a clean implementation. No shims, wrappers or compatibility patches over legacy.
 - **`./gradlew detekt testDebugUnitTest` green** before every commit.
 - **Never add `Co-Authored-By`** from Claude, Anthropic or any AI assistant to a commit message. Applies to `git commit`, `--amend`, rebases and any generated message flow.
 
@@ -91,6 +92,13 @@ Issues and specs live in GitHub Issues for `emm3000/gema-app` via the `gh` CLI. 
 ### Triage labels
 
 Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Design and reference docs
+
+- `docs/design/flows.md`, `screens.md`, `components.md` — navigation map, per-screen `UiState` and intents, the `G*` catalog. A feature ticket implements the screen as specified there.
+- `docs/cneb/primary.json` — official CNEB areas, competencies and the AD/A/B/C scale. The seed source for `core:domain`.
+- `docs/siagie/` — SIAGIE template structure and official instructives.
+- `docs/play/` — store listing, privacy policy and Play Console form answers.
 
 ### Domain docs
 
