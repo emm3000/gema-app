@@ -10,6 +10,8 @@ sealed interface SectionDetailUiIntent {
 
     data object PeriodLevelsClicked : SectionDetailUiIntent
 
+    data object ExportClicked : SectionDetailUiIntent
+
     data object AreasClicked : SectionDetailUiIntent
 
     data object RenameClicked : SectionDetailUiIntent

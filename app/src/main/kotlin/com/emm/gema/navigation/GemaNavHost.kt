@@ -16,6 +16,7 @@ import com.emm.gema.feature.attendance.month.AttendanceMonthRoute
 import com.emm.gema.feature.backup.BackupRoute
 import com.emm.gema.feature.evaluation.levels.PeriodLevelsRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
+import com.emm.gema.feature.export.ExportRoute
 import com.emm.gema.feature.sections.areas.SectionAreasRoute
 import com.emm.gema.feature.sections.detail.SectionDetailRoute
 import com.emm.gema.feature.sections.form.SectionFormRoute
@@ -121,6 +122,7 @@ fun GemaNavHost(
                 },
                 onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
                 onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
+                onExport = { navController.navigate(GemaRoutes.exportOf(it)) },
                 onSectionAreas = { navController.navigate(GemaRoutes.sectionAreasOf(it)) },
                 onSectionForm = { schoolYearId, sectionId ->
                     navController.navigate(GemaRoutes.sectionForm(schoolYearId, sectionId))
@@ -229,6 +231,17 @@ fun GemaNavHost(
                 onWorkedCompetencies = { sectionId, periodId, area ->
                     navController.navigate(GemaRoutes.workedCompetenciesOf(sectionId, periodId, area))
                 },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = GemaRoutes.EXPORT,
+            arguments = listOf(navArgument(GemaRoutes.SECTION_ID) { type = NavType.StringType }),
+        ) { entry ->
+            ExportRoute(
+                sectionId = entry.arguments?.getString(GemaRoutes.SECTION_ID).orEmpty(),
+                onPeriodLevels = { navController.navigate(GemaRoutes.periodLevelsOf(it)) },
+                onStudents = { navController.navigate(GemaRoutes.studentsOf(it)) },
                 onBack = { navController.popBackStack() },
             )
         }

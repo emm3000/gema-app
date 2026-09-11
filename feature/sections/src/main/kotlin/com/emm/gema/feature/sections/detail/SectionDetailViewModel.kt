@@ -77,6 +77,7 @@ class SectionDetailViewModel(
             -> emit(SectionDetailUiEffect.NavigateToAttendanceDay(sectionId, today))
             SectionDetailUiIntent.StudentsClicked -> emit(SectionDetailUiEffect.NavigateToStudents(sectionId))
             SectionDetailUiIntent.PeriodLevelsClicked -> emit(SectionDetailUiEffect.NavigateToPeriodLevels(sectionId))
+            SectionDetailUiIntent.ExportClicked -> emit(SectionDetailUiEffect.NavigateToExport(sectionId))
             SectionDetailUiIntent.AreasClicked -> emit(SectionDetailUiEffect.NavigateToSectionAreas(sectionId))
             SectionDetailUiIntent.RenameClicked -> rename()
             SectionDetailUiIntent.BackClicked -> emit(SectionDetailUiEffect.NavigateBack)

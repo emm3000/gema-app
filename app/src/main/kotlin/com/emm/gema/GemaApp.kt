@@ -4,6 +4,7 @@ import android.app.Application
 import com.emm.gema.di.appModule
 import com.emm.gema.feature.attendance.attendanceModule
 import com.emm.gema.feature.evaluation.evaluationModule
+import com.emm.gema.feature.export.exportModule
 import com.emm.gema.feature.sections.sectionsModule
 import com.emm.gema.feature.setup.setupModule
 import com.emm.gema.feature.students.studentsModule
@@ -18,7 +19,15 @@ class GemaApp : Application() {
         startKoin {
             androidContext(this@GemaApp)
             androidLogger()
-            modules(appModule, setupModule, sectionsModule, studentsModule, attendanceModule, evaluationModule)
+            modules(
+                appModule,
+                setupModule,
+                sectionsModule,
+                studentsModule,
+                attendanceModule,
+                evaluationModule,
+                exportModule,
+            )
         }
     }
 }

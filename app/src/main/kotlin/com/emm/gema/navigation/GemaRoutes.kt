@@ -20,6 +20,7 @@ object GemaRoutes {
     const val STUDENT_FORM: String = "student-form/{sectionId}?studentId={studentId}"
     const val IMPORT_PREVIEW: String = "import-preview/{sectionId}/{uri}"
     const val PERIOD_LEVELS: String = "period-levels/{sectionId}"
+    const val EXPORT: String = "export/{sectionId}"
     const val WORKED_COMPETENCIES: String = "worked-competencies/{sectionId}/{periodId}/{area}"
 
     const val SCHOOL_YEAR_ID: String = "schoolYearId"
@@ -54,6 +55,8 @@ object GemaRoutes {
     fun importPreview(sectionId: String, uri: String): String =
         "import-preview/$sectionId/${encodeArgument(uri)}"
     fun periodLevelsOf(sectionId: String): String = "period-levels/$sectionId"
+
+    fun exportOf(sectionId: String): String = "export/$sectionId"
 
     fun workedCompetenciesOf(sectionId: String, periodId: String, area: Area): String =
         "worked-competencies/$sectionId/$periodId/${area.name}"
