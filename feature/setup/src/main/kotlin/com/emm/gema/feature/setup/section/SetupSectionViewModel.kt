@@ -40,8 +40,12 @@ class SetupSectionViewModel(
 
     private fun save(nextStep: (CompletedSetup) -> SetupSectionUiEffect) {
         val current: SetupSectionUiState = _state.value
+        if (current.isSaving) return
+        if (!current.canFinish) {
+            update { it }
+            return
+        }
         val grade: Grade = current.grade ?: return
-        if (!current.canFinish || current.isSaving) return
 
         _state.value = current.copy(isSaving = true)
         viewModelScope.launch {
