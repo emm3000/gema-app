@@ -1,15 +1,5 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
-    id("gema.android.application")
-}
-
-val keystorePropertiesFile = rootProject.file("keystore.properties")
-val keystoreProperties = Properties()
-val hasKeystore: Boolean = keystorePropertiesFile.exists()
-if (hasKeystore) {
-    FileInputStream(keystorePropertiesFile).use(keystoreProperties::load)
+    id("gema.android.release")
 }
 
 android {
@@ -17,29 +7,7 @@ android {
 
     defaultConfig {
         applicationId = "com.emm.gema"
-        versionCode = 1
-        versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    signingConfigs {
-        if (hasKeystore) {
-            create("config") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-            }
-        }
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            signingConfig = signingConfigs.findByName("config")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
     }
 }
 

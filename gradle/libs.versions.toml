@@ -1,4 +1,6 @@
 [versions]
+gemaVersionCode = "1"
+gemaVersionName = "1.0"
 agp = "9.4.0"
 kotlin = "2.4.20"
 coreKtx = "1.19.0"
