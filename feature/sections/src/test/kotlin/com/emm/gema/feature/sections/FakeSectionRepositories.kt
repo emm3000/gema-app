@@ -19,6 +19,7 @@ import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionAreaRepository
+import com.emm.gema.core.domain.section.SectionCascade
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
@@ -252,6 +253,31 @@ class FakeActivityRepository : ActivityRepository {
 
     override suspend fun clearSection(sectionId: String) {
         activities.value = activities.value.filterNot { it.sectionId == sectionId }
+    }
+}
+
+class FakeSectionCascade(
+    private val sectionRepository: SectionRepository,
+    private val sectionAreaRepository: SectionAreaRepository,
+    private val workedCompetencyRepository: WorkedCompetencyRepository,
+    private val studentRepository: StudentRepository,
+    private val siagieImportStore: SiagieImportStore,
+    private val periodLevelRepository: PeriodLevelRepository,
+    private val attendanceRepository: AttendanceRepository,
+    private val activityRepository: ActivityRepository,
+    private val evidenceLevelRepository: EvidenceLevelRepository,
+) : SectionCascade {
+
+    override suspend fun deleteSection(sectionId: String) {
+        sectionRepository.delete(sectionId)
+        sectionAreaRepository.clearSection(sectionId)
+        workedCompetencyRepository.clearSection(sectionId)
+        studentRepository.deleteBySection(sectionId)
+        siagieImportStore.clearSection(sectionId)
+        periodLevelRepository.clearSection(sectionId)
+        attendanceRepository.deleteBySection(sectionId)
+        evidenceLevelRepository.clearSection(sectionId)
+        activityRepository.clearSection(sectionId)
     }
 }
 

@@ -20,6 +20,7 @@ import com.emm.gema.feature.sections.FakeAttendanceRepository
 import com.emm.gema.feature.sections.FakeEvidenceLevelRepository
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakeSectionAreaRepository
+import com.emm.gema.feature.sections.FakeSectionCascade
 import com.emm.gema.feature.sections.FakeSiagieImportStore
 import com.emm.gema.feature.sections.FakeWorkedCompetencyRepository
 import com.emm.gema.feature.sections.FakeSectionRepository
@@ -50,15 +51,17 @@ class SectionFormViewModelTest {
         createSection = CreateSectionUseCase(sectionRepository, IdGenerator { "section-2" }),
         updateSection = UpdateSectionUseCase(sectionRepository),
         deleteSection = DeleteSectionUseCase(
-            sectionRepository,
-            sectionAreaRepository,
-            FakeWorkedCompetencyRepository(),
-            studentRepository,
-            FakeSiagieImportStore(),
-            periodLevelRepository,
-            attendanceRepository,
-            FakeActivityRepository(),
-            FakeEvidenceLevelRepository(),
+            FakeSectionCascade(
+                sectionRepository,
+                sectionAreaRepository,
+                FakeWorkedCompetencyRepository(),
+                studentRepository,
+                FakeSiagieImportStore(),
+                periodLevelRepository,
+                attendanceRepository,
+                FakeActivityRepository(),
+                FakeEvidenceLevelRepository(),
+            ),
         ),
         getStudents = GetStudentsUseCase(studentRepository),
         getPeriodLevelCount = GetPeriodLevelCountUseCase(periodLevelRepository),

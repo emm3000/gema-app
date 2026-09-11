@@ -1,23 +1,14 @@
 package com.emm.gema.core.database.student
 
 import com.emm.gema.core.database.GemaDb
-import com.emm.gema.core.database.attendance.SqlDelightAttendanceRepository
-import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
-import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.database.UuidIdGenerator
-import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.inMemoryGemaDb
-import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
-import com.emm.gema.core.database.activity.SqlDelightActivityRepository
-import com.emm.gema.core.database.activity.SqlDelightEvidenceLevelRepository
-import com.emm.gema.core.database.curriculum.SqlDelightWorkedCompetencyRepository
+import com.emm.gema.core.database.section.SqlDelightSectionCascade
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
-import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
-import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.emm.gema.core.domain.student.GetStudentUseCase
@@ -45,24 +36,10 @@ class StudentPersistenceTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val database: GemaDb = inMemoryGemaDb()
     private val sectionRepository: SectionRepository = SqlDelightSectionRepository(database, dispatcher)
-    private val sectionAreaRepository: SectionAreaRepository = SqlDelightSectionAreaRepository(database, dispatcher)
     private val studentRepository: StudentRepository = SqlDelightStudentRepository(database, dispatcher)
-    private val attendanceRepository: AttendanceRepository = SqlDelightAttendanceRepository(database, dispatcher)
-    private val workedCompetencyRepository: WorkedCompetencyRepository =
-        SqlDelightWorkedCompetencyRepository(database, dispatcher)
 
     private val createSection = CreateSectionUseCase(sectionRepository, UuidIdGenerator())
-    private val deleteSection = DeleteSectionUseCase(
-        sectionRepository,
-        sectionAreaRepository,
-        workedCompetencyRepository,
-        studentRepository,
-        SqlDelightSiagieImportStore(database, dispatcher),
-        SqlDelightPeriodLevelRepository(database, dispatcher),
-        attendanceRepository,
-        SqlDelightActivityRepository(database, dispatcher),
-        SqlDelightEvidenceLevelRepository(database, dispatcher),
-    )
+    private val deleteSection = DeleteSectionUseCase(SqlDelightSectionCascade(database, dispatcher))
     private val saveStudent = SaveStudentUseCase(studentRepository, UuidIdGenerator())
     private val getStudents = GetStudentsUseCase(studentRepository)
     private val getStudent = GetStudentUseCase(studentRepository)
