@@ -112,10 +112,10 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
         GListItem(
             title = row.title,
             modifier = Modifier.fillMaxWidth(),
-            subtitle = pluralStringResource(
-                R.plurals.home_section_students,
-                row.studentCount,
-                row.studentCount,
+            subtitle = stringResource(
+                R.string.home_section_attendance,
+                pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
+                row.attendanceSummary,
             ),
             hasChevron = true,
             onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },

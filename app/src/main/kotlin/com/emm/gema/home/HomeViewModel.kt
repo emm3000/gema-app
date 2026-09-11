@@ -2,6 +2,9 @@ package com.emm.gema.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.attendance.AttendanceEntry
+import com.emm.gema.core.domain.attendance.AttendanceStatus
+import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
@@ -24,6 +27,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.Clock
+import java.time.LocalDate
+
+private const val UNTAKEN_ATTENDANCE: String = "Sin tomar"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
@@ -32,7 +39,11 @@ class HomeViewModel(
     private val getCurrentPeriod: GetCurrentPeriodUseCase,
     private val getStudentCounts: GetStudentCountsUseCase,
     private val observeBackupStatus: ObserveBackupStatusUseCase,
+    private val getAttendanceDay: GetAttendanceDayUseCase,
+    private val clock: Clock,
 ) : ViewModel() {
+
+    private val today: LocalDate = LocalDate.now(clock)
 
     private val _state: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -54,7 +65,8 @@ class HomeViewModel(
     fun onIntent(intent: HomeUiIntent) {
         when (intent) {
             is HomeUiIntent.SectionClicked -> emit(HomeUiEffect.NavigateToSectionDetail(intent.id))
-            is HomeUiIntent.TakeAttendanceClicked -> emit(HomeUiEffect.NavigateToAttendanceDay(intent.id))
+            is HomeUiIntent.TakeAttendanceClicked ->
+                emit(HomeUiEffect.NavigateToAttendanceDay(intent.id, today))
             HomeUiIntent.AddSectionClicked -> withSchoolYear { HomeUiEffect.NavigateToSectionForm(it, null) }
             HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
             HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }
@@ -68,15 +80,41 @@ class HomeViewModel(
         val currentPeriodLabel: String? = getCurrentPeriod(schoolYear.id)
             ?.let { period -> schoolYear.periodKind.labelFor(period.number) }
 
-        return combine(getSections(schoolYear.id), getStudentCounts()) { sections, studentCounts ->
+        return combine(
+            getSections(schoolYear.id),
+            getStudentCounts(),
+            attendanceSummaries(schoolYear.id),
+        ) { sections, studentCounts, summaries ->
             HomeUiState(
                 isLoading = false,
                 schoolYearId = schoolYear.id,
                 schoolYearLabel = schoolYear.label,
                 currentPeriodLabel = currentPeriodLabel,
-                sections = sections.map { it.toRow(studentCounts[it.id] ?: 0) },
+                sections = sections.map { section ->
+                    section.toRow(
+                        studentCount = studentCounts[section.id] ?: 0,
+                        attendanceSummary = summaries[section.id] ?: UNTAKEN_ATTENDANCE,
+                    )
+                },
             )
         }
+    }
+
+    private fun attendanceSummaries(schoolYearId: String): Flow<Map<String, String>> =
+        getSections(schoolYearId).flatMapLatest { sections: List<Section> ->
+            if (sections.isEmpty()) return@flatMapLatest flowOf(emptyMap())
+
+            combine(sections.map { section -> getAttendanceDay(section.id, today) }) { days ->
+                sections.mapIndexed { index: Int, section: Section ->
+                    section.id to summaryOf(days[index])
+                }.toMap()
+            }
+        }
+
+    private fun summaryOf(entries: List<AttendanceEntry>): String {
+        if (entries.none { it.isRecorded }) return UNTAKEN_ATTENDANCE
+        val present: Int = entries.count { it.status == AttendanceStatus.PRESENT }
+        return "$present de ${entries.size} presentes"
     }
 
     private fun merge(schoolYearState: HomeUiState): HomeUiState =
@@ -103,9 +141,10 @@ class HomeViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun Section.toRow(studentCount: Int): SectionRow = SectionRow(
+    private fun Section.toRow(studentCount: Int, attendanceSummary: String): SectionRow = SectionRow(
         id = id,
         title = "${grade.label()} $name",
         studentCount = studentCount,
+        attendanceSummary = attendanceSummary,
     )
 }

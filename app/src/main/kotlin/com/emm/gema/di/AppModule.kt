@@ -164,6 +164,6 @@ val appModule: Module = module {
     factory<SetReminderThresholdUseCase> { SetReminderThresholdUseCase(get()) }
 
     viewModel { StartDestinationViewModel(get(), get()) }
-    viewModelOf(::HomeViewModel)
+    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModelOf(::BackupViewModel)
 }
