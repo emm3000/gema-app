@@ -3,4 +3,12 @@
         <item quantity="one">%d sección</item>
         <item quantity="other">%d secciones</item>
     </plurals>
+    <plurals name="setup_periods_bimester_count">
+        <item quantity="one">%d bimestre</item>
+        <item quantity="other">%d bimestres</item>
+    </plurals>
+    <plurals name="setup_periods_trimester_count">
+        <item quantity="one">%d trimestre</item>
+        <item quantity="other">%d trimestres</item>
+    </plurals>
 </resources>
