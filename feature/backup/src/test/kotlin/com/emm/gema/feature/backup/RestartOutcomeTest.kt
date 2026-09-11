@@ -3,7 +3,7 @@ package com.emm.gema.feature.backup
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-class BackupContextActionsTest {
+class RestartOutcomeTest {
 
     @Test
     fun `restarts and exits when a launch intent is available`() {
