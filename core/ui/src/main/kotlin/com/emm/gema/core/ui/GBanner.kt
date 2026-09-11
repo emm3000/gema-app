@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaAccents
@@ -31,6 +32,7 @@ import com.emm.gema.core.theme.GemaTheme
 fun GBanner(
     text: String,
     modifier: Modifier = Modifier,
+    title: String? = null,
     tone: GBannerTone = GBannerTone.INFO,
     icon: ImageVector? = null,
     actionText: String? = null,
@@ -51,7 +53,15 @@ fun GBanner(
                 Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
             }
             Column {
-                Text(text = text, style = MaterialTheme.typography.bodyMedium)
+                if (title != null) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    )
+                    Text(text = text, style = MaterialTheme.typography.bodySmall)
+                } else {
+                    Text(text = text, style = MaterialTheme.typography.bodyMedium)
+                }
                 if (actionText != null && onActionClick != null) {
                     Spacer(modifier = Modifier.height(GemaSpacing.small))
                     when (actionStyle) {

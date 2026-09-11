@@ -94,7 +94,11 @@ private fun GButtonLabel(text: String, isBusy: Boolean, icon: ImageVector?) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(GemaSpacing.buttonIconSize),
+                )
             }
             Text(
                 text = text,

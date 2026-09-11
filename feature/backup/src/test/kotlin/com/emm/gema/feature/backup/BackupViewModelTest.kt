@@ -16,6 +16,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -137,7 +138,44 @@ class BackupViewModelTest {
         assertThat(settings.observeSettings().first().reminderThresholdDays).isEqualTo(7)
     }
 
-    private fun viewModelFor(content: ByteArray): BackupViewModel {
+    @Test
+    fun `a backup exactly at the reminder threshold is overdue`() = runTest {
+        val reminderThresholdDays = 7
+        val lastBackupAt: Instant = now.minus(reminderThresholdDays.toLong(), ChronoUnit.DAYS)
+        val overdueSettings = FakeBackupSettingsRepository(
+            lastBackupAt = lastBackupAt,
+            reminderThresholdDays = reminderThresholdDays,
+        )
+        val viewModel: BackupViewModel = viewModelFor(sqliteContent(schemaVersion = 1), overdueSettings)
+
+        assertThat(viewModel.state.value.isBackupOverdue).isTrue()
+    }
+
+    @Test
+    fun `a backup one day below the reminder threshold is not overdue`() = runTest {
+        val reminderThresholdDays = 7
+        val lastBackupAt: Instant = now.minus((reminderThresholdDays - 1).toLong(), ChronoUnit.DAYS)
+        val freshSettings = FakeBackupSettingsRepository(
+            lastBackupAt = lastBackupAt,
+            reminderThresholdDays = reminderThresholdDays,
+        )
+        val viewModel: BackupViewModel = viewModelFor(sqliteContent(schemaVersion = 1), freshSettings)
+
+        assertThat(viewModel.state.value.isBackupOverdue).isFalse()
+    }
+
+    @Test
+    fun `never having backed up is not reported as overdue`() = runTest {
+        val neverBackedUpSettings = FakeBackupSettingsRepository(lastBackupAt = null, reminderThresholdDays = 7)
+        val viewModel: BackupViewModel = viewModelFor(sqliteContent(schemaVersion = 1), neverBackedUpSettings)
+
+        assertThat(viewModel.state.value.isBackupOverdue).isFalse()
+    }
+
+    private fun viewModelFor(
+        content: ByteArray,
+        settings: FakeBackupSettingsRepository = this.settings,
+    ): BackupViewModel {
         val documents = FakeBackupDocuments(name = "gema-20260910-1432.gema", content = content)
         val validate = ValidateBackupUseCase(supportedSchemaVersion = 1)
         return BackupViewModel(

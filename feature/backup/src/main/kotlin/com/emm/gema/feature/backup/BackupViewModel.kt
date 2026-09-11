@@ -73,7 +73,7 @@ class BackupViewModel(
             } else {
                 status.reminderThresholdDays.toString()
             },
-            isBackupOverdue = daysSinceLastBackup != null && daysSinceLastBackup >= status.reminderThresholdDays,
+            isBackupOverdue = status.lastBackupAt != null && status.isReminderDue,
         )
     }
 

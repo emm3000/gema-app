@@ -30,6 +30,7 @@ object GemaSpacing {
     val compactRowHeight: Dp = 52.dp
     val evidenceChipWidth: Dp = 34.dp
     val evidenceChipHeight: Dp = 26.dp
+    val buttonIconSize: Dp = 20.dp
 }
 
 object GemaShapes {
