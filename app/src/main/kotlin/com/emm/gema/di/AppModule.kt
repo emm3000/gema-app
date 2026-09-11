@@ -15,6 +15,7 @@ import com.emm.gema.core.database.evaluation.SqlDelightPeriodLevelRepository
 import com.emm.gema.core.database.section.SqlDelightSectionAreaRepository
 import com.emm.gema.core.database.section.SqlDelightSectionRepository
 import com.emm.gema.core.database.setup.SqlDelightSetupRepository
+import com.emm.gema.core.database.siagie.CacheSiagieExportStore
 import com.emm.gema.core.database.siagie.ContentResolverSiagieDocuments
 import com.emm.gema.core.database.siagie.SqlDelightSiagieImportStore
 import com.emm.gema.core.database.student.SqlDelightStudentRepository
@@ -42,6 +43,10 @@ import com.emm.gema.core.domain.evaluation.GetAreaRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelCountUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
+import com.emm.gema.core.domain.export.ExportGradesUseCase
+import com.emm.gema.core.domain.export.GetGradesExportPlanUseCase
+import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
+import com.emm.gema.core.domain.export.SiagieExportStore
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelUseCase
 import com.emm.gema.core.domain.evaluation.GetRecordedLevelCountsUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
@@ -72,6 +77,7 @@ import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
 import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.siagie.PreviewSiagieImportUseCase
 import com.emm.gema.core.domain.siagie.SiagieDocuments
+import com.emm.gema.core.domain.siagie.SiagieGradesWriter
 import com.emm.gema.core.domain.siagie.SiagieImportPlanner
 import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.siagie.SiagieRosterReader
@@ -85,6 +91,7 @@ import com.emm.gema.core.domain.student.SaveStudentUseCase
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.core.siagie.XlsxMonthlyAttendanceWriter
+import com.emm.gema.core.siagie.XlsxSiagieGradesWriter
 import com.emm.gema.core.siagie.XlsxSiagieRosterReader
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.HomeViewModel
@@ -94,7 +101,10 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import java.io.File
 import java.time.Clock
+
+private const val EXPORTS_DIRECTORY: String = "exports"
 
 val appModule: Module = module {
     single<GemaDatabase> { GemaDatabase(androidContext()) }
@@ -113,6 +123,8 @@ val appModule: Module = module {
     single<SiagieImportStore> { SqlDelightSiagieImportStore(get()) }
     single<SiagieDocuments> { ContentResolverSiagieDocuments(androidContext().contentResolver) }
     single<SiagieRosterReader> { XlsxSiagieRosterReader() }
+    single<SiagieGradesWriter> { XlsxSiagieGradesWriter() }
+    single<SiagieExportStore> { CacheSiagieExportStore(File(androidContext().cacheDir, EXPORTS_DIRECTORY)) }
     single<PeriodLevelRepository> { SqlDelightPeriodLevelRepository(get()) }
     single<AttendanceRepository> { SqlDelightAttendanceRepository(get()) }
     single<MonthlyAttendanceExporter> {
@@ -155,6 +167,9 @@ val appModule: Module = module {
     factory<SiagieImportPlanner> { SiagieImportPlanner(get(), get(), get(), get()) }
     factory<PreviewSiagieImportUseCase> { PreviewSiagieImportUseCase(get()) }
     factory<ApplySiagieImportUseCase> { ApplySiagieImportUseCase(get(), get(), get(), get(), get()) }
+    factory<GetGradesTemplateNameUseCase> { GetGradesTemplateNameUseCase(get()) }
+    factory<GetGradesExportPlanUseCase> { GetGradesExportPlanUseCase(get(), get()) }
+    factory<ExportGradesUseCase> { ExportGradesUseCase(get(), get(), get(), get()) }
     factory<GetStudentsUseCase> { GetStudentsUseCase(get()) }
     factory<GetStudentUseCase> { GetStudentUseCase(get()) }
     factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }

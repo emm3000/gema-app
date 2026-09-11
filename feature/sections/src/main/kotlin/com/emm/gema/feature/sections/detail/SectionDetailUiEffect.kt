@@ -10,6 +10,8 @@ sealed interface SectionDetailUiEffect {
 
     data class NavigateToPeriodLevels(val sectionId: String) : SectionDetailUiEffect
 
+    data class NavigateToExport(val sectionId: String) : SectionDetailUiEffect
+
     data class NavigateToSectionAreas(val sectionId: String) : SectionDetailUiEffect
 
     data class NavigateToSectionForm(val schoolYearId: String, val sectionId: String) : SectionDetailUiEffect
