@@ -130,7 +130,6 @@ class PeriodLevelsViewModelTest {
         viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
         viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.C))
 
-        assertThat(viewModel.state.value.sheet?.isConclusionRequiredForExport).isTrue()
         assertThat(viewModel.cell(firstStudentId, firstCompetency).isIncomplete).isTrue()
     }
 

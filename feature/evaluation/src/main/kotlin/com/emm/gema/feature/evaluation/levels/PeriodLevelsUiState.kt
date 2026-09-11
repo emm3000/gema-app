@@ -83,7 +83,6 @@ data class PeriodLevelSheetUiState(
     val achievementLevel: AchievementLevel? = null,
     val unworkedComment: UnworkedComment? = null,
     val descriptiveConclusion: String = "",
-    val isConclusionRequiredForExport: Boolean = false,
     val evidence: List<EvidenceRow> = emptyList(),
 )
 
