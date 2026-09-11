@@ -9,11 +9,13 @@ import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
+import com.emm.gema.core.domain.section.GetSectionDeletionImpactUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.UpdateSectionUseCase
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
@@ -66,9 +68,12 @@ class SectionFormViewModelTest {
                 FakeEvidenceLevelRepository(),
             ),
         ),
-        getStudents = GetStudentsUseCase(studentRepository),
-        getPeriodLevelCount = GetPeriodLevelCountUseCase(periodLevelRepository),
-        countAttendanceDays = CountAttendanceDaysUseCase(attendanceRepository),
+        getStudentCounts = GetStudentCountsUseCase(studentRepository),
+        getSectionDeletionImpact = GetSectionDeletionImpactUseCase(
+            GetStudentsUseCase(studentRepository),
+            GetPeriodLevelCountUseCase(periodLevelRepository),
+            CountAttendanceDaysUseCase(attendanceRepository),
+        ),
     )
 
     @Test

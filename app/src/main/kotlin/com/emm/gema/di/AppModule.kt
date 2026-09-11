@@ -85,6 +85,7 @@ import com.emm.gema.core.domain.section.CreateSectionUseCase
 import com.emm.gema.core.domain.section.DeleteSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.GetSectionCountsUseCase
+import com.emm.gema.core.domain.section.GetSectionDeletionImpactUseCase
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.SectionAreaRepository
@@ -176,6 +177,7 @@ val appModule: Module = module {
     factory<GetSectionsUseCase> { GetSectionsUseCase(get()) }
     factory<GetSectionAreasUseCase> { GetSectionAreasUseCase(get()) }
     factory<GetSectionCountsUseCase> { GetSectionCountsUseCase(get()) }
+    factory<GetSectionDeletionImpactUseCase> { GetSectionDeletionImpactUseCase(get(), get(), get()) }
     factory<GetSectionUseCase> { GetSectionUseCase(get()) }
     factory<SetAreaVisibilityUseCase> { SetAreaVisibilityUseCase(get()) }
     factory<SeedCurriculumUseCase> { SeedCurriculumUseCase(get()) }
