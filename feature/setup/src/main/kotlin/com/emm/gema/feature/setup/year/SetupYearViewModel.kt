@@ -111,16 +111,14 @@ class SetupYearViewModel(clock: Clock) : ViewModel() {
     }
 
     private fun validate(state: SetupYearUiState): SetupYearUiState {
-        val ranges: List<PeriodDates> = state.periods.map { PeriodDates(it.ordinal, it.startDate, it.endDate) }
-        val periods: List<PeriodDraftRow> = state.periods.mapIndexed { index, row ->
-            row.copy(error = errorFor(ranges[index], ranges, state))
-        }
+        val errors: Map<Int, String?> = errorsFor(state)
+        val periods: List<PeriodDraftRow> = state.periods.map { row -> row.copy(error = errors[row.ordinal]) }
         val dateRangeError: String? = dateRangeErrorFor(state)
         val yearLabelError: String? = MISSING_LABEL_ERROR.takeIf { state.yearLabel.isBlank() }
 
         return state.copy(
             periods = periods,
-            editor = state.editor?.let { editor -> editor.copy(error = editorErrorFor(editor, ranges, state)) },
+            editor = state.editor?.let { editor -> editor.copy(error = editorErrorFor(editor, state)) },
             yearLabelError = yearLabelError,
             dateRangeError = dateRangeError,
             canContinue = yearLabelError == null &&
@@ -138,20 +136,22 @@ class SetupYearViewModel(clock: Clock) : ViewModel() {
         return null
     }
 
-    private fun editorErrorFor(
-        editor: PeriodEditorState,
-        ranges: List<PeriodDates>,
-        state: SetupYearUiState,
-    ): String? {
+    private fun editorErrorFor(editor: PeriodEditorState, state: SetupYearUiState): String? {
         val edited: PeriodDates = PeriodDates(editor.ordinal, editor.startDate, editor.endDate)
-        val others: List<PeriodDates> = ranges.filterNot { it.number == editor.ordinal }
-        return errorFor(edited, others + edited, state)
+        return errorsFor(state, edited)[editor.ordinal]
     }
 
-    private fun errorFor(period: PeriodDates, periods: List<PeriodDates>, state: SetupYearUiState): String? {
-        val startDate: LocalDate = state.startDate ?: return null
-        val endDate: LocalDate = state.endDate ?: return null
-        return period.errorWithin(periods, startDate, endDate)
+    private fun errorsFor(state: SetupYearUiState, replacement: PeriodDates? = null): Map<Int, String?> {
+        val startDate: LocalDate = state.startDate ?: return emptyMap()
+        val endDate: LocalDate = state.endDate ?: return emptyMap()
+        val ranges: List<PeriodDates> = state.periods.map { row ->
+            if (replacement != null && row.ordinal == replacement.number) {
+                replacement
+            } else {
+                PeriodDates(row.ordinal, row.startDate, row.endDate)
+            }
+        }
+        return ranges.associate { period -> period.number to period.errorWithin(ranges, startDate, endDate) }
     }
 
     private fun isLongEnough(startDate: LocalDate, endDate: LocalDate, periodKind: PeriodKind): Boolean =

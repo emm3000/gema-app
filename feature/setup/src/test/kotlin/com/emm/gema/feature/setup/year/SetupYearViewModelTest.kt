@@ -131,7 +131,16 @@ class SetupYearViewModelTest {
     }
 
     @Test
-    fun `a period that leaves the school year is reported`() {
+    fun `the editor reports dates that leave the school year`() {
+        viewModel.onIntent(SetupYearUiIntent.PeriodClicked(1))
+
+        viewModel.onIntent(SetupYearUiIntent.EditorStartDateChanged(LocalDate.of(2026, 1, 5)))
+
+        assertThat(viewModel.state.value.editor?.error).isNotNull()
+    }
+
+    @Test
+    fun `a period that leaves the school year is reported on its row and blocks continuing`() {
         viewModel.onIntent(SetupYearUiIntent.PeriodClicked(1))
         viewModel.onIntent(SetupYearUiIntent.EditorStartDateChanged(LocalDate.of(2026, 1, 5)))
 
