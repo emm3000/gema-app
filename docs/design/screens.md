@@ -1347,12 +1347,17 @@ data class ActivityEvidenceUiState(
 data class EvidenceLevelRow(
     val studentId: StudentId,
     val displayName: String,
-    val level: AchievementLevel?,
+    val mark: EvidenceMark?,
 )
 ```
 
+`EvidenceMark` (`core:domain`) is a sealed interface: `EvidenceMark.Level(achievementLevel: AchievementLevel)`
+for a graded row and `EvidenceMark.NoEvidence` for an explicit "no evidence" mark. `mark == null` means the
+Student is untouched — distinct from an explicit `NoEvidence` mark, which is what tapping the "—" chip
+records.
+
 Intents: `CompetencySelected(id: CompetencyId)`,
-`LevelSelected(studentId: StudentId, level: AchievementLevel?)`,
+`LevelSelected(studentId: StudentId, mark: EvidenceMark?)`,
 `EditActivityClicked`, `BackClicked`.
 
 Effects: `NavigateToActivityForm(sectionId: SectionId, activityId: ActivityId?)`,
