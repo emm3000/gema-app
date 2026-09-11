@@ -17,3 +17,12 @@ local.properties
 /.kotlin
 /key
 /keystore.properties
+
+# Gentle AI skill registry cache
+.atl/
+
+# Claude Code personal overrides
+.claude/settings.local.json
+
+# Any module build dir
+build/
