@@ -39,6 +39,11 @@ fun StudentsScreen(
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
                 actions = {
                     GButton(
+                        text = "Importar",
+                        onClick = { onIntent(StudentsUiIntent.ImportClicked) },
+                        variant = GButtonVariant.TEXT,
+                    )
+                    GButton(
                         text = "Agregar",
                         onClick = { onIntent(StudentsUiIntent.AddStudentClicked) },
                         variant = GButtonVariant.TEXT,
