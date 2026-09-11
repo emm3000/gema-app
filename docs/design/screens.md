@@ -583,8 +583,9 @@ Primary action: FAB *Agregar alumno*.
 +------------------------------------------+
 ```
 
-The top bar carries *Importar* next to *Agregar*; there is no overflow menu in
-the catalog yet (`GDropdownPicker` is still planned).
+The top bar carries *Importar* alone; *Agregar alumno* is the extended FAB,
+bottom-right. There is no overflow menu in the catalog yet (`GDropdownPicker`
+is still planned).
 
 ```kotlin
 data class StudentsUiState(
