@@ -1,0 +1,27 @@
+CREATE TABLE attendance (
+    section_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    date TEXT NOT NULL,
+    status TEXT NOT NULL,
+    PRIMARY KEY (student_id, date)
+);
+
+CREATE INDEX attendance_section_date ON attendance(section_id, date);
+
+insert:
+INSERT OR REPLACE INTO attendance (section_id, student_id, date, status)
+VALUES (?, ?, ?, ?);
+
+selectBySectionAndDate:
+SELECT *
+FROM attendance
+WHERE section_id = ? AND date = ?;
+
+countRecordedDays:
+SELECT COUNT(DISTINCT date)
+FROM attendance
+WHERE section_id = ?;
+
+deleteBySection:
+DELETE FROM attendance
+WHERE section_id = ?;

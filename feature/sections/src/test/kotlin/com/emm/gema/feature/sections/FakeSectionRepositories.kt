@@ -1,5 +1,7 @@
 package com.emm.gema.feature.sections
 
+import com.emm.gema.core.domain.attendance.AttendanceRecord
+import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
 import com.emm.gema.core.domain.siagie.SiagieImportStore
+import java.time.LocalDate
 
 class FakeSectionRepository(initial: List<Section> = emptyList()) : SectionRepository {
 
@@ -195,4 +198,25 @@ class FakeSchoolYearRepository(private val schoolYears: List<SchoolYear> = empty
     override suspend fun findById(id: String): SchoolYear? = schoolYears.find { it.id == id }
 
     override suspend fun save(schoolYear: SchoolYear) = Unit
+}
+class FakeAttendanceRepository(initial: List<AttendanceRecord> = emptyList()) : AttendanceRepository {
+
+    val records: MutableStateFlow<List<AttendanceRecord>> = MutableStateFlow(initial)
+
+    override fun observeBySectionAndDate(sectionId: String, date: LocalDate): Flow<List<AttendanceRecord>> =
+        records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
+
+    override suspend fun record(record: AttendanceRecord) {
+        records.value = records.value
+            .filterNot { it.studentId == record.studentId && it.date == record.date } + record
+    }
+
+    override suspend fun countRecordedDays(sectionId: String): Int = records.value
+        .filter { it.sectionId == sectionId }
+        .distinctBy { it.date }
+        .size
+
+    override suspend fun deleteBySection(sectionId: String) {
+        records.value = records.value.filterNot { it.sectionId == sectionId }
+    }
 }
