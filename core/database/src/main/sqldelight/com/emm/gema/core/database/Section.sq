@@ -1,0 +1,27 @@
+CREATE TABLE section (
+    id TEXT NOT NULL PRIMARY KEY,
+    school_year_id TEXT NOT NULL,
+    grade TEXT NOT NULL,
+    name TEXT NOT NULL
+);
+
+CREATE INDEX section_school_year_id ON section(school_year_id);
+
+insert:
+INSERT OR REPLACE INTO section (id, school_year_id, grade, name)
+VALUES (?, ?, ?, ?);
+
+selectBySchoolYear:
+SELECT *
+FROM section
+WHERE school_year_id = ?
+ORDER BY grade, name;
+
+selectById:
+SELECT *
+FROM section
+WHERE id = ?;
+
+deleteById:
+DELETE FROM section
+WHERE id = ?;

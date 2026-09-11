@@ -38,6 +38,7 @@ class SqlDelightSchoolYearRepository(
             start_date = schoolYear.startDate.toString(),
             end_date = schoolYear.endDate.toString(),
             period_kind = schoolYear.periodKind.name,
+            label = schoolYear.label,
         )
     }
 }

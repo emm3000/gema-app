@@ -1,0 +1,22 @@
+CREATE TABLE section_hidden_area (
+    section_id TEXT NOT NULL,
+    area TEXT NOT NULL,
+    PRIMARY KEY (section_id, area)
+);
+
+insert:
+INSERT OR IGNORE INTO section_hidden_area (section_id, area)
+VALUES (?, ?);
+
+selectBySection:
+SELECT area
+FROM section_hidden_area
+WHERE section_id = ?;
+
+delete:
+DELETE FROM section_hidden_area
+WHERE section_id = ? AND area = ?;
+
+deleteBySection:
+DELETE FROM section_hidden_area
+WHERE section_id = ?;

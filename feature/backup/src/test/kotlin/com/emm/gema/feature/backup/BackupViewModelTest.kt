@@ -32,6 +32,7 @@ class BackupViewModelTest {
     private val schoolYears = FakeSchoolYearRepository(
         SchoolYear(
             id = "the-year",
+            label = "2026",
             startDate = LocalDate.of(2026, 3, 2),
             endDate = LocalDate.of(2026, 12, 18),
             periodKind = PeriodKind.BIMESTER,

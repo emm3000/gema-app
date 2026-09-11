@@ -1,0 +1,24 @@
+CREATE TABLE period (
+    id TEXT NOT NULL PRIMARY KEY,
+    school_year_id TEXT NOT NULL,
+    number INTEGER NOT NULL,
+    start_date TEXT NOT NULL,
+    end_date TEXT NOT NULL
+);
+
+CREATE INDEX period_school_year_id ON period(school_year_id);
+
+insert:
+INSERT OR REPLACE INTO period (id, school_year_id, number, start_date, end_date)
+VALUES (?, ?, ?, ?, ?);
+
+selectBySchoolYear:
+SELECT *
+FROM period
+WHERE school_year_id = ?
+ORDER BY number;
+
+selectById:
+SELECT *
+FROM period
+WHERE id = ?;
