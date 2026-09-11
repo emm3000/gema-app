@@ -62,7 +62,7 @@ fun ActivitiesScreen(
                 label = "Periodo",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+                    .padding(vertical = GemaSpacing.small),
             )
             if (state.activities.isEmpty()) {
                 GEmptyState(

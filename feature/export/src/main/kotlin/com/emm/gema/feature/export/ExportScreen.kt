@@ -50,7 +50,7 @@ fun ExportScreen(
         Column(
             modifier = Modifier
                 .padding(scaffoldPadding)
-                .padding(GemaSpacing.screenGutter)
+                .padding(vertical = GemaSpacing.screenGutter)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {

@@ -38,7 +38,7 @@ fun ColumnModeBar(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(GemaSpacing.screenGutter),
+                .padding(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
             Row(
