@@ -62,6 +62,7 @@ class AttendanceMonthViewModelTest {
 
         assertThat(state.isLoading).isFalse()
         assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.month).isEqualTo(september)
         assertThat(state.monthLabel).isEqualTo("setiembre 2026")
         assertThat(state.canExport).isFalse()
     }
@@ -92,6 +93,7 @@ class AttendanceMonthViewModelTest {
 
         viewModel.onIntent(AttendanceMonthUiIntent.PreviousMonthClicked)
 
+        assertThat(viewModel.state.value.month).isEqualTo(september.minusMonths(1))
         assertThat(viewModel.state.value.monthLabel).isEqualTo("agosto 2026")
         assertThat(viewModel.state.value.rows.single().countsByStatus[AttendanceStatus.ABSENT]).isEqualTo(1)
     }
