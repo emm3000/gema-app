@@ -15,8 +15,8 @@ internal fun PeriodDates.errorWithin(
     if (endDate.isBefore(startDate)) return INVERTED_PERIOD_ERROR
     if (startDate.isBefore(yearStart) || endDate.isAfter(yearEnd)) return OUTSIDE_YEAR_ERROR
 
-    val overlaps: Boolean = periods
+    val hasOverlap: Boolean = periods
         .filterNot { it.number == number }
         .any { other -> other.startDate <= endDate && startDate <= other.endDate }
-    return OVERLAP_ERROR.takeIf { overlaps }
+    return OVERLAP_ERROR.takeIf { hasOverlap }
 }
