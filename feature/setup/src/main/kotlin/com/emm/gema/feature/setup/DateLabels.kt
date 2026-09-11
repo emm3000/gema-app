@@ -18,3 +18,10 @@ fun rangeLabel(startDate: LocalDate, endDate: LocalDate): String =
 @Composable
 fun shortRangeLabel(startDate: LocalDate, endDate: LocalDate): String =
     "${startDate.asShortDayMonth()} – ${endDate.asShortDayMonth()}"
+
+private val dayMonth: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
+
+fun LocalDate.asDayMonth(): String = format(dayMonth)
+
+fun numericRangeLabel(startDate: LocalDate, endDate: LocalDate): String =
+    "${startDate.asDayMonth()} – ${endDate.asDayMonth()}"

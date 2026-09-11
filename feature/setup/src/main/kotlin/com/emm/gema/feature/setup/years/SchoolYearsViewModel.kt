@@ -7,9 +7,7 @@ import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SwitchSchoolYearUseCase
-import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.core.domain.section.GetSectionCountsUseCase
-import com.emm.gema.feature.setup.rangeLabel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,8 +62,9 @@ class SchoolYearsViewModel(
         SchoolYearRow(
             id = id,
             label = label,
-            dateRangeLabel = rangeLabel(startDate, endDate),
-            periodKindLabel = periodKind.kindLabel(),
+            startDate = startDate,
+            endDate = endDate,
+            periodKind = periodKind,
             sectionCount = sectionCounts[id] ?: 0,
             isActive = id == activeSchoolYear?.id,
         )

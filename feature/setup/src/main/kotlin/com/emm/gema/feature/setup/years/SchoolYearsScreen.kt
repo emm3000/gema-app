@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -22,6 +23,8 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.ui.GYearCard
 import com.emm.gema.feature.setup.R
+import com.emm.gema.feature.setup.numericRangeLabel
+import java.time.LocalDate
 
 @Composable
 fun SchoolYearsScreen(
@@ -66,9 +69,14 @@ private fun SchoolYearItem(
     onIntent: (SchoolYearsUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val periodCountLabel: String = pluralStringResource(
+        row.periodKind.periodCountPlural(),
+        row.periodKind.periodCount,
+        row.periodKind.periodCount,
+    )
     GYearCard(
         label = row.label,
-        subtitle = "${row.dateRangeLabel} · ${row.periodKindLabel}",
+        subtitle = "${numericRangeLabel(row.startDate, row.endDate)} · $periodCountLabel",
         sectionCountLabel = pluralStringResource(
             R.plurals.school_years_section_count,
             row.sectionCount,
@@ -83,6 +91,11 @@ private fun SchoolYearItem(
     )
 }
 
+private fun PeriodKind.periodCountPlural(): Int = when (this) {
+    PeriodKind.BIMESTER -> R.plurals.setup_periods_bimester_count
+    PeriodKind.TRIMESTER -> R.plurals.setup_periods_trimester_count
+}
+
 @PreviewLightDark
 @Composable
 private fun SchoolYearsScreenPreview() {
@@ -91,8 +104,24 @@ private fun SchoolYearsScreenPreview() {
             state = SchoolYearsUiState(
                 isLoading = false,
                 years = listOf(
-                    SchoolYearRow(SchoolYearId("2026"), "2026", "02/03/2026 - 18/12/2026", "Bimestre", 2, true),
-                    SchoolYearRow(SchoolYearId("2025"), "2025", "01/03/2025 - 19/12/2025", "Trimestre", 1, false),
+                    SchoolYearRow(
+                        id = SchoolYearId("2026"),
+                        label = "2026",
+                        startDate = LocalDate.of(2026, 3, 2),
+                        endDate = LocalDate.of(2026, 12, 18),
+                        periodKind = PeriodKind.BIMESTER,
+                        sectionCount = 2,
+                        isActive = true,
+                    ),
+                    SchoolYearRow(
+                        id = SchoolYearId("2025"),
+                        label = "2025",
+                        startDate = LocalDate.of(2025, 3, 1),
+                        endDate = LocalDate.of(2025, 12, 19),
+                        periodKind = PeriodKind.TRIMESTER,
+                        sectionCount = 1,
+                        isActive = false,
+                    ),
                 ),
             ),
             onIntent = {},
