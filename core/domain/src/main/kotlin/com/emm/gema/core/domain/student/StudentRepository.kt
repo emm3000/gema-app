@@ -8,6 +8,8 @@ interface StudentRepository {
 
     fun observeCountsBySection(): Flow<Map<String, Int>>
 
+    suspend fun listBySection(sectionId: String): List<Student>
+
     suspend fun findById(id: String): Student?
 
     suspend fun findByCode(sectionId: String, code: StudentCode): Student?

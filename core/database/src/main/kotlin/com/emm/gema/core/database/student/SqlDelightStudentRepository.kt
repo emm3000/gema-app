@@ -33,6 +33,10 @@ class SqlDelightStudentRepository(
             .mapToList(dispatcher)
             .map { rows -> rows.associate { it.section_id to it.student_count.toInt() } }
 
+    override suspend fun listBySection(sectionId: String): List<Student> = withContext(dispatcher) {
+        queries.selectBySection(sectionId).executeAsList().map { it.toDomain() }.orderedByName()
+    }
+
     override suspend fun findById(id: String): Student? = withContext(dispatcher) {
         queries.selectById(id).executeAsOneOrNull()?.toDomain()
     }
