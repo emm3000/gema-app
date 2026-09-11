@@ -30,6 +30,7 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.setup.R
+import com.emm.gema.feature.setup.periodCountPlural
 import java.time.LocalDate
 
 @Composable
@@ -102,11 +103,6 @@ fun PeriodsScreen(
             }
         }
     }
-}
-
-private fun PeriodKind.periodCountPlural(): Int = when (this) {
-    PeriodKind.BIMESTER -> R.plurals.setup_periods_bimester_count
-    PeriodKind.TRIMESTER -> R.plurals.setup_periods_trimester_count
 }
 
 @Composable

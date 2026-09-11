@@ -24,6 +24,7 @@ import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.ui.GYearCard
 import com.emm.gema.feature.setup.R
 import com.emm.gema.feature.setup.numericRangeLabel
+import com.emm.gema.feature.setup.periodCountPlural
 import java.time.LocalDate
 
 @Composable
@@ -89,11 +90,6 @@ private fun SchoolYearItem(
         onPeriodsClick = { onIntent(SchoolYearsUiIntent.PeriodsClicked(row.id)) },
         modifier = modifier.fillMaxWidth(),
     )
-}
-
-private fun PeriodKind.periodCountPlural(): Int = when (this) {
-    PeriodKind.BIMESTER -> R.plurals.setup_periods_bimester_count
-    PeriodKind.TRIMESTER -> R.plurals.setup_periods_trimester_count
 }
 
 @PreviewLightDark
