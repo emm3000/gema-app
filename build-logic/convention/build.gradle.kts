@@ -20,6 +20,15 @@ dependencies {
     implementation(libs.kotlin.gradle.plugin)
     implementation(libs.compose.compiler.gradle.plugin)
     implementation(libs.sqldelight.gradle.plugin)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    testImplementation(gradleTestKit())
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnit()
+    systemProperty("gema.rootDir", rootDir.parentFile.absolutePath)
 }
 
 gradlePlugin {
