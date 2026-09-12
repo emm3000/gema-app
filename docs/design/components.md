@@ -93,9 +93,13 @@ typography value never gets hardcoded outside `com.emm.gema.core.theme.Type`.
 ```kotlin
 enum class GTextStyle {
     TITLE_MEDIUM,
+    TITLE_MEDIUM_EMPHASIS,
+    TITLE_LARGE_EMPHASIS,
     BODY_LARGE,
     BODY_SMALL,
+    LABEL_LARGE_EMPHASIS,
     LABEL_SMALL,
+    LABEL_SMALL_EMPHASIS,
     NUMERAL,
 }
 
@@ -355,6 +359,12 @@ outer row, `colorScheme.primary` / `onPrimary` for the selected segment,
 with an `outline` divider between segments, `GemaSpacing.minimumTouchTarget`
 as the segment height floor, `gemaTypography.labelLarge`.
 
+`GLevelPicker` and `GAttendanceToggle` override this default selected-state
+styling with their own rules — see system.md: `GLevelPicker` uses a
+`primaryContainer` fill while the letter itself stays `onSurface` ink rather
+than switching to `onPrimary`; `GAttendanceToggle` uses a different fill per
+attendance status instead of one shared `primary` selected color.
+
 Tradeoffs worth stating, because this is the control the app lives on:
 
 - **Segmented control, not a dropdown.** Attendance and levels are set hundreds
@@ -389,8 +399,8 @@ fun GListItem(
 ```
 
 Wraps `ListItem` inside a clickable `Surface`. Tokens: `GTextStyle.BODY_LARGE`
-(the `titleStyle` default) for `title`, `gemaTypography.bodyMedium` for
-`subtitle` / `trailingText`, `gemaTypography.bodyLarge` for `leadingText`,
+(the `titleStyle` default) for `title`, `gemaTypography.bodyLarge` for
+`subtitle` and `leadingText`, `gemaTypography.bodySmall` for `trailingText`,
 `colorScheme.onSurface` / `onSurfaceVariant`, `colorScheme.primary` for
 `leadingText`, `GemaSpacing.leadingLabelWidth` for its fixed width,
 `GemaSpacing.medium` vertical padding, `colorScheme.outline` for the
@@ -864,7 +874,7 @@ screen (Students, Sections, School Years, Activities) — floats bottom-end via
 `bottomAction` are mutually exclusive on `GScreen`. Tokens:
 `GemaSpacing.fabHeight` (52dp — #163: today's code ships 56dp),
 `GemaShapes.control` (8dp) radius, `colorScheme.inverseSurface`
-fill with `colorScheme.surface`-toned icon and label.
+fill with `colorScheme.inverseOnSurface` icon and label.
 
 Deviation from an earlier draft of this catalog: the fab moves from
 `primaryContainer` to `inverseSurface`. It reads as one dark object on a

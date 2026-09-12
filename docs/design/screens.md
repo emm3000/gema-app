@@ -874,7 +874,7 @@ Intents: `StatusSelected(studentId: StudentId, status: AttendanceStatus)`,
 `DatePicked(value: LocalDate)`, `MonthlySummaryClicked`, `BackClicked`.
 
 Effects: `NavigateToAttendanceMonth(sectionId: SectionId, month: YearMonth)`,
-`NavigateBack`, `ShowMessage(text: String)`.
+`NavigateBack`, `ShowMessage(message: AttendanceDayMessage)`.
 
 Notes:
 
@@ -1149,7 +1149,7 @@ regenerates it from the emulator).
 A bottom sheet over PeriodLevels for one Student x one Competency.
 Every change persists on selection; the sheet closes with *Listo*. When the
 selected level is C, the Descriptive Conclusion field renders in error state
-(error-colored border, error-tone helper text) instead of a separate banner —
+(error-colored border, helper text in `colorScheme.error`) instead of a separate banner —
 the field itself carries the requirement.
 
 ```
