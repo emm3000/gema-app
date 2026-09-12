@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 internal fun Project.configureAndroidCompose(commonExtension: CommonExtension) {
     commonExtension.buildFeatures.compose = true
+    commonExtension.testOptions.unitTests.isIncludeAndroidResources = true
 
     dependencies {
         add("implementation", platform(libs.library("androidx-compose-bom")))
@@ -16,6 +17,11 @@ internal fun Project.configureAndroidCompose(commonExtension: CommonExtension) {
         add("implementation", libs.library("androidx-ui-tooling-preview"))
         add("implementation", libs.library("androidx-material3"))
         add("debugImplementation", libs.library("androidx-ui-tooling"))
+        add("testImplementation", platform(libs.library("androidx-compose-bom")))
+        add("testImplementation", libs.library("androidx-compose-ui-test-junit4"))
+        add("testImplementation", libs.library("robolectric"))
+        add("debugImplementation", platform(libs.library("androidx-compose-bom")))
+        add("debugImplementation", libs.library("androidx-compose-ui-test-manifest"))
     }
 
     tasks.withType<KotlinJvmCompile>().configureEach {
