@@ -2,109 +2,85 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
-  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-    </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Niveles · 3ro A</span>
-      <span style="font-size: 13px; color: #43483F;">II Bimestre</span>
-    </div>
-    <div style="display: flex; align-items: center; height: 40px; padding: 0 12px; margin-right: 8px; border-radius: 20px; background: #FFDAD6; color: #93000A; font-size: 13px; font-weight: 500;">Faltan 12</div>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; gap: 4px; padding: 8px 16px 0 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 1px;"><div style="font-size: 18px; font-weight: 600; line-height: 1.2;">Niveles · 3ro A</div><div style="font-size: 13px; color: #6E7075;">II Bimestre</div></div>
+    <div style="height: 32px; padding: 0 12px; display: flex; align-items: center; background: #FDE1DF; color: #8C1D13; border-radius: 999px; font-size: 13px; font-weight: 500; white-space: nowrap;">Faltan 12</div>
   </div>
 
-  <div style="display: flex; gap: 8px; padding: 0 16px 12px 16px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-grow: 1; height: 48px; padding: 0 12px 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-      <span>Personal Social</span>
-      <svg class="ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
-    </div>
+  <div style="padding: 8px 16px 12px 16px;">
+    <div style="height: 48px; padding: 0 12px 0 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #C9C9C5; border-radius: 8px;"><div style="display: flex; flex-direction: column;"><div style="font-size: 11px; color: #6E7075;">Área</div><div style="font-size: 15px; font-weight: 500; line-height: 1.2;">Personal Social</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div>
   </div>
 
-  <div style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; border-top: 1px solid #DFE4D7;">
-    <div style="display: flex; height: 44px; border-bottom: 1px solid #DFE4D7; background: #ECEFE5;">
-      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F; border-right: 1px solid #C3C8BC;">ALUMNO</div>
-      <div style="display: flex; flex-grow: 1;">
-        <div style="width: 64px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #285020; background: #C0EFB0;">01</div>
-        <div style="width: 64px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: #43483F;">02</div>
-        <div style="width: 64px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: #43483F;">05</div>
-        <div style="width: 20px; display: flex; align-items: center; justify-content: center; color: #73796E;"><svg class="ico" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg></div>
-      </div>
+  <div style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; border-top: 1px solid #E6E6E3;">
+    <div style="display: flex; height: 44px; flex-shrink: 0; background: #F6F6F4; border-bottom: 1px solid #E6E6E3;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; box-sizing: border-box;">ALUMNO</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #3F6836;">01</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #6E7075;">02</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #6E7075;">05</div>
+      <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
     </div>
 
-    <div style="display: flex; height: 56px; border-bottom: 1px solid #DFE4D7;">
-      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; color: #191D17; border-right: 1px solid #C3C8BC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ACOSTA RIVERA</div>
-      <div style="display: flex; align-items: center; gap: 8px; padding-left: 8px;">
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">AD</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">A</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C3C8BC; border-radius: 12px; background: #FFFFFF;"></div>
-      </div>
+    <div style="display: flex; height: 56px; flex-shrink: 0; border-bottom: 1px solid #E6E6E3;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Apaza Condori</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 8px; font-size: 15px; font-weight: 600;">A</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 15px; font-weight: 600;">AD</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px;"></div></div>
     </div>
-    <div style="display: flex; height: 56px; border-bottom: 1px solid #DFE4D7;">
-      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; color: #191D17; border-right: 1px solid #C3C8BC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">BAUTISTA QUISPE</div>
-      <div style="display: flex; align-items: center; gap: 8px; padding-left: 8px;">
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">B</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">B</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; gap: 2px; border: 2px solid #BA1A1A; border-radius: 12px; background: #FFDAD6; font-size: 15px; font-weight: 700; color: #93000A;">C<span style="font-size: 12px;">!</span></div>
-      </div>
+    <div style="display: flex; height: 56px; flex-shrink: 0; border-bottom: 1px solid #E6E6E3;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ccahuana Flores</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 8px; font-size: 15px; font-weight: 600;">B</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 15px; font-weight: 600;">A</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px;"></div></div>
     </div>
-    <div style="display: flex; height: 56px; border-bottom: 1px solid #DFE4D7;">
-      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; color: #191D17; border-right: 1px solid #C3C8BC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CCAHUANA MAMANI</div>
-      <div style="display: flex; align-items: center; gap: 8px; padding-left: 8px;">
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">A</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C3C8BC; border-radius: 12px; background: #FFFFFF;"></div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">A</div>
-      </div>
+    <div style="display: flex; height: 56px; flex-shrink: 0; border-bottom: 1px solid #E6E6E3;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Huanca Ríos</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; position: relative; display: flex; align-items: center; justify-content: center; border: 2px solid #B42318; border-radius: 8px; font-size: 15px; font-weight: 600; color: #8C1D13;">C<span style="position: absolute; top: 2px; right: 6px; font-size: 11px; font-weight: 600; color: #B42318;">!</span></div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 15px; font-weight: 600;">B</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 15px; font-weight: 600; color: #6E7075;">*</div></div>
     </div>
-    <div style="display: flex; height: 56px; border-bottom: 1px solid #DFE4D7; background: #ECEFE5;">
-      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 700; color: #191D17; border-right: 1px solid #C3C8BC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">DELGADO HUAMÁN</div>
-      <div style="display: flex; align-items: center; gap: 8px; padding-left: 8px;">
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 12px; background: #C0EFB0; font-size: 15px; font-weight: 700; color: #285020;">?</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">C</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">A</div>
-      </div>
+    <div style="display: flex; height: 56px; flex-shrink: 0; border-bottom: 1px solid #E6E6E3; background: #EDEDEA;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mamani Torres</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 8px; font-size: 15px; font-weight: 600; color: #6E7075; background: #FFFFFF;">?</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 15px; font-weight: 600;">A</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px;"></div></div>
     </div>
-    <div style="display: flex; height: 56px; border-bottom: 1px solid #DFE4D7;">
-      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; color: #191D17; border-right: 1px solid #C3C8BC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ESPINOZA VEGA</div>
-      <div style="display: flex; align-items: center; gap: 8px; padding-left: 8px;">
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C3C8BC; border-radius: 12px; background: #FFFFFF;"></div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17;">A</div>
-        <div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #43483F;">*</div>
-      </div>
+    <div style="display: flex; height: 56px; flex-shrink: 0; border-bottom: 1px solid #E6E6E3;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Quispe Huamán</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 8px;"></div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 15px; font-weight: 600;">B</div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px;"></div></div>
+    </div>
+    <div style="display: flex; height: 56px; flex-shrink: 0; border-bottom: 1px solid #E6E6E3;">
+      <div style="width: 150px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 500; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ramos Paucar</div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; border-radius: 8px;"></div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px;"></div></div>
+      <div style="width: 56px; display: flex; align-items: center; justify-content: center;"><div style="width: 48px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px;"></div></div>
     </div>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 16px 20px 16px; background: #FFFFFF; border-top: 1px solid #C3C8BC; border-radius: 16px 16px 0 0;">
+  <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 16px 16px; background: #FFFFFF; border-top: 1px solid #E6E6E3; box-shadow: 0 -8px 24px rgba(23,24,26,0.08); border-radius: 12px 12px 0 0;">
     <div style="display: flex; align-items: center; justify-content: space-between;">
-      <div style="display: flex; flex-direction: column;">
-        <span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F;">COMPETENCIA 01 · 4 DE 30</span>
-        <span style="font-size: 15px; font-weight: 500; color: #191D17;">DELGADO HUAMÁN, Pedro</span>
-      </div>
-      <span style="font-size: 13px; color: #3F6836; font-weight: 500;">Saltar</span>
+      <div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075;">COMPETENCIA 01 · 4 DE 30</div><div style="font-size: 16px; font-weight: 500;">Mamani Torres, Luis Alberto</div></div>
+      <div style="font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; display: flex; align-items: center;">Saltar</div>
     </div>
     <div style="display: flex; gap: 8px;">
-      <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; height: 52px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; font-weight: 700; color: #191D17;">AD</div>
-      <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; height: 52px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; font-weight: 700; color: #191D17;">A</div>
-      <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; height: 52px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; font-weight: 700; color: #191D17;">B</div>
-      <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; height: 52px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 17px; font-weight: 700; color: #191D17;">C</div>
-      <div style="display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; color: #43483F;">
-        <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
-      </div>
+      <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">AD</div>
+      <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">A</div>
+      <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">B</div>
+      <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">C</div>
+      <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
     </div>
-    <span style="font-size: 12px; color: #43483F;">Al elegir, pasa al siguiente alumno. Toca cualquier celda para salir.</span>
+    <div style="font-size: 13px; color: #6E7075;">Un toque guarda y pasa al siguiente alumno.</div>
   </div>
 </div>
-</x-dc>
 </body>
 </html>

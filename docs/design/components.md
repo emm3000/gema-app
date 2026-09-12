@@ -8,29 +8,33 @@ radius.
 Built path: `core/ui/src/main/kotlin/com/emm/gema/core/ui/` — the foundation
 split has landed, `core:ui` is its own module. Tokens live in
 `core/theme/Color.kt`, `Type.kt` and `Foundation.kt` and are the single source
-of truth.
+of truth. Values below follow the Registro tokens in `system.md`; that
+document is authoritative for anything not restated here.
 
 ## Token vocabulary used below
 
 | Token group | Members referenced here |
 |---|---|
-| `GemaSpacing` | `xs`, `sm`, `md`, `lg`, `xl`, `screenGutter`, `minTouchTarget` |
-| `GemaShapes` | `control` (buttons, inputs, chips), `container` (cards, sheets), `pill` |
-| `GemaColors` / `MaterialTheme.colorScheme` | `surface`, `surfaceVariant`, `onSurface`, `onSurfaceVariant`, `outline`, `primary`, `onPrimary`, `error`, `onError` |
-| `GemaAccents` | `unmarkedSurface`, `onUnmarkedSurface` (the warm surface behind an Attendance row nobody has touched yet; light and dark values live in `Color.kt`) |
-| `GemaTypography` | `titleLarge`, `titleMedium`, `bodyLarge`, `bodyMedium`, `labelLarge`, `labelSmall`, `numericMedium` |
+| `GemaSpacing` | `extraSmall`, `small`, `medium`, `large`, `extraLarge`, `screenGutter`, `minimumTouchTarget` |
+| `GemaShapes` | `control` 8dp (buttons, inputs, chips), `chip` 6dp (evidence chips), `container` 12dp (cards, sheets), `pill` |
+| `MaterialTheme.colorScheme` | `surface`, `surfaceContainerLow`, `surfaceContainerHigh`, `onSurface`, `onSurfaceVariant`, `outlineVariant`, `outline`, `primary`, `primaryContainer`, `onPrimaryContainer`, `error`, `errorContainer`, `inverseSurface` |
+| `GemaAccents` | `unmarkedSurface`, `onUnmarkedSurface` — the `warningContainer` tint behind an Attendance row nobody has touched yet; light and dark values live in `Color.kt` |
+| `gemaTypography` | `headlineSmall`, `titleLarge`, `titleMedium`, `bodyLarge`, `bodySmall`, `labelLarge`, `labelSmall`, plus the tabular-figure `numeral` style |
 
-`minTouchTarget` is 48dp and is a hard floor for every interactive component in
-this catalog. It is a token and not a per-component constant precisely because
-every component must honour it.
+`minimumTouchTarget` is 48dp and is a hard floor for every interactive
+component in this catalog. It is a token and not a per-component constant
+precisely because every component must honour it.
 
 ## The set
 
-Sixteen components. Each one is justified by at least two screens; anything used
-once lives in its feature package instead (`.claude/rules/ui-components.md`,
-"Decide the scope"). Fourteen are built in `core:ui`; six are still **planned**
-— specified here because a future feature ticket needs them, but with no
-`.kt` file yet.
+Forty-seven `G*`-prefixed Kotlin files exist under
+`core/ui/src/main/kotlin/com/emm/gema/core/ui/` today (counted directly:
+`fd -e kt . core/ui/src/main | rg -c '/G[A-Z]'`). That count includes
+component files and their co-located enums (`GButtonVariant`, `GBannerTone`,
+`GLevelOption`, and similar), not forty-seven independently useful widgets —
+the table below lists the components a feature screen actually calls. Each is
+justified by at least two screens; anything used once lives in its feature
+package instead (`.claude/rules/ui-components.md`, "Decide the scope").
 
 | Component | Wraps | Used by | Status |
 |---|---|---|---|
@@ -48,7 +52,7 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GCard` | `Surface` | home banner, export cards, section detail | built |
 | `GLevelChip` | `Surface` + `Text` | period levels grid, evidence rows | built |
 | `GLevelPicker` | `GSegmentedPicker` | period level sheet, activity evidence | built |
-| `GAttendanceToggle` | `GSegmentedPicker` | attendance day | planned |
+| `GAttendanceToggle` | `GSegmentedPicker` | attendance day | built |
 | `GCheckRow` | `Row` + `Checkbox` | worked competencies, activity form, import preview | built |
 | `GRadioRow` | `Row` + `RadioButton` | period level sheet | built |
 | `GSwitchRow` | `Row` + `Switch` | section areas | built |
@@ -66,10 +70,18 @@ once lives in its feature package instead (`.claude/rules/ui-components.md`,
 | `GTableRow` | `Box` + `HorizontalDivider` | attendance month | built |
 | `GMonthPickerDialog` | `AlertDialog` (`GDialog`) + `Surface` month chips | attendance month | built |
 
-(Twenty-eight rows; `GScreen`, `GDialog` and `GBottomSheet` are structural shells
-rather than widgets, which is why the working widget set is twenty-four.
-`GTableHeaderBand`/`GTableRow` currently back one screen; the period levels
-grid drifts on the same shape and is its own migration ticket.)
+(Thirty-one rows above, all built; `GScreen`, `GDialog` and `GBottomSheet`
+are structural shells rather than widgets, which is why the working widget
+set is twenty-eight. `GTableHeaderBand`/`GTableRow` currently back one
+screen; the period levels grid drifts on the same shape and is its own
+migration ticket. The remaining `G*` files under `core/ui/src/main` beyond
+this table — `GAttendanceRow`, `GBorderedContainer`, `GCalendarIconButton`,
+`GCircledIcon`, `GCompactNote`, `GDateChip`, `GDivider`, `GFileCard`, `GIcon`,
+`GOverflowMenu`, `GTintedGroupContent`, `GValidatedHelperText`, plus the
+co-located enums `GButtonVariant`, `GBannerActionStyle`, `GBannerTone` and
+`GLevelOption` — are real and shipped but not repeated in this table because
+they are either an enum or a narrow supporting piece of a component listed
+above.)
 
 ---
 
@@ -397,13 +409,19 @@ fun GCard(
 )
 ```
 
-Wraps `Surface` (not `Card`). Tokens: `GemaShapes.container`,
-`colorScheme.surfaceVariant`, `GemaSpacing.md` inner padding.
+Wraps `Surface` (not `Card`). Tokens: `GemaShapes.container` (12dp radius),
+`colorScheme.surface` with a hairline `outlineVariant` border, `GemaSpacing.medium`
+inner padding.
 
 Tradeoff: `Surface` with a one-dp outline instead of `Card` with elevation.
 Elevation shadows are the single most expensive thing to draw repeatedly on a
 low-end GPU, and in direct sunlight a shadow is invisible anyway — an outline
 is not.
+
+Deviation from an earlier draft of this catalog: `GCard`'s `containerColor`
+defaults to `colorScheme.surface`, not `surfaceVariant`. Registro cards lose
+their tint entirely — a card is white with a hairline border, never a color.
+Content that is genuinely one line uses a `GListItem` row instead of a card.
 
 Deviation from an earlier draft of this catalog: the built `GCard` has no
 `onClick`. Every current use (home banner, export cards, section detail) is a
@@ -417,7 +435,7 @@ Purpose: display one Achievement Level, one Unworked Comment, or an empty slot.
 Read-only.
 
 ```kotlin
-enum class GLevelChipSize { GRID, INLINE }
+enum class GLevelChipSize { GRID, INLINE, EVIDENCE }
 
 enum class GLevelOption(val letter: String, val contentDescription: String) {
     AD("AD", "Logro destacado"),
@@ -428,7 +446,7 @@ enum class GLevelOption(val letter: String, val contentDescription: String) {
 
 @Composable
 fun GLevelChip(
-    level: GLevelOption?,
+    letter: String?,
     modifier: Modifier = Modifier,
     hasUnworkedComment: Boolean = false,
     isIncomplete: Boolean = false,
@@ -438,10 +456,14 @@ fun GLevelChip(
 )
 ```
 
-Wraps `Surface` + `Text`. Tokens: `GemaShapes.control`,
-`GemaTypography.labelLarge` (INLINE) / `labelSmall` (GRID),
-`colorScheme.surfaceVariant` background, `colorScheme.outline` border,
-`colorScheme.error` for the incomplete marker.
+Wraps `Surface` + `Text`. Sizes: GRID 48×44dp inside a 56dp row (`labelSmall`),
+INLINE 48×48dp (`labelLarge`), EVIDENCE 34×26dp with `GemaShapes.chip` radius
+(`labelSmall`) — GRID and INLINE both use `GemaShapes.control`. Tokens:
+`colorScheme.surface` background for EVIDENCE, `surfaceVariant` for GRID/INLINE,
+`colorScheme.outline` border (`outlineVariant` for an EVIDENCE default),
+`colorScheme.primary` for the `isCurrent` border, `colorScheme.error` for the
+`isIncomplete` border and marker, `colorScheme.onSurface` for the letter in
+every state.
 
 Tradeoffs, and this is the one place where the obvious choice is wrong:
 
@@ -453,7 +475,8 @@ Tradeoffs, and this is the one place where the obvious choice is wrong:
   shown to a parent or a director reframes it as one. The chip therefore carries
   the **letter**, in one neutral surface, at a size that is legible without
   colour. Distinguishing levels is the Teacher's reading job, which they do
-  fluently; the app's job is not to editorialise.
+  fluently; the app's job is not to editorialise. **Invariant: a level letter is
+  always `onSurface`; only `isIncomplete` uses `error`.**
 - **`isCurrent` is a border, not a fill.** Column mode (ADR 0015) has to say
   which cell the bottom picker is bound to. It thickens the border to
   `GemaSpacing.indicatorStroke` in `colorScheme.primary`, so the letter itself
@@ -463,16 +486,17 @@ Tradeoffs, and this is the one place where the obvious choice is wrong:
   because that *is* a system state: SIAGIE will reject the file. It renders as a
   marker glyph next to the letter, never as a fill, so it survives a colour-blind
   reader and a washed-out screen.
-- **Two sizes, not a free `dp`.** GRID has to fit three columns plus a pinned
-  name column at 360dp. A caller passing an arbitrary size would eventually
+- **Three sizes, not a free `dp`.** GRID has to fit three columns plus a pinned
+  name column at 360dp; EVIDENCE has to fit inline in a read-only evidence row
+  on `PeriodLevelSheet`. A caller passing an arbitrary size would eventually
   break that arithmetic.
-- **`GLevelOption`, not `AchievementLevel`.** `core:ui` is the design system and
-  depends on no domain module, the same boundary `GAttendanceOption` keeps for
-  `GAttendanceToggle`. The chip and the picker take a `core:ui` type carrying the
-  letter and the `contentDescription`, and `feature:evaluation` maps
-  `AchievementLevel` to it. The cost is one exhaustive `when` in the feature
-  module; the gain is a design system that a second app, or a redesign, can
-  take without the CNEB scale coming along.
+- **`letter: String?`, not `GLevelOption` directly.** `core:ui` is the design
+  system and depends on no domain module, the same boundary `GAttendanceOption`
+  keeps for `GAttendanceToggle`. The chip takes a plain letter; `GLevelOption`
+  supplies the letter and `contentDescription` pairing used by `GLevelPicker`,
+  and `feature:evaluation` maps `AchievementLevel` to it. The cost is one
+  exhaustive `when` in the feature module; the gain is a design system that a
+  second app, or a redesign, can take without the CNEB scale coming along.
 
 ### GLevelPicker
 
@@ -651,17 +675,23 @@ action renders: `BUTTON` (default, a full-width text button, for a dismissal
 like "Entendido") or `LINK` (an inline text-plus-chevron row that navigates,
 for an affordance like "No dicto todas las áreas ›").
 
-Wraps `Surface`. Tokens: `GemaShapes.container`, `colorScheme.surfaceVariant`
-(INFO), `colorScheme.errorContainer` (ERROR), `GemaTypography.bodyMedium`.
+Wraps `Surface`, radius `GemaShapes.control` (8dp), no border. Tokens:
+`colorScheme.surfaceContainerLow` (INFO), `colorScheme.errorContainer` /
+`onErrorContainer` text (ERROR), `colorScheme.warningContainer` /
+`onSurfaceVariant`-toned text (WARNING), `gemaTypography.bodyLarge`.
 
 Tradeoff: banners are inline in the content, never floating snackbars, for
 anything that matters. A snackbar disappears after four seconds; a Teacher who
 put the phone down mid-lesson would never see "Faltan 2 conclusiones". Snackbars
 stay only for pure acknowledgements ("Respaldo creado").
 
-WARNING deliberately resolves to the same neutral surface as INFO with a
-different leading glyph rather than an amber fill — three tones of coloured
-container on a 360dp screen becomes decoration.
+Deviation from an earlier draft of this catalog: WARNING used to resolve to
+the same neutral surface as INFO with only a different leading glyph. The
+Registro tokens give WARNING its own `warningContainer` tint (the same one
+`GAttendanceToggle`'s unrecorded row uses), because a pending-attendance
+banner and a backup-overdue banner should not read identically at a glance —
+INFO stays neutral, WARNING and ERROR are now visibly distinct container
+tones.
 
 ### GEmptyState
 
@@ -676,8 +706,9 @@ fun GEmptyState(
 )
 ```
 
-Wraps a centred `Column`. Tokens: `GemaTypography.titleMedium` / `bodyMedium`,
-`colorScheme.onSurfaceVariant`, `GemaSpacing.xl`.
+Wraps a centred `Column`, bordered with `GemaShapes.container` (12dp) and a
+hairline, no illustration. Tokens: `gemaTypography.titleMedium` / `bodyLarge`,
+`colorScheme.onSurfaceVariant`, `GemaSpacing.extraLarge`.
 
 No illustration and no mascot — the rule file forbids it, and an empty state
 here is almost always one tap from being resolved. The action text is the whole
@@ -802,8 +833,13 @@ Wraps `ExtendedFloatingActionButton`. The primary creation action for a list
 screen (Students, Sections, School Years, Activities) — floats bottom-end via
 `GScreen`'s `fab` slot instead of sitting in the top bar. `fab` and
 `bottomAction` are mutually exclusive on `GScreen`. Tokens:
-`GemaSpacing.fabHeight`, `GemaShapes.container`, `primaryContainer` /
-`onPrimaryContainer`.
+`GemaSpacing.fabHeight`, `GemaShapes.control` +2dp radius, `colorScheme.inverseSurface`
+fill with `colorScheme.surface`-toned icon and label.
+
+Deviation from an earlier draft of this catalog: the fab moves from
+`primaryContainer` to `inverseSurface`. It reads as one dark object on a
+white screen — always the same shape, always the same tone — rather than a
+tinted button competing with the primary green used elsewhere on the screen.
 
 ---
 
