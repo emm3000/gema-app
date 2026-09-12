@@ -44,6 +44,9 @@ val onUnmarkedLight = Color(0xFF43483F)
 val warningContainerLight = Color(0xFFFFF8E1)
 val onWarningContainerLight = Color(0xFF43483F)
 
+val absentContainerLight = Color(0xFFFFDAD6)
+val onAbsentContainerLight = Color(0xFF93000A)
+
 val primaryDark = Color(0xFFA5D396)
 val onPrimaryDark = Color(0xFF11380B)
 val primaryContainerDark = Color(0xFF285020)
@@ -85,3 +88,6 @@ val onUnmarkedDark = Color(0xFFD5D0C2)
 
 val warningContainerDark = Color(0xFF2C2718)
 val onWarningContainerDark = Color(0xFFD5D0C2)
+
+val absentContainerDark = Color(0xFF93000A)
+val onAbsentContainerDark = Color(0xFFFFDAD6)
