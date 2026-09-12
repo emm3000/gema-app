@@ -4,27 +4,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.ui.test.RobolectricComposeTest
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-class GDateFieldTest {
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class GDateFieldTest : RobolectricComposeTest() {
 
     @Test
     fun `field grows past a single-line baseline when its value does not fit the container width`() {

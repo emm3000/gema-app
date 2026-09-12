@@ -2,21 +2,12 @@ package com.emm.gema.core.ui
 
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import com.emm.gema.core.theme.GemaTheme
-import org.junit.Rule
+import com.emm.gema.core.ui.test.RobolectricComposeTest
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
-class GAttendanceToggleTest {
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class GAttendanceToggleTest : RobolectricComposeTest() {
 
     @Test
     fun `each option announces its label and selected state`() {
