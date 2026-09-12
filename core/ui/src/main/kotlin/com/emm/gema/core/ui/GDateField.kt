@@ -35,6 +35,9 @@ private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInsta
 
 private fun Long.toLocalDateUtc(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
+internal fun isFontScaleExpanded(fontScale: Float): Boolean =
+    fontScale >= GemaAccessibility.expandableFieldFontScaleThreshold
+
 @Composable
 fun GDateField(
     value: LocalDate?,
@@ -66,8 +69,7 @@ fun GDateField(
             Text(text = text, color = MaterialTheme.colorScheme.error)
         }
     }
-    val isFontScaleExpanded: Boolean =
-        LocalConfiguration.current.fontScale > GemaAccessibility.expandableFieldFontScaleThreshold
+    val isExpanded: Boolean = isFontScaleExpanded(LocalConfiguration.current.fontScale)
 
     OutlinedTextField(
         value = displayValue,
@@ -87,8 +89,8 @@ fun GDateField(
         },
         interactionSource = interactionSource,
         shape = GemaShapes.control,
-        singleLine = !isFontScaleExpanded,
-        maxLines = if (isFontScaleExpanded) 2 else 1,
+        singleLine = !isExpanded,
+        maxLines = if (isExpanded) 2 else 1,
     )
 
     if (isPickerVisible) {

@@ -46,7 +46,8 @@ object GemaBorder {
 }
 
 object GemaAccessibility {
-    const val expandableFieldFontScaleThreshold: Float = 1.15f
+    @Suppress("MayBeConst")
+    val expandableFieldFontScaleThreshold: Float = 1.15f
 }
 
 object GemaAccents {
