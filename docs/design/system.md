@@ -186,10 +186,9 @@ the letter is not.
 
 ## Phase 4 waves
 
-1. Tokens
-2. Components
-3. Home
-4. Attendance day
-5. Period levels + level sheet
+1. #163 Tokens
+2. #164 Typeface
+3. #165/#166/#167 Components (parallel)
+4. #168/#169/#170 Screens (parallel)
 
 No wave changes a `UiState` contract unless `screens.md` explicitly says so.
