@@ -31,7 +31,6 @@ import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
 import java.time.Clock
 import java.time.YearMonth
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
