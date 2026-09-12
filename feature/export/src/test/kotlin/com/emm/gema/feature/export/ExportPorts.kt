@@ -1,5 +1,7 @@
 package com.emm.gema.feature.export
 
+import com.emm.gema.core.domain.attendance.AttendanceRecord
+import com.emm.gema.core.domain.attendance.AttendanceRepository
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.CompetencyRepository
@@ -24,8 +26,11 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
+import com.emm.gema.core.domain.siagie.AttendanceExportEntry
+import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.ImportedTemplate
 import com.emm.gema.core.domain.siagie.ImportedTemplateKind
+import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
 import com.emm.gema.core.domain.siagie.SiagieGradesWriteResult
 import com.emm.gema.core.domain.siagie.SiagieGradesWriter
@@ -35,6 +40,8 @@ import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
+import java.time.LocalDate
+import java.time.YearMonth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -200,4 +207,40 @@ class FakePeriodLevelSummaryPdfRenderer : PeriodLevelSummaryPdfRenderer {
 
     override fun render(sectionTitle: String, periodLabel: String, summary: PeriodLevelSummary): ByteArray =
         byteArrayOf(1, 2, 3)
+}
+
+class FakeAttendanceRepository : AttendanceRepository {
+
+    private val records: MutableStateFlow<List<AttendanceRecord>> = MutableStateFlow(emptyList())
+
+    override fun observeBySectionAndDate(sectionId: SectionId, date: LocalDate): Flow<List<AttendanceRecord>> =
+        records.map { stored -> stored.filter { it.sectionId == sectionId && it.date == date } }
+
+    override fun observeBySectionAndMonth(sectionId: SectionId, month: YearMonth): Flow<List<AttendanceRecord>> =
+        records.map { stored ->
+            stored.filter { it.sectionId == sectionId && YearMonth.from(it.date) == month }
+        }
+
+    override suspend fun record(record: AttendanceRecord) {
+        records.value = records.value.filterNot {
+            it.sectionId == record.sectionId && it.studentId == record.studentId && it.date == record.date
+        } + record
+    }
+
+    override suspend fun countRecordedDays(sectionId: SectionId): Int =
+        records.value.filter { it.sectionId == sectionId }.map { it.date }.distinct().size
+
+    override suspend fun deleteBySection(sectionId: SectionId) = Unit
+}
+
+class FakeMonthlyAttendanceExporter : MonthlyAttendanceExporter {
+
+    override suspend fun export(
+        templateUri: String,
+        month: YearMonth,
+        entries: List<AttendanceExportEntry>,
+    ): AttendanceExportFile = AttendanceExportFile(
+        fileName = "asistencia.xlsx",
+        path = "/cache/exports/asistencia.xlsx",
+    )
 }

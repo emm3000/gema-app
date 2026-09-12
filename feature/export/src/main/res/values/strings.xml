@@ -1,18 +1,20 @@
 <resources>
-    <string name="export_title">Entregar</string>
-    <string name="export_period_label">Periodo</string>
+    <string name="export_title">Entregar · %1$s</string>
     <string name="export_grades_title">Notas para SIAGIE</string>
     <string name="export_grades_unavailable">Esta sección no tiene una plantilla SIAGIE importada. Importa una desde Alumnos, o usa el resumen PDF/CSV.</string>
     <string name="export_grades_blocked">Faltan %1$d conclusiones descriptivas</string>
     <string name="export_template_mismatch">La plantilla importada no tiene todo lo que hay que llenar: %1$s. Importa la plantilla que SIAGIE generó para esta sección.</string>
     <string name="export_import_template">Importar plantilla</string>
     <string name="export_generate_file">Generar archivo</string>
-    <string name="export_file_name_note">El archivo conserva su nombre original.</string>
+    <string name="export_file_name_note">El archivo conserva su nombre original y se comparte por WhatsApp, Bluetooth o USB.</string>
     <string name="export_share_title">Compartir notas</string>
     <string name="export_message_failed">No se pudo generar el archivo</string>
     <string name="export_message_unavailable">Esta sección no tiene una plantilla SIAGIE importada</string>
     <string name="export_summary_title">Resumen para imprimir</string>
     <string name="export_summary_pdf">PDF</string>
     <string name="export_summary_csv">CSV</string>
-    <string name="export_period_badge_current">Actual</string>
+    <string name="export_attendance_title">Asistencia para SIAGIE</string>
+    <string name="export_attendance_subtitle">%1$s · %2$d días</string>
+    <string name="export_attendance_export">Exportar</string>
+    <string name="export_attendance_message_failed">No se pudo generar el archivo de asistencia</string>
 </resources>

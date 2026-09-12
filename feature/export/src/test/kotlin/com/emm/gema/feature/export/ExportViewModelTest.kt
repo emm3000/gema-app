@@ -10,6 +10,8 @@ import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
+import com.emm.gema.core.domain.attendance.ExportMonthlyAttendanceUseCase
+import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
 import com.emm.gema.core.domain.export.ExportGradesUseCase
 import com.emm.gema.core.domain.export.GetGradesExportPlanUseCase
 import com.emm.gema.core.domain.export.GetGradesTemplateNameUseCase
@@ -77,6 +79,7 @@ class ExportViewModelTest {
     )
 
     private val students = FakeStudentRepository()
+    private val attendance = FakeAttendanceRepository()
     private val levels = FakePeriodLevelRepository()
     private val worked = FakeWorkedCompetencyRepository()
     private val sectionAreas = FakeSectionAreaRepository()
@@ -175,14 +178,14 @@ class ExportViewModelTest {
     }
 
     @Test
-    fun `the period picker starts on the period that contains today`() = runTest {
+    fun `the period label shows the period that contains today`() = runTest {
         seedSection()
         storeTemplate()
 
         val viewModel: ExportViewModel = viewModel()
 
-        assertThat(viewModel.state.value.selectedPeriodId).isEqualTo(periodId)
-        assertThat(viewModel.state.value.periods.single().label).isEqualTo("I Bimestre")
+        assertThat(viewModel.state.value.periodId).isEqualTo(periodId)
+        assertThat(viewModel.state.value.periodLabel).isEqualTo("I Bimestre")
         assertThat(viewModel.state.value.sectionTitle).isEqualTo("6to A")
     }
 
@@ -244,14 +247,16 @@ class ExportViewModelTest {
                 FakePeriodRepository(periods),
                 Clock.fixed(Instant.parse("2026-04-15T10:00:00Z"), ZoneOffset.UTC),
             ),
-            getGradesTemplateName = GetGradesTemplateNameUseCase(importStore),
-            getGradesExportPlan = getPlan,
-            exportGrades = ExportGradesUseCase(
+            gradesExport = GradesExport(
+                getTemplateName = GetGradesTemplateNameUseCase(importStore),
                 getPlan = getPlan,
-                importStore = importStore,
-                writer = writer,
-                exportStore = FakeExportStore(),
-                students = students,
+                export = ExportGradesUseCase(
+                    getPlan = getPlan,
+                    importStore = importStore,
+                    writer = writer,
+                    exportStore = FakeExportStore(),
+                    students = students,
+                ),
             ),
             exportPeriodLevelSummary = ExportPeriodLevelSummaryUseCase(
                 getSummary = GetPeriodLevelSummaryUseCase(
@@ -263,6 +268,10 @@ class ExportViewModelTest {
                 ),
                 documents = FakeSummaryDocuments(),
                 pdfRenderer = FakePeriodLevelSummaryPdfRenderer(),
+            ),
+            attendanceExport = AttendanceExport(
+                getSummary = GetMonthlyAttendanceSummaryUseCase(students, attendance),
+                export = ExportMonthlyAttendanceUseCase(students, attendance, FakeMonthlyAttendanceExporter()),
             ),
         )
     }

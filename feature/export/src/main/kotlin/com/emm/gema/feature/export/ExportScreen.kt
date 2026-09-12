@@ -17,18 +17,18 @@ import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.theme.label
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCard
-import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GListItem
-import com.emm.gema.core.ui.GPickerOption
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import java.time.YearMonth
 
 @Composable
 fun ExportScreen(
@@ -37,14 +37,13 @@ fun ExportScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
-    val currentPeriodBadge: String = stringResource(R.string.export_period_badge_current)
     GScreen(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
         topBar = {
             GTopBar(
-                title = stringResource(R.string.export_title),
-                subtitle = state.sectionTitle,
+                title = stringResource(R.string.export_title, state.sectionTitle),
+                subtitle = state.periodLabel,
                 onBackClick = { onIntent(ExportUiIntent.BackClicked) },
             )
         },
@@ -56,20 +55,8 @@ fun ExportScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
-            GDropdownPicker(
-                options = state.periods.map {
-                    GPickerOption(
-                        value = it.id,
-                        label = it.label,
-                        badge = currentPeriodBadge.takeIf { _ -> it.isCurrent },
-                    )
-                },
-                selected = state.selectedPeriodId,
-                onSelect = { onIntent(ExportUiIntent.PeriodSelected(it)) },
-                label = stringResource(R.string.export_period_label),
-                modifier = Modifier.fillMaxWidth(),
-            )
             GradesCard(state = state, onIntent = onIntent)
+            AttendanceCard(state = state, onIntent = onIntent)
             SummaryCard(state = state, onIntent = onIntent)
             GText(
                 text = stringResource(R.string.export_file_name_note),
@@ -166,6 +153,38 @@ private fun BlockedGrades(
 }
 
 @Composable
+private fun AttendanceCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit) {
+    val month: YearMonth = state.attendanceMonth ?: return
+    GCard {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                GText(
+                    text = stringResource(R.string.export_attendance_title),
+                    style = GTextStyle.TITLE_MEDIUM,
+                )
+                GText(
+                    text = stringResource(
+                        R.string.export_attendance_subtitle,
+                        month.label(),
+                        state.attendanceDayCount,
+                    ),
+                    style = GTextStyle.BODY_SMALL,
+                )
+            }
+            GButton(
+                text = stringResource(R.string.export_attendance_export),
+                onClick = { onIntent(ExportUiIntent.ExportAttendanceClicked) },
+                variant = GButtonVariant.SECONDARY,
+                isBusy = state.activeExport == ActiveExport.ATTENDANCE,
+            )
+        }
+    }
+}
+
+@Composable
 private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit) {
     GCard {
         GText(
@@ -181,7 +200,7 @@ private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit
                 onClick = { onIntent(ExportUiIntent.ExportSummaryPdfClicked) },
                 modifier = Modifier.weight(1f),
                 variant = GButtonVariant.SECONDARY,
-                enabled = state.selectedPeriodId != null && state.activeExport != ActiveExport.SUMMARY_CSV,
+                enabled = state.periodId != null && state.activeExport != ActiveExport.SUMMARY_CSV,
                 isBusy = state.activeExport == ActiveExport.SUMMARY_PDF,
             )
             GButton(
@@ -189,7 +208,7 @@ private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit
                 onClick = { onIntent(ExportUiIntent.ExportSummaryCsvClicked) },
                 modifier = Modifier.weight(1f),
                 variant = GButtonVariant.SECONDARY,
-                enabled = state.selectedPeriodId != null && state.activeExport != ActiveExport.SUMMARY_PDF,
+                enabled = state.periodId != null && state.activeExport != ActiveExport.SUMMARY_PDF,
                 isBusy = state.activeExport == ActiveExport.SUMMARY_CSV,
             )
         }
@@ -211,9 +230,11 @@ private fun ExportScreenPreview() {
             state = ExportUiState(
                 isLoading = false,
                 sectionTitle = "6to A",
-                periods = listOf(PeriodOption(id = PeriodId("period-1"), label = "II Bimestre", isCurrent = true)),
-                selectedPeriodId = PeriodId("period-1"),
+                periodId = PeriodId("period-1"),
+                periodLabel = "II Bimestre",
                 templateFileName = "6 Primaria EBR.xlsx",
+                attendanceMonth = YearMonth.of(2026, 9),
+                attendanceDayCount = 20,
                 gradesExportState = GradesExportUiState.Blocked(
                     listOf(
                         ExportGapRow(

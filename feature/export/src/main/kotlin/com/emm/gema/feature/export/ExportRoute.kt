@@ -1,6 +1,9 @@
 package com.emm.gema.feature.export
 
 import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,10 +37,18 @@ fun ExportRoute(
     val shareTitle: String = stringResource(R.string.export_share_title)
     val messages: Map<ExportMessage, String> = exportMessages()
 
+    val pickAttendanceTemplate = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri: Uri? ->
+        if (uri != null) viewModel.onIntent(ExportUiIntent.AttendanceTemplatePicked(uri.toString()))
+    }
+
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect: ExportUiEffect ->
             when (effect) {
                 is ExportUiEffect.ShareFile -> context.shareFile(File(effect.path), effect.mimeType, shareTitle)
+                is ExportUiEffect.OpenAttendanceTemplatePicker ->
+                    pickAttendanceTemplate.launch(effect.mimeTypes.toTypedArray())
                 is ExportUiEffect.NavigateToPeriodLevelCell ->
                     onPeriodLevelCell(effect.sectionId, effect.studentId, effect.competencyId)
                 is ExportUiEffect.NavigateToStudents -> onStudents(effect.sectionId)
@@ -59,4 +70,5 @@ fun ExportRoute(
 private fun exportMessages(): Map<ExportMessage, String> = mapOf(
     ExportMessage.EXPORT_FAILED to stringResource(R.string.export_message_failed),
     ExportMessage.EXPORT_UNAVAILABLE to stringResource(R.string.export_message_unavailable),
+    ExportMessage.ATTENDANCE_EXPORT_FAILED to stringResource(R.string.export_attendance_message_failed),
 )
