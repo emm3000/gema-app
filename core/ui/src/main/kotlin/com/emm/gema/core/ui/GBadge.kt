@@ -21,7 +21,12 @@ enum class GBadgeTone {
 }
 
 @Composable
-fun GBadge(text: String, modifier: Modifier = Modifier, tone: GBadgeTone = GBadgeTone.PRIMARY) {
+fun GBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+    tone: GBadgeTone = GBadgeTone.PRIMARY,
+    onClick: (() -> Unit)? = null,
+) {
     val color: Color = when (tone) {
         GBadgeTone.PRIMARY -> MaterialTheme.colorScheme.primaryContainer
         GBadgeTone.ERROR -> MaterialTheme.colorScheme.errorContainer
@@ -30,17 +35,30 @@ fun GBadge(text: String, modifier: Modifier = Modifier, tone: GBadgeTone = GBadg
         GBadgeTone.PRIMARY -> MaterialTheme.colorScheme.onPrimaryContainer
         GBadgeTone.ERROR -> MaterialTheme.colorScheme.onErrorContainer
     }
-    Surface(
-        modifier = modifier,
-        shape = GemaShapes.control,
-        color = color,
-        contentColor = contentColor,
-    ) {
+    val content: @Composable () -> Unit = {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = GemaSpacing.small, vertical = GemaSpacing.extraSmall),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Medium,
+        )
+    }
+    if (onClick == null) {
+        Surface(
+            modifier = modifier,
+            shape = GemaShapes.control,
+            color = color,
+            contentColor = contentColor,
+            content = content,
+        )
+    } else {
+        Surface(
+            onClick = onClick,
+            modifier = modifier,
+            shape = GemaShapes.control,
+            color = color,
+            contentColor = contentColor,
+            content = content,
         )
     }
 }
