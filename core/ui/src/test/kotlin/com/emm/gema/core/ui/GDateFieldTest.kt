@@ -1,12 +1,15 @@
 package com.emm.gema.core.ui
 
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaTheme
+import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate
 import org.junit.Rule
 import org.junit.Test
@@ -15,9 +18,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-// Covers the field growing past one line to keep a value visible; it cannot
-// assert against ellipsis or horizontal-scroll clipping, since neither is
-// observable through Compose semantics at the JVM level (see #155).
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -27,20 +27,35 @@ class GDateFieldTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun `field grows past single-line height when its value does not fit the container width`() {
+    fun `field grows past a single-line baseline when its value does not fit the container width`() {
         val value: LocalDate = LocalDate.of(2026, 3, 1)
+        val width: Dp = 130.dp
 
         composeTestRule.setContent {
             GemaTheme {
+                OutlinedTextField(
+                    value = "01/03/2026",
+                    onValueChange = {},
+                    singleLine = true,
+                    modifier = Modifier.width(width).testTag("baseline"),
+                )
                 GDateField(
                     value = value,
                     onValueChange = {},
-                    modifier = Modifier.width(130.dp),
+                    modifier = Modifier.width(width).testTag("field"),
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("01/03/2026")
-            .assertHeightIsAtLeast(64.dp)
+        val baselineHeightPx: Int = composeTestRule.onNodeWithTag("baseline")
+            .fetchSemanticsNode()
+            .size
+            .height
+        val fieldHeightPx: Int = composeTestRule.onNodeWithTag("field")
+            .fetchSemanticsNode()
+            .size
+            .height
+
+        assertThat(fieldHeightPx).isGreaterThan(baselineHeightPx)
     }
 }
