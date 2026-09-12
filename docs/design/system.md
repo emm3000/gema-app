@@ -151,7 +151,7 @@ radius, 48dp rows, `labelLarge`.
 **GExtendedFab** — moved from `primaryContainer` to `inverseSurface`: one
 dark object on a white screen, always the same thing. `GemaSpacing.fabHeight`
 52dp (#163 — today's code ships 56dp), `GemaShapes.control` (8dp) radius,
-white icon and label.
+`colorScheme.inverseOnSurface` icon and label.
 
 **GBadge** — pill shape, PRIMARY tone (`primaryContainer` / `onPrimaryContainer`)
 or ERROR tone (`errorContainer` / `on`), 32dp visual height inside a 48dp
