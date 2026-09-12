@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -203,12 +204,16 @@ private fun CurrentPeriodCard(label: String, daysLeft: Int?, endDate: LocalDate?
     }
 }
 
+internal fun sectionCardTestTag(id: SectionId): String = "home_section_card_${id.value}"
+
 @Composable
 private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modifier: Modifier = Modifier) {
     GBorderedContainer(modifier = modifier) {
         GListItem(
             title = row.title,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(sectionCardTestTag(row.id)),
             titleStyle = GTextStyle.CARD_TITLE_EMPHASIS,
             trailingText = pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
             showDivider = false,

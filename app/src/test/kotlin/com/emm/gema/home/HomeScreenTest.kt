@@ -1,7 +1,7 @@
 package com.emm.gema.home
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.theme.GemaTheme
@@ -22,9 +22,10 @@ class HomeScreenTest {
     @Test
     fun `tapping a section card dispatches SectionClicked`() {
         var dispatched: HomeUiIntent? = null
+        val sectionId = SectionId("section-1")
         val state = HomeUiState(
             isLoading = false,
-            sections = listOf(SectionRow(SectionId("section-1"), "3ro A", 30)),
+            sections = listOf(SectionRow(sectionId, "3ro A", 30)),
         )
 
         composeTestRule.setContent {
@@ -33,8 +34,8 @@ class HomeScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("3ro A").performClick()
+        composeTestRule.onNodeWithTag(sectionCardTestTag(sectionId)).performClick()
 
-        assertThat(dispatched).isEqualTo(HomeUiIntent.SectionClicked(SectionId("section-1")))
+        assertThat(dispatched).isEqualTo(HomeUiIntent.SectionClicked(sectionId))
     }
 }
