@@ -41,6 +41,17 @@ next screen someone touches. Retrofitting all 21 destinations in one sitting
 would produce a suite nobody who wrote it maintains; one test the next person
 copies is worth more than twenty nobody reads.
 
+The category also covers the second half of the same #136 incident:
+`GAttendanceToggle` dropping `GSegmentedPicker`'s per-option accessibility
+semantics. `GAttendanceToggleTest` (`core:ui`) asserts each option's
+`contentDescription` and selected state through the merged semantics tree —
+the same failure surface a screen reader relies on and nothing else in the
+suite could assert. It is deliberately not a mandate to add a semantics test
+to every `G*` component; it covers the one that regressed, alongside
+navigation dispatch (`HomeScreenTest`) and enabled/disabled state
+(`ExportScreenTest`, below) as one more admitted assertion kind, not a
+license to test Compose UI generally.
+
 ## Where the test setup lives
 
 `configureAndroidCompose` in `build-logic/convention` — not `gema.android.feature`
@@ -95,6 +106,13 @@ of screens in — it is worth revisiting whether every screen needs its own
 Robolectric class, or whether some of this coverage moves to fewer, denser
 classes.
 
+A local forced run of `:core:ui:testDebugUnitTest --tests GAttendanceToggleTest`
+measured 2.77s of JUnit-reported test time, in line with `HomeScreenTest`'s
+~2.7s — confirming the fixed per-class cost holds across `:app` and
+`core:ui`. This is a local measurement, not CI-corroborated. No `NATIVE`
+graphics mode is needed here either: the test reads semantics, not measured
+layout.
+
 `@GraphicsMode(GraphicsMode.Mode.NATIVE)` roughly doubles that per-class cost:
 `GDateFieldTest` (issue #155), the third class, measured 6.06s against the
 2.7s `HomeScreenTest` reference. Default Robolectric graphics mode returns
@@ -109,6 +127,14 @@ assertion, like `HomeScreenTest`, does not need it and should not pay for it.
 `HomeScreenTest` was confirmed to catch the exact #136 regression: with
 `SectionCard`'s `onClick` removed, the test failed because no intent was
 captured; with `onClick` restored, it passed.
+
+`GAttendanceToggleTest` was confirmed the same way, against both semantics
+sources it asserts: with the `.semantics { }` modifier removed, the test
+failed because no node matched the expected `contentDescription`; with only
+`selectable(...)`'s `selected` argument forced to `false` (leaving
+`contentDescription` in place so the node stayed locatable), the test failed
+because the selected-state assertions no longer held. Restoring either change
+passed again.
 
 ## Widening the category: enabled/disabled state
 
