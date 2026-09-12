@@ -1,5 +1,6 @@
 package com.emm.gema.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -212,7 +213,9 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onIntent(HomeUiIntent.SectionClicked(row.id)) },
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 GText(
