@@ -92,6 +92,15 @@ class ActivityEvidenceViewModelTest {
     )
 
     @Test
+    fun `competency column label shows the code and the competency name`() = runTest {
+        workedCompetencyRepository.setWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), true)
+        val viewModel: ActivityEvidenceViewModel = viewModel()
+
+        val state: ActivityEvidenceUiState = viewModel.state.value
+        assertThat(state.competencies.first().label).isEqualTo("PPSS 01 · Construye su identidad")
+    }
+
+    @Test
     fun `evidence is optional per student`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, periodId, Competency.idOf(Area.PPSS, 1), true)
         val viewModel: ActivityEvidenceViewModel = viewModel()
