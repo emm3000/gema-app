@@ -1,6 +1,5 @@
 package com.emm.gema.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +40,7 @@ import com.emm.gema.core.ui.GCircledIcon
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GIconButton
+import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GMenuAction
 import com.emm.gema.core.ui.GOverflowMenu
 import com.emm.gema.core.ui.GScreen
@@ -206,30 +206,20 @@ private fun CurrentPeriodCard(label: String, daysLeft: Int?, endDate: LocalDate?
 @Composable
 private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modifier: Modifier = Modifier) {
     GBorderedContainer(modifier = modifier) {
+        GListItem(
+            title = row.title,
+            modifier = Modifier.fillMaxWidth(),
+            trailingText = pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
+            showDivider = false,
+            onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(GemaSpacing.medium),
+                .padding(horizontal = GemaSpacing.medium)
+                .padding(bottom = GemaSpacing.medium),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onIntent(HomeUiIntent.SectionClicked(row.id)) },
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                GText(
-                    text = row.title,
-                    style = GTextStyle.TITLE_MEDIUM_EMPHASIS,
-                    modifier = Modifier
-                        .weight(1f, fill = false),
-                )
-                GText(
-                    text = pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
-                    style = GTextStyle.BODY_MEDIUM,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
             GText(
                 text = stringResource(R.string.home_today_status, attendanceLabel(row.attendance)),
                 style = GTextStyle.BODY_MEDIUM,
