@@ -97,8 +97,11 @@ class ExportViewModel(
                 ),
             )
             ExportUiIntent.ImportTemplateClicked -> emit(ExportUiEffect.NavigateToStudents(sectionId))
-            ExportUiIntent.ExportAttendanceClicked ->
-                emit(ExportUiEffect.OpenAttendanceTemplatePicker(attendanceTemplateMimeTypes))
+            ExportUiIntent.ExportAttendanceClicked -> {
+                if (_state.value.activeExport == null) {
+                    emit(ExportUiEffect.OpenAttendanceTemplatePicker(attendanceTemplateMimeTypes))
+                }
+            }
             is ExportUiIntent.AttendanceTemplatePicked -> exportAttendance(intent.uri)
             ExportUiIntent.ExportSummaryCsvClicked -> exportSummary(SummaryFormat.CSV)
             ExportUiIntent.ExportSummaryPdfClicked -> exportSummary(SummaryFormat.PDF)
