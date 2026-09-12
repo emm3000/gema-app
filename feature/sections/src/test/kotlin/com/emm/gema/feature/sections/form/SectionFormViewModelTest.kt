@@ -84,6 +84,7 @@ class SectionFormViewModelTest {
         assertThat(state.sectionId).isNull()
         assertThat(state.canSave).isFalse()
         assertThat(state.canDelete).isFalse()
+        assertThat(state.sectionNameError).isNull()
     }
 
     @Test
