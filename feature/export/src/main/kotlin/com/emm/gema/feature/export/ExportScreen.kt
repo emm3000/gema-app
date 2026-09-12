@@ -121,7 +121,7 @@ private fun ReadyGrades(
         text = stringResource(R.string.export_generate_file),
         onClick = { onIntent(ExportUiIntent.ExportGradesClicked) },
         modifier = Modifier.fillMaxWidth(),
-        enabled = state.activeExport == null || state.activeExport == ActiveExport.GRADES,
+        enabled = state.activeExport == null,
         isBusy = state.activeExport == ActiveExport.GRADES,
     )
 }
@@ -179,7 +179,7 @@ private fun AttendanceCard(state: ExportUiState, onIntent: (ExportUiIntent) -> U
                 text = stringResource(R.string.export_attendance_export),
                 onClick = { onIntent(ExportUiIntent.ExportAttendanceClicked) },
                 variant = GButtonVariant.SECONDARY,
-                enabled = state.activeExport == null || state.activeExport == ActiveExport.ATTENDANCE,
+                enabled = state.activeExport == null,
                 isBusy = state.activeExport == ActiveExport.ATTENDANCE,
             )
         }
@@ -202,8 +202,7 @@ private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit
                 onClick = { onIntent(ExportUiIntent.ExportSummaryPdfClicked) },
                 modifier = Modifier.weight(1f),
                 variant = GButtonVariant.SECONDARY,
-                enabled = state.periodId != null &&
-                    (state.activeExport == null || state.activeExport == ActiveExport.SUMMARY_PDF),
+                enabled = state.periodId != null && state.activeExport == null,
                 isBusy = state.activeExport == ActiveExport.SUMMARY_PDF,
             )
             GButton(
@@ -211,8 +210,7 @@ private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit
                 onClick = { onIntent(ExportUiIntent.ExportSummaryCsvClicked) },
                 modifier = Modifier.weight(1f),
                 variant = GButtonVariant.SECONDARY,
-                enabled = state.periodId != null &&
-                    (state.activeExport == null || state.activeExport == ActiveExport.SUMMARY_CSV),
+                enabled = state.periodId != null && state.activeExport == null,
                 isBusy = state.activeExport == ActiveExport.SUMMARY_CSV,
             )
         }

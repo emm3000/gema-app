@@ -1496,9 +1496,12 @@ column in that sheet, or a Student the Template does not carry. It reads as a wa
 written (ADR 0018).
 
 The Resumen card's PDF and CSV buttons read `activeExport` to show which one
-is busy and disable the other; its `ExportMessage.EXPORT_FAILED` on failure
-is the same message the grades card uses — one failure message for the
-whole screen. Each output is one table per active Area (a title row, then
+is busy; every action on the screen — Grades' *Generar archivo*, Attendance's
+*Exportar*, and both Resumen buttons — disables while any export is in
+flight (`activeExport != null`), not only its own sibling. Its
+`ExportMessage.EXPORT_FAILED` on failure is the same message the grades card
+uses — one failure message for the whole screen. Each output is one table
+per active Area (a title row, then
 "Estudiante" plus one column per Worked Competency), not one flat table
 spanning every Area — see ADR 0020.
 
