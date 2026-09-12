@@ -1381,7 +1381,7 @@ Entry: SectionDetail. All three outputs for one Section and Period.
 +------------------------------------------+
 |  <   Entregar - 3ro A                    |
 +------------------------------------------+
-|  II Bimestre v                           |
+|  II Bimestre                             |
 |                                          |
 |  +--------------------------------------+|
 |  | Notas para SIAGIE                    ||
@@ -1396,7 +1396,7 @@ Entry: SectionDetail. All three outputs for one Section and Period.
 |                                          |
 |  +--------------------------------------+|
 |  | Asistencia para SIAGIE               ||
-|  | setiembre 2026                       ||
+|  | setiembre 2026 · 20 dias             ||
 |  |             [     Exportar       ]   ||
 |  +--------------------------------------+|
 |                                          |
@@ -1405,9 +1405,15 @@ Entry: SectionDetail. All three outputs for one Section and Period.
 |  |    [   PDF   ]      [   CSV    ]     ||
 |  +--------------------------------------+|
 |                                          |
-|  El archivo conserva su nombre original. |
+|  El archivo conserva su nombre original  |
+|  y se comparte por WhatsApp, Bluetooth   |
+|  o USB.                                  |
 +------------------------------------------+
 ```
+
+The period under the title is a static, read-only subtitle — not an editable
+dropdown — matching every other section detail screen in the app (ADR-less
+fix, issue #121).
 
 When there are no blockers, the grades card drops the gap list and its
 *Generar archivo* button enables:
@@ -1432,12 +1438,14 @@ When no Template is stored, the first card reads:
 data class ExportUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
-    val periods: List<PeriodOption> = emptyList(),
-    val selectedPeriodId: PeriodId? = null,
+    val periodId: PeriodId? = null,
+    val periodLabel: String = "",
     val templateFileName: String? = null,
     val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
     val templateMismatch: TemplateMismatchUi? = null,
-    val isExporting: Boolean = false,
+    val attendanceMonth: YearMonth? = null,
+    val attendanceDayCount: Int = 0,
+    val activeExport: ActiveExport? = null,
 )
 
 sealed interface GradesExportUiState {
@@ -1460,18 +1468,19 @@ data class TemplateMismatchUi(
 )
 ```
 
-The Resumen card adds `activeExport: ActiveExport?` to this same `UiState`
-(ticket #14) — `GRADES`, `SUMMARY_CSV` or `SUMMARY_PDF`, or `null` when
-nothing is exporting; the screen derives each button's busy/enabled state
-from it, and only one export runs at a time. The attendance card lands
-with its own ticket and adds `attendanceMonthLabel`.
+`activeExport: ActiveExport?` (ticket #14) is `GRADES`, `ATTENDANCE`,
+`SUMMARY_CSV` or `SUMMARY_PDF`, or `null` when nothing is exporting; the
+screen derives each button's busy/enabled state from it, and only one
+export runs at a time. The attendance card reads `attendanceMonth` and
+`attendanceDayCount` directly off `ExportUiState`.
 
-Intents: `PeriodSelected(periodId: PeriodId)`, `ExportGradesClicked`,
-`GapRowClicked(row: ExportGapRow)`, `ExportAttendanceClicked`,
-`ExportSummaryPdfClicked`, `ExportSummaryCsvClicked`, `ImportTemplateClicked`,
-`BackClicked`.
+Intents: `ExportGradesClicked`, `GapRowClicked(row: ExportGapRow)`,
+`ImportTemplateClicked`, `ExportAttendanceClicked`,
+`AttendanceTemplatePicked(uri: String)`, `ExportSummaryCsvClicked`,
+`ExportSummaryPdfClicked`, `BackClicked`.
 
 Effects: `ShareFile(path: String, mimeType: String)`,
+`OpenAttendanceTemplatePicker(mimeTypes: List<String>)`,
 `NavigateToPeriodLevelCell(sectionId: SectionId, studentId: StudentId, competencyId: CompetencyId)`,
 `NavigateToStudents(sectionId: SectionId)`, `NavigateBack`,
 `ShowMessage(message: ExportMessage)`.
