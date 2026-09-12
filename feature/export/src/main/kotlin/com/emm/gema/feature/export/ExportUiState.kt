@@ -3,20 +3,24 @@ package com.emm.gema.feature.export
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.student.StudentId
+import java.time.YearMonth
 
 data class ExportUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
-    val periods: List<PeriodOption> = emptyList(),
-    val selectedPeriodId: PeriodId? = null,
+    val periodId: PeriodId? = null,
+    val periodLabel: String = "",
     val templateFileName: String? = null,
     val gradesExportState: GradesExportUiState = GradesExportUiState.Unavailable,
     val templateMismatch: TemplateMismatchUi? = null,
+    val attendanceMonth: YearMonth? = null,
+    val attendanceDayCount: Int = 0,
     val activeExport: ActiveExport? = null,
 )
 
 enum class ActiveExport {
     GRADES,
+    ATTENDANCE,
     SUMMARY_CSV,
     SUMMARY_PDF,
 }
@@ -25,12 +29,6 @@ data class TemplateMismatchUi(
     val areaNames: List<String>,
     val studentNames: List<String>,
     val competencyLabels: List<String>,
-)
-
-data class PeriodOption(
-    val id: PeriodId,
-    val label: String,
-    val isCurrent: Boolean,
 )
 
 sealed interface GradesExportUiState {

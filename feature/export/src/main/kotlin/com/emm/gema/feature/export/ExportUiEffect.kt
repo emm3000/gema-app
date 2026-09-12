@@ -8,6 +8,8 @@ sealed interface ExportUiEffect {
 
     data class ShareFile(val path: String, val mimeType: String) : ExportUiEffect
 
+    data class OpenAttendanceTemplatePicker(val mimeTypes: List<String>) : ExportUiEffect
+
     data class NavigateToPeriodLevelCell(
         val sectionId: SectionId,
         val studentId: StudentId,
@@ -24,4 +26,5 @@ sealed interface ExportUiEffect {
 enum class ExportMessage {
     EXPORT_FAILED,
     EXPORT_UNAVAILABLE,
+    ATTENDANCE_EXPORT_FAILED,
 }

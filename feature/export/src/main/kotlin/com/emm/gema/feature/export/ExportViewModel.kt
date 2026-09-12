@@ -2,6 +2,9 @@ package com.emm.gema.feature.export
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emm.gema.core.domain.attendance.ExportMonthlyAttendanceUseCase
+import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
+import com.emm.gema.core.domain.attendance.MonthlyAttendanceSummary
 import com.emm.gema.core.domain.evaluation.ExportPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.SummaryFile
 import com.emm.gema.core.domain.evaluation.SummaryFormat
@@ -24,7 +27,10 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
+import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
+import java.time.YearMonth
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +43,21 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 private const val ORDINAL_DIGITS: Int = 2
+private const val ATTENDANCE_XLSX_MIME_TYPE: String =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+private val attendanceTemplateMimeTypes: List<String> =
+    listOf(ATTENDANCE_XLSX_MIME_TYPE, "application/vnd.ms-excel")
+
+data class AttendanceExport(
+    val getSummary: GetMonthlyAttendanceSummaryUseCase,
+    val export: ExportMonthlyAttendanceUseCase,
+)
+
+data class GradesExport(
+    val getTemplateName: GetGradesTemplateNameUseCase,
+    val getPlan: GetGradesExportPlanUseCase,
+    val export: ExportGradesUseCase,
+)
 
 class ExportViewModel(
     private val sectionId: SectionId,
@@ -44,10 +65,9 @@ class ExportViewModel(
     private val getSchoolYear: GetSchoolYearUseCase,
     private val getPeriods: GetPeriodsUseCase,
     private val getCurrentPeriod: GetCurrentPeriodUseCase,
-    private val getGradesTemplateName: GetGradesTemplateNameUseCase,
-    private val getGradesExportPlan: GetGradesExportPlanUseCase,
-    private val exportGrades: ExportGradesUseCase,
+    private val gradesExport: GradesExport,
     private val exportPeriodLevelSummary: ExportPeriodLevelSummaryUseCase,
+    private val attendanceExport: AttendanceExport,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<ExportUiState> = MutableStateFlow(ExportUiState())
@@ -57,15 +77,16 @@ class ExportViewModel(
     val effects: Flow<ExportUiEffect> = _effects.receiveAsFlow()
 
     private val selectedPeriod: MutableStateFlow<PeriodId?> = MutableStateFlow(null)
+    private val attendanceMonth: YearMonth = YearMonth.now()
 
     init {
         viewModelScope.launch { load() }
         viewModelScope.launch { observePlan() }
+        viewModelScope.launch { observeAttendanceSummary() }
     }
 
     fun onIntent(intent: ExportUiIntent) {
         when (intent) {
-            is ExportUiIntent.PeriodSelected -> selectPeriod(intent.periodId)
             ExportUiIntent.ExportGradesClicked -> generateFile()
             is ExportUiIntent.GapRowClicked -> emit(
                 ExportUiEffect.NavigateToPeriodLevelCell(
@@ -75,6 +96,9 @@ class ExportViewModel(
                 ),
             )
             ExportUiIntent.ImportTemplateClicked -> emit(ExportUiEffect.NavigateToStudents(sectionId))
+            ExportUiIntent.ExportAttendanceClicked ->
+                emit(ExportUiEffect.OpenAttendanceTemplatePicker(attendanceTemplateMimeTypes))
+            is ExportUiIntent.AttendanceTemplatePicked -> exportAttendance(intent.uri)
             ExportUiIntent.ExportSummaryCsvClicked -> exportSummary(SummaryFormat.CSV)
             ExportUiIntent.ExportSummaryPdfClicked -> exportSummary(SummaryFormat.PDF)
             ExportUiIntent.BackClicked -> emit(ExportUiEffect.NavigateBack)
@@ -91,15 +115,11 @@ class ExportViewModel(
         _state.value = _state.value.copy(
             isLoading = false,
             sectionTitle = section.title(),
-            templateFileName = getGradesTemplateName(sectionId),
-            periods = periods.map {
-                PeriodOption(
-                    id = it.id,
-                    label = schoolYear.periodKind.labelFor(it.number),
-                    isCurrent = it.id == currentPeriod?.id,
-                )
-            },
-            selectedPeriodId = periodId,
+            templateFileName = gradesExport.getTemplateName(sectionId),
+            periodId = periodId,
+            periodLabel = periodId?.let { id ->
+                periods.find { it.id == id }?.let { schoolYear.periodKind.labelFor(it.number) }
+            }.orEmpty(),
         )
         selectedPeriod.value = periodId
     }
@@ -107,8 +127,17 @@ class ExportViewModel(
     private suspend fun observePlan() {
         selectedPeriod
             .filterNotNull()
-            .flatMapLatest { periodId: PeriodId -> getGradesExportPlan(sectionId, periodId) }
+            .flatMapLatest { periodId: PeriodId -> gradesExport.getPlan(sectionId, periodId) }
             .collect(::render)
+    }
+
+    private suspend fun observeAttendanceSummary() {
+        attendanceExport.getSummary(sectionId, attendanceMonth).collect { summary: MonthlyAttendanceSummary ->
+            _state.value = _state.value.copy(
+                attendanceMonth = attendanceMonth,
+                attendanceDayCount = summary.recordedDayCount,
+            )
+        }
     }
 
     private fun render(plan: GradesExportPlan) {
@@ -121,18 +150,13 @@ class ExportViewModel(
         else -> GradesExportUiState.Blocked(plan.gaps.map { it.toRow() })
     }
 
-    private fun selectPeriod(periodId: PeriodId) {
-        _state.value = _state.value.copy(selectedPeriodId = periodId)
-        selectedPeriod.value = periodId
-    }
-
     private fun generateFile() {
-        val periodId: PeriodId = _state.value.selectedPeriodId ?: return
+        val periodId: PeriodId = _state.value.periodId ?: return
         if (_state.value.activeExport != null) return
 
         viewModelScope.launch {
             _state.value = _state.value.copy(activeExport = ActiveExport.GRADES, templateMismatch = null)
-            val result: Result<GradesExportResult> = runCatching { exportGrades(sectionId, periodId) }
+            val result: Result<GradesExportResult> = runCatching { gradesExport.export(sectionId, periodId) }
             _state.value = _state.value.copy(activeExport = null)
             result
                 .onSuccess(::onExported)
@@ -165,8 +189,7 @@ class ExportViewModel(
     }
 
     private fun exportSummary(format: SummaryFormat) {
-        val periodId: PeriodId = _state.value.selectedPeriodId ?: return
-        val periodLabel: String = _state.value.periods.find { it.id == periodId }?.label.orEmpty()
+        val periodId: PeriodId = _state.value.periodId ?: return
         if (_state.value.activeExport != null) return
 
         viewModelScope.launch {
@@ -176,7 +199,7 @@ class ExportViewModel(
                     sectionId = sectionId,
                     periodId = periodId,
                     sectionTitle = _state.value.sectionTitle,
-                    periodLabel = periodLabel,
+                    periodLabel = _state.value.periodLabel,
                     format = format,
                 )
             }
@@ -186,6 +209,23 @@ class ExportViewModel(
                     emit(ExportUiEffect.ShareFile(path = file.path, mimeType = format.mimeType))
                 }
                 .onFailure { emit(ExportUiEffect.ShowMessage(ExportMessage.EXPORT_FAILED)) }
+        }
+    }
+
+    private fun exportAttendance(templateUri: String) {
+        if (_state.value.activeExport != null) return
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(activeExport = ActiveExport.ATTENDANCE)
+            val result: Result<AttendanceExportFile> = runCatching {
+                attendanceExport.export(sectionId, attendanceMonth, templateUri)
+            }
+            _state.value = _state.value.copy(activeExport = null)
+            result
+                .onSuccess { file: AttendanceExportFile ->
+                    emit(ExportUiEffect.ShareFile(path = file.path, mimeType = ATTENDANCE_XLSX_MIME_TYPE))
+                }
+                .onFailure { emit(ExportUiEffect.ShowMessage(ExportMessage.ATTENDANCE_EXPORT_FAILED)) }
         }
     }
 

@@ -7,6 +7,15 @@ import org.koin.dsl.module
 
 val exportModule: Module = module {
     viewModel { (sectionId: SectionId) ->
-        ExportViewModel(sectionId, get(), get(), get(), get(), get(), get(), get(), get())
+        ExportViewModel(
+            sectionId,
+            get(),
+            get(),
+            get(),
+            get(),
+            GradesExport(get(), get(), get()),
+            get(),
+            AttendanceExport(get(), get()),
+        )
     }
 }
