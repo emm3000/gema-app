@@ -149,7 +149,7 @@ class ActivityEvidenceViewModel(
 }
 
 private fun Competency.toColumn(): CompetencyColumn =
-    CompetencyColumn(id = id, label = "${area.name} ${siagieOrdinal.toString().padStart(2, '0')}")
+    CompetencyColumn(id = id, label = "${area.name} ${siagieOrdinal.toString().padStart(2, '0')} · $name")
 
 private fun EvidenceLevel.toMark(): EvidenceMark =
     achievementLevel?.let(EvidenceMark::Level) ?: EvidenceMark.NoEvidence
