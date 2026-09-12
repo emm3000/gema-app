@@ -199,8 +199,8 @@ Effects: `NavigateToHome`, `NavigateToSectionAreas(sectionId: SectionId)`,
 
 ## 3. Home
 
-Mockup: [html](mockups/home.html) (the `.png` render is stale and will be
-regenerated from the emulator in Phase 4).
+Mockup: [html](mockups/home.html) (no PNG until Phase 4 regenerates it from
+the emulator).
 
 Entry: launch with an existing School Year, or up from any Section.
 Shows the active year, the current Period, the Backup reminder and the Sections.
@@ -208,15 +208,16 @@ Primary action: exactly one PRIMARY `GButton` on the whole screen, placed on
 the first Section that still lacks today's attendance. FAB *Nueva sección*.
 
 The screen leads with an eyebrow, "HOY · <weekday> <day> de <month>"
-(for example "HOY · MARTES 10 DE SETIEMBRE"), instead of a bare Period
-banner. A Section already taken today collapses to a `GListItem` row with a
-chevron that opens that day directly; a Section not yet taken keeps the
-expanded card with its own PRIMARY button. Only one PRIMARY button exists on
-the whole screen, on the first still-pending Section — every other pending
-Section (if a multigrade Teacher has more than one) falls back to a
-SECONDARY button so the primary action stays singular. The backup banner
-renders only when `backupReminder` is non-null and overdue (days elapsed
-exceeds the reminder threshold); otherwise no banner occupies that space.
+(for example "HOY · MARTES 10 DE SETIEMBRE"), above the Sections. A Section
+already taken today collapses to a `GListItem` row with a chevron that opens
+that day directly; a Section not yet taken keeps the expanded card with its
+own PRIMARY button. Only one PRIMARY button exists on the whole screen, on
+the first still-pending Section — every other pending Section (if a
+multigrade Teacher has more than one) falls back to a SECONDARY button so
+the primary action stays singular. The backup banner renders only when
+`backupReminder` is non-null (the ViewModel only emits it when
+`BackupStatus.isReminderDue` is true); otherwise no banner occupies that
+space.
 
 ```
 +------------------------------------------+
@@ -243,20 +244,21 @@ exceeds the reminder threshold); otherwise no banner occupies that space.
 ```kotlin
 data class HomeUiState(
     val isLoading: Boolean = true,
+    val schoolYearId: SchoolYearId? = null,
     val schoolYearLabel: String = "",
     val todayLabel: String = "",
     val currentPeriodLabel: String? = null,
     val daysLeftInPeriod: Int? = null,
-    val backupReminder: BackupReminder? = null,
+    val currentPeriodEndDate: LocalDate? = null,
     val sections: List<SectionRow> = emptyList(),
+    val backupReminder: BackupReminder? = null,
 )
 
 data class SectionRow(
     val id: SectionId,
     val title: String,
     val studentCount: Int,
-    val attendanceSummary: String,
-    val isAttendanceTakenToday: Boolean,
+    val attendance: AttendanceDaySummary = AttendanceDaySummary(0, 0, 0),
 )
 
 data class BackupReminder(
@@ -265,17 +267,23 @@ data class BackupReminder(
 )
 ```
 
-`todayLabel` is new: it carries the pre-formatted "HOY · <weekday> <day> de
-<month>" eyebrow so the screen never formats a date itself. `isAttendanceTakenToday`
-on `SectionRow` is new: it is what decides whether a Section renders as the
-expanded card with a PRIMARY button, or collapses to a `GListItem` row.
+`todayLabel` is (new): it carries the pre-formatted "HOY · <weekday> <day> de
+<month>" eyebrow so the screen never formats a date itself. `SectionRow`
+carries the domain `AttendanceDaySummary` rather than a separate
+`isAttendanceTakenToday` flag: `attendance.isTaken` (`unmarkedCount <
+totalCount`) already answers whether the Section renders as the expanded
+card with a PRIMARY button or collapses to a `GListItem` row, so no
+duplicate field is needed.
 
 Intents: `SectionClicked(id: SectionId)`, `TakeAttendanceClicked(id: SectionId)`,
-`AddSectionClicked`, `SchoolYearSwitcherClicked`, `BackupReminderClicked`.
+`AddSectionClicked`, `SchoolYearSwitcherClicked`, `OutOfPeriodClicked`,
+`BackupReminderClicked`.
 
-Effects: `NavigateToSectionDetail(id: SectionId)`,
+Effects: `NavigateToSectionDetail(sectionId: SectionId)`,
 `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
-`NavigateToSectionForm`, `NavigateToSchoolYears`, `NavigateToBackup`.
+`NavigateToSectionForm(schoolYearId: SchoolYearId, sectionId: SectionId?)`,
+`NavigateToSchoolYears`, `NavigateToPeriods(schoolYearId: SchoolYearId)`,
+`NavigateToBackup`.
 
 Note: the top bar carries two actions, both reusing existing intents rather
 than adding new destinations. `[dl]` (download) opens `Backup` through
@@ -793,8 +801,8 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 12. AttendanceDay
 
-Mockup: [html](mockups/attendance-day.html) (the `.png` render is stale and
-will be regenerated from the emulator in Phase 4).
+Mockup: [html](mockups/attendance-day.html) (no PNG until Phase 4
+regenerates it from the emulator).
 
 Entry: SectionDetail primary action, or the Attendance row.
 The daily workhorse. Every tap persists one row; there is no save button.
@@ -999,8 +1007,8 @@ deletes; the levels stop being exported and reappear if it is remarked.
 
 ## 15. PeriodLevels
 
-Mockup: [html](mockups/period-levels.html) (the `.png` render is stale and
-will be regenerated from the emulator in Phase 4).
+Mockup: [html](mockups/period-levels.html) (no PNG until Phase 4
+regenerates it from the emulator).
 
 Entry: SectionDetail. The grid for one Section x Period x Area.
 Primary action: tap a cell. The screen is an Área picker (`GDropdownPicker`)
@@ -1073,7 +1081,7 @@ data class PeriodLevelsUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
     val areas: List<AreaOption> = emptyList(),
-    val selectedAreaId: AreaId? = null,
+    val selectedArea: Area? = null,
     val periods: List<PeriodOption> = emptyList(),
     val selectedPeriodId: PeriodId? = null,
     val columns: List<CompetencyColumn> = emptyList(),
@@ -1090,7 +1098,7 @@ data class ColumnModeUiState(
     val currentStudentIndex: Int,
 )
 
-data class AreaOption(val id: AreaId, val name: String)
+data class AreaOption(val area: Area, val name: String)
 
 data class PeriodOption(val id: PeriodId, val label: String, val isCurrent: Boolean)
 
@@ -1120,21 +1128,23 @@ data class PeriodLevelCellKey(
 )
 ```
 
-Intents: `AreaSelected(id: AreaId)`, `PeriodSelected(id: PeriodId)`,
-`CellClicked(key: PeriodLevelCellKey)`, `MissingFilterToggled`,
-`EnterColumnMode(competencyId: CompetencyId)`,
+Intents (all on `PeriodLevelsUiIntent`): `AreaSelected(area: Area)`,
+`PeriodSelected(periodId: PeriodId)`, `CellClicked(key: PeriodLevelCellKey)`,
+`MissingFilterToggled`, `EnterColumnMode(competencyId: CompetencyId)`,
 `PickLevelForCurrent(level: AchievementLevel?)`, `ExitColumnMode`,
-`WorkedCompetenciesClicked`, `BackClicked`.
+`WorkedCompetenciesClicked`, `BackClicked` — plus the `Sheet*` intents and
+`SheetDismissed` listed under PeriodLevelSheet below, which belong to this
+same sealed interface.
 
-Effects: `NavigateToWorkedCompetencies(sectionId: SectionId, areaId: AreaId, periodId: PeriodId)`,
-`NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateToWorkedCompetencies(sectionId: SectionId, periodId: PeriodId, area: Area)`,
+`NavigateBack`, `ShowMessage(message: PeriodLevelsMessage)`.
 
 ---
 
 ## 16. PeriodLevelSheet
 
-Mockup: [html](mockups/period-level-sheet.html) (the `.png` render is stale
-and will be regenerated from the emulator in Phase 4).
+Mockup: [html](mockups/period-level-sheet.html) (no PNG until Phase 4
+regenerates it from the emulator).
 A bottom sheet over PeriodLevels for one Student x one Competency.
 Every change persists on selection; the sheet closes with *Listo*. When the
 selected level is C, the Descriptive Conclusion field renders in error state
@@ -1175,8 +1185,10 @@ the field itself carries the requirement.
 ```kotlin
 data class PeriodLevelSheetUiState(
     val isLoading: Boolean = true,
-    val studentName: String = "",
-    val competencyLabel: String = "",
+    val studentId: StudentId,
+    val competencyId: CompetencyId,
+    val studentName: String,
+    val competencyLabel: String,
     val achievementLevel: AchievementLevel? = null,
     val unworkedComment: UnworkedComment? = null,
     val descriptiveConclusion: String = "",
@@ -1188,15 +1200,27 @@ data class EvidenceRow(
     val activityId: ActivityId,
     val activityName: String,
     val date: LocalDate,
-    val level: AchievementLevel,
+    val achievementLevel: AchievementLevel,
 )
 ```
 
-Intents: `AchievementLevelSelected(level: AchievementLevel?)`,
-`UnworkedCommentSelected(comment: UnworkedComment?)`,
-`DescriptiveConclusionChanged(value: String)`, `DoneClicked`, `DismissRequested`.
+`isLoading` and `isConclusionRequiredForExport` are (new): the current
+`PeriodLevelSheetUiState` has neither field, and `PeriodLevelSheet.kt` has no
+logic today that derives an error state from `achievementLevel ==
+AchievementLevel.C`. The "renders in error state when the level is C"
+behavior described above is the intended redesign behavior, not yet
+implemented.
 
-Effects: `Dismiss`, `ShowMessage(text: String)`.
+Intents (on `PeriodLevelsUiIntent`, shared with PeriodLevels above):
+`SheetAchievementLevelSelected(level: AchievementLevel?)`,
+`SheetUnworkedCommentSelected(comment: UnworkedComment?)`,
+`SheetDescriptiveConclusionChanged(value: String)`, `SheetDismissed` — there
+is no separate `DoneClicked`; *Listo* dispatches `SheetDismissed`.
+
+Effects: the sheet has no effect type of its own. A save failure shares the
+parent screen's `PeriodLevelsUiEffect.ShowMessage(message:
+PeriodLevelsMessage)`; dismissal is the `SheetDismissed` intent above, not a
+separate `Dismiss` effect.
 
 Notes:
 
