@@ -110,6 +110,25 @@ assertion, like `HomeScreenTest`, does not need it and should not pay for it.
 `SectionCard`'s `onClick` removed, the test failed because no intent was
 captured; with `onClick` restored, it passed.
 
+## Widening the category: enabled/disabled state
+
+`ExportScreenTest` (issue #158), the fourth class, asserts something neither
+navigation dispatch nor semantics: that a button's `enabled` state tracks
+`ExportUiState.activeExport` correctly across all four Export actions. The
+same underlying gap applies — `ExportViewModelTest` can assert
+`activeExport` transitions correctly in the state, but nothing in this repo
+could assert that a Composable actually wires that state into whether a
+control accepts a tap. PR #159's own review caught exactly that class of
+bug: the first draft carried a dead `|| activeExport == SELF` branch that
+`GButton`'s `isClickable = enabled && !isBusy` already made redundant, and
+only a test that inspects the rendered `enabled`/`isBusy` semantics — not a
+read of the source — would have caught a *wrong* mapping the same way.
+
+This needs no `NATIVE` graphics mode — `assertIsEnabled`/`assertIsNotEnabled`
+read semantics, not measured layout — so `ExportScreenTest` cost 4.26s of
+JUnit-reported test time, in the same range as `HomeScreenTest`'s 2.7s
+non-`NATIVE` baseline, not `GDateFieldTest`'s 6.06s.
+
 ## Expected next step: extract the boilerplate at the third screen
 
 `HomeScreenTest` repeats `@RunWith(RobolectricTestRunner::class)`,
