@@ -182,8 +182,8 @@ fun GTopBar(
 )
 ```
 
-Wraps `TopAppBar`. Tokens: `GemaTypography.titleMedium` for `title`,
-`labelSmall` + `onSurfaceVariant` for `subtitle`, `colorScheme.surface`.
+Wraps `TopAppBar`. Tokens: `gemaTypography.titleMedium` for `title`,
+`gemaTypography.labelSmall` + `onSurfaceVariant` for `subtitle`, `colorScheme.surface`.
 
 Tradeoff: no collapsing or large top bar. A large top bar animates on every
 scroll, which costs frames on a low-end device and eats a fifth of the viewport
@@ -210,9 +210,9 @@ fun GButton(
 
 Wraps `Button` (primary), `OutlinedButton` (secondary), `Button` with
 `colorScheme.error` (destructive), `TextButton` (text). Tokens:
-`GemaShapes.control`, `GemaSpacing.md` horizontal padding,
-`GemaSpacing.minTouchTarget` height floor, `GemaTypography.labelLarge`,
-`GemaSpacing.sm` between `icon` and label when `icon` is set.
+`GemaShapes.control`, `GemaSpacing.medium` horizontal padding,
+`GemaSpacing.minimumTouchTarget` height floor, `gemaTypography.labelLarge`,
+`GemaSpacing.small` between `icon` and label when `icon` is set.
 
 Deviation from an earlier draft of this catalog: the built parameter is
 `enabled`, matching Compose's own `Button`/`OutlinedButton`/`TextButton`
@@ -242,7 +242,7 @@ fun GIconButton(
 )
 ```
 
-Wraps `IconButton`. Tokens: `GemaSpacing.minTouchTarget`,
+Wraps `IconButton`. Tokens: `GemaSpacing.minimumTouchTarget`,
 `colorScheme.onSurfaceVariant`, `onSurface` when enabled and prominent,
 `colorScheme.outlineVariant` when `isEnabled` is false.
 
@@ -272,8 +272,8 @@ Wraps `OutlinedTextField`, built on the existing `FieldShell` template
 `.claude/rules/ui-components.md`.
 
 Tokens: `GemaShapes.control`, `colorScheme.outline` / `primary` for the border,
-`colorScheme.error` for `errorText`, `GemaTypography.bodyLarge` for the value and
-`labelSmall` for the supporting line.
+`colorScheme.error` for `errorText`, `gemaTypography.bodyLarge` for the value and
+`gemaTypography.labelSmall` for the supporting line.
 
 Deviation from an earlier draft of this catalog: the built component has no
 `placeholder` and no `maxLines` — every use so far is a single labelled line,
@@ -346,8 +346,8 @@ data class GSegmentOption<T>(
 
 Wraps `SingleChoiceSegmentedButtonRow`. Tokens: `GemaShapes.control` on the
 outer row, `colorScheme.primary` / `onPrimary` for the selected segment,
-`surfaceVariant` / `onSurfaceVariant` otherwise, `GemaSpacing.minTouchTarget` as
-the segment height floor, `GemaTypography.labelLarge`.
+`surfaceVariant` / `onSurfaceVariant` otherwise, `GemaSpacing.minimumTouchTarget` as
+the segment height floor, `gemaTypography.labelLarge`.
 
 Tradeoffs worth stating, because this is the control the app lives on:
 
@@ -382,11 +382,13 @@ fun GListItem(
 )
 ```
 
-Wraps `ListItem` inside a clickable `Surface`. Tokens:
-`GemaTypography.bodyLarge` / `bodyMedium`, `colorScheme.onSurface` /
-`onSurfaceVariant`, `colorScheme.primary` for `leadingText`,
-`GemaSpacing.leadingLabelWidth` for its fixed width, `GemaSpacing.md` vertical
-padding, `colorScheme.outline` for the hairline divider.
+Wraps `ListItem` inside a clickable `Surface`. Tokens: `GTextStyle.BODY_LARGE`
+(the `titleStyle` default) for `title`, `gemaTypography.bodyMedium` for
+`subtitle` / `trailingText`, `gemaTypography.bodyLarge` for `leadingText`,
+`colorScheme.onSurface` / `onSurfaceVariant`, `colorScheme.primary` for
+`leadingText`, `GemaSpacing.leadingLabelWidth` for its fixed width,
+`GemaSpacing.medium` vertical padding, `colorScheme.outline` for the
+hairline divider.
 
 Tradeoff: no leading avatar or icon slot — `leadingText` is a short label
 (a Roman numeral, an ordinal), not an image slot. Every list in this app is
@@ -428,6 +430,20 @@ Deviation from an earlier draft of this catalog: the built `GCard` has no
 passive container; a clickable variant of the whole card was never needed, and
 a caller that wants a tap target wraps its own `Modifier.clickable` on the
 content rather than the catalog adding a parameter with no current caller.
+
+### GBorderedContainer
+
+```kotlin
+@Composable
+fun GBorderedContainer(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+)
+```
+
+Wraps `Surface`. A non-card grouping surface for content that is not a
+floating card — the Period Levels grid, a bottom sheet body. Tokens: see
+`system.md`, "GBorderedContainer" (Component rules).
 
 ### GLevelChip
 
@@ -511,7 +527,7 @@ fun GLevelPicker(
 ```
 
 Wraps `GSegmentedPicker` with the five fixed options AD / A / B / C / none.
-Tokens: inherited.
+Tokens: see `system.md`, "GLevelPicker" (Component rules).
 
 It exists as its own composable rather than a call-site configuration of
 `GSegmentedPicker` because the option list, their order and their
@@ -541,8 +557,9 @@ fun GAttendanceToggle(
 fun gAttendanceRowColor(isRecorded: Boolean): Color
 ```
 
-Wraps `GSegmentedPicker` with the four fixed statuses. Tokens: inherited, plus
-`colorScheme.outline` for the dashed outline drawn while `isRecorded` is false.
+Wraps `GSegmentedPicker` with the four fixed statuses. Tokens: see
+`system.md`, "GAttendanceToggle" (Component rules), plus `colorScheme.outline`
+for the dashed outline drawn while `isRecorded` is false.
 
 Tradeoffs:
 
@@ -588,8 +605,8 @@ fun GCheckRow(
 )
 ```
 
-Wraps `Row` + `Checkbox`. Tokens: `GemaSpacing.md`, `GemaSpacing.minTouchTarget`
-row height floor, `GemaTypography.bodyLarge`, `labelSmall` for `prefix`.
+Wraps `Row` + `Checkbox`. Tokens: `GemaSpacing.medium`, `GemaSpacing.minimumTouchTarget`
+row height floor, `gemaTypography.bodyLarge`, `gemaTypography.labelSmall` for `prefix`.
 
 `prefix` carries the SIAGIE ordinal ("01", "05"), which is how a Teacher matches
 a competency to a template column. The whole row is the hit area, not just the
@@ -787,7 +804,7 @@ data class GPickerOption<T>(
 ```
 
 Wraps `ExposedDropdownMenuBox`. Tokens: `GemaShapes.control`, inherited field
-tokens, `GemaTypography.labelSmall` for `badge`.
+tokens, `gemaTypography.labelSmall` for `badge`.
 
 Used where the option count is large or variable — nine Areas, three or four
 Periods, twelve months — which is exactly where `GSegmentedPicker` stops fitting.
@@ -860,6 +877,26 @@ Wraps `Surface` + `GText`. A tinted, full-bleed, tappable divider between a
 list's primary rows and a collapsed secondary group — Students' withdrawn
 roster today. Tokens: `GemaSpacing.compactRowHeight`, `surfaceVariant` /
 `onSurfaceVariant`, `GTextStyle.LABEL_SMALL_EMPHASIS`.
+
+---
+
+### GBadge
+
+```kotlin
+enum class GBadgeTone { PRIMARY, ERROR }
+
+@Composable
+fun GBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+    tone: GBadgeTone = GBadgeTone.PRIMARY,
+    onClick: (() -> Unit)? = null,
+)
+```
+
+Wraps `Surface` + `Text`. A small pill-shaped label for a short piece of
+state (a count, a status word); `onClick` makes it tappable, otherwise it is
+a static tag. Tokens: see `system.md`, "GBadge" (Component rules).
 
 ---
 
