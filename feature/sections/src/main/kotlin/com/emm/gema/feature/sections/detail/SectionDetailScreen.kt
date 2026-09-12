@@ -222,7 +222,7 @@ private fun SectionDetailScreenPreview() {
         SectionDetailScreen(
             state = SectionDetailUiState(
                 isLoading = false,
-                sectionTitle = "3° A",
+                sectionTitle = "3ro A",
                 studentCount = 30,
                 currentPeriodLabel = "II Bimestre",
                 hasStoredTemplate = true,

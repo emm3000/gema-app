@@ -90,8 +90,25 @@ class HomeViewModelTest {
         assertThat(state.isLoading).isFalse()
         assertThat(state.schoolYearLabel).isEqualTo("2026")
         assertThat(state.currentPeriodLabel).isEqualTo("II Bimestre")
-        assertThat(state.sections.map { it.title }).containsExactly("3° A", "4° B").inOrder()
+        assertThat(state.sections.map { it.title }).containsExactly("3ro A", "4to B").inOrder()
         assertThat(state.sections.map { it.studentCount }).containsExactly(2, 1).inOrder()
+    }
+
+    @Test
+    fun `the current period shows the days left and its end date`() {
+        val state: HomeUiState = homeAt(periods[1].startDate).state.value
+
+        val expectedDaysLeft: Int = ChronoUnit.DAYS.between(periods[1].startDate, periods[1].endDate).toInt()
+        assertThat(state.daysLeftInPeriod).isEqualTo(expectedDaysLeft)
+        assertThat(state.currentPeriodEndDate).isEqualTo(periods[1].endDate)
+    }
+
+    @Test
+    fun `there is no period countdown outside the school year`() {
+        val state: HomeUiState = homeAt(LocalDate.of(2027, 1, 5)).state.value
+
+        assertThat(state.daysLeftInPeriod).isNull()
+        assertThat(state.currentPeriodEndDate).isNull()
     }
 
     @Test

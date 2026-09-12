@@ -45,6 +45,9 @@ fun LocalDate.label(): String = "${dayOfWeek.abbreviatedLabel()} $dayOfMonth ${m
 @Composable
 fun LocalDate.fullLabel(): String = "${dayOfWeek.label()} $dayOfMonth de ${month.label()}"
 
+@Composable
+fun LocalDate.dayMonthLabel(): String = "$dayOfMonth ${month.abbreviatedLabel()}"
+
 fun LocalDate.asDayMonth(): String = format(dayMonthFormat)
 
 fun LocalDate.asDayMonthYear(): String = format(dayMonthYearFormat)

@@ -43,7 +43,7 @@ class SectionAreasViewModelTest {
         val state: SectionAreasUiState = viewModel.state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.areas.map { it.id }).containsExactlyElementsIn(Area.entries).inOrder()
         assertThat(state.areas.all { it.isActive }).isTrue()
         assertThat(state.areas.single { it.id == Area.MATE }.name).isEqualTo("Matemática")

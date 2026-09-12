@@ -114,7 +114,7 @@ class SectionDetailViewModelTest {
         val state: SectionDetailUiState = viewModel().state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.studentCount).isEqualTo(1)
         assertThat(state.today).isEqualTo(today)
     }

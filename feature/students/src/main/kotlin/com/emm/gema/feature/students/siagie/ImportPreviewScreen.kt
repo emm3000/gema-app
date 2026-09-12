@@ -239,7 +239,7 @@ private fun ImportPreviewScreenPreview() {
             state = ImportPreviewUiState(
                 isLoading = false,
                 fileName = "6 Primaria EBR.xlsx",
-                sectionTitle = "6° A",
+                sectionTitle = "6to A",
                 rosterSize = 30,
                 created = listOf(ImportStudentRow("10000000000001", "ALVARADO QUISPE, MARIA")),
                 updated = listOf(ImportStudentRow("10000000000002", "BAUTISTA HUAMAN, JOSE")),

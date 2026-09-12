@@ -147,7 +147,7 @@ private fun SectionAreasScreenPreview() {
         SectionAreasScreen(
             state = SectionAreasUiState(
                 isLoading = false,
-                sectionTitle = "3° A",
+                sectionTitle = "3ro A",
                 areas = listOf(
                     AreaToggleRow(Area.COMU, "Comunicación", true, 0),
                     AreaToggleRow(Area.EFIS, "Educación Física", false, 12),

@@ -183,7 +183,7 @@ class ExportViewModelTest {
 
         assertThat(viewModel.state.value.selectedPeriodId).isEqualTo(periodId)
         assertThat(viewModel.state.value.periods.single().label).isEqualTo("I Bimestre")
-        assertThat(viewModel.state.value.sectionTitle).isEqualTo("6° A")
+        assertThat(viewModel.state.value.sectionTitle).isEqualTo("6to A")
     }
 
     @Test

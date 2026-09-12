@@ -172,7 +172,7 @@ private fun StudentsScreenPreview() {
         StudentsScreen(
             state = StudentsUiState(
                 isLoading = false,
-                sectionTitle = "3° A",
+                sectionTitle = "3ro A",
                 activeStudents = listOf(
                     StudentRow(StudentId("1"), "ACOSTA RIVERA, Luz Maria", "12345678901234"),
                     StudentRow(StudentId("2"), "BAUTISTA QUISPE, Jose", "12345678901235"),
