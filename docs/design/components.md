@@ -301,6 +301,15 @@ wrong silently misfiles months of Activities. `minDate` / `maxDate` exist so
 AttendanceDay can make future dates unreachable rather than rejecting them after
 the tap.
 
+Line behavior: the field is not `singleLine`. It is capped at two lines with a
+one-line minimum, so the `DD/MM/YYYY` value stays on one line wherever it fits
+and reflows onto a second line only where the container is too narrow for it —
+`AlertDialog` is content-width, so `GDialog` squeezes a `weight(1f)` pair well
+below what the same pair gets on a full screen. Reflow is driven by the text's
+own layout against the real container, so it holds at every font scale; a
+`singleLine` field would clip the value instead, and a font-scale threshold
+cannot see the container at all.
+
 ### GSegmentedPicker
 
 Purpose: the one horizontal exclusive-choice control. `GLevelPicker` and
