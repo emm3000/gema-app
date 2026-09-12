@@ -52,6 +52,7 @@ fun BackupScreen(
         topBar = {
             GTopBar(
                 title = stringResource(R.string.backup_title),
+                subtitle = stringResource(R.string.backup_subtitle),
                 onBackClick = { onIntent(BackupUiIntent.BackClicked) },
             )
         },
