@@ -1502,8 +1502,8 @@ whole screen. Each output is one table per active Area (a title row, then
 "Estudiante" plus one column per Worked Competency), not one flat table
 spanning every Area — see ADR 0020.
 
-Note: screen title is "Entregar", because that is the Teacher's goal, not the
-file format. Every blocking gap now lists as a tap-through row inside the
+Note: screen title is "Entregar · {sectionTitle}" (`export_title`), because
+"Entregar" is the Teacher's goal, not the file format. Every blocking gap now lists as a tap-through row inside the
 grades card itself — no separate bottom sheet — and `ExportGradesClicked`
 (now labelled *Generar archivo*) is enabled only when `gradesExportState` is
 `Ready`, i.e. nothing is pending.

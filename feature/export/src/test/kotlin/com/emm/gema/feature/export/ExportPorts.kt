@@ -42,6 +42,7 @@ import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -193,8 +194,12 @@ class FakeGradesWriter : SiagieGradesWriter {
 
 class FakeExportStore : SiagieExportStore {
 
-    override suspend fun write(fileName: String, content: ByteArray): ExportedFile =
-        ExportedFile(name = fileName, path = "/cache/exports/$fileName")
+    var gate: CompletableDeferred<Unit>? = null
+
+    override suspend fun write(fileName: String, content: ByteArray): ExportedFile {
+        gate?.await()
+        return ExportedFile(name = fileName, path = "/cache/exports/$fileName")
+    }
 }
 
 class FakeSummaryDocuments : SummaryDocuments {

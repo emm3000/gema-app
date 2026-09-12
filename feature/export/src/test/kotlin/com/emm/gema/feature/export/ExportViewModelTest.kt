@@ -45,6 +45,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneOffset
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -92,6 +93,7 @@ class ExportViewModelTest {
     private val importStore = FakeSiagieImportStore()
     private val competencies = FakeCompetencyRepository(listOf(competency))
     private val writer = FakeGradesWriter()
+    private val exportStore = FakeExportStore()
 
     @Test
     fun `a section without a stored template offers the import instead`() = runTest {
@@ -248,6 +250,25 @@ class ExportViewModelTest {
     }
 
     @Test
+    fun `clicking export attendance while another export is running does not open the picker`() = runTest {
+        seedSection()
+        storeTemplate()
+        record(AchievementLevel.A, conclusion = "")
+        exportStore.gate = CompletableDeferred()
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.onIntent(ExportUiIntent.ExportGradesClicked)
+        assertThat(viewModel.state.value.activeExport).isEqualTo(ActiveExport.GRADES)
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.ExportAttendanceClicked)
+            expectNoEvents()
+        }
+
+        exportStore.gate?.complete(Unit)
+    }
+
+    @Test
     fun `picking a template exports attendance and hands the file to the share sheet`() = runTest {
         seedSection()
         val viewModel: ExportViewModel = viewModel()
@@ -317,7 +338,7 @@ class ExportViewModelTest {
                     getPlan = getPlan,
                     importStore = importStore,
                     writer = writer,
-                    exportStore = FakeExportStore(),
+                    exportStore = exportStore,
                     students = students,
                 ),
             ),
