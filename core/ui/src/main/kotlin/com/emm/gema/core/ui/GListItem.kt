@@ -3,6 +3,7 @@ package com.emm.gema.core.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -37,8 +38,9 @@ fun GListItem(
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
+    val heightModifier: Modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget)
     if (onClick != null) {
-        Surface(onClick = onClick, modifier = modifier, color = MaterialTheme.colorScheme.surface) {
+        Surface(onClick = onClick, modifier = heightModifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
                 titleStyle = titleStyle,
@@ -54,7 +56,7 @@ fun GListItem(
             )
         }
     } else {
-        Surface(modifier = modifier, color = MaterialTheme.colorScheme.surface) {
+        Surface(modifier = heightModifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
                 titleStyle = titleStyle,
