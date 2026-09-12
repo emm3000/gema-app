@@ -129,11 +129,11 @@ class SectionFormViewModel(
     }
 
     private fun validate(state: SectionFormUiState): SectionFormUiState {
-        val isBlank: Boolean = state.sectionName.isBlank()
-        val sectionNameError: SectionFormMessage? = SectionFormMessage.MISSING_NAME.takeIf { isBlank }
+        val sectionNameError: SectionFormMessage? =
+            SectionFormMessage.MISSING_NAME.takeIf { state.sectionName.isBlank() }
         return state.copy(
             sectionNameError = sectionNameError.takeIf { !state.isLoading && state.sectionNameTouched },
-            canSave = !isBlank && state.grade != null,
+            canSave = sectionNameError == null && state.grade != null,
         )
     }
 }
