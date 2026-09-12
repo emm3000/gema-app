@@ -199,34 +199,42 @@ Effects: `NavigateToHome`, `NavigateToSectionAreas(sectionId: SectionId)`,
 
 ## 3. Home
 
-Mockup: [html](mockups/home.html) · [png](mockups/home.png)
+Mockup: [html](mockups/home.html) (the `.png` render is stale and will be
+regenerated from the emulator in Phase 4).
 
 Entry: launch with an existing School Year, or up from any Section.
 Shows the active year, the current Period, the Backup reminder and the Sections.
-Primary action: FAB *Nueva seccion*.
+Primary action: exactly one PRIMARY `GButton` on the whole screen, placed on
+the first Section that still lacks today's attendance. FAB *Nueva sección*.
+
+The screen leads with an eyebrow, "HOY · <weekday> <day> de <month>"
+(for example "HOY · MARTES 10 DE SETIEMBRE"), instead of a bare Period
+banner. A Section already taken today collapses to a `GListItem` row with a
+chevron that opens that day directly; a Section not yet taken keeps the
+expanded card with its own PRIMARY button. Only one PRIMARY button exists on
+the whole screen, on the first still-pending Section — every other pending
+Section (if a multigrade Teacher has more than one) falls back to a
+SECONDARY button so the primary action stays singular. The backup banner
+renders only when `backupReminder` is non-null and overdue (days elapsed
+exceeds the reminder threshold); otherwise no banner occupies that space.
 
 ```
 +------------------------------------------+
 |  Gema  2026                    [dl]  [=] |
 +------------------------------------------+
-|  +--------------------------------------+|
-|  | !  Ultimo respaldo hace 12 dias      ||
-|  |    Respaldar ahora  >                ||
-|  +--------------------------------------+|
+|  II Bimestre - faltan 24 dias             |
 |                                          |
-|  II Bimestre - faltan 24 dias            |
+|  ! Ultimo respaldo hace 12 dias  Respaldar|
 |                                          |
-|  SECCIONES                               |
+|  HOY · MARTES 10 DE SETIEMBRE             |
 |  +--------------------------------------+|
 |  | 3ro A                     30 alumnos ||
-|  | Asistencia de hoy: sin tomar         ||
+|  | Sin tomar - 12 niveles faltan         ||
 |  |      [ Tomar asistencia de hoy ]     ||
 |  +--------------------------------------+|
-|  | 4to B                     27 alumnos ||
-|  | Asistencia de hoy: 25 presentes      ||
-|  |      [ Tomar asistencia de hoy ]     ||
+|  | 4to B                     27 alumnos >||
+|  | 25 de 27 presentes                    ||
 |  +--------------------------------------+|
-|                                          |
 |                                          |
 |                                  (  +  ) |
 +------------------------------------------+
@@ -236,6 +244,7 @@ Primary action: FAB *Nueva seccion*.
 data class HomeUiState(
     val isLoading: Boolean = true,
     val schoolYearLabel: String = "",
+    val todayLabel: String = "",
     val currentPeriodLabel: String? = null,
     val daysLeftInPeriod: Int? = null,
     val backupReminder: BackupReminder? = null,
@@ -247,6 +256,7 @@ data class SectionRow(
     val title: String,
     val studentCount: Int,
     val attendanceSummary: String,
+    val isAttendanceTakenToday: Boolean,
 )
 
 data class BackupReminder(
@@ -254,6 +264,11 @@ data class BackupReminder(
     val hasEverBackedUp: Boolean,
 )
 ```
+
+`todayLabel` is new: it carries the pre-formatted "HOY · <weekday> <day> de
+<month>" eyebrow so the screen never formats a date itself. `isAttendanceTakenToday`
+on `SectionRow` is new: it is what decides whether a Section renders as the
+expanded card with a PRIMARY button, or collapses to a `GListItem` row.
 
 Intents: `SectionClicked(id: SectionId)`, `TakeAttendanceClicked(id: SectionId)`,
 `AddSectionClicked`, `SchoolYearSwitcherClicked`, `BackupReminderClicked`.
@@ -272,8 +287,10 @@ Note: `currentPeriodLabel` is null when today falls outside every Period
 (holidays, or a year whose dates were mistyped). The banner then reads
 "Fuera de periodo" and links to `Periods` rather than hiding.
 
-Note: the card title opens `SectionDetail`. The inline button takes today's
-attendance for that Section in one tap, without a detour through the hub.
+Note: a Section row's title (in either render) opens `SectionDetail`. A
+still-pending Section's inline PRIMARY button takes today's attendance for
+that Section in one tap, without a detour through the hub; an
+already-taken Section's chevron opens `AttendanceDay` for today directly.
 Both read the same `SectionRow`; neither is destructive, so neither confirms.
 
 ---
@@ -776,7 +793,8 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 12. AttendanceDay
 
-Mockup: [html](mockups/attendance-day.html) · [png](mockups/attendance-day.png)
+Mockup: [html](mockups/attendance-day.html) (the `.png` render is stale and
+will be regenerated from the emulator in Phase 4).
 
 Entry: SectionDetail primary action, or the Attendance row.
 The daily workhorse. Every tap persists one row; there is no save button.
@@ -785,9 +803,10 @@ The daily workhorse. Every tap persists one row; there is no save button.
 +------------------------------------------+
 |  <   Asistencia - 3ro A            [cal] |
 +------------------------------------------+
-|   <    Mar 10 set 2026    >   28/30      |
-|  [ Todos presentes ]        3 sin marcar |
-|  Cada toque guarda al instante.          |
+|   <    Mar 10 set 2026    >              |
++------------------------------------------+
+|  28 de 30 presentes    [ Todos presentes]|
+|  2 sin marcar                             |
 +------------------------------------------+
 |  ACOSTA RIVERA, Luz Maria                |
 |  +------+------+------+------+           |
@@ -808,11 +827,16 @@ The daily workhorse. Every tap persists one row; there is no save button.
 +------------------------------------------+
 ```
 
-`P` presente, `T` tardanza, `F` falta, `FJ` falta justificada. The double border
-marks the selected segment; the selected segment also carries a filled
-background, so the state is not colour-only. The `:`-bordered row is an
-unmarked Student: a warm surface colour and a dashed outline, not colour alone,
-so it stands out on a low-end screen in daylight.
+`P` presente, `T` tardanza, `F` falta, `FJ` falta justificada. The student
+name sits on its own line, with the four-segment toggle below it — never on
+the same line — so a long name never squeezes the toggle at font scale 1.3.
+The selected segment carries a filled background plus weight 600, so the
+state is not colour-only. The summary strip above the list reads as a
+`numeral` count ("28 de 30 presentes") with "N sin marcar" beneath it in
+warning-tone text; "Todos presentes" sits beside it as a SECONDARY button.
+The `:`-bordered row is an unmarked Student: `warningContainer` row tint plus
+a dashed outline and a trailing "sin marcar" label, not colour alone, so it
+stands out on a low-end screen in daylight.
 
 ```kotlin
 data class AttendanceDayUiState(
@@ -975,10 +999,13 @@ deletes; the levels stop being exported and reappear if it is remarked.
 
 ## 15. PeriodLevels
 
-Mockup: [html](mockups/period-levels.html) · [png](mockups/period-levels.png)
+Mockup: [html](mockups/period-levels.html) (the `.png` render is stale and
+will be regenerated from the emulator in Phase 4).
 
 Entry: SectionDetail. The grid for one Section x Period x Area.
-Primary action: tap a cell.
+Primary action: tap a cell. The screen is an Área picker (`GDropdownPicker`)
+above the read-only level grid: state (current, incomplete) lives in the
+cell's border, never a fill, so the grid itself stays ink on a white ground.
 
 ```
 +------------------------------------------+
@@ -1030,7 +1057,12 @@ the whole Section is a straight run of taps with no re-aiming at a grid cell.
 ```
 
 `[>B<]` marks the current Student's cell while column mode is open, drawn by
-`GLevelChip(isCurrent = true)`. A single
+`GLevelChip(isCurrent = true)`. The column-mode sheet titles itself
+"COMPETENCIA NN · i DE n" (for example "COMPETENCIA 01 · 4 DE 30" — the
+Competency's SIAGIE ordinal, then the current Student's position over the
+Section's total), with the caption "Un toque guarda y pasa al siguiente
+alumno." underneath the level row, so the Teacher never wonders whether a
+tap advances automatically. A single
 tap on a level closes that Student's row and reopens the picker for the next
 one; *Listo* or picking a level for the last Student exits column mode. A tap
 on any other cell while column mode is closed still opens `PeriodLevelSheet`
@@ -1101,9 +1133,13 @@ Effects: `NavigateToWorkedCompetencies(sectionId: SectionId, areaId: AreaId, per
 
 ## 16. PeriodLevelSheet
 
-Mockup: [html](mockups/period-level-sheet.html) · [png](mockups/period-level-sheet.png)
+Mockup: [html](mockups/period-level-sheet.html) (the `.png` render is stale
+and will be regenerated from the emulator in Phase 4).
 A bottom sheet over PeriodLevels for one Student x one Competency.
-Every change persists on selection; the sheet closes with *Listo*.
+Every change persists on selection; the sheet closes with *Listo*. When the
+selected level is C, the Descriptive Conclusion field renders in error state
+(error-colored border, error-tone helper text) instead of a separate banner —
+the field itself carries the requirement.
 
 ```
 +------------------------------------------+

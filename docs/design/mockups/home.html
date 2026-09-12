@@ -2,83 +2,66 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden; position: relative;">
-  <div style="display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 8px 0 16px; background: #F8FBF1;">
-    <div style="display: flex; align-items: baseline; gap: 10px;">
-      <span style="font-size: 22px; font-weight: 700; color: #191D17;">Gema</span>
-      <span style="font-size: 14px; font-weight: 500; color: #43483F;">2026</span>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 0 16px;">
+    <div style="display: flex; align-items: baseline; gap: 10px; min-height: 48px;">
+      <div style="font-size: 24px; font-weight: 600; letter-spacing: -0.3px;">Gema</div>
+      <div style="font-size: 15px; font-weight: 500; color: #6E7075;">2026</div>
     </div>
-    <div style="display: flex; align-items: center; gap: 0;">
-      <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #43483F;">
-        <svg class="ico" viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
-      </div>
-      <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #43483F;">
-        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg>
-      </div>
+    <div style="display: flex;">
+      <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="M7 11l5 5 5-5"></path><path d="M4 19h16"></path></svg></div>
+      <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="#17181A" aria-hidden="true"><circle cx="12" cy="5" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="12" cy="19" r="1.8"></circle></svg></div>
     </div>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 16px; padding: 4px 16px 0 16px; flex-grow: 1;">
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #ECEFE5; border-radius: 16px;">
-      <div style="display: flex; flex-direction: column; gap: 2px;">
-        <span style="font-size: 16px; font-weight: 500; color: #191D17;">II Bimestre</span>
-        <span style="font-size: 13px; color: #43483F;">Faltan 24 días · cierra 31 jul</span>
-      </div>
-      <div style="width: 48px; height: 48px; border-radius: 24px; background: #DFE4D7; display: flex; align-items: center; justify-content: center; color: #285020;">
-        <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-      </div>
+  <div style="display: flex; flex-direction: column; padding: 0 16px;">
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 48px; font-size: 14px; color: #6E7075;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+      <span><strong style="font-weight: 500; color: #17181A;">II Bimestre</strong> · faltan 24 días · cierra 31 jul</span>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #FFDAD6; border-radius: 16px; color: #93000A;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span style="font-size: 14px; font-weight: 500;">Último respaldo hace 12 días</span>
-        <span style="font-size: 13px; text-decoration: underline;">Respaldar ahora</span>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 14px; background: #FDE1DF; border-radius: 8px;">
+      <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #8C1D13;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #B42318; flex-shrink: 0;"></span>
+        <span>Último respaldo hace 12 días</span>
       </div>
+      <div style="font-size: 14px; font-weight: 500; color: #8C1D13; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; min-height: 44px; display: flex; align-items: center;">Respaldar</div>
     </div>
 
-    <span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F; padding-top: 4px;">SECCIONES</span>
+    <div style="font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; padding: 28px 0 8px 0;">HOY · MARTES 10 DE SETIEMBRE</div>
 
-    <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-size: 20px; font-weight: 700; color: #191D17;">3ro A</span>
-        <span style="font-size: 14px; color: #43483F;">30 alumnos</span>
+    <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-top: 1px solid #E6E6E3;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <div style="font-size: 20px; font-weight: 600;">3ro A</div>
+        <div style="font-size: 14px; color: #6E7075;">30 alumnos</div>
       </div>
-      <span style="font-size: 14px; color: #43483F;">Hoy: sin tomar · 12 niveles faltan</span>
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin-top: 12px; background: #3F6836; color: #FFFFFF; border-radius: 12px; font-size: 15px; font-weight: 500;">
-        <svg class="ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
-        <span>Tomar asistencia de hoy</span>
-      </div>
+      <div style="font-size: 15px; line-height: 1.4; color: #5C4A12;">Sin tomar · 12 niveles faltan</div>
+      <div style="margin-top: 12px; height: 48px; display: flex; align-items: center; justify-content: center; background: #3F6836; color: #FFFFFF; font-size: 15px; font-weight: 500; border-radius: 8px;">Tomar asistencia de hoy</div>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-size: 20px; font-weight: 700; color: #191D17;">4to B</span>
-        <span style="font-size: 14px; color: #43483F;">27 alumnos</span>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; border-top: 1px solid #E6E6E3; border-bottom: 1px solid #E6E6E3;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; align-items: baseline; gap: 10px;">
+          <div style="font-size: 20px; font-weight: 600;">4to B</div>
+          <div style="font-size: 14px; color: #6E7075;">27 alumnos</div>
+        </div>
+        <div style="font-size: 15px; line-height: 1.4; color: #6E7075;">25 de 27 presentes</div>
       </div>
-      <span style="font-size: 14px; color: #43483F;">Hoy: 25 de 27 presentes</span>
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; margin-top: 12px; background: #FFFFFF; color: #3F6836; border: 1px solid #73796E; border-radius: 12px; font-size: 15px; font-weight: 500;">
-        <span>Ver asistencia de hoy</span>
-      </div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
     </div>
   </div>
 
-  <div style="position: absolute; right: 16px; bottom: 24px; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 20px 0 16px; background: #C0EFB0; color: #285020; border-radius: 16px; font-size: 15px; font-weight: 500;">
-    <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+  <div style="position: absolute; right: 16px; bottom: 24px; height: 52px; padding: 0 18px 0 14px; display: flex; align-items: center; gap: 8px; background: #17181A; color: #FFFFFF; border-radius: 10px; font-size: 15px; font-weight: 500; box-shadow: 0 6px 18px rgba(23,24,26,0.18);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
     <span>Nueva sección</span>
   </div>
 </div>
-</x-dc>
 </body>
 </html>
