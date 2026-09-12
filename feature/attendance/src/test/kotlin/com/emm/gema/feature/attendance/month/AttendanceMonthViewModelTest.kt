@@ -61,7 +61,7 @@ class AttendanceMonthViewModelTest {
         val state: AttendanceMonthUiState = viewModel().state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.month).isEqualTo(september)
         assertThat(state.canExport).isFalse()
     }

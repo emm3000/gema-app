@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.section.gradeOrdinalLabel
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.siagie.ApplySiagieImportUseCase
 import com.emm.gema.core.domain.siagie.PreviewSiagieImportUseCase
@@ -147,7 +148,7 @@ class ImportPreviewViewModel(
         is SiagieImportRejection.GradeMismatch -> ImportRejection(
             reason = "Este archivo no es de esta sección",
             expected = sectionTitle.ifEmpty { section?.title().orEmpty() },
-            found = "${reason.found}°",
+            found = gradeOrdinalLabel(reason.found),
         )
         is SiagieImportRejection.SectionMismatch -> ImportRejection(
             reason = "Este archivo no es de esta sección",

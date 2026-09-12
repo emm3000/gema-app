@@ -70,7 +70,7 @@ class PeriodLevelsViewModelTest {
         val state: PeriodLevelsUiState = viewModel.state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.selectedPeriodId).isEqualTo(periodId)
         assertThat(state.selectedArea).isEqualTo(Area.COMU)
         assertThat(state.periods.single { it.isCurrent }.label).isEqualTo("II Bimestre")

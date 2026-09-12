@@ -1,10 +1,7 @@
 package com.emm.gema.feature.attendance
 
 import com.emm.gema.core.domain.attendance.AttendanceStatus
-import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.ui.GAttendanceOption
-
-fun Section.title(): String = "${grade.number}° $name"
 
 fun AttendanceStatus.asToggleOption(): GAttendanceOption = when (this) {
     AttendanceStatus.PRESENT -> GAttendanceOption.PRESENT

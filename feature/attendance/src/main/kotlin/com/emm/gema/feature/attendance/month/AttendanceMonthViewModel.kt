@@ -10,7 +10,7 @@ import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
-import com.emm.gema.feature.attendance.title
+import com.emm.gema.core.domain.section.title
 import java.time.Clock
 import java.time.YearMonth
 import kotlinx.coroutines.channels.Channel

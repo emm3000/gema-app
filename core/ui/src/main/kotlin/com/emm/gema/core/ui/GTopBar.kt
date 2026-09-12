@@ -20,11 +20,12 @@ fun GTopBar(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     onBackClick: (() -> Unit)? = null,
+    titleContent: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         modifier = modifier,
-        title = {
+        title = titleContent ?: {
             Column {
                 Text(text = title, style = MaterialTheme.typography.titleMedium)
                 if (subtitle != null) {

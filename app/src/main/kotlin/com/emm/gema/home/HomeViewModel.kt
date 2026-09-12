@@ -9,16 +9,18 @@ import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
+import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.labelFor
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
-import com.emm.gema.core.domain.section.label
+import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import java.time.Clock
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,8 +77,11 @@ class HomeViewModel(
     private suspend fun schoolYearState(schoolYear: SchoolYear?): Flow<HomeUiState> {
         if (schoolYear == null) return flowOf(HomeUiState(isLoading = false))
 
-        val currentPeriodLabel: String? = getCurrentPeriod(schoolYear.id)
-            ?.let { period -> schoolYear.periodKind.labelFor(period.number) }
+        val currentPeriod: Period? = getCurrentPeriod(schoolYear.id)
+        val currentPeriodLabel: String? = currentPeriod?.let { period -> schoolYear.periodKind.labelFor(period.number) }
+        val daysLeftInPeriod: Int? = currentPeriod?.let { period ->
+            ChronoUnit.DAYS.between(today, period.endDate).toInt()
+        }
 
         return combine(
             getSections(schoolYear.id),
@@ -88,6 +93,8 @@ class HomeViewModel(
                 schoolYearId = schoolYear.id,
                 schoolYearLabel = schoolYear.label,
                 currentPeriodLabel = currentPeriodLabel,
+                daysLeftInPeriod = daysLeftInPeriod,
+                currentPeriodEndDate = currentPeriod?.endDate,
                 sections = sections.map { section ->
                     section.toRow(
                         studentCount = studentCounts[section.id] ?: 0,
@@ -135,7 +142,7 @@ class HomeViewModel(
 
     private fun Section.toRow(studentCount: Int, attendance: AttendanceDaySummary): SectionRow = SectionRow(
         id = id,
-        title = "${grade.label()} $name",
+        title = title(),
         studentCount = studentCount,
         attendance = attendance,
     )

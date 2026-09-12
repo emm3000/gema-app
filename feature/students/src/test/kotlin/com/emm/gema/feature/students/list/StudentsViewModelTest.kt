@@ -70,7 +70,7 @@ class StudentsViewModelTest {
         val state: StudentsUiState = viewModel().state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.activeStudents.map { it.displayName })
             .containsExactly("ACOSTA RIVERA, Luz Maria", "BAUTISTA QUISPE, Jose").inOrder()
         assertThat(state.withdrawnStudents.map { it.displayName }).containsExactly("CCAHUANA MAMANI, Rosa")

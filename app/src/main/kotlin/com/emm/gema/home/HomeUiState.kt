@@ -3,12 +3,15 @@ package com.emm.gema.home
 import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.SectionId
+import java.time.LocalDate
 
 data class HomeUiState(
     val isLoading: Boolean = true,
     val schoolYearId: SchoolYearId? = null,
     val schoolYearLabel: String = "",
     val currentPeriodLabel: String? = null,
+    val daysLeftInPeriod: Int? = null,
+    val currentPeriodEndDate: LocalDate? = null,
     val sections: List<SectionRow> = emptyList(),
     val backupReminder: BackupReminder? = null,
 )

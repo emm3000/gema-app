@@ -257,7 +257,7 @@ private fun AttendanceMonthScreenPreview() {
         AttendanceMonthScreen(
             state = AttendanceMonthUiState(
                 isLoading = false,
-                sectionTitle = "3° A",
+                sectionTitle = "3ro A",
                 month = YearMonth.of(2026, 9),
                 recordedDayCount = 20,
                 canExport = true,

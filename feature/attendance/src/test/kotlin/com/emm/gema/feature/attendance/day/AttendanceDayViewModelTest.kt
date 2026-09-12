@@ -57,7 +57,7 @@ class AttendanceDayViewModelTest {
         val state: AttendanceDayUiState = viewModel().state.value
 
         assertThat(state.isLoading).isFalse()
-        assertThat(state.sectionTitle).isEqualTo("3° A")
+        assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.date).isEqualTo(today)
         assertThat(state.rows.map { it.displayName })
             .containsExactly("ACOSTA RIVERA, Luz Maria", "BAUTISTA QUISPE, Jose").inOrder()

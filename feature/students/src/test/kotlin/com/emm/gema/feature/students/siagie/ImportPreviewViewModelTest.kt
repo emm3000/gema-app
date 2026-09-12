@@ -60,7 +60,7 @@ class ImportPreviewViewModelTest {
         val state: ImportPreviewUiState = viewModel().state.value
 
         assertThat(state.fileName).isEqualTo(FILE_NAME)
-        assertThat(state.sectionTitle).isEqualTo("6° A")
+        assertThat(state.sectionTitle).isEqualTo("6to A")
         assertThat(state.created.map { it.displayName }).containsExactly("BAUTISTA HUAMAN, JOSE")
         assertThat(state.updated.map { it.displayName }).containsExactly("ALVARADO QUISPE, MARIA FERNANDA")
         assertThat(state.proposedWithdrawals).isEmpty()
@@ -88,8 +88,8 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
-        assertThat(state.rejection?.expected).isEqualTo("6° A")
-        assertThat(state.rejection?.found).isEqualTo("3°")
+        assertThat(state.rejection?.expected).isEqualTo("6to A")
+        assertThat(state.rejection?.found).isEqualTo("3ro")
         assertThat(state.canApply).isFalse()
     }
 

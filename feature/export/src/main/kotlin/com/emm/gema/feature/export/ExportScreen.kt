@@ -210,7 +210,7 @@ private fun ExportScreenPreview() {
         ExportScreen(
             state = ExportUiState(
                 isLoading = false,
-                sectionTitle = "6° A",
+                sectionTitle = "6to A",
                 periods = listOf(PeriodOption(id = PeriodId("period-1"), label = "II Bimestre", isCurrent = true)),
                 selectedPeriodId = PeriodId("period-1"),
                 templateFileName = "6 Primaria EBR.xlsx",

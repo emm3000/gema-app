@@ -302,7 +302,7 @@ private fun PeriodLevelsScreenPreview() {
         PeriodLevelsScreen(
             state = PeriodLevelsUiState(
                 isLoading = false,
-                sectionTitle = "3° A",
+                sectionTitle = "3ro A",
                 areas = listOf(AreaOption(Area.PPSS, "Personal Social")),
                 selectedArea = Area.PPSS,
                 periods = listOf(PeriodOption(PeriodId("period-2"), "II Bimestre", isCurrent = true)),
