@@ -76,8 +76,37 @@ in the ViewModel or its effects, it was in the Composable that never called
 `onIntent` at all. The Screen-level test isolates exactly that failure
 surface, with no DI setup, and runs faster.
 
+## Cost
+
+Robolectric's per-class startup — loading the Android framework jar,
+inflating the merged manifest, standing up a `ComponentActivity` — is a fixed
+cost per test *class*, not per assertion. A single forced run of
+`:app:testDebugUnitTest --tests HomeScreenTest` measured 2.7s of JUnit-reported
+test time inside a ~10s Gradle task (including JVM worker fork); a peer
+review of the same run measured 13s wall-clock on different hardware. Either
+number lands in the same place: this is seconds per class, and it scales with
+the number of Robolectric test classes, not with how many assertions live in
+them.
+
+That means ten screens with two or three Robolectric classes each is real
+minutes added to `testDebugUnitTest`, the gate that runs before every commit.
+If that gate's added Robolectric time crosses roughly 60 seconds — a handful
+of screens in — it is worth revisiting whether every screen needs its own
+Robolectric class, or whether some of this coverage moves to fewer, denser
+classes.
+
 ## Verification
 
 `HomeScreenTest` was confirmed to catch the exact #136 regression: with
 `SectionCard`'s `onClick` removed, the test failed because no intent was
 captured; with `onClick` restored, it passed.
+
+## Expected next step: extract the boilerplate at the third screen
+
+`HomeScreenTest` repeats `@RunWith(RobolectricTestRunner::class)`,
+`@Config(sdk = [34])` and a `composeTestRule` inline. That is deliberate here:
+extracting a shared base rule for a single test class is the premature
+abstraction `.claude/rules/principles.md` warns against — there is no second
+call site yet to prove the right shape for it. It becomes worth it around the
+third or fourth screen; whoever adds that one should extract a shared JUnit
+rule or base class instead of copying this boilerplate again.
