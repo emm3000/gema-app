@@ -22,8 +22,8 @@ import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBadge
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
+import com.emm.gema.core.ui.GBorderedContainer
 import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GCard
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
@@ -113,7 +113,7 @@ private fun PeriodEditor(
     onIntent: (PeriodsUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GCard(modifier = modifier.fillMaxWidth()) {
+    GBorderedContainer(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(GemaSpacing.medium),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),

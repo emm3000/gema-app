@@ -83,6 +83,7 @@ fun GDateField(
         },
         interactionSource = interactionSource,
         shape = GemaShapes.control,
+        singleLine = true,
     )
 
     if (isPickerVisible) {
