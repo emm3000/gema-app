@@ -100,5 +100,5 @@ Character count: 3283/4000.
 
 `docs/play/assets/screenshot-1-inicio.png` through `screenshot-4-alumnos.png`
 (1080x2160, phone): captured on a `medium_phone` AVD from a debug build with
-seeded demo data (Año Escolar 2026, sección 3ro A, three students), then
+seeded demo data (Año Escolar 2026, sección 3ro A, 14 students), then
 cropped from the emulator's native 1080x2400 to 1080x2160 anchored north.
