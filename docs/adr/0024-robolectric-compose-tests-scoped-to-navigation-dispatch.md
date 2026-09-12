@@ -174,7 +174,11 @@ and `GAttendanceToggleTest` in `core:ui`, `ExportScreenTest` in
 (`core/ui/src/testFixtures/kotlin/com/emm/gema/core/ui/test`), consumed via
 `testImplementation(testFixtures(project(":core:ui")))` from `:app` and
 `feature:export` (`core:ui`'s own tests see it without an extra dependency
-line). AGP's native test-fixtures support publishes it without adding a
+line). Enabling AGP's native test-fixtures support is done by a new
+`gema.android.library.testfixtures` convention plugin, applied only by
+`core:ui`, so the module build file still just applies its plugins and
+declares dependencies — no raw `android { testFixtures { ... } }` block in
+the module script. This publishes the base class without adding a
 `core:testing` module or otherwise widening the module graph in
 `CLAUDE.md`; the dependency edge is the same `-> core:ui` edge `:app` and
 every `feature:*` module already have, so `checkModuleBoundaries` needed no
@@ -206,7 +210,10 @@ green after reverting: `HomeScreenTest` (removing `SectionCard`'s `onClick`),
 `GAttendanceToggleTest` (removing the `contentDescription` semantics), and
 `ExportScreenTest` (hardcoding `GButton`'s `enabled` to `true` on the grades
 action, reproducing PR #159's dead-branch class of bug). `GDateFieldTest`
-still passes with `NATIVE` and its width-based assertion untouched.
+was extracted the same way as the other three — it now extends
+`RobolectricComposeTest` too — but was not put through a forced red/green
+here; it keeps passing on its own width-based assertion, unchanged from
+before the extraction.
 
 **Cost.** A forced rerun of all four classes measured 4.15s (`HomeScreenTest`),
 4.81s (`GDateFieldTest`, `NATIVE`), 3.95s (`GAttendanceToggleTest`) and 3.35s

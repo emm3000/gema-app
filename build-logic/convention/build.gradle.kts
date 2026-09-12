@@ -49,6 +49,10 @@ gradlePlugin {
             id = "gema.android.feature"
             implementationClass = "com.emm.gema.buildlogic.AndroidFeatureConventionPlugin"
         }
+        register("androidTestFixtures") {
+            id = "gema.android.library.testfixtures"
+            implementationClass = "com.emm.gema.buildlogic.AndroidTestFixturesConventionPlugin"
+        }
         register("androidRelease") {
             id = "gema.android.release"
             implementationClass = "com.emm.gema.buildlogic.AndroidReleaseConventionPlugin"
