@@ -1,6 +1,6 @@
 # Redesign brief
 
-Status: working brief, 2026-09-12. Input for the design and UX cycle that starts next. Every claim cites a file, or is labelled **Hypothesis** or **Decision**. Terminology follows `CONTEXT.md`.
+Status: working brief, 2026-09-12, section 6 questions answered 2026-09-13. Input for the design and UX cycle that starts next. Every claim cites a file, or is labelled **Hypothesis** or **Decision**. Terminology follows `CONTEXT.md`.
 
 ## 1. Problem statement
 
@@ -102,6 +102,15 @@ The Robolectric Compose tests from ADR 0024 (`HomeScreenTest`, `GAttendanceToggl
 4. Does the rule that color never carries an Achievement Level stay?
 5. Are real teachers available to test H1-H5 before Phase 3, and if not, which alpha signals count as validation?
 6. May the new typography ship a bundled typeface, given its APK size cost on low-end devices (H1), or must it stay on the system sans?
+
+### Answers (owner, 2026-09-13)
+
+1. No brand material beyond `docs/play/assets/icon.svg`. Phase 1 creates the identity from scratch, with the current icon as the anchor.
+2. Independent: a teacher's own tool. Reference feel: Notion-like, clean, sober, generous whitespace. SIAGIE compatibility is a feature, not the identity.
+3. Dark mode stays a correctness requirement only. No theme toggle, no separately designed dark palette.
+4. The rule stays: color never carries an Achievement Level.
+5. No real teachers before Phase 3. The alpha signal is direct conversation with the closed-alpha testers; without it, H1-H5 remain hypotheses and the design stays conservative.
+6. One bundled variable typeface is allowed, with an APK budget of 300 KB; above that, the type system stays on the system sans.
 
 ## 7. Appendix: current state (STEP 1 facts)
 
