@@ -1,11 +1,6 @@
 plugins {
     id("gema.android.compose")
-}
-
-android {
-    testFixtures {
-        enable = true
-    }
+    id("gema.android.library.testfixtures")
 }
 
 dependencies {
