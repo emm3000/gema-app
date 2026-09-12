@@ -164,3 +164,57 @@ abstraction `.claude/rules/principles.md` warns against — there is no second
 call site yet to prove the right shape for it. It becomes worth it around the
 third or fourth screen; whoever adds that one should extract a shared JUnit
 rule or base class instead of copying this boilerplate again.
+
+## Extraction done (issue #157): a base class in `core:ui` test fixtures
+
+With four call sites on `main` (`HomeScreenTest` in `:app`, `GDateFieldTest`
+and `GAttendanceToggleTest` in `core:ui`, `ExportScreenTest` in
+`feature:export`), the boilerplate was extracted into
+`RobolectricComposeTest`, an abstract base class in `core:ui`'s test fixtures
+(`core/ui/src/testFixtures/kotlin/com/emm/gema/core/ui/test`), consumed via
+`testImplementation(testFixtures(project(":core:ui")))` from `:app` and
+`feature:export` (`core:ui`'s own tests see it without an extra dependency
+line). AGP's native test-fixtures support publishes it without adding a
+`core:testing` module or otherwise widening the module graph in
+`CLAUDE.md`; the dependency edge is the same `-> core:ui` edge `:app` and
+every `feature:*` module already have, so `checkModuleBoundaries` needed no
+change and stays green.
+
+**Base class, not a JUnit `TestRule`.** `@RunWith` and `@Config` are both
+meta-annotated `@Inherited` in their respective libraries (confirmed by
+inspecting `org.junit.runner.RunWith` and `org.robolectric.annotation.Config`
+class files), so a base class can carry both and every subclass picks them up
+with no repetition. A `TestRule` cannot: JUnit resolves `@RunWith` and
+`@Config` from the concrete test class only, and a `@Rule`-annotated field
+has no way to attach a type-level annotation to its enclosing class. A rule
+would only have deduplicated the `composeTestRule` line, leaving both
+annotations copied into every class regardless — worse coverage of the
+actual boilerplate for no offsetting benefit, since none of the four classes
+need more than one shared base.
+
+**`@GraphicsMode(GraphicsMode.Mode.NATIVE)` stays on `GDateFieldTest` only.**
+That annotation is not `@Inherited` (confirmed the same way), so it was never
+a candidate for the base class in the first place — JUnit would silently
+ignore it on a superclass. `GDateFieldTest` keeps it as a class-level
+annotation alongside its `RobolectricComposeTest` supertype; `HomeScreenTest`,
+`GAttendanceToggleTest` and `ExportScreenTest` do not carry it and did not
+gain it.
+
+**Verification.** Each of the three tests whose regression this ADR
+documents was forced red again against the extracted base and confirmed
+green after reverting: `HomeScreenTest` (removing `SectionCard`'s `onClick`),
+`GAttendanceToggleTest` (removing the `contentDescription` semantics), and
+`ExportScreenTest` (hardcoding `GButton`'s `enabled` to `true` on the grades
+action, reproducing PR #159's dead-branch class of bug). `GDateFieldTest`
+still passes with `NATIVE` and its width-based assertion untouched.
+
+**Cost.** A forced rerun of all four classes measured 4.15s (`HomeScreenTest`),
+4.81s (`GDateFieldTest`, `NATIVE`), 3.95s (`GAttendanceToggleTest`) and 3.35s
+(`ExportScreenTest`) of JUnit-reported time — `GDateFieldTest` still the most
+expensive of the four, consistent with `NATIVE` staying opt-in. These are
+local, single-machine numbers like the rest of this section's measurements,
+not CI-corroborated in isolation; the CI "Unit tests" step duration is the
+number that matters for the ~60-second revisit threshold in the Cost section
+above, and the pull
+request that shipped this extraction (closing #157) reports that step's
+duration against the pre-extraction baseline.
