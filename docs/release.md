@@ -114,6 +114,18 @@ Outputs land in `app/build/outputs/apk/release/` and
 `app/build/outputs/bundle/release/`. An unsigned build is named
 `app-release-unsigned.apk`; a signed one is `app-release.apk`.
 
+## Native debug symbols
+
+The release build type sets `ndk.debugSymbolLevel = "FULL"`, so `bundleRelease`
+writes `app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip`
+whenever a bundled native library carries debug info to extract. As of this
+change, the only `.so` files in the release bundle come from prebuilt AARs
+(`androidx.graphics.path`) already stripped upstream, so the zip is not
+produced locally and the `Release` workflow's upload step warns instead of
+failing when it is missing. If a future dependency ships native code with
+debug info, the zip appears automatically and the workflow uploads it as the
+`gema-release-native-debug-symbols` artifact next to the AAB.
+
 ## Minification
 
 The release build runs R8 with `proguard-android-optimize.txt` plus
@@ -173,10 +185,15 @@ No keep rule was needed for any of it.
 ## Shipping to internal testing
 
 1. Push to `main`. The `Release` workflow builds the bundle and uploads it as
-   the `gema-release-bundle` artifact.
-2. While `PLAY_PUBLISH_ENABLED` is unset, download that artifact and upload
+   the `gema-release-bundle` artifact. It also uploads the native debug
+   symbols zip as `gema-release-native-debug-symbols` when the release build
+   produced one (see above).
+2. While `PLAY_PUBLISH_ENABLED` is unset, download the artifacts and upload
    the `.aab` by hand in Play Console under
    **Test and release > Testing > Internal testing > Create new release**.
+   If `gema-release-native-debug-symbols` exists, attach it under the
+   release's **App bundle explorer > Downloads > Native debug symbols**
+   upload prompt.
 3. Once the Play Console app exists and the service account is wired, set
    `PLAY_PUBLISH_ENABLED` to `true` and run the `Release` workflow from the
    Actions tab, choosing the track. The release is created as a draft, so

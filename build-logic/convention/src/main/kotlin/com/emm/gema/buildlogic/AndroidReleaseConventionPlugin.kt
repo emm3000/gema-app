@@ -69,6 +69,7 @@ class AndroidReleaseConventionPlugin : Plugin<Project> {
                 extension.getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            releaseBuildType.ndk.debugSymbolLevel = "FULL"
         }
     }
 
