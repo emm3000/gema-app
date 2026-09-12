@@ -30,6 +30,8 @@ import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.ui.GBadge
+import com.emm.gema.core.ui.GBadgeTone
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
@@ -65,10 +67,10 @@ fun PeriodLevelsScreen(
                         onClick = { onIntent(PeriodLevelsUiIntent.WorkedCompetenciesClicked) },
                         variant = GButtonVariant.TEXT,
                     )
-                    GButton(
+                    GBadge(
                         text = "Faltan ${state.missingCount}",
+                        tone = if (state.isMissingFilterOn) GBadgeTone.PRIMARY else GBadgeTone.ERROR,
                         onClick = { onIntent(PeriodLevelsUiIntent.MissingFilterToggled) },
-                        variant = if (state.isMissingFilterOn) GButtonVariant.PRIMARY else GButtonVariant.TEXT,
                     )
                 },
             )

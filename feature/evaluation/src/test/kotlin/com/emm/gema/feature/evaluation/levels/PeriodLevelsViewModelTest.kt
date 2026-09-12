@@ -336,6 +336,17 @@ class PeriodLevelsViewModelTest {
         assertThat(viewModel.state.value.sheet).isNull()
     }
 
+    @Test
+    fun `a section with no periods leaves the grid empty and cell taps are a safe no-op`() = runTest {
+        val viewModel: PeriodLevelsViewModel = createViewModel(periods = emptyList())
+
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
+
+        assertThat(viewModel.state.value.selectedPeriodId).isNull()
+        assertThat(viewModel.state.value.rows).isEmpty()
+        assertThat(viewModel.state.value.sheet).isNull()
+    }
+
     private suspend fun work(competencyId: CompetencyId) {
         workedCompetencyRepository.setWorked(sectionId, periodId, competencyId, isWorked = true)
     }
@@ -343,6 +354,7 @@ class PeriodLevelsViewModelTest {
     private fun createViewModel(
         initialCell: PeriodLevelCellKey? = null,
         evidenceLevelRepository: FakeEvidenceLevelRepository = FakeEvidenceLevelRepository(),
+        periods: List<Period> = this.periods,
     ): PeriodLevelsViewModel = PeriodLevelsViewModel(
         sectionId = sectionId,
         initialCell = initialCell,
