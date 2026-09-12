@@ -14,7 +14,6 @@ import com.emm.gema.feature.attendance.title
 import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AttendanceDayViewModel(
     private val sectionId: SectionId,
     initialDate: LocalDate?,

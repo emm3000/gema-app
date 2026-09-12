@@ -25,7 +25,6 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -105,7 +104,6 @@ class ExportViewModel(
         selectedPeriod.value = periodId
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun observePlan() {
         selectedPeriod
             .filterNotNull()

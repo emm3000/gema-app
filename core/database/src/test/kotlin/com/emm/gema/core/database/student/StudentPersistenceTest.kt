@@ -23,7 +23,6 @@ import com.emm.gema.core.domain.student.StudentSaveResult
 import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -32,7 +31,6 @@ import org.junit.Test
 private const val FIRST_CODE: String = "12345678901234"
 private const val SECOND_CODE: String = "12345678901235"
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class StudentPersistenceTest {
 
     private val dispatcher = UnconfinedTestDispatcher()

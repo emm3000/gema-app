@@ -13,7 +13,6 @@ import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.feature.attendance.title
 import java.time.Clock
 import java.time.YearMonth
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +26,6 @@ private const val XLSX_MIME_TYPE: String = "application/vnd.openxmlformats-offic
 
 private val xlsxMimeTypes: List<String> = listOf(XLSX_MIME_TYPE, "application/vnd.ms-excel")
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AttendanceMonthViewModel(
     private val sectionId: SectionId,
     initialMonth: YearMonth?,

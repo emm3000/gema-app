@@ -36,7 +36,6 @@ import com.emm.gema.core.domain.setup.CompleteSetupRequest
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -46,7 +45,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SetupPersistenceTest {
 
     private val dispatcher = UnconfinedTestDispatcher()

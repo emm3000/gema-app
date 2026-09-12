@@ -14,6 +14,7 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
 
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions.jvmTarget.set(JVM_TARGET)
+        compilerOptions.optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
 

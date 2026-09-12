@@ -14,7 +14,6 @@ import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.google.common.truth.Truth.assertThat
 import java.time.Instant
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -22,7 +21,6 @@ import org.junit.Test
 private val sectionId: SectionId = SectionId("section-1")
 private val importedAt: Instant = Instant.parse("2026-09-10T12:00:00Z")
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SiagieImportPersistenceTest {
 
     private val dispatcher = UnconfinedTestDispatcher()

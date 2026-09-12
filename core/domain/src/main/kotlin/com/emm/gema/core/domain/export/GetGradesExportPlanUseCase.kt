@@ -11,7 +11,6 @@ import com.emm.gema.core.domain.section.GetSectionAreasUseCase
 import com.emm.gema.core.domain.section.SectionArea
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.siagie.SiagieGradeEntry
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -23,7 +22,6 @@ class GetGradesExportPlanUseCase(
     private val getPeriodLevelGrid: GetPeriodLevelGridUseCase,
 ) {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(sectionId: SectionId, periodId: PeriodId): Flow<GradesExportPlan> = getSectionAreas(sectionId)
         .map { areas: List<SectionArea> -> areas.filter { it.isActive }.map { it.area } }
         .flatMapLatest { active: List<Area> -> planOf(sectionId, periodId, active) }

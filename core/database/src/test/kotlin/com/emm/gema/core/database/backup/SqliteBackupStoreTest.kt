@@ -18,7 +18,6 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.time.LocalDate
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -26,7 +25,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SqliteBackupStoreTest {
 
     @get:Rule

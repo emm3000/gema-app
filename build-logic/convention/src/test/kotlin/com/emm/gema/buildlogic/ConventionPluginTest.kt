@@ -22,6 +22,7 @@ class ConventionPluginTest {
         assertThat(report["sourceCompatibility"]).isEqualTo("17")
         assertThat(report["jvmTarget"]).isEqualTo("17")
         assertThat(report["namespace"]).isEqualTo("com.emm.gema.probe")
+        assertThat(report["optIn"]).isEqualTo("kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 
     @Test
@@ -32,6 +33,8 @@ class ConventionPluginTest {
         assertThat(report["minSdk"]).isEqualTo("26")
         assertThat(report["jvmTarget"]).isEqualTo("17")
         assertThat(report["compose"]).isEqualTo("true")
+        assertThat(report["optIn"]).contains("androidx.compose.material3.ExperimentalMaterial3Api")
+        assertThat(report["optIn"]).contains("kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 
     @Test
@@ -77,6 +80,7 @@ class ConventionPluginTest {
         assertThat(report["javaSourceCompatibility"]).isEqualTo("17")
         assertThat(report["jvmTarget"]).isEqualTo("17")
         assertThat(report["conventionTasks"]).isEqualTo("testDebugUnitTest")
+        assertThat(report["optIn"]).isEqualTo("kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 
     @Test

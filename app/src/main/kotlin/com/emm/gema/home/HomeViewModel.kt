@@ -19,7 +19,6 @@ import com.emm.gema.core.domain.section.label
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import java.time.Clock
 import java.time.LocalDate
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
     getActiveSchoolYear: GetActiveSchoolYearUseCase,
     private val getSections: GetSectionsUseCase,

@@ -43,7 +43,6 @@ import com.emm.gema.core.domain.student.StudentRepository
 import com.google.common.truth.Truth.assertThat
 import java.time.Instant
 import java.time.LocalDate
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -52,7 +51,6 @@ import org.junit.Test
 private val periodId: PeriodId = PeriodId("period-1")
 private val competencyId: CompetencyId = CompetencyId("competency-1")
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SectionCascadeTest {
 
     private val dispatcher = UnconfinedTestDispatcher()

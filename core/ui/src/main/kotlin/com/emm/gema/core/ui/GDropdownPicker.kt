@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -31,7 +30,6 @@ data class GPickerOption<T>(
     val badge: String? = null,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> GDropdownPicker(
     options: List<GPickerOption<T>>,

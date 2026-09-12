@@ -28,7 +28,6 @@ import com.emm.gema.core.domain.section.SectionArea
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.StudentId
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -119,7 +118,6 @@ class PeriodLevelsViewModel(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun observeGrid() {
         selection
             .filterNotNull()
