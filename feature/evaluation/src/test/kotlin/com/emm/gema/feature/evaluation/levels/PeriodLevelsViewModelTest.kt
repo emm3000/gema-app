@@ -337,14 +337,11 @@ class PeriodLevelsViewModelTest {
     }
 
     @Test
-    fun `a section with no periods leaves the grid empty and cell taps are a safe no-op`() = runTest {
+    fun `a section with no periods never selects one and never renders a tappable row`() = runTest {
         val viewModel: PeriodLevelsViewModel = createViewModel(periods = emptyList())
-
-        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
 
         assertThat(viewModel.state.value.selectedPeriodId).isNull()
         assertThat(viewModel.state.value.rows).isEmpty()
-        assertThat(viewModel.state.value.sheet).isNull()
     }
 
     private suspend fun work(competencyId: CompetencyId) {

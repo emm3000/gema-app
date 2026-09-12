@@ -28,7 +28,6 @@ import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 
 private const val UNWORKED_COMMENT_MARK: String = "*"
-private const val CURRENT_MARK: String = "?"
 private const val INCOMPLETE_MARK: String = "!"
 private const val EMPTY_MARK: String = ""
 private const val INCOMPLETE_DESCRIPTION: String = "En inicio sin conclusión descriptiva"
@@ -104,7 +103,7 @@ fun GLevelChip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = label(letter, hasUnworkedComment, isCurrent),
+                text = label(letter, hasUnworkedComment),
                 style = metrics.labelStyle,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
@@ -141,10 +140,9 @@ fun GLevelChip(
     }
 }
 
-private fun label(letter: String?, hasUnworkedComment: Boolean, isCurrent: Boolean): String = when {
+private fun label(letter: String?, hasUnworkedComment: Boolean): String = when {
     letter != null -> letter
     hasUnworkedComment -> UNWORKED_COMMENT_MARK
-    isCurrent -> CURRENT_MARK
     else -> EMPTY_MARK
 }
 

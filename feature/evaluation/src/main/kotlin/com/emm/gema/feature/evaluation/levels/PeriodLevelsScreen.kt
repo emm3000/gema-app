@@ -68,7 +68,7 @@ fun PeriodLevelsScreen(
                         variant = GButtonVariant.TEXT,
                     )
                     GBadge(
-                        text = "Faltan ${state.missingCount}",
+                        text = stringResource(R.string.period_levels_missing_count, state.missingCount),
                         tone = if (state.isMissingFilterOn) GBadgeTone.PRIMARY else GBadgeTone.ERROR,
                         onClick = { onIntent(PeriodLevelsUiIntent.MissingFilterToggled) },
                     )

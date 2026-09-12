@@ -194,7 +194,7 @@ class PeriodLevelsViewModel(
         val current: PeriodLevelsUiState = _state.value
         val row: PeriodLevelRow = current.rows.find { it.studentId == cell.studentId } ?: return
         val column: CompetencyColumn = current.columns.find { it.id == cell.competencyId } ?: return
-        val key: PeriodLevelKey = keyOf(cell.studentId, cell.competencyId) ?: return
+        val key: PeriodLevelKey = keyOf(cell.studentId, cell.competencyId)
 
         viewModelScope.launch {
             val context: PeriodLevelSheetContext = getPeriodLevelSheetContext(key)
@@ -218,7 +218,7 @@ class PeriodLevelsViewModel(
 
     private fun editSheet(change: (PeriodLevel) -> PeriodLevel) {
         val sheet: PeriodLevelSheetUiState = _state.value.sheet ?: return
-        val key: PeriodLevelKey = keyOf(sheet.studentId, sheet.competencyId) ?: return
+        val key: PeriodLevelKey = keyOf(sheet.studentId, sheet.competencyId)
 
         viewModelScope.launch {
             val updated: PeriodLevel = change(getPeriodLevelSheetContext(key).periodLevel)
@@ -238,7 +238,7 @@ class PeriodLevelsViewModel(
         val current: PeriodLevelsUiState = _state.value
         val mode: ColumnModeUiState = current.columnMode ?: return
         val student: PeriodLevelRow = current.columnModeStudent ?: return
-        val key: PeriodLevelKey = keyOf(student.studentId, mode.competencyId) ?: return
+        val key: PeriodLevelKey = keyOf(student.studentId, mode.competencyId)
 
         viewModelScope.launch {
             val stored: PeriodLevel = getPeriodLevelSheetContext(key).periodLevel
@@ -252,8 +252,10 @@ class PeriodLevelsViewModel(
             .onFailure { _effects.send(PeriodLevelsUiEffect.ShowMessage(PeriodLevelsMessage.SAVE_FAILED)) }
     }
 
-    private fun keyOf(studentId: StudentId, competencyId: CompetencyId): PeriodLevelKey? {
-        val periodId: PeriodId = _state.value.selectedPeriodId ?: return null
+    private fun keyOf(studentId: StudentId, competencyId: CompetencyId): PeriodLevelKey {
+        val periodId: PeriodId = checkNotNull(_state.value.selectedPeriodId) {
+            "a visible row implies a selected period"
+        }
 
         return PeriodLevelKey(
             sectionId = sectionId,
