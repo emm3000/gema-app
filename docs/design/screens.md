@@ -841,7 +841,8 @@ the same line — so a long name never squeezes the toggle at font scale 1.3.
 The selected segment carries a filled background plus weight 600, so the
 state is not colour-only. The summary strip above the list reads as a
 `numeral` count ("28 de 30 presentes") with "N sin marcar" beneath it in
-warning-tone text; "Todos presentes" sits beside it as a SECONDARY button.
+`GemaAccents.onWarningContainer` text (#163: today's code uses
+`onSurfaceVariant`); "Todos presentes" sits beside it as a SECONDARY button.
 The `:`-bordered row is an unmarked Student: `warningContainer` row tint plus
 a dashed outline and a trailing "sin marcar" label, not colour alone, so it
 stands out on a low-end screen in daylight.

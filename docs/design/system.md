@@ -45,11 +45,21 @@ only — it is correctness-only, not a designed alternate theme.
 | `outlineVariant` | `#E6E6E3` | `#34353A` | Hairlines between rows. 1dp, never thinner. |
 | `outline` | `#C9C9C5` | `#55575D` | Control borders: secondary button, picker, empty level cell, toggle. |
 | `primary` | `#3F6836` | `#A5D396` | Brand. The one primary action per screen, the current marker, links. |
-| `primaryContainer` + `onPrimaryContainer` | `#E4EFD9` / `#285020` | `#2C4A27` / `#285020` | Selected present, selected level chip, primary badge. |
+| `primaryContainer` + `onPrimaryContainer` | `#E4EFD9` / `#285020` | `#2C4A27` / `#C0EFB0` | Selected present, selected level chip, primary badge. |
 | `error` | `#B42318` | `#F4A29A` | State, never a grade: incomplete cell border, destructive button, backup dot. |
-| `errorContainer` + `on` | `#FDE1DF` / `#8C1D13` | `#5C1E19` / `#8C1D13` | Absent segment fill, error banner. |
-| `warningContainer` / `unmarked` + `on` | `#FBF4E1` / `#5C4A12` | `#3A3222` / `#5C4A12` | Pending attendance row, warning banner. |
+| `errorContainer` + `on` | `#FDE1DF` / `#8C1D13` | `#5C1E19` / `#FDE1DF` | Absent segment fill, error banner. |
+| `warningContainer` + `on` (`GemaAccents`) | `#FBF4E1` / `#5C4A12` | `#3A3222` / `#EAD79C` | Pending attendance row, warning banner. |
 | `inverseSurface` | `#17181A` | `#ECECEA` | Justified-absence segment, snackbar, extended FAB. |
+
+Note: dark `onPrimaryContainer` (`#C0EFB0`), `onErrorContainer` (`#FDE1DF`)
+and `onWarningContainer` (`#EAD79C`) are the designer-approved dark
+foregrounds against their unchanged containers — contrast 7.66:1, 10.28:1
+and 8.86:1 respectively, all comfortably above WCAG AA.
+
+Note: `GemaAccents.unmarkedSurface`/`onUnmarkedSurface` and
+`absentContainer`/`onAbsentContainer` are deleted, not renamed, in #163.
+`GAttendanceRow` moves to the `warningContainer`/`onWarningContainer` pair
+above (unmarked) and `colorScheme.errorContainer` (absent).
 
 Note: secondary and tertiary tonal families are removed. Nothing on the three
 daily screens used them with intent.
@@ -73,11 +83,25 @@ weight range 400-600, Latin and Spanish subset, all layout features kept:
 | `bodySmall` | 13sp / 400 / 1.45 | Captions, helper text |
 | `labelLarge` | 15sp / 500 | Buttons, segments |
 | `labelSmall` | 12sp / 600, +1px tracking | Eyebrows |
-| `numeral` | 20sp / 600, tabular figures | Counts, levels |
 
-Retired: `gemaCardTitleFontSize` and `gemaCardDateFontSize` fold into
-`titleLarge` and `numeral`. Every size must survive font scale 1.3 on 360dp:
-rows grow, nothing truncates a name to one line.
+`gemaTypography` (#163) keeps only these seven M3 slots — the ones Material
+internals need — and drops the `GTextStyle` entries `BODY_MEDIUM`,
+`TITLE_SMALL` and `LABEL_MEDIUM`. Every call site remaps:
+
+- `BODY_MEDIUM` becomes `BODY_LARGE` (15sp / 400 / 1.45).
+- `TITLE_SMALL` becomes `TITLE_MEDIUM` (16sp / 500 / 1.4) when it titles a
+  list or a month, or `LABEL_SMALL` as an eyebrow when it heads a control
+  group.
+- `LABEL_MEDIUM` becomes `LABEL_SMALL` (12sp / 600, +1px tracking, color
+  `onSurfaceVariant`).
+
+`GTextStyle.NUMERAL` is not a `Typography` slot: `GText.kt` resolves it
+directly as `titleLarge.copy(fontWeight = FontWeight.SemiBold,
+fontFeatureSettings = "tnum")` — 20sp / weight 600 / lineHeight 24sp, tabular
+figures (`tnum`), color `onSurface`. It replaces `CARD_TITLE_EMPHASIS`,
+`gemaCardTitleFontSize` and `gemaCardDateFontSize` (#163 scope). Every size
+must survive font scale 1.3 on 360dp: rows grow, nothing truncates a name to
+one line.
 
 ## Spacing
 
@@ -96,7 +120,7 @@ Unchanged from the current token set:
 - `control` 8dp — buttons, inputs, chips
 - `chip` 6dp — evidence chips
 - `container` 12dp — cards, sheets
-- `pill` — badges, extended fab label pill
+- `pill` — badges
 
 `hairline` stays 1dp; `activeBorder` (the current marker) stays 2dp. Radii
 come down from the previous 12 / 8 / 16 set to 8 / 6 / 12: quieter corners,
@@ -125,17 +149,19 @@ calendar glyph for the date-stepper's picker affordance.
 radius, 48dp rows, `labelLarge`.
 
 **GExtendedFab** — moved from `primaryContainer` to `inverseSurface`: one
-dark object on a white screen, always the same thing. 52dp height, `control`
-+2dp radius, white icon and label.
+dark object on a white screen, always the same thing. `GemaSpacing.fabHeight`
+52dp (#163 — today's code ships 56dp), `GemaShapes.control` (8dp) radius,
+white icon and label.
 
 **GBadge** — pill shape, PRIMARY tone (`primaryContainer` / `onPrimaryContainer`)
 or ERROR tone (`errorContainer` / `on`), 32dp visual height inside a 48dp
 touch target when clickable.
 
-**GBanner** — INFO (`surfaceContainerLow`), WARNING (`warningContainer` /
-`onSurfaceVariant` text with warning-tone text color), ERROR
-(`errorContainer` / `on`). `control` radius (8dp), no border. Optional
-leading dot for the ERROR/backup-overdue case, optional trailing link action.
+**GBanner** — INFO (`surfaceContainerLow`), WARNING (`GemaAccents.warningContainer`
+/ `GemaAccents.onWarningContainer` text — #163: today's code uses
+`onSurfaceVariant` for this text), ERROR (`errorContainer` / `on`). `control`
+radius (8dp), no border. Optional leading dot for the ERROR/backup-overdue
+case, optional trailing link action.
 
 **GListItem** — sits directly on the screen ground, separated by one
 `outlineVariant` hairline. Leading label 28dp wide, tabular. Names wrap to
@@ -161,13 +187,14 @@ radius border, no illustration.
 600: present on `primaryContainer`, late on `surfaceContainerHigh`, absent on
 `errorContainer`, justified on `inverseSurface`. The unrecorded row: dashed
 `outline` border, `warningContainer` row tint, trailing "sin marcar" label in
-`onSurfaceVariant`/warning-tone text. Color is always redundant with the
-letter and the weight, never the only signal.
+`GemaAccents.onWarningContainer` text (#163: today's code uses
+`onSurfaceVariant`). Color is always redundant with the letter and the
+weight, never the only signal.
 
 **Attendance summary strip** — `surfaceContainerLow` background, `control`
 (8dp) radius, `numeral` count + `bodyLarge` label, a secondary "sin marcar"
-line in warning-tone text. "Todos presentes" renders as a SECONDARY
-`GButton`.
+line in `GemaAccents.onWarningContainer` text (#163: today's code uses
+`onSurfaceVariant`). "Todos presentes" renders as a SECONDARY `GButton`.
 
 **GLevelChip states** — GRID (48×44dp inside a 56dp row), INLINE (48dp
 height), EVIDENCE (34×26dp, `chip` radius). Default: `outline` border,
