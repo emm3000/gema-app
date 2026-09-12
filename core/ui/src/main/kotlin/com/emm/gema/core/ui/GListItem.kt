@@ -25,6 +25,7 @@ import com.emm.gema.core.theme.GemaTheme
 fun GListItem(
     title: String,
     modifier: Modifier = Modifier,
+    titleStyle: GTextStyle = GTextStyle.BODY_LARGE,
     subtitle: String? = null,
     subtitleColor: Color? = null,
     leadingText: String? = null,
@@ -40,6 +41,7 @@ fun GListItem(
         Surface(onClick = onClick, modifier = modifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
+                titleStyle = titleStyle,
                 subtitle = subtitle,
                 subtitleColor = subtitleColor,
                 leadingText = leadingText,
@@ -55,6 +57,7 @@ fun GListItem(
         Surface(modifier = modifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
+                titleStyle = titleStyle,
                 subtitle = subtitle,
                 subtitleColor = subtitleColor,
                 leadingText = leadingText,
@@ -72,6 +75,7 @@ fun GListItem(
 @Composable
 private fun GListItemBody(
     title: String,
+    titleStyle: GTextStyle,
     subtitle: String?,
     subtitleColor: Color?,
     leadingText: String?,
@@ -130,7 +134,7 @@ private fun GListItemBody(
                     titleLeading?.invoke()
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = titleStyle.toTextStyle(),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }

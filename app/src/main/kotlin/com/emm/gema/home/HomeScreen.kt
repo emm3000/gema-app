@@ -209,6 +209,7 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
         GListItem(
             title = row.title,
             modifier = Modifier.fillMaxWidth(),
+            titleStyle = GTextStyle.CARD_TITLE_EMPHASIS,
             trailingText = pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
             showDivider = false,
             onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
