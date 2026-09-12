@@ -139,6 +139,15 @@ class SectionFormViewModelTest {
     }
 
     @Test
+    fun `attempting to save a pristine blank form reports the name error`() {
+        val viewModel: SectionFormViewModel = viewModelFor(null)
+
+        viewModel.onIntent(SectionFormUiIntent.SaveClicked)
+
+        assertThat(viewModel.state.value.sectionNameError).isNotNull()
+    }
+
+    @Test
     fun `deleting asks for confirmation before removing anything`() = runTest {
         val viewModel: SectionFormViewModel = viewModelFor(existing.id)
 
