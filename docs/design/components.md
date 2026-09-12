@@ -18,8 +18,8 @@ document is authoritative for anything not restated here.
 | `GemaSpacing` | `extraSmall`, `small`, `medium`, `large`, `extraLarge`, `screenGutter`, `minimumTouchTarget` |
 | `GemaShapes` | `control` 8dp (buttons, inputs, chips), `chip` 6dp (evidence chips), `container` 12dp (cards, sheets), `pill` |
 | `MaterialTheme.colorScheme` | `surface`, `surfaceContainerLow`, `surfaceContainerHigh`, `onSurface`, `onSurfaceVariant`, `outlineVariant`, `outline`, `primary`, `primaryContainer`, `onPrimaryContainer`, `error`, `errorContainer`, `inverseSurface` |
-| `GemaAccents` | `unmarkedSurface`, `onUnmarkedSurface` — the `warningContainer` tint behind an Attendance row nobody has touched yet; light and dark values live in `Color.kt` |
-| `gemaTypography` | `headlineSmall`, `titleLarge`, `titleMedium`, `bodyLarge`, `bodySmall`, `labelLarge`, `labelSmall`, plus the tabular-figure `numeral` style |
+| `GemaAccents` | `warningContainer` / `onWarningContainer` (light `#FBF4E1`/`#5C4A12`, dark `#3A3222`/`#EAD79C`) — values live in `Color.kt`. #163: `unmarkedSurface`/`onUnmarkedSurface` and `absentContainer`/`onAbsentContainer` are deleted, not renamed; `GAttendanceRow` moves to this warning pair (unmarked) and `colorScheme.errorContainer` (absent) |
+| `gemaTypography` | `headlineSmall`, `titleLarge`, `titleMedium`, `bodyLarge`, `bodySmall`, `labelLarge`, `labelSmall` — `GTextStyle.NUMERAL` is resolved directly in `GText.kt`, not a `Typography` slot |
 
 `minimumTouchTarget` is 48dp and is a hard floor for every interactive
 component in this catalog. It is a token and not a per-component constant
@@ -93,19 +93,17 @@ typography value never gets hardcoded outside `com.emm.gema.core.theme.Type`.
 ```kotlin
 enum class GTextStyle {
     TITLE_MEDIUM,
-    TITLE_SMALL,
     BODY_LARGE,
-    BODY_MEDIUM,
     BODY_SMALL,
-    LABEL_MEDIUM,
     LABEL_SMALL,
+    NUMERAL,
 }
 
 @Composable
 fun GText(
     text: String,
     modifier: Modifier = Modifier,
-    style: GTextStyle = GTextStyle.BODY_MEDIUM,
+    style: GTextStyle = GTextStyle.BODY_LARGE,
     color: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -115,8 +113,15 @@ fun GText(
 Wraps `Text`. `GTextStyle` is a closed set mapped 1:1 to the `MaterialTheme.typography`
 members the app actually uses — not the full fifteen Material type-scale slots,
 and not a semantic name like "Title" or "Caption" that would drift from the
-token it maps to. `color` defaults to `Color.Unspecified`, so `Text` falls back
-to `LocalContentColor` exactly as a raw `Text` call would.
+token it maps to. One exception: `NUMERAL` is not a `Typography` slot —
+`GText.kt` resolves it directly as `titleLarge.copy(fontWeight =
+FontWeight.SemiBold, fontFeatureSettings = "tnum")` (20sp / weight 600 /
+lineHeight 24sp, tabular figures, color `onSurface`), replacing
+`CARD_TITLE_EMPHASIS`, `gemaCardTitleFontSize` and `gemaCardDateFontSize`
+(#163 scope). `#163` also drops `BODY_MEDIUM`, `TITLE_SMALL` and
+`LABEL_MEDIUM` from this enum — see `system.md`'s Typography section for the
+remap. `color` defaults to `Color.Unspecified`, so `Text` falls back to
+`LocalContentColor` exactly as a raw `Text` call would.
 
 ### GScreen
 
@@ -244,7 +249,7 @@ fun GIconButton(
 
 Wraps `IconButton`. Tokens: `GemaSpacing.minimumTouchTarget`,
 `colorScheme.onSurfaceVariant`, `onSurface` when enabled and prominent,
-`colorScheme.outlineVariant` when `isEnabled` is false.
+`colorScheme.outline` when `isEnabled` is false.
 
 `contentDescription` is required, not nullable: an icon-only control with no
 label is the one place where a missing description makes the app unusable with
@@ -346,8 +351,9 @@ data class GSegmentOption<T>(
 
 Wraps `SingleChoiceSegmentedButtonRow`. Tokens: `GemaShapes.control` on the
 outer row, `colorScheme.primary` / `onPrimary` for the selected segment,
-`surfaceVariant` / `onSurfaceVariant` otherwise, `GemaSpacing.minimumTouchTarget` as
-the segment height floor, `gemaTypography.labelLarge`.
+`colorScheme.surface` (no fill) / `onSurface` text for the unselected state
+with an `outline` divider between segments, `GemaSpacing.minimumTouchTarget`
+as the segment height floor, `gemaTypography.labelLarge`.
 
 Tradeoffs worth stating, because this is the control the app lives on:
 
@@ -475,8 +481,9 @@ fun GLevelChip(
 Wraps `Surface` + `Text`. Sizes: GRID 48×44dp inside a 56dp row (`labelSmall`),
 INLINE 48×48dp (`labelLarge`), EVIDENCE 34×26dp with `GemaShapes.chip` radius
 (`labelSmall`) — GRID and INLINE both use `GemaShapes.control`. Tokens:
-`colorScheme.surface` background for EVIDENCE, `surfaceVariant` for GRID/INLINE,
-`colorScheme.outline` border (`outlineVariant` for an EVIDENCE default),
+`colorScheme.surface` background for both EVIDENCE and GRID/INLINE (no
+fill), `colorScheme.outline` border for GRID/INLINE (`outlineVariant` for an
+EVIDENCE default),
 `colorScheme.primary` for the `isCurrent` border, `colorScheme.error` for the
 `isIncomplete` border and marker, `colorScheme.onSurface` for the letter in
 every state.
@@ -694,8 +701,9 @@ for an affordance like "No dicto todas las áreas ›").
 
 Wraps `Surface`, radius `GemaShapes.control` (8dp), no border. Tokens:
 `colorScheme.surfaceContainerLow` (INFO), `colorScheme.errorContainer` /
-`onErrorContainer` text (ERROR), `colorScheme.warningContainer` /
-`onSurfaceVariant`-toned text (WARNING), `gemaTypography.bodyLarge`.
+`onErrorContainer` text (ERROR), `GemaAccents.warningContainer` /
+`GemaAccents.onWarningContainer` text (WARNING) — #163: today's code uses
+`onSurfaceVariant` for the WARNING text — `gemaTypography.bodyLarge`.
 
 Tradeoff: banners are inline in the content, never floating snackbars, for
 anything that matters. A snackbar disappears after four seconds; a Teacher who
@@ -704,8 +712,8 @@ stay only for pure acknowledgements ("Respaldo creado").
 
 Deviation from an earlier draft of this catalog: WARNING used to resolve to
 the same neutral surface as INFO with only a different leading glyph. The
-Registro tokens give WARNING its own `warningContainer` tint (the same one
-`GAttendanceToggle`'s unrecorded row uses), because a pending-attendance
+Registro tokens give WARNING its own `GemaAccents.warningContainer` tint (the
+same one `GAttendanceToggle`'s unrecorded row uses), because a pending-attendance
 banner and a backup-overdue banner should not read identically at a glance —
 INFO stays neutral, WARNING and ERROR are now visibly distinct container
 tones.
@@ -823,14 +831,18 @@ fun GSearchField(
 )
 ```
 
-Wraps `BasicTextField` in a pill `Surface`, with a leading search icon and a
+Wraps `BasicTextField` in a `Surface`, with a leading search icon and a
 clear action — `OutlinedTextField`'s label padding cannot hit the mockup's
-48dp height. Tokens: `GemaSpacing.minimumTouchTarget`, `GemaShapes.pill`,
-`surfaceVariant` fill.
+48dp height. Tokens: `GemaSpacing.minimumTouchTarget` (48dp height),
+`GemaShapes.control` radius, `colorScheme.surface` fill, 1dp `outline`
+border. `pill` is reserved for `GBadge`; this control no longer uses it.
+
+Wave 2: Students sits outside the Phase 4 screen waves (#168/#169/#170), so
+this token swap lands with the Students screen's own ticket, not Phase 4.
 
 It is a separate component from `GTextField` only because the clear affordance
-and the pill shape are search conventions, and because filtering is local and
-instant — there is no debounce parameter, since there is no query to throttle.
+is a search convention, and because filtering is local and instant — there
+is no debounce parameter, since there is no query to throttle.
 
 ---
 
@@ -850,7 +862,8 @@ Wraps `ExtendedFloatingActionButton`. The primary creation action for a list
 screen (Students, Sections, School Years, Activities) — floats bottom-end via
 `GScreen`'s `fab` slot instead of sitting in the top bar. `fab` and
 `bottomAction` are mutually exclusive on `GScreen`. Tokens:
-`GemaSpacing.fabHeight`, `GemaShapes.control` +2dp radius, `colorScheme.inverseSurface`
+`GemaSpacing.fabHeight` (52dp — #163: today's code ships 56dp),
+`GemaShapes.control` (8dp) radius, `colorScheme.inverseSurface`
 fill with `colorScheme.surface`-toned icon and label.
 
 Deviation from an earlier draft of this catalog: the fab moves from
@@ -875,8 +888,12 @@ fun GGroupHeader(
 
 Wraps `Surface` + `GText`. A tinted, full-bleed, tappable divider between a
 list's primary rows and a collapsed secondary group — Students' withdrawn
-roster today. Tokens: `GemaSpacing.compactRowHeight`, `surfaceVariant` /
-`onSurfaceVariant`, `GTextStyle.LABEL_SMALL_EMPHASIS`.
+roster today. Tokens: `GemaSpacing.compactRowHeight`, `surfaceContainerLow`
+background / `onSurfaceVariant` text, `surfaceContainerHigh` pressed state,
+`GTextStyle.LABEL_SMALL_EMPHASIS`.
+
+Wave 2: Students sits outside the Phase 4 screen waves (#168/#169/#170), so
+this token swap lands with the Students screen's own ticket, not Phase 4.
 
 ---
 
