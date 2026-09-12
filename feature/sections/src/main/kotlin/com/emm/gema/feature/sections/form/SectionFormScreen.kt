@@ -21,11 +21,11 @@ import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
+import com.emm.gema.core.ui.GChoiceChipOption
+import com.emm.gema.core.ui.GChoiceChipRow
 import com.emm.gema.core.ui.GDialog
 import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GScreen
-import com.emm.gema.core.ui.GSegmentOption
-import com.emm.gema.core.ui.GSegmentedPicker
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
@@ -33,10 +33,10 @@ import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.sections.R
 
 @Composable
-private fun gradeOptions(): List<GSegmentOption<Grade>> = Grade.entries.map { grade ->
-    GSegmentOption(
+private fun gradeOptions(): List<GChoiceChipOption<Grade>> = Grade.entries.map { grade ->
+    GChoiceChipOption(
         value = grade,
-        label = grade.label(),
+        label = "${grade.number}",
         contentDescription = stringResource(R.string.sections_form_grade_content_description, grade.label()),
     )
 }
@@ -101,7 +101,7 @@ fun SectionFormScreen(
             }
             Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
                 GText(text = stringResource(R.string.sections_form_grade_label), style = GTextStyle.LABEL_MEDIUM)
-                GSegmentedPicker(
+                GChoiceChipRow(
                     options = gradeOptions(),
                     selected = state.grade,
                     onSelect = { grade -> grade?.let { onIntent(SectionFormUiIntent.GradeSelected(it)) } },

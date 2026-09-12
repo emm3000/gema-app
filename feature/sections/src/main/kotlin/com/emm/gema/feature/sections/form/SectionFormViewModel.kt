@@ -46,7 +46,8 @@ class SectionFormViewModel(
     fun onIntent(intent: SectionFormUiIntent) {
         when (intent) {
             is SectionFormUiIntent.GradeSelected -> update { it.copy(grade = intent.grade) }
-            is SectionFormUiIntent.SectionNameChanged -> update { it.copy(sectionName = intent.value) }
+            is SectionFormUiIntent.SectionNameChanged ->
+                update { it.copy(sectionName = intent.value, sectionNameTouched = true) }
             SectionFormUiIntent.SaveClicked -> save()
             SectionFormUiIntent.DeleteClicked -> askForConfirmation()
             SectionFormUiIntent.DeleteConfirmed -> delete()
@@ -71,6 +72,7 @@ class SectionFormViewModel(
     }
 
     private fun save() {
+        update { it.copy(sectionNameTouched = true) }
         val current: SectionFormUiState = _state.value
         val grade: Grade = current.grade ?: return
         if (!current.canSave) return
@@ -127,11 +129,11 @@ class SectionFormViewModel(
     }
 
     private fun validate(state: SectionFormUiState): SectionFormUiState {
-        val sectionNameError: SectionFormMessage? =
-            SectionFormMessage.MISSING_NAME.takeIf { state.sectionName.isBlank() }
+        val isBlank: Boolean = state.sectionName.isBlank()
+        val sectionNameError: SectionFormMessage? = SectionFormMessage.MISSING_NAME.takeIf { isBlank }
         return state.copy(
-            sectionNameError = sectionNameError.takeIf { !state.isLoading },
-            canSave = sectionNameError == null && state.grade != null,
+            sectionNameError = sectionNameError.takeIf { !state.isLoading && state.sectionNameTouched },
+            canSave = !isBlank && state.grade != null,
         )
     }
 }
