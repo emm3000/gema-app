@@ -207,7 +207,7 @@ Primary action: FAB *Nueva seccion*.
 
 ```
 +------------------------------------------+
-|  Gema                    2026 v      [=] |
+|  Gema  2026                    [dl]  [=] |
 +------------------------------------------+
 |  +--------------------------------------+|
 |  | !  Ultimo respaldo hace 12 dias      ||
@@ -256,12 +256,17 @@ data class BackupReminder(
 ```
 
 Intents: `SectionClicked(id: SectionId)`, `TakeAttendanceClicked(id: SectionId)`,
-`AddSectionClicked`, `SchoolYearSwitcherClicked`, `BackupReminderClicked`,
-`SettingsClicked`.
+`AddSectionClicked`, `SchoolYearSwitcherClicked`, `BackupReminderClicked`.
 
 Effects: `NavigateToSectionDetail(id: SectionId)`,
 `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
 `NavigateToSectionForm`, `NavigateToSchoolYears`, `NavigateToBackup`.
+
+Note: the top bar carries two actions, both reusing existing intents rather
+than adding new destinations. `[dl]` (download) opens `Backup` through
+`BackupReminderClicked` / `NavigateToBackup` — the same target as the
+backup banner's own link. `[=]` (overflow) opens a one-item menu, "Cambiar
+de año escolar", through `SchoolYearSwitcherClicked` / `NavigateToSchoolYears`.
 
 Note: `currentPeriodLabel` is null when today falls outside every Period
 (holidays, or a year whose dates were mistyped). The banner then reads
