@@ -95,6 +95,15 @@ of screens in — it is worth revisiting whether every screen needs its own
 Robolectric class, or whether some of this coverage moves to fewer, denser
 classes.
 
+`@GraphicsMode(GraphicsMode.Mode.NATIVE)` roughly doubles that per-class cost:
+`GDateFieldTest` (issue #155), the third class, measured 6.06s against the
+2.7s `HomeScreenTest` reference. Default Robolectric graphics mode returns
+degenerate, near-zero-width text measurement for Compose text, which makes
+`NATIVE` a requirement whenever a test asserts a real layout size or line
+count — `GDateFieldTest` needed it to distinguish a field that wraps to fit
+its value from one that does not. A test with no width- or layout-sensitive
+assertion, like `HomeScreenTest`, does not need it and should not pay for it.
+
 ## Verification
 
 `HomeScreenTest` was confirmed to catch the exact #136 regression: with
