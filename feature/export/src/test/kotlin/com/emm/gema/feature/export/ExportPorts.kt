@@ -235,12 +235,17 @@ class FakeAttendanceRepository : AttendanceRepository {
 
 class FakeMonthlyAttendanceExporter : MonthlyAttendanceExporter {
 
+    var shouldFail: Boolean = false
+
     override suspend fun export(
         templateUri: String,
         month: YearMonth,
         entries: List<AttendanceExportEntry>,
-    ): AttendanceExportFile = AttendanceExportFile(
-        fileName = "asistencia.xlsx",
-        path = "/cache/exports/asistencia.xlsx",
-    )
+    ): AttendanceExportFile {
+        if (shouldFail) error("export failed")
+        return AttendanceExportFile(
+            fileName = "asistencia.xlsx",
+            path = "/cache/exports/asistencia.xlsx",
+        )
+    }
 }

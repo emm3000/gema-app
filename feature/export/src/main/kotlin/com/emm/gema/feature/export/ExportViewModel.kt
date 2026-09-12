@@ -29,6 +29,7 @@ import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.siagie.AttendanceExportFile
 import com.emm.gema.core.domain.siagie.SiagieCompetencyColumn
+import java.time.Clock
 import java.time.YearMonth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -68,6 +69,7 @@ class ExportViewModel(
     private val gradesExport: GradesExport,
     private val exportPeriodLevelSummary: ExportPeriodLevelSummaryUseCase,
     private val attendanceExport: AttendanceExport,
+    clock: Clock,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<ExportUiState> = MutableStateFlow(ExportUiState())
@@ -77,7 +79,7 @@ class ExportViewModel(
     val effects: Flow<ExportUiEffect> = _effects.receiveAsFlow()
 
     private val selectedPeriod: MutableStateFlow<PeriodId?> = MutableStateFlow(null)
-    private val attendanceMonth: YearMonth = YearMonth.now()
+    private val attendanceMonth: YearMonth = YearMonth.now(clock)
 
     init {
         viewModelScope.launch { load() }

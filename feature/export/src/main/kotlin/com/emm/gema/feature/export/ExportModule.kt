@@ -16,6 +16,7 @@ val exportModule: Module = module {
             GradesExport(get(), get(), get()),
             get(),
             AttendanceExport(get(), get()),
+            get(),
         )
     }
 }

@@ -10,6 +10,8 @@ import com.emm.gema.core.domain.evaluation.GetPeriodLevelGridUseCase
 import com.emm.gema.core.domain.evaluation.GetPeriodLevelSummaryUseCase
 import com.emm.gema.core.domain.evaluation.PeriodLevel
 import com.emm.gema.core.domain.evaluation.PeriodLevelKey
+import com.emm.gema.core.domain.attendance.AttendanceRecord
+import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.attendance.ExportMonthlyAttendanceUseCase
 import com.emm.gema.core.domain.attendance.GetMonthlyAttendanceSummaryUseCase
 import com.emm.gema.core.domain.export.ExportGradesUseCase
@@ -41,6 +43,7 @@ import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneOffset
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -78,8 +81,11 @@ class ExportViewModelTest {
         ),
     )
 
+    private val clock: Clock = Clock.fixed(Instant.parse("2026-04-15T10:00:00Z"), ZoneOffset.UTC)
+    private val attendanceMonth: YearMonth = YearMonth.now(clock)
     private val students = FakeStudentRepository()
     private val attendance = FakeAttendanceRepository()
+    private val attendanceExporter = FakeMonthlyAttendanceExporter()
     private val levels = FakePeriodLevelRepository()
     private val worked = FakeWorkedCompetencyRepository()
     private val sectionAreas = FakeSectionAreaRepository()
@@ -228,6 +234,66 @@ class ExportViewModelTest {
         assertThat(viewModel.state.value.activeExport).isNull()
     }
 
+    @Test
+    fun `clicking export attendance opens the template picker`() = runTest {
+        seedSection()
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.ExportAttendanceClicked)
+
+            val effect = awaitItem() as ExportUiEffect.OpenAttendanceTemplatePicker
+            assertThat(effect.mimeTypes).contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        }
+    }
+
+    @Test
+    fun `picking a template exports attendance and hands the file to the share sheet`() = runTest {
+        seedSection()
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.AttendanceTemplatePicked("content://template"))
+
+            val shared = awaitItem() as ExportUiEffect.ShareFile
+            assertThat(shared.path).isEqualTo("/cache/exports/asistencia.xlsx")
+        }
+        assertThat(viewModel.state.value.activeExport).isNull()
+    }
+
+    @Test
+    fun `a failed attendance export shows the attendance failure message`() = runTest {
+        seedSection()
+        attendanceExporter.shouldFail = true
+        val viewModel: ExportViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(ExportUiIntent.AttendanceTemplatePicked("content://template"))
+
+            val message = awaitItem() as ExportUiEffect.ShowMessage
+            assertThat(message.message).isEqualTo(ExportMessage.ATTENDANCE_EXPORT_FAILED)
+        }
+        assertThat(viewModel.state.value.activeExport).isNull()
+    }
+
+    @Test
+    fun `the attendance summary reports the recorded day count for the current month`() = runTest {
+        seedSection()
+        attendance.record(
+            AttendanceRecord(
+                sectionId = sectionId,
+                studentId = StudentId("student-1"),
+                date = attendanceMonth.atDay(1),
+                status = AttendanceStatus.PRESENT,
+            ),
+        )
+
+        val viewModel: ExportViewModel = viewModel()
+
+        assertThat(viewModel.state.value.attendanceMonth).isEqualTo(attendanceMonth)
+        assertThat(viewModel.state.value.attendanceDayCount).isEqualTo(1)
+    }
+
     private fun viewModel(): ExportViewModel {
         val getPlan = GetGradesExportPlanUseCase(
             getSectionAreas = GetSectionAreasUseCase(sectionAreas),
@@ -243,10 +309,7 @@ class ExportViewModelTest {
             getSection = GetSectionUseCase(FakeSectionRepository(section)),
             getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(schoolYear)),
             getPeriods = GetPeriodsUseCase(FakePeriodRepository(periods)),
-            getCurrentPeriod = GetCurrentPeriodUseCase(
-                FakePeriodRepository(periods),
-                Clock.fixed(Instant.parse("2026-04-15T10:00:00Z"), ZoneOffset.UTC),
-            ),
+            getCurrentPeriod = GetCurrentPeriodUseCase(FakePeriodRepository(periods), clock),
             gradesExport = GradesExport(
                 getTemplateName = GetGradesTemplateNameUseCase(importStore),
                 getPlan = getPlan,
@@ -271,8 +334,9 @@ class ExportViewModelTest {
             ),
             attendanceExport = AttendanceExport(
                 getSummary = GetMonthlyAttendanceSummaryUseCase(students, attendance),
-                export = ExportMonthlyAttendanceUseCase(students, attendance, FakeMonthlyAttendanceExporter()),
+                export = ExportMonthlyAttendanceUseCase(students, attendance, attendanceExporter),
             ),
+            clock = clock,
         )
     }
 
