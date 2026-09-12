@@ -45,11 +45,6 @@ object GemaBorder {
     val hairline: Dp = 1.dp
 }
 
-object GemaAccessibility {
-    @Suppress("MayBeConst")
-    val expandableFieldFontScaleThreshold: Float = 1.15f
-}
-
 object GemaAccents {
 
     val unmarkedSurface: Color

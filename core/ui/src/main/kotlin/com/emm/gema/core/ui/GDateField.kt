@@ -21,9 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import com.emm.gema.core.theme.GemaAccessibility
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.theme.asDayMonthYear
@@ -34,9 +32,6 @@ import java.time.ZoneOffset
 private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
 private fun Long.toLocalDateUtc(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
-
-internal fun isFontScaleExpanded(fontScale: Float): Boolean =
-    fontScale >= GemaAccessibility.expandableFieldFontScaleThreshold
 
 @Composable
 fun GDateField(
@@ -69,7 +64,6 @@ fun GDateField(
             Text(text = text, color = MaterialTheme.colorScheme.error)
         }
     }
-    val isExpanded: Boolean = isFontScaleExpanded(LocalConfiguration.current.fontScale)
 
     OutlinedTextField(
         value = displayValue,
@@ -89,8 +83,9 @@ fun GDateField(
         },
         interactionSource = interactionSource,
         shape = GemaShapes.control,
-        singleLine = !isExpanded,
-        maxLines = if (isExpanded) 2 else 1,
+        singleLine = false,
+        minLines = 1,
+        maxLines = 2,
     )
 
     if (isPickerVisible) {
