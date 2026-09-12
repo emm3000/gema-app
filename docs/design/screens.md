@@ -209,9 +209,11 @@ the first Section that still lacks today's attendance. FAB *Nueva sección*.
 
 The screen leads with an eyebrow, "HOY · <weekday> <day> de <month>"
 (for example "HOY · MARTES 10 DE SETIEMBRE"), above the Sections. A Section
-already taken today collapses to a `GListItem` row with a chevron that opens
-that day directly; a Section not yet taken keeps the expanded card with its
-own PRIMARY button. Only one PRIMARY button exists on the whole screen, on
+already taken today collapses to a plain `GListItem` row — no secondary
+button — with a chevron; tapping the row, anywhere on it, sends
+`SectionClicked`, which the ViewModel routes to `NavigateToSectionDetail`.
+A Section not yet taken keeps the expanded card with its own PRIMARY
+button. Only one PRIMARY button exists on the whole screen, on
 the first still-pending Section — every other pending Section (if a
 multigrade Teacher has more than one) falls back to a SECONDARY button so
 the primary action stays singular. The backup banner renders only when
@@ -259,6 +261,7 @@ data class SectionRow(
     val title: String,
     val studentCount: Int,
     val attendance: AttendanceDaySummary = AttendanceDaySummary(0, 0, 0),
+    val missingLevelCount: Int? = null,
 )
 
 data class BackupReminder(
@@ -274,6 +277,24 @@ carries the domain `AttendanceDaySummary` rather than a separate
 totalCount`) already answers whether the Section renders as the expanded
 card with a PRIMARY button or collapses to a `GListItem` row, so no
 duplicate field is needed.
+
+`missingLevelCount` is (new): sourced from
+`GetMissingPeriodLevelCountUseCase(sectionId, currentPeriod.id)`, confirmed
+present in `core:domain` and already wired into the Koin `AppModule`
+(`app/src/main/kotlin/com/emm/gema/di/AppModule.kt`) — but only as a
+dependency of `GetSectionDetailExtrasUseCase` for `SectionDetail`. Home does
+not call this use case yet; `HomeViewModel`, `HomeUiState` and the Home Koin
+wiring carry no reference to it today, so this field is new wiring for the
+ticket, not existing behavior. Its value is: visible worked competencies
+(hidden Areas excluded) times active, non-withdrawn Students, minus
+recorded levels, for the current Period only; `null` when there is no
+current Period. Render rule: the "· N niveles faltan" segment appears on
+any Section row whenever `missingLevelCount` is greater than zero, appended
+to the attendance status — an untaken row reads "Sin tomar · 12 niveles
+faltan", a taken row reads "25 de 27 presentes · 12 niveles faltan". The
+whole status line renders `GemaAccents.onWarningContainer` whenever
+anything is pending on that row — untaken OR `missingLevelCount` greater
+than zero — and `colorScheme.onSurfaceVariant` otherwise.
 
 Intents: `SectionClicked(id: SectionId)`, `TakeAttendanceClicked(id: SectionId)`,
 `AddSectionClicked`, `SchoolYearSwitcherClicked`, `OutOfPeriodClicked`,
@@ -295,11 +316,13 @@ Note: `currentPeriodLabel` is null when today falls outside every Period
 (holidays, or a year whose dates were mistyped). The banner then reads
 "Fuera de periodo" and links to `Periods` rather than hiding.
 
-Note: a Section row's title (in either render) opens `SectionDetail`. A
-still-pending Section's inline PRIMARY button takes today's attendance for
-that Section in one tap, without a detour through the hub; an
-already-taken Section's chevron opens `AttendanceDay` for today directly.
-Both read the same `SectionRow`; neither is destructive, so neither confirms.
+Note: a Section row's tap — its title or its chevron, in either render —
+sends `SectionClicked`, which the ViewModel routes to
+`NavigateToSectionDetail`. A still-pending Section additionally exposes an
+inline PRIMARY button that takes today's attendance for that Section in one
+tap, without a detour through the hub; an already-taken Section carries no
+secondary button. Both read the same `SectionRow`; neither is destructive,
+so neither confirms.
 
 ---
 

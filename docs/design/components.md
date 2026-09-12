@@ -403,8 +403,9 @@ Wraps `ListItem` inside a clickable `Surface`. Tokens: `GTextStyle.BODY_LARGE`
 `subtitle` and `leadingText`, `gemaTypography.bodySmall` for `trailingText`,
 `colorScheme.onSurface` / `onSurfaceVariant`, `colorScheme.primary` for
 `leadingText`, `GemaSpacing.leadingLabelWidth` for its fixed width,
-`GemaSpacing.medium` vertical padding, `colorScheme.outline` for the
-hairline divider.
+`GemaSpacing.medium` vertical padding, `colorScheme.outlineVariant` for the
+hairline divider (`GListItem.kt` still draws it with `colorScheme.outline`
+today — #166 scope).
 
 Tradeoff: no leading avatar or icon slot — `leadingText` is a short label
 (a Roman numeral, an ordinal), not an image slot. Every list in this app is
@@ -491,9 +492,10 @@ fun GLevelChip(
 Wraps `Surface` + `Text`. Sizes: GRID 48×44dp inside a 56dp row (`labelSmall`),
 INLINE 48×48dp (`labelLarge`), EVIDENCE 34×26dp with `GemaShapes.chip` radius
 (`labelSmall`) — GRID and INLINE both use `GemaShapes.control`. Tokens:
-`colorScheme.surface` background for both EVIDENCE and GRID/INLINE (no
-fill), `colorScheme.outline` border for GRID/INLINE (`outlineVariant` for an
-EVIDENCE default),
+`colorScheme.surface` background for EVIDENCE and GRID/INLINE alike (no
+fill), `colorScheme.outline` default border for all three sizes — EVIDENCE
+included, same as GRID/INLINE (`GLevelChip.kt` still draws the EVIDENCE
+default with `colorScheme.outlineVariant` today — #167 scope),
 `colorScheme.primary` for the `isCurrent` border, `colorScheme.error` for the
 `isIncomplete` border and marker, `colorScheme.onSurface` for the letter in
 every state.
