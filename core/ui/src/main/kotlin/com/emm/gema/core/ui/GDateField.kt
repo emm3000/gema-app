@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +33,6 @@ private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInsta
 
 private fun Long.toLocalDateUtc(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GDateField(
     value: LocalDate?,

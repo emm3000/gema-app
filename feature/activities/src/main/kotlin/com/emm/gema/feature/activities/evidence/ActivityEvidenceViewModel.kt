@@ -26,7 +26,6 @@ import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.orderedByName
 import com.emm.gema.core.theme.asDayMonthYear
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -103,7 +102,6 @@ class ActivityEvidenceViewModel(
         loadedSectionId.value = loadedActivity.sectionId
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun observeRows() {
         loadedSectionId
             .filterNotNull()

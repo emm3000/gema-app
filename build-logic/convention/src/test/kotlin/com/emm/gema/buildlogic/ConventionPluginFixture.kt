@@ -117,6 +117,11 @@ internal class ConventionPluginFixture(private val projectDirectory: File) {
                         .distinct()
                         .sorted()
                     println("REPORT jvmTarget=" + jvmTargets.joinToString(separator = ","))
+                    val optIns = project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class.java)
+                        .flatMap { it.compilerOptions.optIn.get() }
+                        .distinct()
+                        .sorted()
+                    println("REPORT optIn=" + optIns.joinToString(separator = ","))
                     println("REPORT conventionTasks=" + project.tasks.names.filter { it == "testDebugUnitTest" || it == "checkSqlDelightSnapshots" }.sorted().joinToString(separator = ","))
                     println("REPORT projectDependencies=" + project.configurations.flatMap { it.dependencies }.filterIsInstance<org.gradle.api.artifacts.ProjectDependency>().map { it.path }.filter { it != project.path }.distinct().sorted().joinToString(separator = ","))
                 }

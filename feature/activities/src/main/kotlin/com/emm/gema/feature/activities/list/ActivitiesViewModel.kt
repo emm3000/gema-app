@@ -22,7 +22,6 @@ import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,7 +92,6 @@ class ActivitiesViewModel(
         selectedPeriodId.value = selectedId
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun observeActivities() {
         selectedPeriodId
             .filterNotNull()

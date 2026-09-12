@@ -15,6 +15,7 @@ internal fun Project.configureKotlinJvm() {
 
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions.jvmTarget.set(JVM_TARGET)
+        compilerOptions.optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 
     tasks.withType<Test>().configureEach {

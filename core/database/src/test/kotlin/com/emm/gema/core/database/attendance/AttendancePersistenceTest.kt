@@ -32,7 +32,6 @@ import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneOffset
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -43,7 +42,6 @@ private const val secondCode: String = "12345678901235"
 private val today: LocalDate = LocalDate.of(2026, 9, 10)
 private val yesterday: LocalDate = today.minusDays(1)
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AttendancePersistenceTest {
 
     private val dispatcher = UnconfinedTestDispatcher()

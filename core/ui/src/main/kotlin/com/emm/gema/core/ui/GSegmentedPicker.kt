@@ -2,7 +2,6 @@
 
 package com.emm.gema.core.ui
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -21,7 +20,6 @@ data class GSegmentOption<T>(
     val contentDescription: String,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> GSegmentedPicker(
     options: List<GSegmentOption<T>>,
