@@ -10,10 +10,10 @@ field.
 |---|---|
 | App name | Gema |
 | Package name | `com.emm.gema` |
-| Default language | Spanish (Peru) — es-PE |
+| Default language | Spanish (Latin America) — es-419 |
 | Category | Education |
 | Tags | asistencia escolar, calificaciones, CNEB, SIAGIE, docentes, primaria |
-| Contact email | `<contact-email>` |
+| Contact email | edgardo.emm20@gmail.com |
 | Contact website | none |
 | Contact phone | none |
 
@@ -95,3 +95,10 @@ de una conexión a internet.
 ```
 
 Character count: 3283/4000.
+
+## Screenshots
+
+`docs/play/assets/screenshot-1-inicio.png` through `screenshot-4-alumnos.png`
+(1080x2160, phone): captured on a `medium_phone` AVD from a debug build with
+seeded demo data (Año Escolar 2026, sección 3ro A, three students), then
+cropped from the emulator's native 1080x2400 to 1080x2160 anchored north.
