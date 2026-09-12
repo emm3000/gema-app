@@ -2,12 +2,12 @@ package com.emm.gema.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -20,9 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -72,7 +76,12 @@ fun GAttendanceToggle(
                     .weight(1f)
                     .fillMaxHeight()
                     .background(containerColorFor(entry, isSelected))
-                    .clickable { onSelect(if (isSelected) option else entry) },
+                    .selectable(
+                        selected = isSelected,
+                        onClick = { onSelect(if (isSelected) option else entry) },
+                        role = Role.RadioButton,
+                    )
+                    .semantics { contentDescription = entry.contentDescription },
                 contentAlignment = Alignment.Center,
             ) {
                 GText(
@@ -90,8 +99,8 @@ private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean): C
     !isSelected -> MaterialTheme.colorScheme.surface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.primaryContainer
     option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.surfaceVariant
-    option == GAttendanceOption.ABSENT -> MaterialTheme.colorScheme.errorContainer
-    else -> MaterialTheme.colorScheme.onSurface
+    option == GAttendanceOption.ABSENT -> GemaAccents.absentContainer
+    else -> MaterialTheme.colorScheme.inverseSurface
 }
 
 @Composable
@@ -99,8 +108,8 @@ private fun contentColorFor(option: GAttendanceOption, isSelected: Boolean): Col
     !isSelected -> MaterialTheme.colorScheme.onSurface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.onPrimaryContainer
     option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.onSurfaceVariant
-    option == GAttendanceOption.ABSENT -> MaterialTheme.colorScheme.onErrorContainer
-    else -> MaterialTheme.colorScheme.surface
+    option == GAttendanceOption.ABSENT -> GemaAccents.onAbsentContainer
+    else -> MaterialTheme.colorScheme.inverseOnSurface
 }
 
 private fun Modifier.pendingOutline(color: Color): Modifier = drawBehind {
