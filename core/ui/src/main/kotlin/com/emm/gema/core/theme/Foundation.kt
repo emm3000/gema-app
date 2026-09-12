@@ -35,7 +35,8 @@ object GemaSpacing {
 
 object GemaShapes {
     val chip: Shape = RoundedCornerShape(8.dp)
-    val control: CornerBasedShape = RoundedCornerShape(12.dp)
+    val controlRadius: Dp = 12.dp
+    val control: CornerBasedShape = RoundedCornerShape(controlRadius)
     val container: Shape = RoundedCornerShape(16.dp)
     val pill: Shape = RoundedCornerShape(percent = 50)
 }

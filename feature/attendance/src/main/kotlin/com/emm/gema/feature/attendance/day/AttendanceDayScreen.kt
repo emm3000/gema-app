@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,12 +32,14 @@ import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
+import com.emm.gema.core.ui.GCalendarIconButton
 import com.emm.gema.core.ui.GCard
-import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GText
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.core.ui.gAttendanceRowColor
 import com.emm.gema.feature.attendance.R
@@ -58,6 +61,14 @@ fun AttendanceDayScreen(
                 title = "Asistencia · ${state.sectionTitle}",
                 subtitle = stringResource(R.string.attendance_day_subtitle_saves_itself),
                 onBackClick = { onIntent(AttendanceDayUiIntent.BackClicked) },
+                actions = {
+                    GCalendarIconButton(
+                        value = state.date,
+                        onValueChange = { picked: LocalDate -> onIntent(AttendanceDayUiIntent.DatePicked(picked)) },
+                        contentDescription = "Elegir fecha",
+                        maxDate = LocalDate.now(),
+                    )
+                },
             )
         },
         modifier = modifier,
@@ -117,7 +128,7 @@ private fun DayStepper(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GIconButton(
@@ -125,12 +136,9 @@ private fun DayStepper(
             contentDescription = "Día anterior",
             onClick = { onIntent(AttendanceDayUiIntent.PreviousDayClicked) },
         )
-        GDateField(
-            value = state.date,
-            onValueChange = { picked: LocalDate -> onIntent(AttendanceDayUiIntent.DatePicked(picked)) },
-            label = state.date?.label().orEmpty(),
-            modifier = Modifier.weight(1f),
-            maxDate = LocalDate.now(),
+        GText(
+            text = state.date?.label().orEmpty(),
+            style = GTextStyle.TITLE_SMALL,
         )
         GIconButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -147,20 +155,37 @@ private fun DaySummary(
     onIntent: (AttendanceDayUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GCard(modifier = modifier) {
-        GListItem(
-            title = "${state.presentCount} de ${state.totalCount} presentes",
+    GCard(modifier = modifier, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            subtitle = "${state.unmarkedCount} sin marcar",
-            trailing = {
-                GButton(
-                    text = "Todos presentes",
-                    onClick = { onIntent(AttendanceDayUiIntent.MarkAllPresent) },
-                    variant = GButtonVariant.TEXT,
-                    enabled = state.canMarkAllPresent,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
+                ) {
+                    GText(text = "${state.presentCount}", style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
+                    GText(
+                        text = "de ${state.totalCount} presentes",
+                        style = GTextStyle.BODY_MEDIUM,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                GText(
+                    text = "${state.unmarkedCount} sin marcar",
+                    style = GTextStyle.BODY_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            },
-        )
+            }
+            GButton(
+                text = "Todos presentes",
+                onClick = { onIntent(AttendanceDayUiIntent.MarkAllPresent) },
+                variant = GButtonVariant.SECONDARY,
+                enabled = state.canMarkAllPresent,
+            )
+        }
     }
 }
 
@@ -174,14 +199,22 @@ private fun StudentRow(
         modifier = modifier
             .fillMaxWidth()
             .background(gAttendanceRowColor(row.isRecorded))
-            .padding(vertical = GemaSpacing.extraSmall),
-        verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
+            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
-        GListItem(
-            title = row.displayName,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            trailingText = "sin marcar".takeIf { !row.isRecorded },
-        )
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
+            if (!row.isRecorded) {
+                GText(
+                    text = "sin marcar",
+                    style = GTextStyle.LABEL_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
         GAttendanceToggle(
             option = row.status.asToggleOption(),
             isRecorded = row.isRecorded,
