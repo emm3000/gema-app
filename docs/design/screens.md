@@ -833,28 +833,30 @@ The daily workhorse. Every tap persists one row; there is no save button.
 ```
 +------------------------------------------+
 |  <   Asistencia - 3ro A            [cal] |
+|       Cada toque se guarda solo          |
 +------------------------------------------+
 |   <    Mar 10 set 2026    >              |
-+------------------------------------------+
-|  28 de 30 presentes    [ Todos presentes]|
-|  2 sin marcar                             |
-+------------------------------------------+
+|  +------------------------------------+  |
+|  |28 de 30 presentes [Todos presentes]|  |
+|  |2 sin marcar                        |  |
+|  +------------------------------------+  |
+|  ------------------------------------    |
 |  ACOSTA RIVERA, Luz Maria                |
 |  +------+------+------+------+           |
 |  |  P   |  T   |  F   |  FJ  |           |
 |  +======+------+------+------+           |
-|                                          |
+|  ------------------------------------    |
 | :BAUTISTA QUISPE, Jose : sin marcar      |
 | :+------+------+------+------+:          |
 | :|  P   |  T   |  F   |  FJ  |:          |
 | :+------+------+------+------+:          |
-|                                          |
+|  ------------------------------------    |
 |  CCAHUANA MAMANI, Rosa                   |
 |  +------+------+------+------+           |
 |  |  P   |  T   |  F   |  FJ  |           |
 |  +------+------+------+======+           |
-|                                          |
-|  Resumen del mes  >                      |
++------------------------------------------+
+|  Resumen del mes                      >  |
 +------------------------------------------+
 ```
 
@@ -864,8 +866,12 @@ the same line — so a long name never squeezes the toggle at font scale 1.3.
 The selected segment carries a filled background plus weight 600, so the
 state is not colour-only. The summary strip above the list reads as a
 `numeral` count ("28 de 30 presentes") with "N sin marcar" beneath it in
-`GemaAccents.onWarningContainer` text (#163: today's code uses
-`onSurfaceVariant`); "Todos presentes" sits beside it as a SECONDARY button.
+`GemaAccents.onWarningContainer` text; "Todos presentes" sits beside it as a
+SECONDARY button. The strip is a `surfaceContainerLow` block with `control`
+radius, not a card. Each student row sits under an `outline` hairline
+(`GDivider`) and the name takes the remaining width, so the trailing
+"sin marcar" label never wraps. "Resumen del mes" is a footer pinned below
+the scrolling list, not the list's last row.
 The `:`-bordered row is an unmarked Student: `warningContainer` row tint plus
 a dashed outline and a trailing "sin marcar" label, not colour alone, so it
 stands out on a low-end screen in daylight.
@@ -903,7 +909,7 @@ Notes:
 
 - `isRecorded = false` means the row is showing the present default and nothing
   is stored yet (US 25, 26). The first tap creates the row. `unmarkedCount`
-  counts these rows and drives the header's "N sin marcar" pill.
+  counts these rows and drives the summary strip's "N sin marcar" text line.
 - `MarkAllPresent` records present for every `isRecorded = false` row in one
   action; a row already marked (present, late, absent or justified) is left as
   the Teacher set it, and the action disables itself once nothing is unmarked.
