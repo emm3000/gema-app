@@ -2,76 +2,30 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .crow { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 12px 16px; border-bottom: 1px solid #DFE4D7; }
-    .cbon { width: 22px; height: 22px; border-radius: 6px; background: #3F6836; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .cboff { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #73796E; background: #FFFFFF; box-sizing: border-box; flex-shrink: 0; }
-    .cord { font-size: 13px; font-weight: 700; color: #285020; width: 20px; flex-shrink: 0; }
-    .cname { font-size: 15px; color: #191D17; text-wrap: pretty; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
-  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-    </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Competencias trabajadas</span>
-      <span style="font-size: 13px; color: #43483F;">Personal Social · II Bimestre</span>
-    </div>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; gap: 4px; padding: 8px 16px 0 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 1px;"><div style="font-size: 18px; font-weight: 600; line-height: 1.2;">Competencias trabajadas</div><div style="font-size: 13px; color: #6E7075;">Personal Social · II Bimestre</div></div>
   </div>
 
-  <div style="display: flex; flex-direction: column; flex-grow: 1;">
-    <div style="padding: 4px 16px 14px 16px;">
-      <span style="font-size: 13px; color: #43483F;">Marca solo las competencias que trabajaste. Solo esas se exportan.</span>
-    </div>
+  <div style="padding: 8px 16px 12px 16px; font-size: 15px; line-height: 1.45; color: #6E7075;">Marca solo las que trabajaste este periodo. Solo esas entran a la tabla y a SIAGIE.</div>
 
-    <div style="display: flex; flex-direction: column; border-top: 1px solid #DFE4D7; background: #FFFFFF;">
-      <div class="crow">
-        <span class="cbon"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
-        <span class="cord">01</span>
-        <span class="cname">Construye su identidad</span>
-      </div>
-      <div class="crow">
-        <span class="cbon"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
-        <span class="cord">02</span>
-        <span class="cname">Convive y participa democráticamente</span>
-      </div>
-      <div class="crow">
-        <span class="cboff"></span>
-        <span class="cord" style="color: #43483F;">03</span>
-        <span class="cname" style="color: #43483F;">Construye interpretaciones históricas</span>
-      </div>
-      <div class="crow">
-        <span class="cboff"></span>
-        <span class="cord" style="color: #43483F;">04</span>
-        <span class="cname" style="color: #43483F;">Gestiona responsablemente el espacio y el ambiente</span>
-      </div>
-      <div class="crow" style="border-bottom: none;">
-        <span class="cbon"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #FFFFFF; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;"><path d="M20 6L9 17l-5-5"></path></svg></span>
-        <span class="cord">05</span>
-        <span class="cname">Gestiona responsablemente los recursos económicos</span>
-      </div>
-    </div>
-
-    <div style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-top: 1px solid #DFE4D7;">
-      <span style="font-size: 13px; font-weight: 500; color: #43483F;">3 de 5 marcadas</span>
-    </div>
-
-    <div style="display: flex; align-items: flex-start; gap: 12px; margin: 4px 16px 0 16px; padding: 12px 16px; background: #FFF8E1; border-radius: 16px;">
-      <svg class="ico" style="width: 20px; height: 20px; flex-shrink: 0; color: #191D17;" viewBox="0 0 24 24"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
-      <span style="font-size: 14px; color: #191D17;">La 04 tiene 3 niveles registrados. Quedan guardados y dejan de exportarse.</span>
-    </div>
+  <div style="display: flex; flex-direction: column; padding: 0 16px;">
+    <div style="display: flex; align-items: flex-start; gap: 12px; min-height: 56px; padding: 12px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 20px; height: 20px; border-radius: 4px; background: #3F6836; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></div><div style="width: 24px; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; font-variant-numeric: tabular-nums; margin-top: 3px; flex-shrink: 0;">01</div><div style="font-size: 15px; line-height: 1.45;">Construye su identidad</div></div>
+    <div style="display: flex; align-items: flex-start; gap: 12px; min-height: 56px; padding: 12px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 20px; height: 20px; border-radius: 4px; background: #3F6836; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></div><div style="width: 24px; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; font-variant-numeric: tabular-nums; margin-top: 3px; flex-shrink: 0;">02</div><div style="font-size: 15px; line-height: 1.45;">Convive y participa democráticamente en la búsqueda del bien común</div></div>
+    <div style="display: flex; align-items: flex-start; gap: 12px; min-height: 56px; padding: 12px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 20px; height: 20px; border-radius: 4px; border: 2px solid #C9C9C5; box-sizing: border-box; flex-shrink: 0; margin-top: 1px;"></div><div style="width: 24px; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; font-variant-numeric: tabular-nums; margin-top: 3px; flex-shrink: 0;">03</div><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 15px; line-height: 1.45;">Construye interpretaciones históricas</div><div style="font-size: 13px; line-height: 1.45; color: #5C4A12;">8 niveles registrados. No se exportan mientras esté desmarcada.</div></div></div>
+    <div style="display: flex; align-items: flex-start; gap: 12px; min-height: 56px; padding: 12px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 20px; height: 20px; border-radius: 4px; border: 2px solid #C9C9C5; box-sizing: border-box; flex-shrink: 0; margin-top: 1px;"></div><div style="width: 24px; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; font-variant-numeric: tabular-nums; margin-top: 3px; flex-shrink: 0;">04</div><div style="font-size: 15px; line-height: 1.45;">Gestiona responsablemente el espacio y el ambiente</div></div>
+    <div style="display: flex; align-items: flex-start; gap: 12px; min-height: 56px; padding: 12px 0; border-top: 1px solid #E6E6E3; border-bottom: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 20px; height: 20px; border-radius: 4px; background: #3F6836; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></div><div style="width: 24px; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #6E7075; font-variant-numeric: tabular-nums; margin-top: 3px; flex-shrink: 0;">05</div><div style="font-size: 15px; line-height: 1.45;">Gestiona responsablemente los recursos económicos</div></div>
   </div>
+
+  <div style="padding: 12px 16px 0 16px; font-size: 13px; line-height: 1.45; color: #6E7075;">3 de 5 marcadas · cada cambio se guarda solo</div>
 </div>
-</x-dc>
 </body>
 </html>

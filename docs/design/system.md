@@ -10,7 +10,7 @@ Canvases:
 - Identity (seven principles): https://claude.ai/code/artifact/ce4bb182-e374-40d9-96f1-3cabda03921d
 - System (tokens and components): https://claude.ai/code/artifact/d818e6b3-1f76-4775-9373-ea7e0dbe9be6
 - Screens (Home, Attendance day, Period levels, Level sheet): https://claude.ai/code/artifact/e3d89b45-16c4-4e88-9fd5-5d32a1db61f3
-- Screens, setup and sections (SetupYear, SetupSection, SchoolYears, Periods, SectionForm, SectionAreas, SectionDetail): https://claude.ai/code/artifact/58f15a63-a023-4536-8527-8c62513dd666
+- Screens, students and gates (Students, StudentForm, ImportPreview, AttendanceMonth, WorkedCompetencies): https://claude.ai/code/artifact/1ce1c08a-7920-431b-8810-bfa93209749f
 
 ## Principles
 
@@ -69,12 +69,6 @@ Note: dark mode is correctness-only — it exists so contrast stays compliant
 in a dark environment, not as a designed alternate theme. There is no theme
 toggle.
 
-Note: `onWarningContainer` and `onErrorContainer` may be used as text on
-`surface` without their container for a one-line pending or overdue status
-(Home's section status line, SectionDetail's status and "N faltan",
-SectionAreas' recorded-levels subtitle). Both pass 7:1 on white. Banners and
-row tints keep the container pair.
-
 ## Typography
 
 IBM Plex Sans, bundled as a variable TTF. Width axis (`wdth`) pinned to 100,
@@ -93,10 +87,6 @@ weight range 400-600, Latin and Spanish subset, all layout features kept:
 | `bodyMedium` | 15sp / 400 / 1.45 | Registro value, mirrors `bodyLarge`. M3 `ListItem` supporting text, `Dialog` body |
 | `titleSmall` | 12sp / 600, +1px tracking | Registro value, mirrors `labelSmall`. M3 components that read `titleSmall` directly |
 | `labelMedium` | 12sp / 600, +1px tracking | Registro value, mirrors `labelSmall`. `GBadge` text, `DatePicker` |
-
-The mockup HTML rounds these sizes for browser rendering (for example 18px top
-bar titles, 14px buttons, 11px field labels); the Kotlin type scale above is
-the source of truth.
 
 `gemaTypography` keeps these seven `GTextStyle` slots. It also sets
 `bodyMedium`, `titleSmall` and `labelMedium` to Registro values, because
@@ -203,10 +193,10 @@ radius border, no illustration.
 `outline`-bordered, `control`-radius row. Selected segment = fill + weight
 600: present on `primaryContainer`, late on `surfaceContainerHigh`, absent on
 `errorContainer`, justified on `inverseSurface`. The unrecorded row: dashed
-`outline` border drawn on top of the segments, `surface` (white) fill,
-trailing "sin marcar" label in `GemaAccents.onWarningContainer` text (#163:
-today's code uses `onSurfaceVariant`). Color is always redundant with the
-letter and the weight, never the only signal.
+`outline` border, `warningContainer` row tint, trailing "sin marcar" label in
+`GemaAccents.onWarningContainer` text (#163: today's code uses
+`onSurfaceVariant`). Color is always redundant with the letter and the
+weight, never the only signal.
 
 **Attendance summary strip** — `surfaceContainerLow` background, `control`
 (8dp) radius, `numeral` count + `bodyLarge` label, a secondary "sin marcar"
