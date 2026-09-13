@@ -106,3 +106,7 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Multi-session orchestration
+
+Playbook for running and dispatching to parallel peer Claude Code sessions on this repo. Read it before dispatching any ticket. See `docs/agents/multi-session.md`.

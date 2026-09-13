@@ -1,0 +1,62 @@
+# Multi-session orchestration
+
+How the owner runs several Claude Code sessions on this repo in parallel, and what the orchestrator session must do before dispatching work to them. Read this before dispatching a ticket to a peer session.
+
+## Roles
+
+- **Owner** opens named peer sessions by hand, one terminal each (e.g. `tokens`, `home`), sets model and effort with `/model`, and gives the go-ahead for each dispatch. Refer to a session with an `@` prefix in chat (`@tokens`) — it disambiguates the session from a feature or ticket of the same name.
+- **Orchestrator** coordinates: dispatches via `SendMessage`, reviews, merges. It stays thin.
+  - Delegate investigation and any artifact-producing work (tickets, specs, surveys, docs) to a subagent with an explicit model.
+  - Do inline only routing state (`git status`, `git worktree list`, `gh issue/pr list`, `ListAgents`) and at most 1-2 files to decide. *Why: the owner stopped the orchestrator grepping `build-logic` to write a ticket itself (2026-09-12).*
+  - Report minimal: act on review/agent findings, tell the owner 1-2 lines and only decisions that are genuinely theirs. Merging a clean PR is normal practice, not a question. *Why: the owner flagged relayed review output as noise.*
+
+## Model and effort
+
+- Every dispatch states model and **one** explicit effort (low / medium / high, never a range), with a one-line reason. Pick the cheapest model and lowest effort that gets it right; reserve Opus/high for work where a mistake is silent or expensive (xlsx byte layout, migrations); low is enough where a wrong answer fails tests loudly.
+- Fable (`claude-fable-5-1`) is for architecture and design decisions only — identity, tokens, component rules, mockups, visual judgment. Reviews, implementation and doc checks go to Opus or Sonnet. *Why: owner correction when Fable was proposed to review the docs PR #171.*
+- A session cannot see its own reasoning effort — `ListAgents` doesn't show it or context usage, and asking a session directly returns an unreliable guess. The owner verifies effort with `/model` in each terminal. *Why: on 2026-09-12 sessions reported "low" while one said the level isn't exposed to it.*
+- The orchestrator can't self-manage its own effort either: tell the owner when to raise it (a conflicting rebase, judging byte-level findings) and when to lower it back.
+
+## Slicing and waves
+
+- One slice = one small PR: a migration + domain change, or one screen, or one integration. A ticket naming more than 2 screens, or a migration plus a screen, gets split into sub-issues with `gh` first.
+- If a session passes ~60% context without a PR, it commits, opens a partial PR, clears, and continues. *Why: a session hit 50% context on a ticket that bundled four tickets into one.*
+- Waves are ordered by dependency; parallelism is safe only within a wave (e.g. tokens -> typeface -> component slices in parallel -> screens in parallel). A wave starts only after the previous one is merged.
+- Before dispatching tickets filed by an audit, re-verify each against current `main` — the finding may already be fixed. *Why: the visual audit #117-#124 ran on an older commit, and part of #120 was already fixed by #116.*
+
+## Dispatch prompt checklist
+
+Every dispatch to a peer session must include:
+
+- Issue number, docs to read first, branch name, and the peer's **own** worktree path (see Isolation below).
+- The line: *"The issue's acceptance criteria are the contract and win over any file list here; run every criterion check before opening the PR."* Prefer criteria phrased as a command with expected empty output. *Why: PRs #84 and #85 stopped at the file list and missed matching call sites.*
+- Gates: `./gradlew detekt testDebugUnitTest checkModuleBoundaries` green before commit; conventional commits; no `Co-Authored-By`.
+- For any screen-touching ticket, a visual check: install on the session's assigned emulator only, screenshot every changed screen with `adb -s <serial> exec-out screencap -p`, compare against `docs/design/screens.md`, attach the screenshots to the PR. *Why: `SetupYear` drifted from the approved design in #4 and a code-only review never caught it.*
+- An instruction to keep the slice small and stop and report instead of expanding scope.
+- An instruction to open the PR with `Closes #N`, not merge it, not watch CI, and message the orchestrator the PR URL in 1-2 lines.
+
+## Isolation: worktrees
+
+- Every peer works in its own git worktree (`/Users/emm/AndroidStudioProjects/gema-<name>`, branched off `origin/main`) — never in the owner's main checkout, which holds owner-only uncommitted files. All sessions open in the same folder by default, so a checkout there changes the branch under every other session. *Why: `gema-polish` implemented #157 in the main checkout, and the orchestrator, assuming it was a leftover, switched the checkout back to `main` mid-fix (2026-09-12).*
+- Before changing the state of any checkout, find out who is using it — an unexpected branch may be a live peer, not a leftover.
+- Review and verification prompts are read-only on every existing checkout. If gradle must run on a branch, or a red/green check needs a source edit, use a throwaway worktree under the session scratchpad and remove it afterward.
+- `git checkout main` fails inside a worktree while the primary worktree is already on `main`; use `git fetch` + `git switch -c <branch> origin/main` (or `checkout -B`) instead.
+- After a merge, remove the merged worktree and its local branch before the next wave, especially before a new session reuses that worktree's name.
+
+## Isolation: emulators
+
+- Each session gets its own emulator serial; the owner keeps one for personal use. Never install on another session's emulator.
+- `./gradlew installDebug` installs on **every** connected adb device. Run `adb devices` to confirm the serial, then use `ANDROID_SERIAL=<serial> ./gradlew installDebug` or `adb -s <serial> install -r <apk>`, and scope screenshots with `-s` too. *Why: `gema-polish`'s build overwrote the APK on another peer's emulator and invalidated that peer's visual check (2026-09-12).*
+- If it happens anyway, the owning session reinstalls its own build — the session that caused the overwrite must not touch another session's device.
+
+## Review cycle
+
+- A session gets nothing new until its previous PR is reviewed, fixed and merged. Never queue two tickets in one dispatch. *Why: owner directive — finish the review cycle before sending anything else.*
+- Two-axis review (standards vs. `CLAUDE.md` rules, spec vs. the issue), plus screenshots checked against `screens.md`. PR reviews run Opus high; post-review fixes run Sonnet low.
+- Design-doc PRs go in a fixed order: Fable writes the design, a Sonnet pass cross-checks every `UiState` / intent / token / component name against current code (code wins; genuinely new things are marked "(new)"), then Opus high reviews. *Why: PR #171 got ~20 findings that were almost all spec-vs-code drift, not new bugs.*
+- Merge is rebase-only, linear history, CI required. The orchestrator never blocks its own turn on `gh run watch` — it merges when the CI notification or the session's report arrives.
+
+## Between tickets
+
+- When a session finishes (PR merged, cleanup done), the orchestrator tells the owner: the session name, that it needs `/clear`, and the next ticket with model + effort — then waits for the owner's go. It never redispatches on its own. *Why: a session carrying the previous ticket's context drifts and costs more; the owner configures each session by hand.*
+- At session start, the orchestrator searches memory (`mem_search`) for past dispatch gotchas before the first dispatch of the session. *Why: on 2026-09-12, `@tokens` was dispatched into the main checkout without `ANDROID_SERIAL` because past lessons weren't searched first.*
