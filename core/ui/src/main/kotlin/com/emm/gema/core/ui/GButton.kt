@@ -1,5 +1,6 @@
 package com.emm.gema.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
@@ -18,11 +19,16 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+
+private const val BUSY_ALPHA: Float = 0.85f
 
 @Composable
 fun GButton(
@@ -34,8 +40,12 @@ fun GButton(
     isBusy: Boolean = false,
     icon: ImageVector? = null,
 ) {
-    val buttonModifier: Modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget)
+    val buttonModifier: Modifier = modifier
+        .heightIn(min = GemaSpacing.minimumTouchTarget)
+        .alpha(if (isBusy) BUSY_ALPHA else 1f)
     val isClickable: Boolean = enabled && !isBusy
+    val disabledContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
+    val disabledContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 
     when (variant) {
         GButtonVariant.PRIMARY -> Button(
@@ -43,6 +53,10 @@ fun GButton(
             modifier = buttonModifier,
             enabled = isClickable,
             shape = GemaShapes.control,
+            colors = ButtonDefaults.buttonColors(
+                disabledContainerColor = disabledContainerColor,
+                disabledContentColor = disabledContentColor,
+            ),
         ) {
             GButtonLabel(text = text, isBusy = isBusy, icon = icon)
         }
@@ -52,18 +66,27 @@ fun GButton(
             modifier = buttonModifier,
             enabled = isClickable,
             shape = GemaShapes.control,
+            colors = ButtonDefaults.outlinedButtonColors(
+                disabledContainerColor = disabledContainerColor,
+                disabledContentColor = disabledContentColor,
+            ),
         ) {
             GButtonLabel(text = text, isBusy = isBusy, icon = icon)
         }
 
-        GButtonVariant.DESTRUCTIVE -> Button(
+        GButtonVariant.DESTRUCTIVE -> OutlinedButton(
             onClick = onClick,
             modifier = buttonModifier,
             enabled = isClickable,
             shape = GemaShapes.control,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError,
+            border = BorderStroke(
+                width = 1.dp,
+                color = if (isClickable) MaterialTheme.colorScheme.error else disabledContentColor,
+            ),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error,
+                disabledContainerColor = disabledContainerColor,
+                disabledContentColor = disabledContentColor,
             ),
         ) {
             GButtonLabel(text = text, isBusy = isBusy, icon = icon)
@@ -74,6 +97,9 @@ fun GButton(
             modifier = buttonModifier,
             enabled = isClickable,
             shape = GemaShapes.control,
+            colors = ButtonDefaults.textButtonColors(
+                disabledContentColor = disabledContentColor,
+            ),
         ) {
             GButtonLabel(text = text, isBusy = isBusy, icon = icon)
         }

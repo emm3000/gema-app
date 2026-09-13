@@ -26,9 +26,9 @@ fun GExtendedFab(
     ExtendedFloatingActionButton(
         onClick = onClick,
         modifier = modifier.height(GemaSpacing.fabHeight),
-        shape = GemaShapes.container,
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        shape = GemaShapes.control,
+        containerColor = MaterialTheme.colorScheme.inverseSurface,
+        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
         elevation = FloatingActionButtonDefaults.elevation(),
         icon = { Icon(imageVector = icon, contentDescription = null) },
         text = { Text(text = text, style = MaterialTheme.typography.labelLarge) },
