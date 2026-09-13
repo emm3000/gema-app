@@ -124,7 +124,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (isUntouched) GemaAccents.unmarkedSurface else MaterialTheme.colorScheme.surface)
+            .background(if (isUntouched) GemaAccents.warningContainer else MaterialTheme.colorScheme.surface)
             .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
         verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
@@ -136,7 +136,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
             if (isUntouched) {
                 GText(
                     text = stringResource(R.string.activity_evidence_no_evidence_label),
-                    style = GTextStyle.LABEL_MEDIUM,
+                    style = GTextStyle.LABEL_SMALL,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

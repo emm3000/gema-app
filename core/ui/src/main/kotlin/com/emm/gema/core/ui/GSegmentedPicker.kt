@@ -2,6 +2,7 @@
 
 package com.emm.gema.core.ui
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -38,6 +39,10 @@ fun <T> GSegmentedPicker(
                     index = index,
                     count = options.size,
                     baseShape = GemaShapes.control,
+                ),
+                colors = SegmentedButtonDefaults.colors(
+                    activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
                 enabled = isEnabled,
                 modifier = Modifier.semantics { contentDescription = option.contentDescription },

@@ -83,7 +83,11 @@ fun SetupSectionScreen(
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-                GText(text = stringResource(R.string.setup_section_grade_label), style = GTextStyle.LABEL_MEDIUM)
+                GText(
+                    text = stringResource(R.string.setup_section_grade_label),
+                    style = GTextStyle.LABEL_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 GChoiceChipRow(
                     options = Grade.entries.map {
                         GChoiceChipOption(

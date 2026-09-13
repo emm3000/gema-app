@@ -139,11 +139,11 @@ private fun AttendanceCard(
         )
         GText(
             text = state.today?.let { today: LocalDate -> today.fullLabel() }.orEmpty(),
-            style = GTextStyle.TITLE_LARGE_EMPHASIS,
+            style = GTextStyle.NUMERAL,
         )
         GText(
             text = state.todayAttendanceSummary,
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GButton(

@@ -138,7 +138,7 @@ private fun DayStepper(
         )
         GText(
             text = state.date?.label().orEmpty(),
-            style = GTextStyle.TITLE_SMALL,
+            style = GTextStyle.TITLE_MEDIUM,
         )
         GIconButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -169,7 +169,7 @@ private fun DaySummary(
                     GText(text = "${state.presentCount}", style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
                     GText(
                         text = "de ${state.totalCount} presentes",
-                        style = GTextStyle.BODY_MEDIUM,
+                        style = GTextStyle.BODY_LARGE,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }

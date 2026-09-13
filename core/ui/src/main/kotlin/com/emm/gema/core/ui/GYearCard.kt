@@ -23,7 +23,6 @@ import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-import com.emm.gema.core.theme.gemaCardTitleFontSize
 
 @Composable
 fun GYearCard(
@@ -58,7 +57,7 @@ fun GYearCard(
             ) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = gemaCardTitleFontSize),
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )

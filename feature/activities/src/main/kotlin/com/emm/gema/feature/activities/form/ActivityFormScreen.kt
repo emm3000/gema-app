@@ -85,7 +85,7 @@ fun ActivityFormScreen(
                     item {
                         GText(
                             text = message,
-                            style = GTextStyle.BODY_MEDIUM,
+                            style = GTextStyle.BODY_LARGE,
                             modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
                         )
                     }
@@ -172,7 +172,7 @@ fun ActivityFormScreen(
         ) {
             GText(
                 text = "Se perderán las evidencias registradas para esta actividad.",
-                style = GTextStyle.BODY_MEDIUM,
+                style = GTextStyle.BODY_LARGE,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

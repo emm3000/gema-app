@@ -106,7 +106,11 @@ fun SetupYearScreen(
             }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-                    GText(text = "¿Cómo evalúa tu escuela?", style = GTextStyle.LABEL_MEDIUM)
+                    GText(
+                        text = "¿Cómo evalúa tu escuela?",
+                        style = GTextStyle.LABEL_SMALL,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                     GSegmentedPicker(
                         options = PeriodKind.entries.map {
                             GSegmentOption(
@@ -123,7 +127,11 @@ fun SetupYearScreen(
             }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-                    GText(text = "Periodos", style = GTextStyle.LABEL_MEDIUM)
+                    GText(
+                        text = "Periodos",
+                        style = GTextStyle.LABEL_SMALL,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                     PeriodsList(periods = state.periods, onIntent = onIntent)
                     GText(
                         text = stringResource(R.string.setup_year_periods_caption),

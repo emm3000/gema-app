@@ -6,4 +6,4 @@ import com.emm.gema.core.theme.GemaAccents
 
 @Composable
 fun gAttendanceRowColor(isRecorded: Boolean): Color =
-    if (isRecorded) Color.Transparent else GemaAccents.unmarkedSurface
+    if (isRecorded) Color.Transparent else GemaAccents.warningContainer

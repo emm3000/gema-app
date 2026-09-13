@@ -100,7 +100,11 @@ fun SectionFormScreen(
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
-                GText(text = stringResource(R.string.sections_form_grade_label), style = GTextStyle.LABEL_MEDIUM)
+                GText(
+                    text = stringResource(R.string.sections_form_grade_label),
+                    style = GTextStyle.LABEL_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 GChoiceChipRow(
                     options = gradeOptions(),
                     selected = state.grade,
@@ -166,7 +170,7 @@ private fun DeleteSectionDialog(
                 confirmation.attendanceDayCount,
                 confirmation.periodLevelCount,
             ),
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }

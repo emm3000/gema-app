@@ -90,7 +90,7 @@ private fun YearStepper(
             onClick = onPreviousYear,
             isEnabled = canGoToPreviousYear,
         )
-        GText(text = year.toString(), style = GTextStyle.TITLE_SMALL)
+        GText(text = year.toString(), style = GTextStyle.TITLE_MEDIUM)
         GIconButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Año siguiente",

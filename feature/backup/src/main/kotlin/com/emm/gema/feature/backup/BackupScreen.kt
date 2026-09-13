@@ -160,7 +160,7 @@ private fun ReminderSection(state: BackupUiState, onIntent: (BackupUiIntent) -> 
             )
             GText(
                 text = stringResource(R.string.backup_reminder_days),
-                style = GTextStyle.BODY_MEDIUM,
+                style = GTextStyle.BODY_LARGE,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -179,7 +179,7 @@ private fun RestoreDialog(confirmation: RestoreConfirmation, onIntent: (BackupUi
     ) {
         GText(
             text = stringResource(R.string.backup_restore_confirm_file, confirmation.fileName),
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
         )
         GText(
             text = pluralStringResource(
@@ -187,12 +187,12 @@ private fun RestoreDialog(confirmation: RestoreConfirmation, onIntent: (BackupUi
                 confirmation.currentSchoolYearCount,
                 confirmation.currentSchoolYearCount,
             ),
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             modifier = Modifier.padding(top = GemaSpacing.small),
         )
         GText(
             text = stringResource(R.string.backup_restore_warning),
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(top = GemaSpacing.small),
         )

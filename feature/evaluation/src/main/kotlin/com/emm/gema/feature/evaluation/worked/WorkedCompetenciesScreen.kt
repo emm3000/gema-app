@@ -76,7 +76,7 @@ fun WorkedCompetenciesScreen(
             item {
                 GText(
                     text = stringResource(R.string.worked_competencies_hint),
-                    style = GTextStyle.BODY_MEDIUM,
+                    style = GTextStyle.BODY_LARGE,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
                 )
@@ -125,7 +125,7 @@ private fun WorkedCompetenciesFooter(
                     selectedCount,
                     totalCount,
                 ),
-                style = GTextStyle.LABEL_MEDIUM,
+                style = GTextStyle.LABEL_SMALL,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (recordedLevelsWarning != null) {

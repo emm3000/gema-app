@@ -199,7 +199,7 @@ private fun AttendanceMonthDataRow(row: AttendanceMonthRow, modifier: Modifier =
             name = {
                 GText(
                     text = row.displayName,
-                    style = GTextStyle.BODY_MEDIUM,
+                    style = GTextStyle.BODY_LARGE,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -210,7 +210,7 @@ private fun AttendanceMonthDataRow(row: AttendanceMonthRow, modifier: Modifier =
                 {
                     GText(
                         text = count.toString(),
-                        style = GTextStyle.BODY_MEDIUM,
+                        style = GTextStyle.BODY_LARGE,
                         color = if (count == 0) {
                             MaterialTheme.colorScheme.outlineVariant
                         } else {
@@ -240,7 +240,7 @@ private fun MonthStepper(
             contentDescription = "Mes anterior",
             onClick = { onIntent(AttendanceMonthUiIntent.PreviousMonthClicked) },
         )
-        GText(text = state.month?.label().orEmpty(), style = GTextStyle.TITLE_SMALL)
+        GText(text = state.month?.label().orEmpty(), style = GTextStyle.TITLE_MEDIUM)
         GIconButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Mes siguiente",

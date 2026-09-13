@@ -63,7 +63,7 @@ private fun GTableRowPreview() {
             GText(
                 text = "CCAHUANA MAMANI, Rosa",
                 modifier = Modifier.fillMaxSize().padding(horizontal = GemaSpacing.medium),
-                style = GTextStyle.BODY_MEDIUM,
+                style = GTextStyle.BODY_LARGE,
             )
         }
     }

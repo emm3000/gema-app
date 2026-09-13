@@ -163,7 +163,7 @@ private fun HomeTitle(yearLabel: String) {
         GText(text = stringResource(R.string.app_name), style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
         GText(
             text = yearLabel,
-            style = GTextStyle.LABEL_MEDIUM,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -214,7 +214,7 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(sectionCardTestTag(row.id)),
-            titleStyle = GTextStyle.CARD_TITLE_EMPHASIS,
+            titleStyle = GTextStyle.NUMERAL,
             trailingText = pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
             showDivider = false,
             onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
@@ -228,7 +228,7 @@ private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modif
         ) {
             GText(
                 text = stringResource(R.string.home_today_status, attendanceLabel(row.attendance)),
-                style = GTextStyle.BODY_MEDIUM,
+                style = GTextStyle.BODY_LARGE,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (row.attendance.isTaken) {

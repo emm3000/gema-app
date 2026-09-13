@@ -4,6 +4,7 @@ package com.emm.gema.core.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -18,9 +19,9 @@ fun GStepHeader(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
-        GText(text = step, style = GTextStyle.LABEL_MEDIUM)
+        GText(text = step, style = GTextStyle.LABEL_SMALL, color = MaterialTheme.colorScheme.onSurfaceVariant)
         GText(text = title, style = GTextStyle.TITLE_MEDIUM)
-        GText(text = description, style = GTextStyle.BODY_MEDIUM)
+        GText(text = description, style = GTextStyle.BODY_LARGE)
     }
 }
 
