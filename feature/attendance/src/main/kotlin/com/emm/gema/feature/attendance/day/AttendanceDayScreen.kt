@@ -23,6 +23,7 @@ import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.label
 import com.emm.gema.core.domain.student.StudentId
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.theme.label
@@ -166,7 +167,7 @@ private fun DaySummary(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
                 ) {
-                    GText(text = "${state.presentCount}", style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
+                    GText(text = "${state.presentCount}", style = GTextStyle.NUMERAL)
                     GText(
                         text = "de ${state.totalCount} presentes",
                         style = GTextStyle.BODY_LARGE,
@@ -176,7 +177,7 @@ private fun DaySummary(
                 GText(
                     text = "${state.unmarkedCount} sin marcar",
                     style = GTextStyle.BODY_SMALL,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = GemaAccents.onWarningContainer,
                 )
             }
             GButton(
@@ -211,7 +212,7 @@ private fun StudentRow(
                 GText(
                     text = "sin marcar",
                     style = GTextStyle.LABEL_SMALL,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = GemaAccents.onWarningContainer,
                 )
             }
         }
