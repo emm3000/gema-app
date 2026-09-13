@@ -106,7 +106,7 @@ fun GLevelChip(
                 text = label(letter, hasUnworkedComment),
                 style = metrics.labelStyle,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center,
             )
             if (isIncomplete) {
@@ -114,7 +114,7 @@ fun GLevelChip(
                     text = INCOMPLETE_MARK,
                     style = MaterialTheme.typography.labelSmall,
                     color = markerColor,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }

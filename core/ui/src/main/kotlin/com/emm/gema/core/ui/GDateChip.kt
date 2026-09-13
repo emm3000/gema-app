@@ -22,7 +22,7 @@ fun GDateChip(text: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.sp, fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.sp, fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.padding(horizontal = GemaSpacing.small, vertical = GemaSpacing.extraSmall),
         )

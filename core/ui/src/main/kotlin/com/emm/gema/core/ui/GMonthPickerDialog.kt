@@ -167,7 +167,7 @@ private fun MonthChip(
             Text(
                 text = name,
                 color = contentColor,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium,
             )
