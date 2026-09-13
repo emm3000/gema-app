@@ -1214,7 +1214,6 @@ the field itself carries the requirement.
 
 ```kotlin
 data class PeriodLevelSheetUiState(
-    val isLoading: Boolean = true,
     val studentId: StudentId,
     val competencyId: CompetencyId,
     val studentName: String,

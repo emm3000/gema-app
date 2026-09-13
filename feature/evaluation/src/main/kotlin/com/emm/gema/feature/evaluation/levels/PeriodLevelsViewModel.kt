@@ -203,7 +203,6 @@ class PeriodLevelsViewModel(
             _state.value = _state.value.copy(
                 columnMode = null,
                 sheet = PeriodLevelSheetUiState(
-                    isLoading = false,
                     studentId = cell.studentId,
                     competencyId = cell.competencyId,
                     studentName = row.displayName,

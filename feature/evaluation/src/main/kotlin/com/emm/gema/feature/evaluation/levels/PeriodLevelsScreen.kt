@@ -79,7 +79,12 @@ fun PeriodLevelsScreen(
         bottomAction = state.columnModeBar()?.let { bar ->
             {
                 ColumnModeBar(
-                    heading = bar.heading,
+                    heading = stringResource(
+                        R.string.period_levels_column_mode_heading,
+                        bar.siagieOrdinal.toSiagieOrdinal(),
+                        bar.position,
+                        bar.total,
+                    ),
                     studentName = bar.studentName,
                     achievementLevel = bar.achievementLevel,
                     onIntent = onIntent,
@@ -263,10 +268,37 @@ private fun GridRow(
 
 @Composable
 private fun Legend() {
-    GText(
-        text = "C! falta la conclusión descriptiva. * comentario. Vacío es sin nivel.",
+    Column(
         modifier = Modifier.padding(vertical = GemaSpacing.screenGutter),
-        style = GTextStyle.BODY_LARGE,
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
+            AchievementLevel.entries.forEach { level -> GLevelChip(letter = level.name) }
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            GLevelChip(letter = AchievementLevel.C.name, isIncomplete = true)
+            LegendLabel(text = stringResource(R.string.period_levels_legend_missing_conclusion))
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            GLevelChip(letter = null, hasUnworkedComment = true)
+            LegendLabel(text = stringResource(R.string.period_levels_legend_comment))
+            GLevelChip(letter = null)
+            LegendLabel(text = stringResource(R.string.period_levels_legend_no_level))
+        }
+    }
+}
+
+@Composable
+private fun LegendLabel(text: String) {
+    GText(
+        text = text,
+        style = GTextStyle.BODY_SMALL,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
@@ -274,7 +306,9 @@ private fun Legend() {
 private fun Int.toSiagieOrdinal(): String = toString().padStart(2, '0')
 
 private data class ColumnModeBarState(
-    val heading: String,
+    val siagieOrdinal: Int,
+    val position: Int,
+    val total: Int,
     val studentName: String,
     val achievementLevel: AchievementLevel?,
 )
@@ -290,10 +324,10 @@ private fun PeriodLevelsUiState.columnModeBar(): ColumnModeBarState? {
     val mode: ColumnModeUiState = columnMode ?: return null
     val column: CompetencyColumn = columnModeColumn ?: return null
     val student: PeriodLevelRow = columnModeStudent ?: return null
-    val position: Int = mode.currentStudentIndex + 1
-
     return ColumnModeBarState(
-        heading = "${column.siagieOrdinal.toSiagieOrdinal()} ${column.name} - $position de ${visibleRows.size}",
+        siagieOrdinal = column.siagieOrdinal,
+        position = mode.currentStudentIndex + 1,
+        total = visibleRows.size,
         studentName = student.displayName,
         achievementLevel = student.cells.find { it.competencyId == mode.competencyId }
             ?.achievementLevel,

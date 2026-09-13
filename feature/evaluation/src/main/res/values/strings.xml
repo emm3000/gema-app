@@ -9,6 +9,12 @@
     <string name="period_levels_sheet_label_conclusion">CONCLUSIÓN DESCRIPTIVA</string>
     <string name="period_levels_sheet_label_evidence">EVIDENCIAS DE ESTE PERIODO</string>
     <string name="period_levels_sheet_button_done">Listo</string>
+    <string name="period_levels_column_mode_heading">COMPETENCIA %1$s · %2$d DE %3$d</string>
+    <string name="period_levels_column_mode_caption">Un toque guarda y pasa al siguiente alumno.</string>
+    <string name="period_levels_column_mode_done">Listo</string>
+    <string name="period_levels_legend_missing_conclusion">falta conclusión</string>
+    <string name="period_levels_legend_comment">comentario</string>
+    <string name="period_levels_legend_no_level">sin nivel</string>
     <string name="worked_competencies_message_toggle_failed">No se pudo guardar el cambio</string>
     <string name="worked_competencies_hint">Marca solo las competencias que trabajaste. Solo esas se exportan.</string>
     <string name="worked_competencies_understood">Entendido</string>

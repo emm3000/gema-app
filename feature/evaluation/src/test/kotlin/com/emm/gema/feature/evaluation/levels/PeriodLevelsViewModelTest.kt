@@ -147,15 +147,29 @@ class PeriodLevelsViewModelTest {
     }
 
     @Test
-    fun `the sheet opens loaded without requiring a conclusion`() = runTest {
+    fun `an empty cell opens the sheet without requiring a conclusion`() = runTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()
 
         viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
 
+        assertThat(viewModel.state.value.sheet?.isConclusionRequiredForExport).isFalse()
+    }
+
+    @Test
+    fun `reopening a saved C without a conclusion requires one for the export`() = runTest {
+        work(firstCompetency)
+        val viewModel: PeriodLevelsViewModel = createViewModel()
+        val key: PeriodLevelCellKey = PeriodLevelCellKey(firstStudentId, firstCompetency)
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(key))
+        viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.C))
+        viewModel.onIntent(PeriodLevelsUiIntent.SheetDismissed)
+
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(key))
+
         val sheet: PeriodLevelSheetUiState = requireNotNull(viewModel.state.value.sheet)
-        assertThat(sheet.isLoading).isFalse()
-        assertThat(sheet.isConclusionRequiredForExport).isFalse()
+        assertThat(sheet.achievementLevel).isEqualTo(AchievementLevel.C)
+        assertThat(sheet.isConclusionRequiredForExport).isTrue()
     }
 
     @Test
