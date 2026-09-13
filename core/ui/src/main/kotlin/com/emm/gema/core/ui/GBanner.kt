@@ -1,7 +1,9 @@
 package com.emm.gema.core.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,22 +11,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+
+private val leadingDotSize: Dp = 8.dp
 
 @Composable
 fun GBanner(
@@ -33,6 +41,7 @@ fun GBanner(
     title: String? = null,
     tone: GBannerTone = GBannerTone.INFO,
     icon: ImageVector? = null,
+    hasLeadingDot: Boolean = false,
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null,
     actionStyle: GBannerActionStyle = GBannerActionStyle.BUTTON,
@@ -44,42 +53,58 @@ fun GBanner(
         contentColor = contentColorOf(tone),
     ) {
         Row(
-            modifier = Modifier.padding(GemaSpacing.medium),
+            modifier = Modifier.padding(GemaSpacing.medium).fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
-            }
-            Column {
-                if (title != null) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    )
-                    Text(text = text, style = MaterialTheme.typography.bodySmall)
-                } else {
-                    Text(text = text, style = MaterialTheme.typography.bodyMedium)
-                }
-                if (actionText != null && onActionClick != null) {
+            GBannerLeading(icon = icon, hasLeadingDot = hasLeadingDot, tone = tone)
+            Column(modifier = Modifier.weight(1f)) {
+                GBannerMessage(title = title, text = text)
+                if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.BUTTON) {
                     Spacer(modifier = Modifier.height(GemaSpacing.small))
-                    when (actionStyle) {
-                        GBannerActionStyle.BUTTON -> GButton(
-                            text = actionText,
-                            onClick = onActionClick,
-                            variant = GButtonVariant.TEXT,
-                        )
-                        GBannerActionStyle.LINK -> Text(
-                            text = actionText,
-                            modifier = Modifier.clickable(onClick = onActionClick),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                        )
-                    }
+                    GButton(text = actionText, onClick = onActionClick, variant = GButtonVariant.TEXT)
                 }
+            }
+            if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.LINK) {
+                GBannerLinkAction(text = actionText, onClick = onActionClick)
             }
         }
     }
+}
+
+@Composable
+private fun GBannerLeading(icon: ImageVector?, hasLeadingDot: Boolean, tone: GBannerTone) {
+    if (icon != null) {
+        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
+    } else if (hasLeadingDot) {
+        Box(
+            modifier = Modifier
+                .size(leadingDotSize)
+                .clip(CircleShape)
+                .background(dotColorOf(tone)),
+        )
+    }
+}
+
+@Composable
+private fun GBannerMessage(title: String?, text: String) {
+    if (title != null) {
+        Text(text = title, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
+        Text(text = text, style = MaterialTheme.typography.bodySmall)
+    } else {
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun GBannerLinkAction(text: String, onClick: () -> Unit) {
+    Text(
+        text = text,
+        modifier = Modifier.clickable(onClick = onClick),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        textDecoration = TextDecoration.Underline,
+    )
 }
 
 @Composable
@@ -96,6 +121,12 @@ private fun contentColorOf(tone: GBannerTone): Color = when (tone) {
     GBannerTone.ERROR -> MaterialTheme.colorScheme.onErrorContainer
 }
 
+@Composable
+private fun dotColorOf(tone: GBannerTone): Color = when (tone) {
+    GBannerTone.ERROR -> MaterialTheme.colorScheme.error
+    else -> contentColorOf(tone)
+}
+
 @PreviewLightDark
 @Composable
 private fun GBannerPreview() {
@@ -105,6 +136,21 @@ private fun GBannerPreview() {
             tone = GBannerTone.WARNING,
             actionText = "Respaldar ahora",
             onActionClick = {},
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GBannerDotLinkPreview() {
+    GemaTheme {
+        GBanner(
+            text = "Último respaldo hace 12 días",
+            tone = GBannerTone.ERROR,
+            hasLeadingDot = true,
+            actionText = "Respaldar",
+            onActionClick = {},
+            actionStyle = GBannerActionStyle.LINK,
         )
     }
 }

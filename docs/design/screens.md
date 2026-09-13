@@ -868,7 +868,7 @@ state is not colour-only. The summary strip above the list reads as a
 `numeral` count ("28 de 30 presentes") with "N sin marcar" beneath it in
 `GemaAccents.onWarningContainer` text; "Todos presentes" sits beside it as a
 SECONDARY button. The strip is a `surfaceContainerLow` block with `control`
-radius, not a card. Each student row sits under an `outline` hairline
+radius, not a card. Each student row sits under an `outlineVariant` hairline
 (`GDivider`) and the name takes the remaining width, so the trailing
 "sin marcar" label never wraps. "Resumen del mes" is a footer pinned below
 the scrolling list, not the list's last row.

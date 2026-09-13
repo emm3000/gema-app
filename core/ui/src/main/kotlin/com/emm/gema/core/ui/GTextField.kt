@@ -23,6 +23,7 @@ fun GTextField(
     errorText: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     isEnabled: Boolean = true,
+    isSingleLine: Boolean = true,
 ) {
     OutlinedTextField(
         value = value,
@@ -30,7 +31,7 @@ fun GTextField(
         modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget),
         label = label?.let { { Text(text = it, style = MaterialTheme.typography.labelSmall) } },
         enabled = isEnabled,
-        singleLine = true,
+        singleLine = isSingleLine,
         isError = errorText != null,
         shape = GemaShapes.control,
         textStyle = MaterialTheme.typography.bodyLarge,
@@ -64,6 +65,19 @@ private fun GTextFieldPreview() {
             label = "Recordarme cada",
             supportingText = "días",
             keyboardType = KeyboardType.Number,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GTextFieldMultiLinePreview() {
+    GemaTheme {
+        GTextField(
+            value = "En inicio, reconoce algunos números hasta el 20.",
+            onValueChange = {},
+            label = "Conclusión descriptiva",
+            isSingleLine = false,
         )
     }
 }
