@@ -41,7 +41,7 @@ Every dispatch to a peer session must include:
 - Before changing the state of any checkout, find out who is using it — an unexpected branch may be a live peer, not a leftover.
 - Review and verification prompts are read-only on every existing checkout. If gradle must run on a branch, or a red/green check needs a source edit, use a throwaway worktree under the session scratchpad and remove it afterward.
 - `git checkout main` fails inside a worktree while the primary worktree is already on `main`; use `git fetch` + `git switch -c <branch> origin/main` (or `checkout -B`) instead.
-- After a merge, remove the merged worktree and its local branch before the next wave, especially before a new session reuses that worktree's name.
+- Cleanup is part of closing the cycle, not a later chore (see Between tickets). *Why: on 2026-09-12 five worktrees from merged PRs #150, #151, #156 and #159, plus a review scratch worktree, were still on disk a wave later, and one of them blocked the name a new session needed.*
 
 ## Isolation: emulators
 
@@ -58,5 +58,6 @@ Every dispatch to a peer session must include:
 
 ## Between tickets
 
+- A cycle is closed only when all of this is done, in order. First the PR is merged. Then the peer leaves its worktree clean and removes it (`git worktree remove <path>`). Then its local branch is deleted (`git branch -D <branch>`) and `git worktree prune` runs. Last, any throwaway review worktree under a scratchpad is removed. The orchestrator checks `git worktree list` before reporting the session as free. If a peer is gone, the orchestrator removes the leftovers itself, but only after confirming that no live session uses them.
 - When a session finishes (PR merged, cleanup done), the orchestrator tells the owner: the session name, that it needs `/clear`, and the next ticket with model + effort — then waits for the owner's go. It never redispatches on its own. *Why: a session carrying the previous ticket's context drifts and costs more; the owner configures each session by hand.*
 - At session start, the orchestrator searches memory (`mem_search`) for past dispatch gotchas before the first dispatch of the session. *Why: on 2026-09-12, `@tokens` was dispatched into the main checkout without `ANDROID_SERIAL` because past lessons weren't searched first.*
