@@ -145,7 +145,7 @@ private fun GListItemBody(
             trailingContent = trailingContent,
         )
         if (showDivider) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         }
     }
 }

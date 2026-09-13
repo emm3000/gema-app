@@ -10,7 +10,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.sp
 import com.emm.gema.core.theme.GemaTheme
 
 @Composable
@@ -47,11 +46,7 @@ internal fun GTextStyle.toTextStyle(): TextStyle = when (this) {
         fontWeight = FontWeight.SemiBold,
     )
     GTextStyle.LABEL_SMALL -> MaterialTheme.typography.labelSmall
-    GTextStyle.LABEL_SMALL_EMPHASIS -> MaterialTheme.typography.labelSmall.copy(
-        fontSize = 12.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = 1.sp,
-    )
+    GTextStyle.LABEL_SMALL_EMPHASIS -> MaterialTheme.typography.labelSmall
 }
 
 @PreviewLightDark

@@ -86,11 +86,7 @@ private fun <T> OptionRow(option: GPickerOption<T>) {
             color = MaterialTheme.colorScheme.onSurface,
         )
         if (option.badge != null) {
-            Text(
-                text = option.badge,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
+            GBadge(text = option.badge)
         }
     }
 }
@@ -101,7 +97,7 @@ private fun GDropdownPickerPreview() {
     GemaTheme {
         GDropdownPicker(
             options = listOf(
-                GPickerOption(value = "PPSS", label = "Personal Social"),
+                GPickerOption(value = "PPSS", label = "Personal Social", badge = "Actual"),
                 GPickerOption(value = "MATE", label = "Matemática"),
             ),
             selected = "PPSS",
