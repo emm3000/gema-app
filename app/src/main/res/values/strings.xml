@@ -4,13 +4,10 @@
     <string name="home_empty_message">Crea tu primera sección para empezar a registrar asistencia y niveles de logro.</string>
     <string name="home_add_section">Nueva sección</string>
     <string name="home_take_attendance">Tomar asistencia de hoy</string>
-    <string name="home_view_attendance">Ver asistencia de hoy</string>
-    <string name="home_today_status">Hoy: %1$s</string>
-    <string name="home_attendance_untaken">sin tomar</string>
+    <string name="home_attendance_untaken">Sin tomar</string>
     <string name="home_attendance_taken">%1$d de %2$d presentes</string>
     <string name="home_switch_school_year">Cambiar de año escolar</string>
     <string name="home_more_options">Más opciones</string>
-    <string name="home_sections_label">SECCIONES</string>
     <string name="home_out_of_period">Hoy está fuera de todos los periodos.</string>
     <string name="home_review_periods">Revisar periodos</string>
     <string name="home_backup_reminder_never">Todavía no respaldaste tus datos</string>
@@ -24,6 +21,11 @@
     <plurals name="home_backup_reminder_days">
         <item quantity="one">Último respaldo hace %d día</item>
         <item quantity="other">Último respaldo hace %d días</item>
+    </plurals>
+
+    <plurals name="home_status_missing_levels">
+        <item quantity="one">%1$s · %2$d nivel falta</item>
+        <item quantity="other">%1$s · %2$d niveles faltan</item>
     </plurals>
 
     <plurals name="home_period_days_left">

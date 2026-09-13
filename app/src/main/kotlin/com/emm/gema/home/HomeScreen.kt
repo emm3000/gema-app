@@ -12,13 +12,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -27,17 +27,16 @@ import com.emm.gema.R
 import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.theme.dayMonthLabel
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerActionStyle
 import com.emm.gema.core.ui.GBannerTone
-import com.emm.gema.core.ui.GBorderedContainer
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
-import com.emm.gema.core.ui.GCard
-import com.emm.gema.core.ui.GCircledIcon
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GIconButton
@@ -50,35 +49,23 @@ import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import java.time.LocalDate
 
+internal const val HOME_PRIMARY_ACTION_TEST_TAG: String = "home_primary_action"
+
+internal fun sectionRowTestTag(id: SectionId): String = "home_section_row_${id.value}"
+
 @Composable
 fun HomeScreen(
     state: HomeUiState,
     onIntent: (HomeUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val firstPendingId: SectionId? = state.sections.firstOrNull { !it.attendance.isTaken }?.id
+    val gutter: Modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.extraSmall)
+
     GScreen(
-        topBar = {
-            GTopBar(
-                title = "",
-                titleContent = { HomeTitle(yearLabel = state.schoolYearLabel) },
-                actions = {
-                    GIconButton(
-                        icon = Icons.Filled.Download,
-                        contentDescription = stringResource(R.string.home_backup_reminder_action),
-                        onClick = { onIntent(HomeUiIntent.BackupReminderClicked) },
-                    )
-                    GOverflowMenu(
-                        actions = listOf(
-                            GMenuAction(
-                                label = stringResource(R.string.home_switch_school_year),
-                                onClick = { onIntent(HomeUiIntent.SchoolYearSwitcherClicked) },
-                            ),
-                        ),
-                        contentDescription = stringResource(R.string.home_more_options),
-                    )
-                },
-            )
-        },
+        topBar = { HomeTopBar(yearLabel = state.schoolYearLabel, onIntent = onIntent) },
         fab = {
             GExtendedFab(
                 text = stringResource(R.string.home_add_section),
@@ -86,18 +73,17 @@ fun HomeScreen(
                 onClick = { onIntent(HomeUiIntent.AddSectionClicked) },
             )
         },
+        contentGutter = false,
         modifier = modifier,
     ) { padding: PaddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(GemaSpacing.screenGutter),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
             if (state.currentPeriodLabel != null) {
                 item {
-                    CurrentPeriodCard(
+                    CurrentPeriodRow(
                         label = state.currentPeriodLabel,
                         daysLeft = state.daysLeftInPeriod,
                         endDate = state.currentPeriodEndDate,
@@ -109,7 +95,7 @@ fun HomeScreen(
                 item {
                     GBanner(
                         text = reminderText(reminder),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = gutter,
                         tone = GBannerTone.ERROR,
                         icon = Icons.Filled.Warning,
                         actionText = stringResource(R.string.home_backup_reminder_action),
@@ -122,7 +108,7 @@ fun HomeScreen(
                 item {
                     GBanner(
                         text = stringResource(R.string.home_out_of_period),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = gutter,
                         tone = GBannerTone.WARNING,
                         actionText = stringResource(R.string.home_review_periods),
                         onActionClick = { onIntent(HomeUiIntent.OutOfPeriodClicked) },
@@ -134,6 +120,7 @@ fun HomeScreen(
                     GEmptyState(
                         title = stringResource(R.string.home_empty_title),
                         message = stringResource(R.string.home_empty_message),
+                        modifier = gutter,
                         actionLabel = stringResource(R.string.home_add_section),
                         onActionClick = { onIntent(HomeUiIntent.AddSectionClicked) },
                     )
@@ -142,16 +129,51 @@ fun HomeScreen(
             if (state.sections.isNotEmpty()) {
                 item {
                     GText(
-                        text = stringResource(R.string.home_sections_label),
+                        text = state.todayLabel,
+                        modifier = Modifier.padding(
+                            start = GemaSpacing.screenGutter,
+                            end = GemaSpacing.screenGutter,
+                            top = GemaSpacing.large,
+                            bottom = GemaSpacing.small,
+                        ),
                         style = GTextStyle.LABEL_SMALL_EMPHASIS,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
             items(state.sections, key = { it.id.value }) { row ->
-                SectionCard(row = row, onIntent = onIntent)
+                if (row.attendance.isTaken) {
+                    TakenSectionRow(row = row, onIntent = onIntent)
+                } else {
+                    PendingSectionRow(row = row, isPrimary = row.id == firstPendingId, onIntent = onIntent)
+                }
             }
         }
     }
+}
+
+@Composable
+private fun HomeTopBar(yearLabel: String, onIntent: (HomeUiIntent) -> Unit) {
+    GTopBar(
+        title = "",
+        titleContent = { HomeTitle(yearLabel = yearLabel) },
+        actions = {
+            GIconButton(
+                icon = Icons.Filled.Download,
+                contentDescription = stringResource(R.string.home_backup_reminder_action),
+                onClick = { onIntent(HomeUiIntent.BackupReminderClicked) },
+            )
+            GOverflowMenu(
+                actions = listOf(
+                    GMenuAction(
+                        label = stringResource(R.string.home_switch_school_year),
+                        onClick = { onIntent(HomeUiIntent.SchoolYearSwitcherClicked) },
+                    ),
+                ),
+                contentDescription = stringResource(R.string.home_more_options),
+            )
+        },
+    )
 }
 
 @Composable
@@ -170,88 +192,81 @@ private fun HomeTitle(yearLabel: String) {
 }
 
 @Composable
-private fun CurrentPeriodCard(label: String, daysLeft: Int?, endDate: LocalDate?) {
-    GCard(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
-                GText(
-                    text = label,
-                    style = GTextStyle.BODY_LARGE,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                if (daysLeft != null && endDate != null) {
-                    GText(
-                        text = pluralStringResource(
-                            R.plurals.home_period_days_left,
-                            daysLeft,
-                            daysLeft,
-                            endDate.dayMonthLabel(),
-                        ),
-                        style = GTextStyle.BODY_SMALL,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-            GCircledIcon(
-                icon = Icons.Filled.CalendarMonth,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-        }
-    }
+private fun CurrentPeriodRow(label: String, daysLeft: Int?, endDate: LocalDate?) {
+    GListItem(
+        title = label,
+        modifier = Modifier.fillMaxWidth(),
+        titleStyle = GTextStyle.TITLE_MEDIUM,
+        subtitle = if (daysLeft != null && endDate != null) {
+            pluralStringResource(R.plurals.home_period_days_left, daysLeft, daysLeft, endDate.dayMonthLabel())
+        } else {
+            null
+        },
+        leadingIcon = Icons.Filled.CalendarMonth,
+        showDivider = false,
+    )
 }
 
-internal fun sectionCardTestTag(id: SectionId): String = "home_section_card_${id.value}"
+@Composable
+private fun TakenSectionRow(row: SectionRow, onIntent: (HomeUiIntent) -> Unit) {
+    GListItem(
+        title = row.title,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(sectionRowTestTag(row.id)),
+        titleStyle = GTextStyle.NUMERAL,
+        subtitle = statusLine(row),
+        subtitleColor = statusColor(row),
+        trailingText = studentCountLabel(row.studentCount),
+        hasChevron = true,
+        onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
+    )
+}
 
 @Composable
-private fun SectionCard(row: SectionRow, onIntent: (HomeUiIntent) -> Unit, modifier: Modifier = Modifier) {
-    GBorderedContainer(modifier = modifier) {
+private fun PendingSectionRow(row: SectionRow, isPrimary: Boolean, onIntent: (HomeUiIntent) -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         GListItem(
             title = row.title,
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(sectionCardTestTag(row.id)),
+                .testTag(sectionRowTestTag(row.id)),
             titleStyle = GTextStyle.NUMERAL,
-            trailingText = pluralStringResource(R.plurals.home_section_students, row.studentCount, row.studentCount),
+            subtitle = statusLine(row),
+            subtitleColor = statusColor(row),
+            trailingText = studentCountLabel(row.studentCount),
             showDivider = false,
             onClick = { onIntent(HomeUiIntent.SectionClicked(row.id)) },
         )
-        Column(
+        GButton(
+            text = stringResource(R.string.home_take_attendance),
+            onClick = { onIntent(HomeUiIntent.TakeAttendanceClicked(row.id)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = GemaSpacing.medium)
-                .padding(bottom = GemaSpacing.medium),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
-        ) {
-            GText(
-                text = stringResource(R.string.home_today_status, attendanceLabel(row.attendance)),
-                style = GTextStyle.BODY_LARGE,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            if (row.attendance.isTaken) {
-                GButton(
-                    text = stringResource(R.string.home_view_attendance),
-                    onClick = { onIntent(HomeUiIntent.TakeAttendanceClicked(row.id)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = GemaSpacing.small),
-                    variant = GButtonVariant.SECONDARY,
-                )
-            } else {
-                GButton(
-                    text = stringResource(R.string.home_take_attendance),
-                    onClick = { onIntent(HomeUiIntent.TakeAttendanceClicked(row.id)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = GemaSpacing.small),
-                    icon = Icons.Filled.Check,
-                )
-            }
-        }
+                .padding(start = GemaSpacing.screenGutter, end = GemaSpacing.screenGutter, bottom = GemaSpacing.medium)
+                .then(if (isPrimary) Modifier.testTag(HOME_PRIMARY_ACTION_TEST_TAG) else Modifier),
+            variant = if (isPrimary) GButtonVariant.PRIMARY else GButtonVariant.SECONDARY,
+        )
+        GDivider()
     }
+}
+
+@Composable
+private fun studentCountLabel(studentCount: Int): String =
+    pluralStringResource(R.plurals.home_section_students, studentCount, studentCount)
+
+@Composable
+private fun statusLine(row: SectionRow): String {
+    val attendance: String = attendanceLabel(row.attendance)
+    val missingLevelCount: Int = row.missingLevelCount ?: 0
+    if (missingLevelCount <= 0) return attendance
+    return pluralStringResource(R.plurals.home_status_missing_levels, missingLevelCount, attendance, missingLevelCount)
+}
+
+@Composable
+private fun statusColor(row: SectionRow): Color {
+    val hasPending: Boolean = !row.attendance.isTaken || (row.missingLevelCount ?: 0) > 0
+    return if (hasPending) GemaAccents.onWarningContainer else MaterialTheme.colorScheme.onSurfaceVariant
 }
 
 @Composable
@@ -281,12 +296,13 @@ private fun HomeScreenPreview() {
                 isLoading = false,
                 schoolYearId = SchoolYearId("2026"),
                 schoolYearLabel = "2026",
+                todayLabel = "HOY · MARTES 10 DE SETIEMBRE",
                 currentPeriodLabel = "II Bimestre",
                 daysLeftInPeriod = 24,
                 currentPeriodEndDate = LocalDate.of(2026, 7, 31),
                 sections = listOf(
-                    SectionRow(SectionId("a"), "3ro A", 30),
-                    SectionRow(SectionId("b"), "4to B", 28),
+                    SectionRow(SectionId("a"), "3ro A", 30, missingLevelCount = 12),
+                    SectionRow(SectionId("b"), "4to B", 27, AttendanceDaySummary(25, 27, 0), 12),
                 ),
             ),
             onIntent = {},

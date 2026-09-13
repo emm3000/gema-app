@@ -9,6 +9,13 @@ import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.backup.BackupSettings
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
+import com.emm.gema.core.domain.curriculum.Competency
+import com.emm.gema.core.domain.curriculum.CompetencyId
+import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
+import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
+import com.emm.gema.core.domain.evaluation.PeriodLevel
+import com.emm.gema.core.domain.evaluation.PeriodLevelKey
+import com.emm.gema.core.domain.evaluation.PeriodLevelRepository
 import com.emm.gema.core.domain.schoolyear.ActiveSchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -20,9 +27,11 @@ import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.domain.schoolyear.SchoolYearRepository
 import com.emm.gema.core.domain.schoolyear.divide
+import com.emm.gema.core.domain.section.Area
 import com.emm.gema.core.domain.section.GetSectionsUseCase
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.Section
+import com.emm.gema.core.domain.section.SectionAreaRepository
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.SectionRepository
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
@@ -75,6 +84,7 @@ class HomeViewModelTest {
     )
     private val activeSchoolYearRepository = FakeActiveSchoolYearRepository(schoolYear.id)
     private val attendanceRepository = FakeAttendanceRepository()
+    private val workedCompetencyRepository = FakeWorkedCompetencyRepository()
     private val studentRepository = FakeStudentRepository(
         listOf(
             student("student-1", SectionId("section-1"), "12345678901234"),
@@ -216,6 +226,30 @@ class HomeViewModelTest {
         }
     }
 
+    @Test
+    fun `home leads with today's weekday, day and month`() {
+        assertThat(homeAt(LocalDate.of(2026, 9, 10)).state.value.todayLabel)
+            .isEqualTo("HOY · JUEVES 10 DE SETIEMBRE")
+    }
+
+    @Test
+    fun `each section counts the levels still missing in the current period`() {
+        workedCompetencyRepository.worked.value = setOf(
+            Triple(SectionId("section-1"), periods[1].id, Competency.idOf(Area.PPSS, 1)),
+        )
+
+        val sections: List<SectionRow> = homeAt(periods[1].startDate).state.value.sections
+
+        assertThat(sections.map { it.missingLevelCount }).containsExactly(2, 0).inOrder()
+    }
+
+    @Test
+    fun `there is no missing level count outside every period`() {
+        val sections: List<SectionRow> = homeAt(LocalDate.of(2027, 1, 5)).state.value.sections
+
+        assertThat(sections.map { it.missingLevelCount }).containsExactly(null, null)
+    }
+
     private fun homeAt(today: LocalDate, lastBackupAt: Instant? = null): HomeViewModel {
         val settings = FakeBackupSettingsRepository(
             BackupSettings(lastBackupAt = lastBackupAt, reminderThresholdDays = REMINDER_THRESHOLD_DAYS),
@@ -230,6 +264,12 @@ class HomeViewModelTest {
             getStudentCounts = GetStudentCountsUseCase(studentRepository),
             observeBackupStatus = ObserveBackupStatusUseCase(settings, backupClock),
             getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository),
+            getMissingPeriodLevelCount = GetMissingPeriodLevelCountUseCase(
+                sectionAreaRepository = FakeSectionAreaRepository(),
+                workedCompetencyRepository = workedCompetencyRepository,
+                studentRepository = studentRepository,
+                periodLevelRepository = FakePeriodLevelRepository(),
+            ),
             clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC")),
         )
     }
@@ -340,6 +380,56 @@ class HomeViewModelTest {
         override suspend fun deleteBySection(sectionId: SectionId) {
             records.value = records.value.filterNot { it.sectionId == sectionId }
         }
+    }
+
+    private class FakeSectionAreaRepository : SectionAreaRepository {
+
+        override fun observeHiddenAreas(sectionId: SectionId): Flow<Set<Area>> = MutableStateFlow(emptySet())
+
+        override suspend fun setAreaHidden(sectionId: SectionId, area: Area, isHidden: Boolean) = Unit
+
+        override suspend fun clearSection(sectionId: SectionId) = Unit
+    }
+
+    private class FakeWorkedCompetencyRepository : WorkedCompetencyRepository {
+
+        val worked: MutableStateFlow<Set<Triple<SectionId, PeriodId, CompetencyId>>> = MutableStateFlow(emptySet())
+
+        override fun observeWorked(sectionId: SectionId, periodId: PeriodId): Flow<Set<CompetencyId>> = worked
+            .map { stored ->
+                stored.filter { it.first == sectionId && it.second == periodId }.mapTo(mutableSetOf()) { it.third }
+            }
+
+        override suspend fun setWorked(
+            sectionId: SectionId,
+            periodId: PeriodId,
+            competencyId: CompetencyId,
+            isWorked: Boolean,
+        ) = Unit
+
+        override suspend fun clearSection(sectionId: SectionId) = Unit
+    }
+
+    private class FakePeriodLevelRepository : PeriodLevelRepository {
+
+        override fun observeByPeriod(sectionId: SectionId, periodId: PeriodId): Flow<List<PeriodLevel>> =
+            MutableStateFlow(emptyList())
+
+        override fun observeRecordedCountsByPeriod(
+            sectionId: SectionId,
+            periodId: PeriodId,
+        ): Flow<Map<CompetencyId, Int>> = MutableStateFlow(emptyMap())
+
+        override fun observeRecordedCountsBySection(sectionId: SectionId): Flow<Map<CompetencyId, Int>> =
+            MutableStateFlow(emptyMap())
+
+        override suspend fun find(key: PeriodLevelKey): PeriodLevel? = null
+
+        override suspend fun save(periodLevel: PeriodLevel) = Unit
+
+        override suspend fun delete(key: PeriodLevelKey) = Unit
+
+        override suspend fun clearSection(sectionId: SectionId) = Unit
     }
 
     private class FakeActiveSchoolYearRepository(initial: SchoolYearId?) : ActiveSchoolYearRepository {

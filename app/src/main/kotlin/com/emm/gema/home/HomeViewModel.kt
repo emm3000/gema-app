@@ -7,6 +7,7 @@ import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.summarise
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
+import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
 import com.emm.gema.core.domain.schoolyear.Period
@@ -40,6 +41,7 @@ class HomeViewModel(
     private val getStudentCounts: GetStudentCountsUseCase,
     private val observeBackupStatus: ObserveBackupStatusUseCase,
     private val getAttendanceDay: GetAttendanceDayUseCase,
+    private val getMissingPeriodLevelCount: GetMissingPeriodLevelCountUseCase,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -87,11 +89,13 @@ class HomeViewModel(
             getSections(schoolYear.id),
             getStudentCounts(),
             attendanceSummaries(schoolYear.id),
-        ) { sections, studentCounts, summaries ->
+            missingLevelCounts(schoolYear.id, currentPeriod),
+        ) { sections, studentCounts, summaries, missingLevelCounts ->
             HomeUiState(
                 isLoading = false,
                 schoolYearId = schoolYear.id,
                 schoolYearLabel = schoolYear.label,
+                todayLabel = todayLabelOf(today),
                 currentPeriodLabel = currentPeriodLabel,
                 daysLeftInPeriod = daysLeftInPeriod,
                 currentPeriodEndDate = currentPeriod?.endDate,
@@ -99,6 +103,7 @@ class HomeViewModel(
                     section.toRow(
                         studentCount = studentCounts[section.id] ?: 0,
                         attendance = summaries[section.id] ?: AttendanceDaySummary(0, 0, 0),
+                        missingLevelCount = missingLevelCounts[section.id],
                     )
                 },
             )
@@ -106,15 +111,27 @@ class HomeViewModel(
     }
 
     private fun attendanceSummaries(schoolYearId: SchoolYearId): Flow<Map<SectionId, AttendanceDaySummary>> =
-        getSections(schoolYearId).flatMapLatest { sections: List<Section> ->
-            if (sections.isEmpty()) return@flatMapLatest flowOf(emptyMap())
-
-            combine(sections.map { section -> getAttendanceDay(section.id, today) }) { days ->
-                sections.mapIndexed { index: Int, section: Section ->
-                    section.id to days[index].summarise()
-                }.toMap()
-            }
+        perSection(schoolYearId) { sectionId: SectionId ->
+            getAttendanceDay(sectionId, today).map { entries -> entries.summarise() }
         }
+
+    private fun missingLevelCounts(schoolYearId: SchoolYearId, currentPeriod: Period?): Flow<Map<SectionId, Int>> {
+        if (currentPeriod == null) return flowOf(emptyMap())
+        return perSection(schoolYearId) { sectionId: SectionId ->
+            getMissingPeriodLevelCount(sectionId, currentPeriod.id)
+        }
+    }
+
+    private inline fun <reified T> perSection(
+        schoolYearId: SchoolYearId,
+        crossinline observe: (SectionId) -> Flow<T>,
+    ): Flow<Map<SectionId, T>> = getSections(schoolYearId).flatMapLatest { sections: List<Section> ->
+        if (sections.isEmpty()) return@flatMapLatest flowOf(emptyMap())
+
+        combine(sections.map { section -> observe(section.id) }) { values: Array<T> ->
+            sections.mapIndexed { index: Int, section: Section -> section.id to values[index] }.toMap()
+        }
+    }
 
     private fun merge(schoolYearState: HomeUiState): HomeUiState =
         schoolYearState.copy(backupReminder = _state.value.backupReminder)
@@ -140,10 +157,15 @@ class HomeViewModel(
         viewModelScope.launch { _effects.send(effect) }
     }
 
-    private fun Section.toRow(studentCount: Int, attendance: AttendanceDaySummary): SectionRow = SectionRow(
+    private fun Section.toRow(
+        studentCount: Int,
+        attendance: AttendanceDaySummary,
+        missingLevelCount: Int?,
+    ): SectionRow = SectionRow(
         id = id,
         title = title(),
         studentCount = studentCount,
         attendance = attendance,
+        missingLevelCount = missingLevelCount,
     )
 }
