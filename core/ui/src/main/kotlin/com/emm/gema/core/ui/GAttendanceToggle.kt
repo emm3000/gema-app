@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.selection.selectable
@@ -14,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -26,7 +27,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -53,11 +53,10 @@ fun GAttendanceToggle(
     val outline: Color = MaterialTheme.colorScheme.outline
     val dividerColor: Color = if (isRecorded) outline else MaterialTheme.colorScheme.outlineVariant
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .height(GemaSpacing.minimumTouchTarget)
-            .clip(shape)
             .then(
                 if (isRecorded) {
                     Modifier.border(GemaBorder.hairline, outline, shape)
@@ -66,37 +65,38 @@ fun GAttendanceToggle(
                 },
             ),
     ) {
-        GAttendanceOption.entries.forEachIndexed { index: Int, entry: GAttendanceOption ->
-            if (index > 0) {
-                VerticalDivider(color = dividerColor, thickness = GemaBorder.hairline)
-            }
-            val isSelected: Boolean = isRecorded && entry == option
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(containerColorFor(entry, isSelected, isRecorded))
-                    .selectable(
-                        selected = isSelected,
-                        onClick = { onSelect(if (isSelected) option else entry) },
-                        role = Role.RadioButton,
+        Row(modifier = Modifier.fillMaxSize().clip(shape)) {
+            GAttendanceOption.entries.forEachIndexed { index: Int, entry: GAttendanceOption ->
+                if (index > 0) {
+                    VerticalDivider(color = dividerColor, thickness = GemaBorder.hairline)
+                }
+                val isSelected: Boolean = isRecorded && entry == option
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(containerColorFor(entry, isSelected))
+                        .selectable(
+                            selected = isSelected,
+                            onClick = { onSelect(if (isSelected) option else entry) },
+                            role = Role.RadioButton,
+                        )
+                        .semantics { contentDescription = entry.contentDescription },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    GText(
+                        text = entry.label,
+                        style = if (isSelected) GTextStyle.LABEL_LARGE_EMPHASIS else GTextStyle.BODY_LARGE,
+                        color = contentColorFor(entry, isSelected),
                     )
-                    .semantics { contentDescription = entry.contentDescription },
-                contentAlignment = Alignment.Center,
-            ) {
-                GText(
-                    text = entry.label,
-                    style = if (isSelected) GTextStyle.LABEL_LARGE_EMPHASIS else GTextStyle.BODY_LARGE,
-                    color = contentColorFor(entry, isSelected),
-                )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean, isRecorded: Boolean): Color = when {
-    !isSelected && !isRecorded -> GemaAccents.warningContainer
+private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean): Color = when {
     !isSelected -> MaterialTheme.colorScheme.surface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.primaryContainer
     option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.surfaceContainerHigh
@@ -113,7 +113,8 @@ private fun contentColorFor(option: GAttendanceOption, isSelected: Boolean): Col
     else -> MaterialTheme.colorScheme.inverseOnSurface
 }
 
-private fun Modifier.pendingOutline(color: Color): Modifier = drawBehind {
+private fun Modifier.pendingOutline(color: Color): Modifier = drawWithContent {
+    drawContent()
     drawRoundRect(
         color = color,
         cornerRadius = CornerRadius(GemaShapes.controlRadius.toPx()),

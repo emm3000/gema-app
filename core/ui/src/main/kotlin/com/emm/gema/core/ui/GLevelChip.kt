@@ -83,10 +83,7 @@ fun GLevelChip(
     onClick: (() -> Unit)? = null,
 ) {
     val metrics: GLevelChipMetrics = size.metrics()
-    val backgroundColor: Color = when (size) {
-        GLevelChipSize.EVIDENCE -> MaterialTheme.colorScheme.surface
-        else -> MaterialTheme.colorScheme.surfaceVariant
-    }
+    val backgroundColor: Color = MaterialTheme.colorScheme.surface
     val markerColor: Color = MaterialTheme.colorScheme.error
     val border = BorderStroke(
         width = if (isCurrent) GemaSpacing.indicatorStroke else GemaBorder.hairline,

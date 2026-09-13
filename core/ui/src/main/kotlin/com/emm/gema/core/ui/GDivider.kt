@@ -12,7 +12,7 @@ import com.emm.gema.core.theme.GemaTheme
 fun GDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.outline,
+        color = MaterialTheme.colorScheme.outlineVariant,
     )
 }
 
