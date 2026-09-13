@@ -2,98 +2,57 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
-  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; gap: 4px; padding: 8px 16px 0 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 1px;"><div style="font-size: 18px; font-weight: 600; line-height: 1.2;">Periodos 2026</div><div style="font-size: 13px; color: #6E7075;">4 bimestres</div></div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; padding: 8px 16px 0 16px;">
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">I Bimestre</div>
+      <div style="display: flex; gap: 8px;">
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #6E7075;">Inicio</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">01/03/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #6E7075;">Fin</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">15/05/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+      </div>
     </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Periodos 2026</span>
-      <span style="font-size: 13px; color: #43483F;">4 bimestres</span>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid #E6E6E3;">
+      <div style="display: flex; align-items: center; gap: 10px;"><div style="font-size: 16px; font-weight: 500;">II Bimestre</div><div style="height: 24px; padding: 0 10px; display: flex; align-items: center; background: #E4EFD9; color: #285020; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: 1px;">ACTUAL</div></div>
+      <div style="display: flex; gap: 8px;">
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #6E7075;">Inicio</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">18/05/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #B42318; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #8C1D13;">Fin</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">14/08/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">III Bimestre</div>
+      <div style="display: flex; gap: 8px;">
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #B42318; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #8C1D13;">Inicio</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">10/08/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #6E7075;">Fin</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">16/10/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid #E6E6E3; border-bottom: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">IV Bimestre</div>
+      <div style="display: flex; gap: 8px;">
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #6E7075;">Inicio</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">19/10/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+        <div style="flex-grow: 1; height: 48px; padding: 0 10px 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 11px; color: #6E7075;">Fin</div><div style="font-size: 15px; line-height: 1.2; font-variant-numeric: tabular-nums;">20/12/2026</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg></div>
+      </div>
     </div>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 0 16px; flex-grow: 1;">
-    <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
-      <span style="font-size: 16px; font-weight: 500; color: #191D17;">I Bimestre</span>
-      <div style="display: flex; gap: 12px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>01/03/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>15/05/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-      </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-size: 16px; font-weight: 500; color: #191D17;">II Bimestre</span>
-        <span style="font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 12px; background: #C0EFB0; color: #285020;">ACTUAL</span>
-      </div>
-      <div style="display: flex; gap: 12px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>18/05/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 2px solid #BA1A1A; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>31/07/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-      </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
-      <span style="font-size: 16px; font-weight: 500; color: #191D17;">III Bimestre</span>
-      <div style="display: flex; gap: 12px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 2px solid #BA1A1A; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>28/07/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>16/10/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-      </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #C3C8BC; border-radius: 16px;">
-      <span style="font-size: 16px; font-weight: 500; color: #191D17;">IV Bimestre</span>
-      <div style="display: flex; gap: 12px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>19/10/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; flex: 1 1 0; height: 48px; padding: 0 12px 0 14px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-          <span>20/12/2026</span>
-          <svg class="ico" style="width: 18px; height: 18px; color: #43483F;" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4M16 3v4"></path></svg>
-        </div>
-      </div>
-    </div>
-
-    <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; background: #FFDAD6; border-radius: 16px; color: #93000A;">
-      <svg class="ico" style="width: 20px; height: 20px; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
-      <span style="font-size: 14px; font-weight: 500;">Los periodos II y III se superponen.</span>
-    </div>
+  <div style="margin: 16px 16px 0 16px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FDE1DF; border-radius: 8px; font-size: 14px; line-height: 1.45; color: #8C1D13;">
+    <span style="width: 8px; height: 8px; border-radius: 50%; background: #B42318; flex-shrink: 0;"></span>
+    <span>Los periodos II y III se superponen. Corrige las fechas marcadas para guardar.</span>
   </div>
 
-  <div style="display: flex; padding: 12px 16px 24px 16px; background: #F8FBF1; border-top: 1px solid #DFE4D7;">
-    <div style="display: flex; align-items: center; justify-content: center; height: 52px; flex-grow: 1; background: #E6E9E0; color: #73796E; border-radius: 12px; font-size: 16px; font-weight: 500;">Guardar</div>
-  </div>
+  <div style="flex-grow: 1;"></div>
+  <div style="flex-shrink: 0; padding: 12px 16px 16px 16px; border-top: 1px solid #E6E6E3; background: #FFFFFF;"><div style="height: 48px; display: flex; align-items: center; justify-content: center; background: #EDEDEA; color: #6E7075; font-size: 15px; font-weight: 500; border-radius: 8px;">Guardar</div></div>
 </div>
-</x-dc>
 </body>
 </html>

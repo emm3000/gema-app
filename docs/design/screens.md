@@ -36,59 +36,77 @@ screen below and are not the accepted proposal.
 
 ## 1. SetupYear
 
-Mockup: [html](mockups/setup-year.html) · [png](mockups/setup-year.png)
+Mockup: [html](mockups/setup-year.html) · period editor
+[html](mockups/setup-year-period-editor.html) (no PNG until Phase 4
+regenerates them from the emulator).
 
 First screen of a cold start with no School Year. Entry: app launch.
 Shows the year, its kind and its Periods. Primary action: *Continuar*.
 
+Registro layout: no top bar. A `GStepHeader` opens the screen with the
+"PASO 1 DE 2" eyebrow (`labelSmall`, `onSurfaceVariant`), the title
+(`headlineSmall`) and one line of description (`bodyLarge`,
+`onSurfaceVariant`). Below it, `GTextField` for the year, then the two
+`GDateField`s side by side, then the "¿CÓMO EVALÚA TU ESCUELA?" eyebrow over a
+two-segment `GSegmentedPicker` whose selected segment uses the default
+`primaryContainer` fill and weight 600. The Periods group is an eyebrow
+followed by read-only `GListItem` rows on hairlines: a 28dp tabular leading
+ordinal (I, II, III, IV), the range as `bodyLarge` ("1 mar – 15 may"), a
+chevron. Nothing on this screen edits a Period inline; the list only opens the
+editor. *Continuar* is the `bottomAction` PRIMARY `GButton`.
+
 ```
 +------------------------------------------+
-|  Configura tu ano escolar                |
-|  Paso 1 de 2                             |
-+------------------------------------------+
-|  Calculamos las fechas de tus periodos   |
+|  PASO 1 DE 2                             |
+|  Configura tu año escolar                |
+|  Calculamos las fechas de los periodos   |
 |  por ti. Puedes ajustar cualquiera.      |
 |                                          |
-|  Ano                                     |
 |  +------------------------------------+  |
+|  | Año                                |  |
 |  | 2026                               |  |
 |  +------------------------------------+  |
-|                                          |
-|  Inicio              Fin                 |
 |  +---------------+  +----------------+   |
+|  | Inicio    [c] |  | Fin        [c] |   |
 |  | 01/03/2026    |  | 20/12/2026     |   |
 |  +---------------+  +----------------+   |
 |                                          |
-|  Como evalua tu escuela?                 |
+|  ¿CÓMO EVALÚA TU ESCUELA?                |
 |  +------------------+-----------------+  |
 |  |  Bimestres (4)   |  Trimestres (3) |  |
 |  +------------------+-----------------+  |
 |                                          |
-|  Periodos                                |
-|  +------------------------------------+  |
-|  | I    01/03/2026  -  15/05/2026   > |  |
-|  | II   18/05/2026  -  31/07/2026   > |  |
-|  | III  10/08/2026  -  16/10/2026   > |  |
-|  | IV   19/10/2026  -  20/12/2026   > |  |
-|  +------------------------------------+  |
+|  PERIODOS                                |
+|  ----------------------------------------|
+|  I    1 mar – 15 may                   > |
+|  ----------------------------------------|
+|  II   18 may – 31 jul                  > |
+|  ----------------------------------------|
+|  III  10 ago – 16 oct                  > |
+|  ----------------------------------------|
+|  IV   19 oct – 20 dic                  > |
 +------------------------------------------+
 |            [    Continuar    ]           |
 +------------------------------------------+
 ```
 
-Tapping a Period row opens a small editor over this screen:
+Tapping a Period row opens a `GDialog` over this screen. Its title is the
+Period label, its subtitle says the edit is scoped to that one Period, and the
+two `GDateField`s sit side by side (they reflow to two lines at font scale
+1.3, see `components.md`). The buttons are the dialog's text buttons; the
+confirm reads `primary`.
 
 ```
 +------------------------------------------+
-|  Editar periodo                          |
-|  I Bimestre                              |
+|  II Bimestre                             |
+|  Solo cambia este periodo                |
 +------------------------------------------+
-|  Inicio              Fin                 |
 |  +---------------+  +----------------+   |
-|  | 01/03/2026    |  | 15/05/2026     |   |
+|  | Inicio    [c] |  | Fin        [c] |   |
+|  | 18/05/2026    |  | 31/07/2026     |   |
 |  +---------------+  +----------------+   |
 |                                          |
-|          [ Cancelar ]  [ Guardar ]       |
+|                    Cancelar    Guardar   |
 +------------------------------------------+
 ```
 
@@ -147,32 +165,47 @@ every Period and discards those corrections. See ADR 0013.
 
 ## 2. SetupSection
 
-Mockup: [html](mockups/setup-section.html) · [png](mockups/setup-section.png)
+Mockup: [html](mockups/setup-section.html) (no PNG until Phase 4
+regenerates it from the emulator).
+
 Entry: from SetupYear, or from `SchoolYears` when creating a later year.
 Shows Grade, Section name and the Area default. Primary action: *Terminar*.
 
+Registro layout: the same `GStepHeader` as step 1, "PASO 2 DE 2", with a
+one-line description ("Como figura en tu registro, por ejemplo 3ro A."). The
+grade is a `GChoiceChipRow` of six equal 48dp chips under a "GRADO" eyebrow;
+the selected chip fills `primaryContainer` with a 2dp `primary` border, the
+digit stays `onSurface`. The name is a `GTextField`. The Area default is an
+INFO `GBanner` (`surfaceContainerLow`, `control` radius) with the statement
+on the first line and "No dicto todas las áreas" as its LINK action, so the
+default path stays one tap and the exception is still visible. The multigrade
+note is `bodySmall` helper text below the banner. *Terminar* is the
+`bottomAction` PRIMARY `GButton`.
+
 ```
 +------------------------------------------+
-|  Tu primera seccion                      |
-|  Paso 2 de 2                             |
-+------------------------------------------+
-|  Grado                                   |
+|  PASO 2 DE 2                             |
+|  Tu primera sección                      |
+|  Como figura en tu registro, por         |
+|  ejemplo 3ro A.                          |
+|                                          |
+|  GRADO                                   |
 |  +----+ +----+ +----+ +----+ +----+ +--+ |
-|  | 1  | | 2  | | 3  | | 4  | | 5  | |6 | |
+|  | 1  | | 2  | |[3] | | 4  | | 5  | |6 | |
 |  +----+ +----+ +----+ +----+ +----+ +--+ |
 |                                          |
-|  Nombre de la seccion                    |
 |  +------------------------------------+  |
+|  | Nombre de la sección               |  |
 |  | A                                  |  |
 |  +------------------------------------+  |
 |                                          |
 |  +--------------------------------------+|
-|  | i  Todas las areas quedan activas.   ||
-|  |    No dicto todas las areas  >       ||
+|  |  Todas las áreas quedan activas.     ||
+|  |  No dicto todas las áreas          > ||
 |  +--------------------------------------+|
 |                                          |
-|  Si ensenas en aula multigrado, crea     |
-|  una seccion por grado.                  |
+|  Si enseñas en aula multigrado, crea     |
+|  una sección por grado.                  |
 +------------------------------------------+
 |            [    Terminar     ]           |
 +------------------------------------------+
@@ -328,25 +361,39 @@ so neither confirms.
 
 ## 4. SchoolYears
 
-Mockup: [html](mockups/school-years.html) · [png](mockups/school-years.png)
+Mockup: [html](mockups/school-years.html) (no PNG until Phase 4 regenerates
+it from the emulator).
+
 Entry: Home year switcher. Shows every School Year, marks the active one.
-Primary action: FAB *Nuevo ano*.
+Primary action: `GExtendedFab` *Nuevo año*.
+
+Registro layout: `GTopBar` with the title and the rule as its subtitle ("Toca
+un año para activarlo. Nada se borra."), so the screen needs no explanatory
+paragraph. Years are rows on the screen ground separated by hairlines, not
+cards: `label` as `titleLarge`, then `dateRangeLabel` · `periodKindLabel` and
+the section count as two `bodyLarge` lines in `onSurfaceVariant`. The active
+year carries a PRIMARY `GBadge` "ACTUAL" beside its label — the same badge the
+Period picker uses for the current Period. The whole row sends `YearClicked`;
+"Periodos" is a trailing TEXT `GButton` with a chevron so it reads as a second
+action rather than as the row. The `GExtendedFab` is the one dark object on
+the screen.
 
 ```
 +------------------------------------------+
-|  <   Anos escolares                      |
+|  <   Años escolares                      |
+|      Toca un año para activarlo. Nada    |
+|      se borra.                           |
 +------------------------------------------+
-|  +--------------------------------------+|
-|  | 2026                        ACTIVO   ||
-|  | 01/03 - 20/12  -  4 bimestres        ||
-|  | 2 secciones                Periodos >||
-|  +--------------------------------------+|
-|  | 2025                                 ||
-|  | 01/03 - 19/12  -  3 trimestres       ||
-|  | 1 seccion                  Periodos >||
-|  +--------------------------------------+|
+|  2026  (ACTUAL)               Periodos > |
+|  1 mar – 20 dic · 4 bimestres            |
+|  2 secciones                             |
+|  ----------------------------------------|
+|  2025                         Periodos > |
+|  1 mar – 19 dic · 3 trimestres           |
+|  1 sección                               |
+|  ----------------------------------------|
 |                                          |
-|                                  (  +  ) |
+|                            [+ Nuevo año] |
 +------------------------------------------+
 ```
 
@@ -378,34 +425,56 @@ Note: tapping a year switches the active year; it never deletes or archives.
 
 ## 5. Periods
 
-Mockup: [html](mockups/periods.html) · [png](mockups/periods.png)
+Mockup: [html](mockups/periods.html) (no PNG until Phase 4 regenerates it
+from the emulator).
+
 Entry: SchoolYears, or the Home "Fuera de periodo" banner.
 Shows the Periods of one School Year and which contains today.
 Primary action: *Guardar*.
 
+Registro layout: `GTopBar` with "Periodos 2026" and `periodKindLabel` as the
+subtitle. Unlike SetupYear, this screen is the edit surface, so each Period is
+a hairline row with its label (`titleMedium`), the "ACTUAL" PRIMARY `GBadge`
+on the current one, and two inline 48dp `GDateField`s side by side. When
+`overlapError` is non-null, the fields that overlap take the `error` border
+and label, and an ERROR `GBanner` with the leading dot names the fix under the
+list. *Guardar* is the `bottomAction` PRIMARY `GButton`, rendered disabled
+(`surfaceContainerHigh` fill, `onSurfaceVariant` text) while `canSave` is
+false; nothing else blocks.
+
 ```
 +------------------------------------------+
 |  <   Periodos 2026                       |
+|      4 bimestres                         |
 +------------------------------------------+
-|  4 bimestres                             |
+|  I Bimestre                              |
+|  +---------------+  +----------------+   |
+|  | Inicio    [c] |  | Fin        [c] |   |
+|  | 01/03/2026    |  | 15/05/2026     |   |
+|  +---------------+  +----------------+   |
+|  ----------------------------------------|
+|  II Bimestre  (ACTUAL)                   |
+|  +---------------+  +----------------+   |
+|  | Inicio    [c] |  | Fin (error)[c] |   |
+|  | 18/05/2026    |  | 14/08/2026     |   |
+|  +---------------+  +----------------+   |
+|  ----------------------------------------|
+|  III Bimestre                            |
+|  +---------------+  +----------------+   |
+|  | Inicio(error) |  | Fin        [c] |   |
+|  | 10/08/2026    |  | 16/10/2026     |   |
+|  +---------------+  +----------------+   |
+|  ----------------------------------------|
+|  IV Bimestre                             |
+|  +---------------+  +----------------+   |
+|  | 19/10/2026    |  | 20/12/2026     |   |
+|  +---------------+  +----------------+   |
 |                                          |
-|  +--------------------------------------+|
-|  | I Bimestre                           ||
-|  | 01/03/2026        15/05/2026         ||
-|  +--------------------------------------+|
-|  | II Bimestre                 ACTUAL   ||
-|  | 18/05/2026        31/07/2026         ||
-|  +--------------------------------------+|
-|  | III Bimestre                         ||
-|  | 10/08/2026        16/10/2026         ||
-|  +--------------------------------------+|
-|  | IV Bimestre                          ||
-|  | 19/10/2026        20/12/2026         ||
-|  +--------------------------------------+|
-|                                          |
-|  ! Los periodos II y III se superponen.  |
+|  • Los periodos II y III se superponen.  |
+|    Corrige las fechas marcadas para      |
+|    guardar.                              |
 +------------------------------------------+
-|             [   Guardar   ]              |
+|          [   Guardar (disabled)  ]       |
 +------------------------------------------+
 ```
 
@@ -437,28 +506,64 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 6. SectionForm
 
-Mockup: [html](mockups/section-form.html) · [png](mockups/section-form.png)
+Mockup: [html](mockups/section-form.html) · delete confirmation
+[html](mockups/section-form-delete.html) (no PNG until Phase 4 regenerates
+them from the emulator).
+
 Entry: Home FAB (create), SectionDetail overflow (rename).
 Shows Grade and name. Primary action: *Guardar*.
 
+Registro layout: `GTopBar` reads "Nueva sección" when `sectionId` is null and
+"Editar sección" with the current title as subtitle otherwise. The grade
+`GChoiceChipRow` and the name `GTextField` are the same controls as
+SetupSection. When `canDelete` is true, a "ZONA DE RIESGO" eyebrow groups a
+DESTRUCTIVE `GButton` "Eliminar sección" with one `bodySmall` helper line
+("Borra alumnos, asistencia y niveles de esta sección. Te preguntamos
+antes."), placed after a 32dp gap so it never sits next to *Guardar*. Create
+mode is the same screen without that group. *Guardar* is the `bottomAction`
+PRIMARY `GButton`.
+
 ```
 +------------------------------------------+
-|  <   Nueva seccion                       |
+|  <   Editar sección                      |
+|      3ro A                               |
 +------------------------------------------+
-|  Grado                                   |
+|  GRADO                                   |
 |  +----+ +----+ +----+ +----+ +----+ +--+ |
-|  | 1  | | 2  | | 3  | | 4  | | 5  | |6 | |
+|  | 1  | | 2  | |[3] | | 4  | | 5  | |6 | |
 |  +----+ +----+ +----+ +----+ +----+ +--+ |
 |                                          |
-|  Nombre                                  |
 |  +------------------------------------+  |
-|  | B                                  |  |
+|  | Nombre                             |  |
+|  | A                                  |  |
 |  +------------------------------------+  |
 |                                          |
-|  ---------------------------------------  |
-|  [  Eliminar seccion  ]                  |
+|  ZONA DE RIESGO                          |
+|  [        Eliminar sección           ]   |
+|  Borra alumnos, asistencia y niveles de  |
+|  esta sección. Te preguntamos antes.     |
 +------------------------------------------+
 |             [   Guardar   ]              |
++------------------------------------------+
+```
+
+The confirmation is a `GDialog(isDestructive = true)`. Its content is a
+short statement followed by the three `DeleteConfirmation` counts as
+hairline rows, each count in `NUMERAL` style beside its noun, so the Teacher
+reads what is lost before reaching the `error`-colored confirm.
+
+```
++------------------------------------------+
+|  ¿Eliminar 3ro A?                        |
+|  Se borra de forma definitiva:           |
+|  ----------------------------------------|
+|    30  alumnos                           |
+|  ----------------------------------------|
+|    84  días de asistencia                |
+|  ----------------------------------------|
+|   112  niveles del periodo               |
+|  ----------------------------------------|
+|                    Cancelar    Eliminar  |
 +------------------------------------------+
 ```
 
@@ -495,29 +600,50 @@ Note: `deleteConfirmation` non-null renders the dialog naming what is lost
 
 ## 7. SectionAreas
 
-Mockup: [html](mockups/section-areas.html) · [png](mockups/section-areas.png)
+Mockup: [html](mockups/section-areas.html) (no PNG until Phase 4 regenerates
+it from the emulator).
+
 Entry: SectionDetail overflow, or the SetupSection link.
 Shows every primary Area with a switch. Saves on toggle.
 
+Registro layout: `GTopBar` "Áreas · 3ro A" with "Cada cambio se guarda solo"
+as its subtitle, the same reassurance AttendanceDay carries. One `bodyLarge`
+line in `onSurfaceVariant` states the rule, then nine `GSwitchRow`s on
+hairlines, 56dp minimum, name in `titleMedium`. The recorded-level note is no
+longer a banner under the list: when an Area with `recordedLevelCount > 0` is
+off, that count renders as the row's `subtitle` in
+`GemaAccents.onWarningContainer` text ("12 niveles registrados. Quedan
+guardados."), next to the switch that caused it. Rows with a long name wrap
+to two lines rather than truncating.
+
 ```
 +------------------------------------------+
-|  <   Areas de 3ro A                      |
+|  <   Áreas · 3ro A                       |
+|      Cada cambio se guarda solo          |
 +------------------------------------------+
-|  Apaga las areas que no dictas. Nada se  |
+|  Apaga las áreas que no dictas. Nada se  |
 |  borra: puedes volver a encenderlas.     |
-|                                          |
-|  Comunicacion                     [ ON ] |
-|  Matematica                       [ ON ] |
-|  Personal Social                  [ ON ] |
-|  Ciencia y Tecnologia             [ ON ] |
-|  Arte y Cultura                   [ ON ] |
-|  Educacion Fisica                 [OFF ] |
-|  Educacion Religiosa              [ ON ] |
-|  Ingles                           [OFF ] |
-|  Castellano como segunda lengua   [OFF ] |
-|                                          |
-|  ! Educacion Fisica tiene 12 niveles     |
-|    registrados. Quedan guardados.        |
+|  ----------------------------------------|
+|  Comunicación                     (ON )  |
+|  ----------------------------------------|
+|  Matemática                       (ON )  |
+|  ----------------------------------------|
+|  Personal Social                  (ON )  |
+|  ----------------------------------------|
+|  Ciencia y Tecnología             (ON )  |
+|  ----------------------------------------|
+|  Arte y Cultura                   (ON )  |
+|  ----------------------------------------|
+|  Educación Física                 ( OFF) |
+|  12 niveles registrados. Quedan          |
+|  guardados.                              |
+|  ----------------------------------------|
+|  Educación Religiosa              (ON )  |
+|  ----------------------------------------|
+|  Inglés                           ( OFF) |
+|  ----------------------------------------|
+|  Castellano como segunda lengua   ( OFF) |
+|  ----------------------------------------|
 +------------------------------------------+
 ```
 
@@ -544,33 +670,48 @@ Effects: `NavigateBack`, `ShowMessage(text: String)`.
 
 ## 8. SectionDetail
 
-Mockup: [html](mockups/section-detail.html) · [png](mockups/section-detail.png)
+Mockup: [html](mockups/section-detail.html) (no PNG until Phase 4
+regenerates it from the emulator).
+
 Entry: Home. The hub for one Section.
 Primary action: *Tomar asistencia de hoy*.
+
+Registro layout: `GTopBar` with `sectionTitle`, "`studentCount` alumnos ·
+`currentPeriodLabel`" as the subtitle, and the overflow (Áreas / Renombrar)
+as its one action. `hasStoredTemplate` renders as a `bodySmall` line with a
+`primary` check glyph, "Plantilla SIAGIE cargada", and renders nothing when
+false. The daily block mirrors Home's expanded card: the "HOY · <weekday>
+<day> de <month>" eyebrow, `todayAttendanceSummary` as `bodyLarge` in
+`GemaAccents.onWarningContainer` while it reads *Sin tomar* and
+`onSurfaceVariant` once taken, then the single PRIMARY `GButton`. The five
+destinations are `GListItem` rows on hairlines with `trailingText` for the
+counts: `studentCount`, `missingPeriodLevelCount` as "N faltan" in
+`onWarningContainer` text when greater than zero, `activityCount`. The last
+row reads *Entregar*, the goal named in `flows.md` §8, and still sends
+`ExportClicked`.
 
 ```
 +------------------------------------------+
 |  <   3ro A                          [.:.]|
+|      30 alumnos · II Bimestre            |
 +------------------------------------------+
-|  30 alumnos  -  II Bimestre              |
-|  Plantilla SIAGIE cargada                |
+|  ✓ Plantilla SIAGIE cargada              |
 |                                          |
-|  +--------------------------------------+|
-|  |  Tomar asistencia de hoy             ||
-|  |  Martes 10 de setiembre - sin tomar  ||
-|  +--------------------------------------+|
+|  HOY · MARTES 10 DE SETIEMBRE            |
+|  Sin tomar                               |
+|  [      Tomar asistencia de hoy      ]   |
 |                                          |
-|  +--------------------------------------+|
-|  | Alumnos                       30   > ||
-|  +--------------------------------------+|
-|  | Asistencia                         > ||
-|  +--------------------------------------+|
-|  | Niveles del periodo      12 faltan > ||
-|  +--------------------------------------+|
-|  | Actividades                    5   > ||
-|  +--------------------------------------+|
-|  | Exportar                           > ||
-|  +--------------------------------------+|
+|  ----------------------------------------|
+|  Alumnos                          30   > |
+|  ----------------------------------------|
+|  Asistencia                            > |
+|  ----------------------------------------|
+|  Niveles del periodo        12 faltan  > |
+|  ----------------------------------------|
+|  Actividades                       5   > |
+|  ----------------------------------------|
+|  Entregar                              > |
+|  ----------------------------------------|
 +------------------------------------------+
 ```
 
