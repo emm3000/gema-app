@@ -184,10 +184,11 @@ No keep rule was needed for any of it.
 
 ## Shipping to internal testing
 
-1. Push to `main`. The `Release` workflow builds the bundle and uploads it as
-   the `gema-release-bundle` artifact. It also uploads the native debug
-   symbols zip as `gema-release-native-debug-symbols` when the release build
-   produced one (see above).
+1. Run `gh workflow run Release` (or trigger it from the Actions tab), or push
+   a `v*` tag. The `Release` workflow builds the bundle and uploads it as the
+   `gema-release-bundle` artifact. It also uploads the native debug symbols
+   zip as `gema-release-native-debug-symbols` when the release build produced
+   one (see above). A plain push to `main` no longer starts a `Release` run.
 2. While `PLAY_PUBLISH_ENABLED` is unset, download the artifacts and upload
    the `.aab` by hand in Play Console under
    **Test and release > Testing > Internal testing > Create new release**.
