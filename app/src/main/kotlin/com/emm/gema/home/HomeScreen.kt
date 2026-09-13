@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -97,7 +96,7 @@ fun HomeScreen(
                         text = reminderText(reminder),
                         modifier = gutter,
                         tone = GBannerTone.ERROR,
-                        icon = Icons.Filled.Warning,
+                        hasLeadingDot = true,
                         actionText = stringResource(R.string.home_backup_reminder_action),
                         onActionClick = { onIntent(HomeUiIntent.BackupReminderClicked) },
                         actionStyle = GBannerActionStyle.LINK,

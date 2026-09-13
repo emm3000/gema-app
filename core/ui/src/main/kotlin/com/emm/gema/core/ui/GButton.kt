@@ -67,6 +67,7 @@ fun GButton(
             enabled = isClickable,
             shape = GemaShapes.control,
             colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 disabledContainerColor = disabledContainerColor,
                 disabledContentColor = disabledContentColor,
             ),

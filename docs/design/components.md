@@ -273,6 +273,7 @@ fun GTextField(
     errorText: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     isEnabled: Boolean = true,
+    isSingleLine: Boolean = true,
 )
 ```
 
@@ -284,9 +285,13 @@ Tokens: `GemaShapes.control`, `colorScheme.outline` / `primary` for the border,
 `colorScheme.error` for `errorText`, `gemaTypography.bodyLarge` for the value and
 `gemaTypography.labelSmall` for the supporting line.
 
+`isSingleLine = false` (the period level sheet's descriptive conclusion) drops
+the `singleLine` constraint and lets the field grow with its content; there is
+still no `maxLines` cap.
+
 Deviation from an earlier draft of this catalog: the built component has no
-`placeholder` and no `maxLines` — every use so far is a single labelled line,
-so both would be unused parameters. It also does **not** show `errorText` and
+`placeholder` — every use so far is a labelled field, so it would be an
+unused parameter. It also does **not** show `errorText` and
 `supportingText` at once: the supporting line renders `errorText ?: supportingText`,
 so an error replaces the supporting text rather than sitting beside it. The
 Student Code live digit counter and its uniqueness error therefore cannot both
@@ -700,19 +705,24 @@ enum class GBannerActionStyle { BUTTON, LINK }
 fun GBanner(
     text: String,
     modifier: Modifier = Modifier,
+    title: String? = null,
     tone: GBannerTone = GBannerTone.INFO,
     icon: ImageVector? = null,
+    hasLeadingDot: Boolean = false,
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null,
     actionStyle: GBannerActionStyle = GBannerActionStyle.BUTTON,
 )
 ```
 
-`icon` renders a leading glyph when the mockup calls for one; omitted by
-default so existing banners are unaffected. `actionStyle` picks how the
-action renders: `BUTTON` (default, a full-width text button, for a dismissal
-like "Entendido") or `LINK` (an inline text-plus-chevron row that navigates,
-for an affordance like "No dicto todas las áreas ›").
+`icon` renders a leading glyph when the mockup calls for one; `hasLeadingDot`
+renders an 8dp filled circle instead, for a status banner that has no glyph
+(the Home backup reminder). The two are mutually exclusive — `icon` wins when
+both are set — and both are omitted by default so existing banners are
+unaffected. `actionStyle` picks how the action renders and where it sits:
+`BUTTON` (default, a full-width text button below the message, for a
+dismissal like "Entendido") or `LINK` (an underlined label on the trailing
+edge of the same row as the message, for an affordance like "Respaldar").
 
 Wraps `Surface`, radius `GemaShapes.control` (8dp), no border. Tokens:
 `colorScheme.surfaceContainerLow` (INFO), `colorScheme.errorContainer` /

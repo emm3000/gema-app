@@ -81,6 +81,7 @@ fun PeriodLevelSheet(
             modifier = Modifier.fillMaxWidth(),
             supportingText = conclusionHint,
             errorText = conclusionHint.takeIf { sheet.isConclusionRequiredForExport },
+            isSingleLine = false,
         )
         if (sheet.evidence.isNotEmpty()) {
             GText(
