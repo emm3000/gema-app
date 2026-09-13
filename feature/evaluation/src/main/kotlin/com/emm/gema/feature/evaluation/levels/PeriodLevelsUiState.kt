@@ -76,7 +76,6 @@ data class PeriodLevelCell(
 }
 
 data class PeriodLevelSheetUiState(
-    val isLoading: Boolean = true,
     val studentId: StudentId,
     val competencyId: CompetencyId,
     val studentName: String,
