@@ -83,6 +83,9 @@ weight range 400-600, Latin and Spanish subset, all layout features kept:
 | `bodySmall` | 13sp / 400 / 1.45 | Captions, helper text |
 | `labelLarge` | 15sp / 500 | Buttons, segments |
 | `labelSmall` | 12sp / 600, +1px tracking | Eyebrows |
+| `bodyMedium` | 15sp / 400 / 1.45 | Registro value, mirrors `bodyLarge`. M3 `ListItem` supporting text, `Dialog` body |
+| `titleSmall` | 12sp / 600, +1px tracking | Registro value, mirrors `labelSmall`. M3 components that read `titleSmall` directly |
+| `labelMedium` | 12sp / 600, +1px tracking | Registro value, mirrors `labelSmall`. `GBadge` text, `DatePicker` |
 
 `gemaTypography` keeps these seven `GTextStyle` slots. It also sets
 `bodyMedium`, `titleSmall` and `labelMedium` to Registro values, because
