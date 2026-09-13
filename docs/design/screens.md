@@ -609,37 +609,55 @@ Effects: `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
 
 ## 9. Students
 
-Mockup: [html](mockups/students.html) · [png](mockups/students.png)
+Mockup: [html](mockups/students.html) (no PNG until Phase 4 regenerates it
+from the emulator).
+
 Entry: SectionDetail. Lists Students by surname.
-Primary action: FAB *Agregar alumno*.
+Primary action: `GExtendedFab` *Agregar alumno*.
+
+Registro layout: `GTopBar` "Alumnos · 3ro A" with the active count and the
+sort rule as subtitle ("30 activos · por apellido"), and *Importar* as its one
+action, a glyph-only `GIconButton` (new: today it is a SECONDARY `GButton`
+with a label and an icon; the glyph keeps the top bar quiet and the FAB as
+the only labelled action). The `GSearchField` (48dp, filled `surfaceVariant`
+pill, no border, placeholder "Buscar por apellido") renders only while `isSearchVisible` is
+true (today's screen always shows it and its `UiState` lacks the flag; the
+flag is the contract above). Each Student is a `GListItem` on a hairline:
+`displayName` as `bodyLarge` (the component's default title style; wraps,
+never truncates), `studentCode` as a `bodyMedium` subtitle in
+`onSurfaceVariant` (the component's default, not tabular), a chevron. The withdrawn
+roster collapses under a full-bleed `GGroupHeader` ("RETIRADOS (2)",
+`labelSmall`, 48dp) with an expand chevron; its fill is the
+`surfaceContainerLow` swap `components.md` already schedules for the
+Students ticket (today's default is `surfaceVariant`). The
+`GExtendedFab` is the one dark object on the screen.
 
 ```
 +------------------------------------------+
-|  <   Alumnos - 3ro A                [.:.]|
+|  <   Alumnos · 3ro A               [up]  |
+|      30 activos · por apellido           |
 +------------------------------------------+
 |  +------------------------------------+  |
-|  | Buscar                             |  |
+|  | (o) Buscar por apellido            |  |
 |  +------------------------------------+  |
+|  ----------------------------------------|
+|  Apaza Condori, Yesenia                > |
+|  12345678901234                          |
+|  ----------------------------------------|
+|  Ccahuana Flores, María                > |
+|  12345678901235                          |
+|  ----------------------------------------|
+|  Huanca Ríos, Diego                    > |
+|  12345678901236                          |
+|  ----------------------------------------|
+|  RETIRADOS (2)                         v |
 |                                          |
-|  | ACOSTA RIVERA, Luz Maria            > |
-|  | 12345678901234                        |
-|  +--------------------------------------+
-|  | BAUTISTA QUISPE, Jose               > |
-|  | 12345678901235                        |
-|  +--------------------------------------+
-|  | CCAHUANA MAMANI, Rosa               > |
-|  | 12345678901236                        |
-|  +--------------------------------------+
-|                                          |
-|  RETIRADOS (2)                        v  |
-|                                          |
-|                                  (  +  ) |
+|                       [+ Agregar alumno] |
 +------------------------------------------+
 ```
 
 The top bar carries *Importar* alone; *Agregar alumno* is the extended FAB,
-bottom-right. There is no overflow menu in the catalog yet (`GDropdownPicker`
-is still planned).
+bottom-right.
 
 ```kotlin
 data class StudentsUiState(
@@ -667,40 +685,65 @@ Intents: `QueryChanged(value: String)`, `StudentClicked(id: StudentId)`,
 Effects: `NavigateToStudentForm(sectionId: SectionId, studentId: StudentId?)`,
 `OpenDocumentPicker(mimeTypes: List<String>)`,
 `NavigateToImportPreview(sectionId: SectionId, uri: String)`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: StudentsMessage)`.
 
 ---
 
 ## 10. StudentForm
 
-Mockup: [html](mockups/student-form.html) · [png](mockups/student-form.png)
+Mockup: [html](mockups/student-form.html) (no PNG until Phase 4 regenerates
+it from the emulator).
+
 Entry: Students. Add or edit one Student. Primary action: *Guardar*.
+
+Registro layout: `GTopBar` "Editar alumno" (or "Nuevo alumno") with the
+Section as subtitle. Two `GTextField`s, each with its supporting line: the
+code (numeric keyboard, tabular value, "14 de 14 dígitos") and the name
+("Apellidos primero, como en SIAGIE."). When `hasSiagieId` is true an INFO
+`GBanner` with a file glyph sits between the fields and the state group
+("Viene de la plantilla SIAGIE. Si cambias el código, la exportación no lo
+encontrará.") (new: replaces `GCompactNote`, which is fixed to
+`surfaceVariant` and an Info icon; one supporting component fewer). "ESTADO"
+is an eyebrow over a two-segment `GSegmentedPicker` (Activo / Retirado); the
+screen passes `activeContainerColor = surfaceContainerHigh` and
+`activeContentColor = onSurface` so the selected *Retirado* segment reads as
+a state, not a success (today the call uses the `primaryContainer` default). The withdrawal `GDateField` and its `bodySmall` helper
+("Desde esa fecha deja de aparecer en la asistencia. Nada se borra.") render
+only while `isWithdrawn` is true. *Guardar* is the `bottomAction` PRIMARY
+`GButton`.
 
 ```
 +------------------------------------------+
 |  <   Editar alumno                       |
+|      3ro A                               |
 +------------------------------------------+
-|  Codigo del estudiante                   |
 |  +------------------------------------+  |
+|  | Código del estudiante              |  |
 |  | 12345678901234                     |  |
 |  +------------------------------------+  |
-|  14 de 14 digitos                        |
+|    14 de 14 dígitos                      |
+|  +------------------------------------+  |
+|  | Apellidos y nombres                |  |
+|  | Huanca Ríos, Diego                 |  |
+|  +------------------------------------+  |
+|    Apellidos primero, como en SIAGIE.    |
 |                                          |
-|  Apellidos y nombres                     |
-|  +------------------------------------+  |
-|  | ACOSTA RIVERA, Luz Maria           |  |
-|  +------------------------------------+  |
-|  Apellidos primero, como en SIAGIE.      |
+|  +--------------------------------------+|
+|  | [f] Viene de la plantilla SIAGIE. Si ||
+|  |     cambias el código, la exportación||
+|  |     no lo encontrará.                ||
+|  +--------------------------------------+|
 |                                          |
-|  ---------------------------------------  |
-|  Estado                                  |
-|  +----------------+  +----------------+  |
-|  |    Activo      |  |   Retirado     |  |
-|  +----------------+  +----------------+  |
-|  Fecha de retiro                         |
+|  ESTADO                                  |
+|  +------------------+-----------------+  |
+|  |      Activo      |    [Retirado]   |  |
+|  +------------------+-----------------+  |
 |  +------------------------------------+  |
+|  | Fecha de retiro                [c] |  |
 |  | 04/09/2026                         |  |
 |  +------------------------------------+  |
+|  Desde esa fecha deja de aparecer en la  |
+|  asistencia. Nada se borra.              |
 +------------------------------------------+
 |             [   Guardar   ]              |
 +------------------------------------------+
@@ -711,14 +754,17 @@ data class StudentFormUiState(
     val isLoading: Boolean = true,
     val studentId: StudentId? = null,
     val studentCode: String = "",
-    val studentCodeError: String? = null,
+    val studentCodeError: StudentCodeError? = null,
+    val studentCodeHint: String = "",
     val fullName: String = "",
-    val fullNameError: String? = null,
+    val fullNameError: FullNameError? = null,
     val isWithdrawn: Boolean = false,
     val withdrawalDate: LocalDate? = null,
-    val withdrawalDateError: String? = null,
+    val withdrawalDateError: WithdrawalDateError? = null,
     val canSave: Boolean = false,
     val hasSiagieId: Boolean = false,
+    val sectionTitle: String = "",
+    val isStudentCodeValid: Boolean = false,
 )
 ```
 
@@ -726,7 +772,7 @@ Intents: `StudentCodeChanged(value: String)`, `FullNameChanged(value: String)`,
 `WithdrawnToggled(isWithdrawn: Boolean)`,
 `WithdrawalDateChanged(value: LocalDate)`, `SaveClicked`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: StudentFormMessage)`.
 
 Note: `hasSiagieId` drives a read-only hint that this Student came from a SIAGIE
 Template, so editing the code by hand may break the round-trip.
@@ -735,48 +781,83 @@ Template, so editing the code by hand may break the round-trip.
 
 ## 11. ImportPreview
 
-Mockup: [html](mockups/import-preview.html) · [png](mockups/import-preview.png)
+Mockup: [html](mockups/import-preview.html) · rejected
+[html](mockups/import-preview-rejected.html) (no PNG until Phase 4
+regenerates them from the emulator).
+
 Entry: the Students top bar, after the system document picker returns a URI.
 Shows what the import will do. Nothing is written until *Aplicar*.
+
+Registro layout: `GTopBar` "Importar de SIAGIE" whose subtitle states the
+rule ("Nada se escribe hasta que apliques"). `fileName` renders as
+`titleMedium` with a file glyph, then "`sectionTitle` · `rosterSize` alumnos
+en el archivo" in `onSurfaceVariant`. The three groups are `GGroupHeader` rows
+on hairlines with the count as trailing text and an expand chevron
+(down closed, up open); the group matching `expandedGroup` lists its rows
+below, `GCheckRow`s for the withdrawals (default on) with one `bodySmall`
+helper ("Desmarca a quien siga en el aula."). The reassurance line stays as
+`bodySmall`. The `bottomAction` is a `Row` of two `GButton`s, as today:
+SECONDARY *Cancelar* beside PRIMARY *Aplicar importación* (new: the primary
+takes weight 2 and names the action; today both weigh 1 and it reads
+"Aplicar"); `isApplying` sets `isBusy` on the primary.
 
 ```
 +------------------------------------------+
 |  <   Importar de SIAGIE                  |
+|      Nada se escribe hasta que apliques  |
 +------------------------------------------+
-|  3 Primaria EBR.xlsx                     |
-|  3ro A  -  30 alumnos en el archivo      |
+|  [f] 3 Primaria EBR.xlsx                 |
+|  3ro A · 30 alumnos en el archivo        |
 |                                          |
-|  +--------------------------------------+|
-|  | Se crearan                     4   v ||
-|  +--------------------------------------+|
-|  | Se actualizaran               26   v ||
-|  +--------------------------------------+|
-|  | Se propondran como retirados   2   ^ ||
-|  |   [x] LOPEZ SILVA, Ana               ||
-|  |   [x] TORRES PINO, Luis              ||
-|  +--------------------------------------+|
+|  ----------------------------------------|
+|  Se crearán                         4  v |
+|  ----------------------------------------|
+|  Se actualizarán                   26  v |
+|  ----------------------------------------|
+|  Se propondrán como retirados       2  ^ |
+|  [x] López Silva, Ana                    |
+|  [x] Torres Pino, Luis                   |
+|      Desmarca a quien siga en el aula.   |
+|  ----------------------------------------|
 |                                          |
 |  Nada se borra. Los retirados conservan  |
 |  su asistencia y sus niveles.            |
 +------------------------------------------+
-|    [ Cancelar ]      [   Aplicar    ]    |
+|  [ Cancelar ]  [  Aplicar importación  ] |
 +------------------------------------------+
 ```
 
 A roster whose Student Code is missing or malformed in the middle is rejected
 with the row number, never truncated at that row.
 
-Rejection state replaces the body:
+Rejection state replaces the body. An ERROR `GBanner` carries `reason` (new: a
+leading dot in its `icon` slot; no icon renders today); `expected` and `found`
+render as two `GListItem` rows with the value as `trailingText` (new: the found value in
+`onErrorContainer`, proposal for the same `core:ui` ticket as the other
+trailing-color notes; `trailingText` is `onSurfaceVariant` today), then one
+`bodyLarge` line says what to do and that nothing changed. The
+`bottomAction` becomes a single SECONDARY `GButton` *Volver a alumnos* that
+sends `CancelClicked` (new: today the Cancelar / Aplicar row stays, and
+Aplicar has nothing to apply); the screen has no re-pick intent.
 
 ```
 +------------------------------------------+
-|  ! Este archivo no es de esta seccion    |
+|  <   Importar de SIAGIE                  |
+|      Nada se escribe hasta que apliques  |
++------------------------------------------+
+|  [f] 4 Primaria EBR.xlsx                 |
 |                                          |
-|  Seccion seleccionada:  3ro A            |
-|  Archivo:               4to B            |
+|  • Este archivo no es de esta sección.   |
 |                                          |
-|  Elige otro archivo o abre la seccion    |
-|  correcta.                               |
+|  ----------------------------------------|
+|  Sección abierta     3ro A               |
+|  ----------------------------------------|
+|  Archivo             4to B               |
+|  ----------------------------------------|
+|  Elige otro archivo o abre la sección    |
+|  correcta. No se cambió nada.            |
++------------------------------------------+
+|         [   Volver a alumnos   ]         |
 +------------------------------------------+
 ```
 
@@ -818,7 +899,7 @@ Intents: `GroupToggled(group: ImportGroup)`,
 `WithdrawalToggled(studentId: StudentId, isSelected: Boolean)`, `ApplyClicked`,
 `CancelClicked`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: ImportPreviewMessage)`.
 
 ---
 
@@ -923,24 +1004,53 @@ Notes:
 
 ## 13. AttendanceMonth
 
-Mockup: [html](mockups/attendance-month.html) · [png](mockups/attendance-month.png)
+Mockup: [html](mockups/attendance-month.html) (no PNG until Phase 4
+regenerates it from the emulator).
+
 Entry: AttendanceDay footer. Monthly counts per Student, plus the SIAGIE
-attendance export. Primary action: *Exportar el mes*.
+attendance export. Primary action: *Exportar el mes a SIAGIE*.
+
+Registro layout: `GTopBar` "Resumen del mes · 3ro A", subtitle
+"Asistencia", and a `GIconButton` calendar action that opens
+`GMonthPickerDialog` (`MonthPicked`), as today (`GCalendarIconButton` wraps a
+day picker and does not fit a `YearMonth`). Under it the month stepper mirrors the
+day stepper on AttendanceDay: `GIconButton` pair around the month label
+(`titleMedium`), forward disabled (`outline` glyph) at the current month. The
+table is full-bleed (`contentGutter = false`): a `GTableHeaderBand` on
+`surfaceContainerLow` with "ALUMNO" and the four status letters as
+`labelSmall`, then one `GTableRow` per Student, 52dp minimum, the name as
+`bodyLarge` wrapping to two lines (new: today it is one line with an ellipsis
+and no added weight; wrapping is what survives font scale 1.3), and four 40dp count
+columns in tabular figures. A zero count renders in `outline` color (today
+`outlineVariant`, too faint on white) so the non-zero counts carry the row;
+color is never the only signal, the digit is there. `recordedDayCount` is
+the `bodySmall` footer line. The PRIMARY `bottomAction` is disabled while
+`canExport` is false; `exportUnavailableReason` renders as a `GBanner` above
+it when set (new: the field exists on the state and today's screen never
+shows it) and `isExporting` sets `isBusy` (supported by `GButton`, not
+passed today).
 
 ```
 +------------------------------------------+
-|  <   Asistencia - setiembre        [cal] |
+|  <   Resumen del mes · 3ro A       [cal] |
+|      Asistencia                          |
 +------------------------------------------+
-|   <     setiembre 2026     >             |
-|                            P   T   F  FJ |
-|  ACOSTA RIVERA, Luz M.    18   1   0   1 |
-|  BAUTISTA QUISPE, Jose    15   2   3   0 |
-|  CCAHUANA MAMANI, Rosa    20   0   0   0 |
-|  DELGADO HUAMAN, Pedro    12   1   6   1 |
-|                                          |
-|  20 dias de clase registrados            |
+|   <        setiembre 2026        (>)     |
+|  ----------------------------------------|
+|  ALUMNO                 P    T    F   FJ |
+|  ----------------------------------------|
+|  Apaza Condori, Yesenia 18   1    0    1 |
+|  ----------------------------------------|
+|  Ccahuana Flores, María 15   2    3    0 |
+|  ----------------------------------------|
+|  Huanca Ríos, Diego     20   0    0    0 |
+|  ----------------------------------------|
+|  Mamani Torres, Luis    12   1    6    1 |
+|  Alberto                                 |
+|  ----------------------------------------|
+|  20 días de clase registrados            |
 +------------------------------------------+
-|         [   Exportar el mes   ]          |
+|      [   Exportar el mes a SIAGIE   ]    |
 +------------------------------------------+
 ```
 
@@ -959,10 +1069,7 @@ data class AttendanceMonthUiState(
 data class AttendanceMonthRow(
     val studentId: StudentId,
     val displayName: String,
-    val presentCount: Int,
-    val lateCount: Int,
-    val absentCount: Int,
-    val justifiedCount: Int,
+    val countsByStatus: Map<AttendanceStatus, Int>,
 )
 ```
 
@@ -972,7 +1079,7 @@ Intents: `PreviousMonthClicked`, `NextMonthClicked`,
 
 Effects: `OpenDocumentPicker(mimeTypes: List<String>)`,
 `ShareFile(path: String, mimeType: String)`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: AttendanceMonthMessage)`.
 
 Note (ADR 0019): `canExport` reflects `recordedDayCount > 0`, not a stored
 template — the attendance template is a new file every month, so there is
@@ -985,26 +1092,57 @@ grades card in `Export` (#20), which reads a template stored at import time.
 
 ## 14. WorkedCompetencies
 
-Mockup: [html](mockups/worked-competencies.html) · [png](mockups/worked-competencies.png)
+Mockup: [html](mockups/worked-competencies.html) (no PNG until Phase 4
+regenerates it from the emulator).
+
 Entry: PeriodLevels empty state or its top bar. One Area, one Period.
 Saves on toggle.
+
+Registro layout: `GTopBar` "Competencias trabajadas" with "`areaName` ·
+`periodLabel`" as subtitle. One `bodyLarge` line in `onSurfaceVariant` states
+the rule ("Marca solo las que trabajaste este periodo. Solo esas entran a la
+tabla y a SIAGIE."). Each Competency is a `GCheckRow` on a hairline, 48dp
+minimum with 12dp vertical padding: the checkbox (`primary` fill when
+checked), `siagieOrdinal` as the `labelSmall` prefix, the name as `bodyLarge`
+wrapping to as many lines as it needs; nothing truncates. A row that is
+unmarked while `recordedLevelCount` is greater than zero carries the warning
+as its `subtitle` ("8 niveles registrados. No se exportan mientras esté
+desmarcada."), next to the box that caused it (new: today one WARNING
+`GBanner` in the footer aggregates every such Competency; the subtitle in
+`GemaAccents.onWarningContainer` text is a proposal for the same `core:ui`
+ticket as the `GSwitchRow` note, since `GCheckRow` hardcodes
+`onSurfaceVariant`). The footer is one `bodySmall` line: "`selectedCount` de
+N marcadas · cada cambio se guarda solo".
 
 ```
 +------------------------------------------+
 |  <   Competencias trabajadas             |
-|      Personal Social - II Bimestre       |
+|      Personal Social · II Bimestre       |
 +------------------------------------------+
-|  Marca solo las competencias que         |
-|  trabajaste. Solo esas se exportan.      |
-|                                          |
+|  Marca solo las que trabajaste este      |
+|  periodo. Solo esas entran a la tabla y  |
+|  a SIAGIE.                               |
+|  ----------------------------------------|
 |  [x] 01  Construye su identidad          |
-|  [x] 02  Convive y participa democrat... |
-|  [ ] 03  Construye interpretaciones...   |
-|  [ ] 04  Gestiona responsablemente el... |
+|  ----------------------------------------|
+|  [x] 02  Convive y participa             |
+|          democráticamente en la búsqueda |
+|          del bien común                  |
+|  ----------------------------------------|
+|  [ ] 03  Construye interpretaciones      |
+|          históricas                      |
+|          8 niveles registrados. No se    |
+|          exportan mientras esté          |
+|          desmarcada.                     |
+|  ----------------------------------------|
+|  [ ] 04  Gestiona responsablemente el    |
+|          espacio y el ambiente           |
+|  ----------------------------------------|
 |  [x] 05  Gestiona responsablemente los   |
-|          recursos economicos             |
-|                                          |
-|  3 de 5 marcadas                         |
+|          recursos económicos             |
+|  ----------------------------------------|
+|  3 de 5 marcadas · cada cambio se guarda |
+|  solo                                    |
 +------------------------------------------+
 ```
 
@@ -1028,7 +1166,7 @@ data class CompetencyToggleRow(
 
 Intents: `CompetencyToggled(id: CompetencyId, isWorked: Boolean)`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: WorkedCompetenciesMessage)`.
 
 Note: unmarking a Competency that already has Period Levels warns but never
 deletes; the levels stop being exported and reappear if it is remarked.

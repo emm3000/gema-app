@@ -10,6 +10,7 @@ Canvases:
 - Identity (seven principles): https://claude.ai/code/artifact/ce4bb182-e374-40d9-96f1-3cabda03921d
 - System (tokens and components): https://claude.ai/code/artifact/d818e6b3-1f76-4775-9373-ea7e0dbe9be6
 - Screens (Home, Attendance day, Period levels, Level sheet): https://claude.ai/code/artifact/e3d89b45-16c4-4e88-9fd5-5d32a1db61f3
+- Screens, students and gates (Students, StudentForm, ImportPreview, AttendanceMonth, WorkedCompetencies): https://claude.ai/code/artifact/1ce1c08a-7920-431b-8810-bfa93209749f
 
 ## Principles
 
