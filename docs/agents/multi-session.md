@@ -45,11 +45,11 @@ Every dispatch to a peer session must include:
 
 ## Isolation: emulators
 
-- Each session gets its own emulator serial; the owner keeps one for personal use. Never install on another session's emulator.
+- Each session gets its own emulator serial. The owner does not use an emulator, so none is reserved. Never install on another session's emulator.
 - `./gradlew installDebug` installs on **every** connected adb device. Run `adb devices` to confirm the serial, then use `ANDROID_SERIAL=<serial> ./gradlew installDebug` or `adb -s <serial> install -r <apk>`, and scope screenshots with `-s` too. *Why: `gema-polish`'s build overwrote the APK on another peer's emulator and invalidated that peer's visual check (2026-09-12).*
 - If it happens anyway, the owning session reinstalls its own build — the session that caused the overwrite must not touch another session's device.
 - A session boots its own emulator only when it needs one, with a fixed port so that the serial is predictable: `emulator -avd <avd> -port <port> -no-snapshot-save &` gives serial `emulator-<port>`.
-- When the review cycle closes, shut the emulator down with `adb -s <serial> emu kill`, together with the worktree cleanup. Review subagents shut down the spare emulator they booted. Keep the AVD: a later boot reuses it, and deleting AVDs frees only disk, not RAM or CPU. Delete an AVD (`avdmanager delete avd -n <avd>`) only when no planned ticket uses it. Never shut down the owner's emulator or one that another session still uses. *Why: on 2026-09-12 five emulators stayed running while only one session was working (owner request to save resources).*
+- When the review cycle closes, shut the emulator down with `adb -s <serial> emu kill`, together with the worktree cleanup. Review subagents shut down the spare emulator they booted. Keep the AVD: a later boot reuses it, and deleting AVDs frees only disk, not RAM or CPU. Delete an AVD (`avdmanager delete avd -n <avd>`) only when no planned ticket uses it. Never shut down an emulator that another session still uses. *Why: on 2026-09-12 five emulators stayed running while only one session was working (owner request to save resources).*
 
 ## Review cycle
 
