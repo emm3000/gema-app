@@ -49,7 +49,7 @@ private fun GLevelChipSize.metrics(): GLevelChipMetrics = when (this) {
         width = GemaSpacing.gridCellWidth,
         height = GemaSpacing.gridChipHeight,
         shape = GemaShapes.control,
-        labelStyle = MaterialTheme.typography.labelSmall,
+        labelStyle = MaterialTheme.typography.bodySmall,
     )
     GLevelChipSize.INLINE -> GLevelChipMetrics(
         width = GemaSpacing.minimumTouchTarget,
@@ -61,15 +61,14 @@ private fun GLevelChipSize.metrics(): GLevelChipMetrics = when (this) {
         width = GemaSpacing.evidenceChipWidth,
         height = GemaSpacing.evidenceChipHeight,
         shape = GemaShapes.chip,
-        labelStyle = MaterialTheme.typography.labelSmall,
+        labelStyle = MaterialTheme.typography.bodySmall,
     )
 }
 
 @Composable
-private fun borderColor(size: GLevelChipSize, isIncomplete: Boolean, isCurrent: Boolean): Color = when {
+private fun borderColor(isIncomplete: Boolean, isCurrent: Boolean): Color = when {
     isIncomplete -> MaterialTheme.colorScheme.error
     isCurrent -> MaterialTheme.colorScheme.primary
-    size == GLevelChipSize.EVIDENCE -> MaterialTheme.colorScheme.outlineVariant
     else -> MaterialTheme.colorScheme.outline
 }
 
@@ -91,7 +90,7 @@ fun GLevelChip(
     val markerColor: Color = MaterialTheme.colorScheme.error
     val border = BorderStroke(
         width = if (isCurrent) GemaSpacing.indicatorStroke else GemaBorder.hairline,
-        color = borderColor(size, isIncomplete, isCurrent),
+        color = borderColor(isIncomplete, isCurrent),
     )
     val content: @Composable () -> Unit = {
         Row(
@@ -112,7 +111,7 @@ fun GLevelChip(
             if (isIncomplete) {
                 Text(
                     text = INCOMPLETE_MARK,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = markerColor,
                     fontWeight = FontWeight.SemiBold,
                 )

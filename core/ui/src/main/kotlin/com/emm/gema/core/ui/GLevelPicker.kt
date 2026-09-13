@@ -1,5 +1,6 @@
 package com.emm.gema.core.ui
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -33,6 +34,8 @@ fun GLevelPicker(
         onSelect = onSelect,
         modifier = modifier,
         isEnabled = isEnabled,
+        activeContentColor = MaterialTheme.colorScheme.onSurface,
+        activeBorderColor = MaterialTheme.colorScheme.primary,
     )
 }
 
@@ -63,6 +66,8 @@ fun GLevelPicker(
         onSelect = { tapped -> nonDeselectingTap(tapped, onSelect) },
         modifier = modifier,
         isEnabled = isEnabled,
+        activeContentColor = MaterialTheme.colorScheme.onSurface,
+        activeBorderColor = MaterialTheme.colorScheme.primary,
     )
 }
 
