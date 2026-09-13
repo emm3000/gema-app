@@ -48,6 +48,8 @@ Every dispatch to a peer session must include:
 - Each session gets its own emulator serial; the owner keeps one for personal use. Never install on another session's emulator.
 - `./gradlew installDebug` installs on **every** connected adb device. Run `adb devices` to confirm the serial, then use `ANDROID_SERIAL=<serial> ./gradlew installDebug` or `adb -s <serial> install -r <apk>`, and scope screenshots with `-s` too. *Why: `gema-polish`'s build overwrote the APK on another peer's emulator and invalidated that peer's visual check (2026-09-12).*
 - If it happens anyway, the owning session reinstalls its own build — the session that caused the overwrite must not touch another session's device.
+- A session boots its own emulator only when it needs one, with a fixed port so that the serial is predictable: `emulator -avd <avd> -port <port> -no-snapshot-save &` gives serial `emulator-<port>`.
+- When the review cycle closes, shut the emulator down with `adb -s <serial> emu kill`, together with the worktree cleanup. Review subagents shut down the spare emulator they booted. Keep the AVD: a later boot reuses it, and deleting AVDs frees only disk, not RAM or CPU. Delete an AVD (`avdmanager delete avd -n <avd>`) only when no planned ticket uses it. Never shut down the owner's emulator or one that another session still uses. *Why: on 2026-09-12 five emulators stayed running while only one session was working (owner request to save resources).*
 
 ## Review cycle
 
@@ -59,6 +61,6 @@ Every dispatch to a peer session must include:
 
 ## Between tickets
 
-- A cycle is closed only when all of this is done, in order. First the PR is merged. Then the peer leaves its worktree clean and removes it (`git worktree remove <path>`). Then its local branch is deleted (`git branch -D <branch>`) and `git worktree prune` runs. Last, any throwaway review worktree under a scratchpad is removed. The orchestrator checks `git worktree list` before reporting the session as free. If a peer is gone, the orchestrator removes the leftovers itself, but only after confirming that no live session uses them.
+- A cycle is closed only when all of this is done, in order. First the PR is merged. Then the peer shuts down its emulator (`adb -s <serial> emu kill`), leaves its worktree clean and removes it (`git worktree remove <path>`). Then its local branch is deleted (`git branch -D <branch>`) and `git worktree prune` runs. Last, any throwaway review worktree under a scratchpad is removed. The orchestrator checks `git worktree list` before reporting the session as free. If a peer is gone, the orchestrator removes the leftovers itself, but only after confirming that no live session uses them.
 - When a session finishes (PR merged, cleanup done), the orchestrator tells the owner: the session name, that it needs `/clear`, and the next ticket with model + effort — then waits for the owner's go. It never redispatches on its own. *Why: a session carrying the previous ticket's context drifts and costs more; the owner configures each session by hand.*
 - At session start, the orchestrator searches memory (`mem_search`) for past dispatch gotchas before the first dispatch of the session. *Why: on 2026-09-12, `@tokens` was dispatched into the main checkout without `ANDROID_SERIAL` because past lessons weren't searched first.*
