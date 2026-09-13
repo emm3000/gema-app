@@ -344,6 +344,9 @@ fun <T> GSegmentedPicker(
     onSelect: (T?) -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
+    activeContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    activeContentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    activeBorderColor: Color? = null,
 )
 
 data class GSegmentOption<T>(
