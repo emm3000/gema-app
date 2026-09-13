@@ -850,12 +850,13 @@ Registro layout: `GTopBar` "Alumnos · 3ro A" with the active count and the
 sort rule as subtitle ("30 activos · por apellido"), and *Importar* as its one
 action, a glyph-only `GIconButton` (new: today it is a SECONDARY `GButton`
 with a label and an icon; the glyph keeps the top bar quiet and the FAB as
-the only labelled action). The `GSearchField` (48dp, `outline` border,
-placeholder "Buscar por apellido") renders only while `isSearchVisible` is
+the only labelled action). The `GSearchField` (48dp, filled `surfaceVariant`
+pill, no border, placeholder "Buscar por apellido") renders only while `isSearchVisible` is
 true (today's screen always shows it and its `UiState` lacks the flag; the
 flag is the contract above). Each Student is a `GListItem` on a hairline:
-`displayName` as `titleMedium` (wraps, never truncates), `studentCode` as a
-tabular `bodySmall` subtitle in `onSurfaceVariant`, a chevron. The withdrawn
+`displayName` as `bodyLarge` (the component's default title style; wraps,
+never truncates), `studentCode` as a `bodyMedium` subtitle in
+`onSurfaceVariant` (the component's default, not tabular), a chevron. The withdrawn
 roster collapses under a full-bleed `GGroupHeader` ("RETIRADOS (2)",
 `labelSmall`, 48dp) with an expand chevron; its fill is the
 `surfaceContainerLow` swap `components.md` already schedules for the
@@ -915,7 +916,7 @@ Intents: `QueryChanged(value: String)`, `StudentClicked(id: StudentId)`,
 Effects: `NavigateToStudentForm(sectionId: SectionId, studentId: StudentId?)`,
 `OpenDocumentPicker(mimeTypes: List<String>)`,
 `NavigateToImportPreview(sectionId: SectionId, uri: String)`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: StudentsMessage)`.
 
 ---
 
@@ -984,14 +985,17 @@ data class StudentFormUiState(
     val isLoading: Boolean = true,
     val studentId: StudentId? = null,
     val studentCode: String = "",
-    val studentCodeError: String? = null,
+    val studentCodeError: StudentCodeError? = null,
+    val studentCodeHint: String = "",
     val fullName: String = "",
-    val fullNameError: String? = null,
+    val fullNameError: FullNameError? = null,
     val isWithdrawn: Boolean = false,
     val withdrawalDate: LocalDate? = null,
-    val withdrawalDateError: String? = null,
+    val withdrawalDateError: WithdrawalDateError? = null,
     val canSave: Boolean = false,
     val hasSiagieId: Boolean = false,
+    val sectionTitle: String = "",
+    val isStudentCodeValid: Boolean = false,
 )
 ```
 
@@ -999,7 +1003,7 @@ Intents: `StudentCodeChanged(value: String)`, `FullNameChanged(value: String)`,
 `WithdrawnToggled(isWithdrawn: Boolean)`,
 `WithdrawalDateChanged(value: LocalDate)`, `SaveClicked`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: StudentFormMessage)`.
 
 Note: `hasSiagieId` drives a read-only hint that this Student came from a SIAGIE
 Template, so editing the code by hand may break the round-trip.
@@ -1018,8 +1022,8 @@ Shows what the import will do. Nothing is written until *Aplicar*.
 Registro layout: `GTopBar` "Importar de SIAGIE" whose subtitle states the
 rule ("Nada se escribe hasta que apliques"). `fileName` renders as
 `titleMedium` with a file glyph, then "`sectionTitle` · `rosterSize` alumnos
-en el archivo" in `onSurfaceVariant`. The three groups are `GListItem` rows
-on hairlines with the count as `NUMERAL` trailing text and an expand chevron
+en el archivo" in `onSurfaceVariant`. The three groups are `GGroupHeader` rows
+on hairlines with the count as trailing text and an expand chevron
 (down closed, up open); the group matching `expandedGroup` lists its rows
 below, `GCheckRow`s for the withdrawals (default on) with one `bodySmall`
 helper ("Desmarca a quien siga en el aula."). The reassurance line stays as
@@ -1057,9 +1061,9 @@ takes weight 2 and names the action; today both weigh 1 and it reads
 A roster whose Student Code is missing or malformed in the middle is rejected
 with the row number, never truncated at that row.
 
-Rejection state replaces the body. An ERROR `GBanner` with the leading dot
-(its `icon` slot) carries `reason`; `expected` and `found` render as two
-`GListItem` rows with the value as `trailingText` (new: the found value in
+Rejection state replaces the body. An ERROR `GBanner` carries `reason` (new: a
+leading dot in its `icon` slot; no icon renders today); `expected` and `found`
+render as two `GListItem` rows with the value as `trailingText` (new: the found value in
 `onErrorContainer`, proposal for the same `core:ui` ticket as the other
 trailing-color notes; `trailingText` is `onSurfaceVariant` today), then one
 `bodyLarge` line says what to do and that nothing changed. The
@@ -1126,7 +1130,7 @@ Intents: `GroupToggled(group: ImportGroup)`,
 `WithdrawalToggled(studentId: StudentId, isSelected: Boolean)`, `ApplyClicked`,
 `CancelClicked`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: ImportPreviewMessage)`.
 
 ---
 
@@ -1246,8 +1250,8 @@ day stepper on AttendanceDay: `GIconButton` pair around the month label
 table is full-bleed (`contentGutter = false`): a `GTableHeaderBand` on
 `surfaceContainerLow` with "ALUMNO" and the four status letters as
 `labelSmall`, then one `GTableRow` per Student, 52dp minimum, the name as
-`bodyLarge` weight 500 wrapping to two lines (new: today it is one line with
-an ellipsis; wrapping is what survives font scale 1.3), and four 40dp count
+`bodyLarge` wrapping to two lines (new: today it is one line with an ellipsis
+and no added weight; wrapping is what survives font scale 1.3), and four 40dp count
 columns in tabular figures. A zero count renders in `outline` color (today
 `outlineVariant`, too faint on white) so the non-zero counts carry the row;
 color is never the only signal, the digit is there. `recordedDayCount` is
@@ -1296,10 +1300,7 @@ data class AttendanceMonthUiState(
 data class AttendanceMonthRow(
     val studentId: StudentId,
     val displayName: String,
-    val presentCount: Int,
-    val lateCount: Int,
-    val absentCount: Int,
-    val justifiedCount: Int,
+    val countsByStatus: Map<AttendanceStatus, Int>,
 )
 ```
 
@@ -1309,7 +1310,7 @@ Intents: `PreviousMonthClicked`, `NextMonthClicked`,
 
 Effects: `OpenDocumentPicker(mimeTypes: List<String>)`,
 `ShareFile(path: String, mimeType: String)`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: AttendanceMonthMessage)`.
 
 Note (ADR 0019): `canExport` reflects `recordedDayCount > 0`, not a stored
 template — the attendance template is a new file every month, so there is
@@ -1396,7 +1397,7 @@ data class CompetencyToggleRow(
 
 Intents: `CompetencyToggled(id: CompetencyId, isWorked: Boolean)`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: WorkedCompetenciesMessage)`.
 
 Note: unmarking a Competency that already has Period Levels warns but never
 deletes; the levels stop being exported and reappear if it is remarked.
