@@ -58,7 +58,7 @@ fun GYearCard(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (badgeText != null) {

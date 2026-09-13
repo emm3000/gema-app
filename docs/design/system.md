@@ -72,7 +72,7 @@ toggle.
 
 IBM Plex Sans, bundled as a variable TTF. Width axis (`wdth`) pinned to 100,
 weight range 400-600, Latin and Spanish subset, all layout features kept:
-117 KB measured (73 KB unhinted). Fits the 300 KB typeface budget with room.
+119 KB measured (106 KB unhinted). Fits the 300 KB typeface budget with room.
 
 | Style | Size / weight / line-height | Use |
 |---|---|---|
@@ -84,9 +84,12 @@ weight range 400-600, Latin and Spanish subset, all layout features kept:
 | `labelLarge` | 15sp / 500 | Buttons, segments |
 | `labelSmall` | 12sp / 600, +1px tracking | Eyebrows |
 
-`gemaTypography` (#163) keeps only these seven M3 slots — the ones Material
-internals need — and drops the `GTextStyle` entries `BODY_MEDIUM`,
-`TITLE_SMALL` and `LABEL_MEDIUM`. Every call site remaps:
+`gemaTypography` keeps these seven `GTextStyle` slots. It also sets
+`bodyMedium`, `titleSmall` and `labelMedium` to Registro values, because
+about 15 `core:ui` components and M3's `ListItem`, `Dialog` and `DatePicker`
+read those three slots directly, not through `GTextStyle`. The `GTextStyle`
+entries `BODY_MEDIUM`, `TITLE_SMALL` and `LABEL_MEDIUM` are dropped; every
+`GText` call site remaps:
 
 - `BODY_MEDIUM` becomes `BODY_LARGE` (15sp / 400 / 1.45).
 - `TITLE_SMALL` becomes `TITLE_MEDIUM` (16sp / 500 / 1.4) when it titles a
@@ -97,7 +100,7 @@ internals need — and drops the `GTextStyle` entries `BODY_MEDIUM`,
 
 `GTextStyle.NUMERAL` is not a `Typography` slot: `GText.kt` resolves it
 directly as `titleLarge.copy(fontWeight = FontWeight.SemiBold,
-fontFeatureSettings = "tnum")` — 20sp / weight 600 / lineHeight 24sp, tabular
+fontFeatureSettings = "tnum")` — 20sp / weight 600 / lineHeight 26sp, tabular
 figures (`tnum`), color `onSurface`. It replaces `CARD_TITLE_EMPHASIS`,
 `gemaCardTitleFontSize` and `gemaCardDateFontSize` (#163 scope). Every size
 must survive font scale 1.3 on 360dp: rows grow, nothing truncates a name to

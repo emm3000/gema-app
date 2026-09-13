@@ -69,7 +69,7 @@ fun <T> GChoiceChipRow(
                     Text(
                         text = option.label,
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         color = if (isSelected) {
                             MaterialTheme.colorScheme.onPrimaryContainer
                         } else {

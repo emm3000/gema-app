@@ -36,7 +36,7 @@ fun GText(
 @Composable
 internal fun GTextStyle.toTextStyle(): TextStyle = when (this) {
     GTextStyle.TITLE_MEDIUM -> MaterialTheme.typography.titleMedium
-    GTextStyle.TITLE_MEDIUM_EMPHASIS -> MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+    GTextStyle.TITLE_MEDIUM_EMPHASIS -> MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
     GTextStyle.NUMERAL -> MaterialTheme.typography.titleLarge.copy(
         fontWeight = FontWeight.SemiBold,
         fontFeatureSettings = "tnum",
@@ -44,13 +44,12 @@ internal fun GTextStyle.toTextStyle(): TextStyle = when (this) {
     GTextStyle.BODY_LARGE -> MaterialTheme.typography.bodyLarge
     GTextStyle.BODY_SMALL -> MaterialTheme.typography.bodySmall
     GTextStyle.LABEL_LARGE_EMPHASIS -> MaterialTheme.typography.labelLarge.copy(
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
     )
     GTextStyle.LABEL_SMALL -> MaterialTheme.typography.labelSmall
     GTextStyle.LABEL_SMALL_EMPHASIS -> MaterialTheme.typography.labelSmall.copy(
         fontSize = 12.sp,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         letterSpacing = 1.sp,
     )
 }
