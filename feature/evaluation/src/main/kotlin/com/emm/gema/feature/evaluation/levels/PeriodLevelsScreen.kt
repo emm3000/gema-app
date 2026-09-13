@@ -4,6 +4,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -207,12 +208,23 @@ private fun GridHeader(
             horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
             columns.forEach { column ->
-                GButton(
-                    text = column.siagieOrdinal.toSiagieOrdinal(),
-                    onClick = { onIntent(PeriodLevelsUiIntent.EnterColumnMode(column.id)) },
+                val ordinal: String = column.siagieOrdinal.toSiagieOrdinal()
+                val onClick: () -> Unit = { onIntent(PeriodLevelsUiIntent.EnterColumnMode(column.id)) }
+                Box(
                     modifier = Modifier.width(GemaSpacing.gridCellWidth),
-                    variant = if (column.id == activeCompetencyId) GButtonVariant.SECONDARY else GButtonVariant.TEXT,
-                )
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (column.id == activeCompetencyId) {
+                        GBadge(text = ordinal, tone = GBadgeTone.PRIMARY, onClick = onClick)
+                    } else {
+                        GButton(
+                            text = ordinal,
+                            onClick = onClick,
+                            modifier = Modifier.width(GemaSpacing.gridCellWidth),
+                            variant = GButtonVariant.TEXT,
+                        )
+                    }
+                }
             }
         }
     }
