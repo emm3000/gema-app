@@ -68,12 +68,19 @@ fun PeriodLevelSheet(
                 )
             }
         }
+        GText(
+            text = stringResource(R.string.period_levels_sheet_label_conclusion),
+            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        val conclusionHint: String = stringResource(R.string.period_levels_sheet_conclusion_hint)
         GTextField(
             value = sheet.descriptiveConclusion,
             onValueChange = { onIntent(PeriodLevelsUiIntent.SheetDescriptiveConclusionChanged(it)) },
-            label = stringResource(R.string.period_levels_sheet_label_conclusion),
+            label = null,
             modifier = Modifier.fillMaxWidth(),
-            supportingText = stringResource(R.string.period_levels_sheet_conclusion_hint),
+            supportingText = conclusionHint,
+            errorText = conclusionHint.takeIf { sheet.isConclusionRequiredForExport },
         )
         if (sheet.evidence.isNotEmpty()) {
             GText(
