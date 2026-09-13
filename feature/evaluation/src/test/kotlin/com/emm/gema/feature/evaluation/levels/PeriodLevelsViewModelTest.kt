@@ -147,6 +147,41 @@ class PeriodLevelsViewModelTest {
     }
 
     @Test
+    fun `the sheet opens loaded without requiring a conclusion`() = runTest {
+        work(firstCompetency)
+        val viewModel: PeriodLevelsViewModel = createViewModel()
+
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
+
+        val sheet: PeriodLevelSheetUiState = requireNotNull(viewModel.state.value.sheet)
+        assertThat(sheet.isLoading).isFalse()
+        assertThat(sheet.isConclusionRequiredForExport).isFalse()
+    }
+
+    @Test
+    fun `a C without a conclusion requires one for the export`() = runTest {
+        work(firstCompetency)
+        val viewModel: PeriodLevelsViewModel = createViewModel()
+
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.C))
+
+        assertThat(viewModel.state.value.sheet?.isConclusionRequiredForExport).isTrue()
+    }
+
+    @Test
+    fun `a C with a conclusion no longer requires one`() = runTest {
+        work(firstCompetency)
+        val viewModel: PeriodLevelsViewModel = createViewModel()
+
+        viewModel.onIntent(PeriodLevelsUiIntent.CellClicked(PeriodLevelCellKey(firstStudentId, firstCompetency)))
+        viewModel.onIntent(PeriodLevelsUiIntent.SheetAchievementLevelSelected(AchievementLevel.C))
+        viewModel.onIntent(PeriodLevelsUiIntent.SheetDescriptiveConclusionChanged("Necesita apoyo"))
+
+        assertThat(viewModel.state.value.sheet?.isConclusionRequiredForExport).isFalse()
+    }
+
+    @Test
     fun `an unworked comment replaces the achievement level`() = runTest {
         work(firstCompetency)
         val viewModel: PeriodLevelsViewModel = createViewModel()

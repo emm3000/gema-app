@@ -1,6 +1,7 @@
 package com.emm.gema.feature.evaluation.levels
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,9 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +35,7 @@ import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
-import com.emm.gema.feature.evaluation.R
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GDropdownPicker
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GLevelChip
@@ -46,6 +45,7 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.evaluation.R
 
 @Composable
 fun PeriodLevelsScreen(
@@ -157,13 +157,18 @@ private fun Grid(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) ->
     val bandScroll: ScrollState = rememberScrollState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        HorizontalDivider()
-        GridHeader(columns = state.columns, bandScroll = bandScroll, onIntent = onIntent)
-        HorizontalDivider()
+        GDivider()
+        GridHeader(
+            columns = state.columns,
+            activeCompetencyId = state.columnMode?.competencyId,
+            bandScroll = bandScroll,
+            onIntent = onIntent,
+        )
+        GDivider()
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(state.visibleRows, key = { it.studentId.value }) { row ->
                 GridRow(row = row, bandScroll = bandScroll, currentCell = state.currentCell(), onIntent = onIntent)
-                HorizontalDivider()
+                GDivider()
             }
             item { Legend() }
         }
@@ -173,36 +178,36 @@ private fun Grid(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) ->
 @Composable
 private fun GridHeader(
     columns: List<CompetencyColumn>,
+    activeCompetencyId: CompetencyId?,
     bandScroll: ScrollState,
     onIntent: (PeriodLevelsUiIntent) -> Unit,
 ) {
-    Surface(color = MaterialTheme.colorScheme.surfaceVariant) {
-        Row(
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .height(GemaSpacing.minimumTouchTarget),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        GText(
+            text = stringResource(R.string.period_levels_column_student),
             modifier = Modifier
-                .fillMaxWidth()
-                .height(GemaSpacing.minimumTouchTarget),
-            verticalAlignment = Alignment.CenterVertically,
+                .width(GemaSpacing.gridNameColumnWidth)
+                .padding(horizontal = GemaSpacing.medium),
+            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Row(
+            modifier = Modifier.horizontalScroll(bandScroll),
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            GText(
-                text = stringResource(R.string.period_levels_column_student),
-                modifier = Modifier
-                    .width(GemaSpacing.gridNameColumnWidth)
-                    .padding(horizontal = GemaSpacing.medium),
-                style = GTextStyle.LABEL_SMALL,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Row(
-                modifier = Modifier.horizontalScroll(bandScroll),
-                horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
-            ) {
-                columns.forEach { column ->
-                    GButton(
-                        text = column.siagieOrdinal.toSiagieOrdinal(),
-                        onClick = { onIntent(PeriodLevelsUiIntent.EnterColumnMode(column.id)) },
-                        modifier = Modifier.width(GemaSpacing.gridCellWidth),
-                        variant = GButtonVariant.TEXT,
-                    )
-                }
+            columns.forEach { column ->
+                GButton(
+                    text = column.siagieOrdinal.toSiagieOrdinal(),
+                    onClick = { onIntent(PeriodLevelsUiIntent.EnterColumnMode(column.id)) },
+                    modifier = Modifier.width(GemaSpacing.gridCellWidth),
+                    variant = if (column.id == activeCompetencyId) GButtonVariant.SECONDARY else GButtonVariant.TEXT,
+                )
             }
         }
     }

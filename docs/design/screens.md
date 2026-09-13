@@ -1228,12 +1228,10 @@ data class EvidenceRow(
 )
 ```
 
-`isLoading` and `isConclusionRequiredForExport` are (new): the current
-`PeriodLevelSheetUiState` has neither field, and `PeriodLevelSheet.kt` has no
-logic today that derives an error state from `achievementLevel ==
-AchievementLevel.C`. The "renders in error state when the level is C"
-behavior described above is the intended redesign behavior, not yet
-implemented.
+`isConclusionRequiredForExport` is `PeriodLevel.isIncomplete`
+(`achievementLevel == C && descriptiveConclusion.isBlank()`), because the
+conclusion is optional unless the level is C (`docs/siagie/README.md`). A C
+that has a conclusion never renders the error.
 
 Intents (on `PeriodLevelsUiIntent`, shared with PeriodLevels above):
 `SheetAchievementLevelSelected(level: AchievementLevel?)`,

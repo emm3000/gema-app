@@ -203,6 +203,7 @@ class PeriodLevelsViewModel(
             _state.value = _state.value.copy(
                 columnMode = null,
                 sheet = PeriodLevelSheetUiState(
+                    isLoading = false,
                     studentId = cell.studentId,
                     competencyId = cell.competencyId,
                     studentName = row.displayName,
@@ -210,6 +211,7 @@ class PeriodLevelsViewModel(
                     achievementLevel = stored.achievementLevel,
                     unworkedComment = stored.unworkedComment,
                     descriptiveConclusion = stored.descriptiveConclusion,
+                    isConclusionRequiredForExport = stored.isIncomplete,
                     evidence = context.evidence.map { it.toRow() },
                 ),
             )
@@ -228,6 +230,7 @@ class PeriodLevelsViewModel(
                     achievementLevel = updated.achievementLevel,
                     unworkedComment = updated.unworkedComment,
                     descriptiveConclusion = updated.descriptiveConclusion,
+                    isConclusionRequiredForExport = updated.isIncomplete,
                 ),
             )
             persist(updated)

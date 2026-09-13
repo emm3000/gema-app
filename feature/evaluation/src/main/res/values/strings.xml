@@ -6,7 +6,7 @@
     <string name="period_levels_missing_count">Faltan %1$d</string>
     <string name="period_levels_sheet_label_achievement_level">NIVEL DE LOGRO</string>
     <string name="period_levels_sheet_label_unworked">O NO EVALUADA</string>
-    <string name="period_levels_sheet_label_conclusion">Conclusión descriptiva</string>
+    <string name="period_levels_sheet_label_conclusion">CONCLUSIÓN DESCRIPTIVA</string>
     <string name="period_levels_sheet_label_evidence">EVIDENCIAS DE ESTE PERIODO</string>
     <string name="period_levels_sheet_button_done">Listo</string>
     <string name="worked_competencies_message_toggle_failed">No se pudo guardar el cambio</string>
