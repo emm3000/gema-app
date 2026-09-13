@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -74,7 +75,7 @@ fun GAttendanceToggle(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(containerColorFor(entry, isSelected))
+                    .background(containerColorFor(entry, isSelected, isRecorded))
                     .selectable(
                         selected = isSelected,
                         onClick = { onSelect(if (isSelected) option else entry) },
@@ -94,10 +95,11 @@ fun GAttendanceToggle(
 }
 
 @Composable
-private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean): Color = when {
+private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean, isRecorded: Boolean): Color = when {
+    !isSelected && !isRecorded -> GemaAccents.warningContainer
     !isSelected -> MaterialTheme.colorScheme.surface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.primaryContainer
-    option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.surfaceVariant
+    option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.surfaceContainerHigh
     option == GAttendanceOption.ABSENT -> MaterialTheme.colorScheme.errorContainer
     else -> MaterialTheme.colorScheme.inverseSurface
 }
@@ -106,7 +108,7 @@ private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean): C
 private fun contentColorFor(option: GAttendanceOption, isSelected: Boolean): Color = when {
     !isSelected -> MaterialTheme.colorScheme.onSurface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.onPrimaryContainer
-    option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.onSurfaceVariant
+    option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.onSurface
     option == GAttendanceOption.ABSENT -> MaterialTheme.colorScheme.onErrorContainer
     else -> MaterialTheme.colorScheme.inverseOnSurface
 }

@@ -2,6 +2,7 @@
 
 package com.emm.gema.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -9,10 +10,12 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaShapes
+import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 
 data class GSegmentOption<T>(
@@ -28,6 +31,9 @@ fun <T> GSegmentedPicker(
     onSelect: (T?) -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
+    activeContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    activeContentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    activeBorderColor: Color? = null,
 ) {
     SingleChoiceSegmentedButtonRow(modifier = modifier) {
         options.forEachIndexed { index: Int, option: GSegmentOption<T> ->
@@ -41,9 +47,14 @@ fun <T> GSegmentedPicker(
                     baseShape = GemaShapes.control,
                 ),
                 colors = SegmentedButtonDefaults.colors(
-                    activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    activeContainerColor = activeContainerColor,
+                    activeContentColor = activeContentColor,
                 ),
+                border = if (isSelected && activeBorderColor != null) {
+                    BorderStroke(GemaSpacing.indicatorStroke, activeBorderColor)
+                } else {
+                    SegmentedButtonDefaults.borderStroke(color = MaterialTheme.colorScheme.outline)
+                },
                 enabled = isEnabled,
                 modifier = Modifier.semantics { contentDescription = option.contentDescription },
             ) {
