@@ -53,6 +53,7 @@ Every dispatch to a peer session must include:
 
 - A session gets nothing new until its previous PR is reviewed, fixed and merged. Never queue two tickets in one dispatch. *Why: owner directive — finish the review cycle before sending anything else.*
 - Two-axis review (standards vs. `CLAUDE.md` rules, spec vs. the issue), plus screenshots checked against `screens.md`. PR reviews run Opus high; post-review fixes run Sonnet low.
+- Every PR review is a fresh Opus high subagent that the orchestrator launches, one per PR. It is not a long-lived peer session. The subagent is read-only and builds the PR in a throwaway worktree under the scratchpad. It installs only on the spare emulator with `ANDROID_SERIAL`, removes the worktree when done, and returns a short MERGE or FIX FIRST verdict. *Why: a dedicated review session fills its context over a wave of PRs and reviews worse each time. It also depends on the owner remembering to `/clear` it. A subagent starts empty every time (owner decision, 2026-09-12).*
 - Design-doc PRs go in a fixed order: Fable writes the design, a Sonnet pass cross-checks every `UiState` / intent / token / component name against current code (code wins; genuinely new things are marked "(new)"), then Opus high reviews. *Why: PR #171 got ~20 findings that were almost all spec-vs-code drift, not new bugs.*
 - Merge is rebase-only, linear history, CI required. The orchestrator never blocks its own turn on `gh run watch` — it merges when the CI notification or the session's report arrives.
 
