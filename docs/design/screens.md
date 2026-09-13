@@ -212,7 +212,7 @@ The screen leads with an eyebrow, "HOY · <weekday> <day> de <month>"
 already taken today collapses to a plain `GListItem` row — no secondary
 button — with a chevron; tapping the row, anywhere on it, sends
 `SectionClicked`, which the ViewModel routes to `NavigateToSectionDetail`.
-A Section not yet taken keeps the expanded card with its own PRIMARY
+A Section not yet taken keeps the expanded row with its own PRIMARY
 button. Only one PRIMARY button exists on the whole screen, on
 the first still-pending Section — every other pending Section (if a
 multigrade Teacher has more than one) falls back to a SECONDARY button so
@@ -275,7 +275,7 @@ data class BackupReminder(
 carries the domain `AttendanceDaySummary` rather than a separate
 `isAttendanceTakenToday` flag: `attendance.isTaken` (`unmarkedCount <
 totalCount`) already answers whether the Section renders as the expanded
-card with a PRIMARY button or collapses to a `GListItem` row, so no
+row with a PRIMARY button or collapses to a `GListItem` row, so no
 duplicate field is needed.
 
 `missingLevelCount` is (new): sourced from

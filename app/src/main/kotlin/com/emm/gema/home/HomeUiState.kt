@@ -9,6 +9,7 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val schoolYearId: SchoolYearId? = null,
     val schoolYearLabel: String = "",
+    val todayLabel: String = "",
     val currentPeriodLabel: String? = null,
     val daysLeftInPeriod: Int? = null,
     val currentPeriodEndDate: LocalDate? = null,
@@ -21,6 +22,7 @@ data class SectionRow(
     val title: String,
     val studentCount: Int,
     val attendance: AttendanceDaySummary = AttendanceDaySummary(0, 0, 0),
+    val missingLevelCount: Int? = null,
 )
 
 data class BackupReminder(
