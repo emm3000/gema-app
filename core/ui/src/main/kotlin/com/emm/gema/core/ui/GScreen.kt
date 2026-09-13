@@ -75,7 +75,7 @@ private fun GScreenPreview() {
             },
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                GText(text = "Contenido", style = GTextStyle.BODY_MEDIUM)
+                GText(text = "Contenido", style = GTextStyle.BODY_LARGE)
             }
         }
     }

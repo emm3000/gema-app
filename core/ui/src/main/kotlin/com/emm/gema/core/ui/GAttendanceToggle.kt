@@ -26,7 +26,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -86,7 +85,7 @@ fun GAttendanceToggle(
             ) {
                 GText(
                     text = entry.label,
-                    style = if (isSelected) GTextStyle.LABEL_LARGE_EMPHASIS else GTextStyle.BODY_MEDIUM,
+                    style = if (isSelected) GTextStyle.LABEL_LARGE_EMPHASIS else GTextStyle.BODY_LARGE,
                     color = contentColorFor(entry, isSelected),
                 )
             }
@@ -99,7 +98,7 @@ private fun containerColorFor(option: GAttendanceOption, isSelected: Boolean): C
     !isSelected -> MaterialTheme.colorScheme.surface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.primaryContainer
     option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.surfaceVariant
-    option == GAttendanceOption.ABSENT -> GemaAccents.absentContainer
+    option == GAttendanceOption.ABSENT -> MaterialTheme.colorScheme.errorContainer
     else -> MaterialTheme.colorScheme.inverseSurface
 }
 
@@ -108,7 +107,7 @@ private fun contentColorFor(option: GAttendanceOption, isSelected: Boolean): Col
     !isSelected -> MaterialTheme.colorScheme.onSurface
     option == GAttendanceOption.PRESENT -> MaterialTheme.colorScheme.onPrimaryContainer
     option == GAttendanceOption.LATE -> MaterialTheme.colorScheme.onSurfaceVariant
-    option == GAttendanceOption.ABSENT -> GemaAccents.onAbsentContainer
+    option == GAttendanceOption.ABSENT -> MaterialTheme.colorScheme.onErrorContainer
     else -> MaterialTheme.colorScheme.inverseOnSurface
 }
 

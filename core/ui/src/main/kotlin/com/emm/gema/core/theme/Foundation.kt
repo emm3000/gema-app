@@ -24,7 +24,7 @@ object GemaSpacing {
     val gridRowHeight: Dp = 56.dp
     val gridChipHeight: Dp = 44.dp
     val leadingLabelWidth: Dp = 28.dp
-    val fabHeight: Dp = 56.dp
+    val fabHeight: Dp = 52.dp
     val activeBorder: Dp = 2.dp
     val narrowCellWidth: Dp = 36.dp
     val compactRowHeight: Dp = 52.dp
@@ -34,10 +34,10 @@ object GemaSpacing {
 }
 
 object GemaShapes {
-    val chip: Shape = RoundedCornerShape(8.dp)
-    val controlRadius: Dp = 12.dp
+    val chip: Shape = RoundedCornerShape(6.dp)
+    val controlRadius: Dp = 8.dp
     val control: CornerBasedShape = RoundedCornerShape(controlRadius)
-    val container: Shape = RoundedCornerShape(16.dp)
+    val container: Shape = RoundedCornerShape(12.dp)
     val pill: Shape = RoundedCornerShape(percent = 50)
 }
 
@@ -47,21 +47,9 @@ object GemaBorder {
 
 object GemaAccents {
 
-    val unmarkedSurface: Color
-        @Composable get() = if (isSystemInDarkTheme()) unmarkedDark else unmarkedLight
-
-    val onUnmarkedSurface: Color
-        @Composable get() = if (isSystemInDarkTheme()) onUnmarkedDark else onUnmarkedLight
-
     val warningContainer: Color
         @Composable get() = if (isSystemInDarkTheme()) warningContainerDark else warningContainerLight
 
     val onWarningContainer: Color
         @Composable get() = if (isSystemInDarkTheme()) onWarningContainerDark else onWarningContainerLight
-
-    val absentContainer: Color
-        @Composable get() = if (isSystemInDarkTheme()) absentContainerDark else absentContainerLight
-
-    val onAbsentContainer: Color
-        @Composable get() = if (isSystemInDarkTheme()) onAbsentContainerDark else onAbsentContainerLight
 }

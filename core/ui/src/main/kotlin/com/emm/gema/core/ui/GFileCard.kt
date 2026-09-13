@@ -42,10 +42,10 @@ fun GFileCard(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Column {
-                GText(text = title, style = GTextStyle.TITLE_SMALL)
+                GText(text = title, style = GTextStyle.TITLE_MEDIUM)
                 GText(
                     text = subtitle,
-                    style = GTextStyle.BODY_MEDIUM,
+                    style = GTextStyle.BODY_LARGE,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

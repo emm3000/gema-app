@@ -226,7 +226,7 @@ private fun GridRow(
             modifier = Modifier
                 .width(GemaSpacing.gridNameColumnWidth)
                 .padding(horizontal = GemaSpacing.medium),
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -261,7 +261,7 @@ private fun Legend() {
     GText(
         text = "C! falta la conclusión descriptiva. * comentario. Vacío es sin nivel.",
         modifier = Modifier.padding(vertical = GemaSpacing.screenGutter),
-        style = GTextStyle.BODY_MEDIUM,
+        style = GTextStyle.BODY_LARGE,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }

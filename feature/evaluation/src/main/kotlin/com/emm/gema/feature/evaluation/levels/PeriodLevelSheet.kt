@@ -101,12 +101,12 @@ private fun EvidenceListRow(evidence: EvidenceRow) {
     ) {
         GText(
             text = evidence.date.asDayMonth(),
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GText(
             text = evidence.activityName,
-            style = GTextStyle.BODY_MEDIUM,
+            style = GTextStyle.BODY_LARGE,
             modifier = Modifier.weight(1f),
         )
         GLevelChip(

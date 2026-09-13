@@ -101,7 +101,7 @@ private fun TemplateMismatchBanner(mismatch: TemplateMismatchUi?) {
 private fun UnavailableGrades(onIntent: (ExportUiIntent) -> Unit) {
     GText(
         text = stringResource(R.string.export_grades_unavailable),
-        style = GTextStyle.BODY_MEDIUM,
+        style = GTextStyle.BODY_LARGE,
     )
     GButton(
         text = stringResource(R.string.export_import_template),
@@ -220,7 +220,7 @@ private fun SummaryCard(state: ExportUiState, onIntent: (ExportUiIntent) -> Unit
 @Composable
 private fun TemplateName(fileName: String?) {
     if (fileName != null) {
-        GText(text = fileName, style = GTextStyle.BODY_MEDIUM)
+        GText(text = fileName, style = GTextStyle.BODY_LARGE)
     }
 }
 

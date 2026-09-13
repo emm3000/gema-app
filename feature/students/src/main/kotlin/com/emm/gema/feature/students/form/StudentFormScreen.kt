@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -106,7 +107,7 @@ fun StudentFormScreen(
                 )
             }
             HorizontalDivider()
-            GText(text = "Estado", style = GTextStyle.TITLE_SMALL)
+            GText(text = "Estado", style = GTextStyle.LABEL_SMALL, color = MaterialTheme.colorScheme.onSurfaceVariant)
             GSegmentedPicker(
                 options = listOf(
                     GSegmentOption(value = false, label = "Activo", contentDescription = "Activo"),

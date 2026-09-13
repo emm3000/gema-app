@@ -71,7 +71,7 @@ fun SectionAreasScreen(
             item {
                 GText(
                     text = stringResource(R.string.sections_areas_hint),
-                    style = GTextStyle.BODY_MEDIUM,
+                    style = GTextStyle.BODY_LARGE,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
