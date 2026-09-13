@@ -24,6 +24,7 @@ import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.label
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaAccents
+import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.theme.label
@@ -34,7 +35,7 @@ import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCalendarIconButton
-import com.emm.gema.core.ui.GCard
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
@@ -73,50 +74,72 @@ fun AttendanceDayScreen(
             )
         },
         modifier = modifier,
+        contentGutter = false,
     ) { padding: PaddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(vertical = GemaSpacing.small),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            if (message != null) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentPadding = PaddingValues(horizontal = GemaSpacing.small, vertical = GemaSpacing.small),
+            ) {
+                if (message != null) {
+                    item {
+                        GBanner(
+                            text = message,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = GemaSpacing.small,
+                                    end = GemaSpacing.small,
+                                    bottom = GemaSpacing.small,
+                                ),
+                            tone = GBannerTone.ERROR,
+                            actionText = "Entendido",
+                            onActionClick = onMessageDismissed,
+                        )
+                    }
+                }
                 item {
-                    GBanner(
-                        text = message,
-                        modifier = Modifier.fillMaxWidth(),
-                        tone = GBannerTone.ERROR,
-                        actionText = "Entendido",
-                        onActionClick = onMessageDismissed,
+                    DayStepper(state = state, onIntent = onIntent)
+                }
+                item {
+                    DaySummary(
+                        state = state,
+                        onIntent = onIntent,
+                        modifier = Modifier.padding(
+                            start = GemaSpacing.small,
+                            end = GemaSpacing.small,
+                            bottom = GemaSpacing.medium,
+                        ),
                     )
                 }
-            }
-            item {
-                DayStepper(state = state, onIntent = onIntent)
-            }
-            item {
-                DaySummary(state = state, onIntent = onIntent)
-            }
-            if (state.rows.isEmpty() && !state.isLoading) {
-                item {
-                    GEmptyState(
-                        title = "Todavía no hay alumnos",
-                        message = "Agrega a los alumnos de la sección para tomar asistencia.",
-                    )
+                if (state.rows.isEmpty() && !state.isLoading) {
+                    item {
+                        GEmptyState(
+                            title = "Todavía no hay alumnos",
+                            message = "Agrega a los alumnos de la sección para tomar asistencia.",
+                            modifier = Modifier.padding(horizontal = GemaSpacing.small),
+                        )
+                    }
+                }
+                items(state.rows, key = { it.studentId.value }) { row: AttendanceRow ->
+                    StudentRow(row = row, onIntent = onIntent)
                 }
             }
-            items(state.rows, key = { it.studentId.value }) { row: AttendanceRow ->
-                StudentRow(row = row, onIntent = onIntent)
-            }
-            item {
-                GListItem(
-                    title = "Resumen del mes",
-                    modifier = Modifier.fillMaxWidth(),
-                    hasChevron = true,
-                    onClick = { onIntent(AttendanceDayUiIntent.MonthlySummaryClicked) },
-                )
-            }
+            GDivider()
+            GListItem(
+                title = "Resumen del mes",
+                modifier = Modifier.fillMaxWidth(),
+                titleStyle = GTextStyle.TITLE_MEDIUM,
+                hasChevron = true,
+                showDivider = false,
+                onClick = { onIntent(AttendanceDayUiIntent.MonthlySummaryClicked) },
+            )
         }
     }
 }
@@ -156,37 +179,44 @@ private fun DaySummary(
     onIntent: (AttendanceDayUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GCard(modifier = modifier, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow, GemaShapes.control)
+            .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.small),
+        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
-                ) {
-                    GText(text = "${state.presentCount}", style = GTextStyle.NUMERAL)
-                    GText(
-                        text = "de ${state.totalCount} presentes",
-                        style = GTextStyle.BODY_LARGE,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+            Row(horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
                 GText(
-                    text = "${state.unmarkedCount} sin marcar",
-                    style = GTextStyle.BODY_SMALL,
-                    color = GemaAccents.onWarningContainer,
+                    text = "${state.presentCount}",
+                    modifier = Modifier.alignByBaseline(),
+                    style = GTextStyle.NUMERAL,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                GText(
+                    text = "de ${state.totalCount} presentes",
+                    modifier = Modifier.alignByBaseline(),
+                    style = GTextStyle.BODY_LARGE,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            GButton(
-                text = "Todos presentes",
-                onClick = { onIntent(AttendanceDayUiIntent.MarkAllPresent) },
-                variant = GButtonVariant.SECONDARY,
-                enabled = state.canMarkAllPresent,
+            GText(
+                text = "${state.unmarkedCount} sin marcar",
+                style = GTextStyle.BODY_SMALL,
+                color = GemaAccents.onWarningContainer,
             )
         }
+        GButton(
+            text = "Todos presentes",
+            onClick = { onIntent(AttendanceDayUiIntent.MarkAllPresent) },
+            variant = GButtonVariant.SECONDARY,
+            enabled = state.canMarkAllPresent,
+        )
     }
 }
 
@@ -196,34 +226,45 @@ private fun StudentRow(
     onIntent: (AttendanceDayUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(gAttendanceRowColor(row.isRecorded))
-            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
-        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+    Column(modifier = modifier.fillMaxWidth()) {
+        GDivider(modifier = Modifier.padding(horizontal = GemaSpacing.small))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(gAttendanceRowColor(row.isRecorded))
+                .padding(GemaSpacing.small),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
-            if (!row.isRecorded) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+            ) {
                 GText(
-                    text = "sin marcar",
-                    style = GTextStyle.LABEL_SMALL,
-                    color = GemaAccents.onWarningContainer,
+                    text = row.displayName,
+                    modifier = Modifier
+                        .weight(1f)
+                        .alignByBaseline(),
+                    style = GTextStyle.TITLE_MEDIUM,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
+                if (!row.isRecorded) {
+                    GText(
+                        text = "sin marcar",
+                        modifier = Modifier.alignByBaseline(),
+                        style = GTextStyle.LABEL_SMALL,
+                        color = GemaAccents.onWarningContainer,
+                    )
+                }
             }
+            GAttendanceToggle(
+                option = row.status.asToggleOption(),
+                isRecorded = row.isRecorded,
+                onSelect = { option: GAttendanceOption ->
+                    onIntent(AttendanceDayUiIntent.StatusSelected(row.studentId, option.asStatus()))
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-        GAttendanceToggle(
-            option = row.status.asToggleOption(),
-            isRecorded = row.isRecorded,
-            onSelect = { option: GAttendanceOption ->
-                onIntent(AttendanceDayUiIntent.StatusSelected(row.studentId, option.asStatus()))
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }
 
@@ -242,7 +283,12 @@ private fun AttendanceDayScreenPreview() {
                 rows = listOf(
                     AttendanceRow(StudentId("1"), "ACOSTA RIVERA, Luz Maria", AttendanceStatus.PRESENT, true),
                     AttendanceRow(StudentId("2"), "BAUTISTA QUISPE, Jose", AttendanceStatus.LATE, true),
-                    AttendanceRow(StudentId("3"), "CCAHUANA MAMANI, Rosa", AttendanceStatus.PRESENT, false),
+                    AttendanceRow(
+                        StudentId("3"),
+                        "CCAHUANA MAMANI DE LA CRUZ, Rosa Maribel",
+                        AttendanceStatus.PRESENT,
+                        false,
+                    ),
                 ),
             ),
             onIntent = {},
