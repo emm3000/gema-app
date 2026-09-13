@@ -137,7 +137,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
                 GText(
                     text = stringResource(R.string.activity_evidence_no_evidence_label),
                     style = GTextStyle.LABEL_SMALL,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = GemaAccents.onWarningContainer,
                 )
             }
         }
