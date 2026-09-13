@@ -45,11 +45,11 @@ Shows the year, its kind and its Periods. Primary action: *Continuar*.
 
 Registro layout: no top bar. A `GStepHeader` opens the screen with the
 "PASO 1 DE 2" eyebrow (`labelSmall`, `onSurfaceVariant`), the title
-(`headlineSmall`) and one line of description (`bodyLarge`,
-`onSurfaceVariant`). Below it, `GTextField` for the year, then the two
+(`titleMedium`) and one line of description (`bodyLarge`, default color).
+Below it, `GTextField` for the year, then the two
 `GDateField`s side by side, then the "¿CÓMO EVALÚA TU ESCUELA?" eyebrow over a
 two-segment `GSegmentedPicker` whose selected segment uses the default
-`primaryContainer` fill and weight 600. The Periods group is an eyebrow
+`primaryContainer` fill. The Periods group is an eyebrow
 followed by read-only `GListItem` rows on hairlines: a 28dp tabular leading
 ordinal (I, II, III, IV), the range as `bodyLarge` ("1 mar – 15 may"), a
 chevron. Nothing on this screen edits a Period inline; the list only opens the
@@ -91,8 +91,9 @@ editor. *Continuar* is the `bottomAction` PRIMARY `GButton`.
 ```
 
 Tapping a Period row opens a `GDialog` over this screen. Its title is the
-Period label, its subtitle says the edit is scoped to that one Period, and the
-two `GDateField`s sit side by side (they reflow to two lines at font scale
+Period label; `GDialog` has no subtitle param, so "Solo cambia este periodo"
+renders as content-slot text above the two `GDateField`s, which sit side by
+side (they reflow to two lines at font scale
 1.3, see `components.md`). The buttons are the dialog's text buttons; the
 confirm reads `primary`.
 
@@ -119,8 +120,8 @@ data class SetupYearUiState(
     val periodKind: PeriodKind = PeriodKind.BIMESTER,
     val periods: List<PeriodDraftRow> = emptyList(),
     val editor: PeriodEditorState? = null,
-    val yearLabelError: String? = null,
-    val dateRangeError: String? = null,
+    val yearLabelError: SetupYearMessage? = null,
+    val dateRangeError: SetupYearMessage? = null,
     val canContinue: Boolean = false,
 )
 
@@ -129,7 +130,7 @@ data class PeriodDraftRow(
     val label: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val error: String?,
+    val error: PeriodRangeError?,
 )
 
 data class PeriodEditorState(
@@ -137,7 +138,7 @@ data class PeriodEditorState(
     val label: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val error: String?,
+    val error: PeriodRangeError?,
 )
 ```
 
@@ -216,7 +217,7 @@ data class SetupSectionUiState(
     val isLoading: Boolean = true,
     val grade: Grade? = null,
     val sectionName: String = "",
-    val sectionNameError: String? = null,
+    val sectionNameError: SetupSectionMessage? = null,
     val canFinish: Boolean = false,
     val isSaving: Boolean = false,
 )
@@ -226,7 +227,7 @@ Intents: `GradeSelected(grade: Grade)`, `SectionNameChanged(value: String)`,
 `AreaSelectionClicked`, `FinishClicked`, `BackClicked`.
 
 Effects: `NavigateToHome`, `NavigateToSectionAreas(sectionId: SectionId)`,
-`NavigateBack`, `ShowMessage(text: String)`.
+`NavigateBack`, `ShowMessage(message: SetupSectionMessage)`.
 
 ---
 
@@ -370,8 +371,9 @@ Primary action: `GExtendedFab` *Nuevo año*.
 Registro layout: `GTopBar` with the title and the rule as its subtitle ("Toca
 un año para activarlo. Nada se borra."), so the screen needs no explanatory
 paragraph. Years are rows on the screen ground separated by hairlines, not
-cards: `label` as `titleLarge`, then `dateRangeLabel` · `periodKindLabel` and
-the section count as two `bodyLarge` lines in `onSurfaceVariant`. The active
+cards: `label` as `titleLarge`, then the `startDate` · `endDate` range and the
+`periodKind`, formatted in the UI, and the section count as two `bodyLarge`
+lines in `onSurfaceVariant`. The active
 year carries a PRIMARY `GBadge` "ACTUAL" beside its label — the same badge the
 Period picker uses for the current Period. The whole row sends `YearClicked`;
 "Periodos" is a trailing TEXT `GButton` with a chevron so it reads as a second
@@ -406,8 +408,9 @@ data class SchoolYearsUiState(
 data class SchoolYearRow(
     val id: SchoolYearId,
     val label: String,
-    val dateRangeLabel: String,
-    val periodKindLabel: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val periodKind: PeriodKind,
     val sectionCount: Int,
     val isActive: Boolean,
 )
@@ -417,7 +420,7 @@ Intents: `YearClicked(id: SchoolYearId)`, `PeriodsClicked(id: SchoolYearId)`,
 `AddYearClicked`, `BackClicked`.
 
 Effects: `NavigateToPeriods(id: SchoolYearId)`, `NavigateToSetupYear`,
-`NavigateBack`, `ShowMessage(text: String)`.
+`NavigateBack`.
 
 Note: tapping a year switches the active year; it never deletes or archives.
 
@@ -432,15 +435,16 @@ Entry: SchoolYears, or the Home "Fuera de periodo" banner.
 Shows the Periods of one School Year and which contains today.
 Primary action: *Guardar*.
 
-Registro layout: `GTopBar` with "Periodos 2026" and `periodKindLabel` as the
-subtitle. Unlike SetupYear, this screen is the edit surface, so each Period is
-a hairline row with its label (`titleMedium`), the "ACTUAL" PRIMARY `GBadge`
-on the current one, and two inline 48dp `GDateField`s side by side. When
-`overlapError` is non-null, the fields that overlap take the `error` border
-and label, and an ERROR `GBanner` with the leading dot names the fix under the
-list. *Guardar* is the `bottomAction` PRIMARY `GButton`, rendered disabled
-(`surfaceContainerHigh` fill, `onSurfaceVariant` text) while `canSave` is
-false; nothing else blocks.
+Registro layout: `GTopBar` with "Periodos 2026" and `periodKind`, formatted in
+the UI, as the subtitle. Unlike SetupYear, this screen is the edit surface, so
+each Period is a hairline row with its label (`titleMedium`), the "ACTUAL"
+PRIMARY `GBadge` on the current one, and two inline 48dp `GDateField`s side by
+side. When `overlapError` is non-null, the fields named by
+`overlappingStartIds` and `overlappingEndIds` take the `error` border and
+label, and an ERROR `GBanner` with a leading dot (new, #189) names the fix
+under the list. *Guardar* is the `bottomAction` PRIMARY `GButton`, rendered
+disabled (`surfaceContainerHigh` fill, `onSurfaceVariant` text) while
+`canSave` is false; nothing else blocks.
 
 ```
 +------------------------------------------+
@@ -482,14 +486,17 @@ false; nothing else blocks.
 data class PeriodsUiState(
     val isLoading: Boolean = true,
     val schoolYearLabel: String = "",
-    val periodKindLabel: String = "",
+    val periodKind: PeriodKind = PeriodKind.BIMESTER,
     val periods: List<PeriodRow> = emptyList(),
-    val overlapError: String? = null,
+    val overlapError: PeriodRangeError? = null,
+    val overlappingStartIds: Set<PeriodId> = emptySet(),
+    val overlappingEndIds: Set<PeriodId> = emptySet(),
     val canSave: Boolean = false,
 )
 
 data class PeriodRow(
     val id: PeriodId,
+    val number: Int,
     val label: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
@@ -500,7 +507,7 @@ data class PeriodRow(
 Intents: `StartDateChanged(id: PeriodId, value: LocalDate)`,
 `EndDateChanged(id: PeriodId, value: LocalDate)`, `SaveClicked`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: PeriodsMessage)`.
 
 ---
 
@@ -574,9 +581,10 @@ data class SectionFormUiState(
     val grade: Grade? = null,
     val sectionName: String = "",
     val sectionNameTouched: Boolean = false,
-    val sectionNameError: String? = null,
+    val sectionNameError: SectionFormMessage? = null,
     val canSave: Boolean = false,
     val canDelete: Boolean = false,
+    val studentCount: Int = 0,
     val deleteConfirmation: DeleteConfirmation? = null,
 )
 
@@ -591,7 +599,7 @@ Intents: `GradeSelected(grade: Grade)`, `SectionNameChanged(value: String)`,
 `SaveClicked`, `DeleteClicked`, `DeleteConfirmed`, `DeleteDismissed`,
 `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: SectionFormMessage)`.
 
 Note: `deleteConfirmation` non-null renders the dialog naming what is lost
 (US 14). An empty Section still confirms, but with zero counts.
@@ -609,12 +617,13 @@ Shows every primary Area with a switch. Saves on toggle.
 Registro layout: `GTopBar` "Áreas · 3ro A" with "Cada cambio se guarda solo"
 as its subtitle, the same reassurance AttendanceDay carries. One `bodyLarge`
 line in `onSurfaceVariant` states the rule, then nine `GSwitchRow`s on
-hairlines, 56dp minimum, name in `titleMedium`. The recorded-level note is no
-longer a banner under the list: when an Area with `recordedLevelCount > 0` is
-off, that count renders as the row's `subtitle` in
-`GemaAccents.onWarningContainer` text ("12 niveles registrados. Quedan
-guardados."), next to the switch that caused it. Rows with a long name wrap
-to two lines rather than truncating.
+hairlines, `GemaSpacing.compactRowHeight` (52dp) minimum, name in `bodyLarge`.
+The recorded-level note is no longer a banner under the list: when an Area
+with `recordedLevelCount > 0` is off, that count renders as the row's
+`subtitle` (new: `GSwitchRow` needs a subtitle color parameter — its subtitle
+color is fixed to `onSurfaceVariant` today) in `GemaAccents.onWarningContainer`
+text ("12 niveles registrados. Quedan guardados."), next to the switch that
+caused it. Rows with a long name wrap to two lines rather than truncating.
 
 ```
 +------------------------------------------+
@@ -655,16 +664,16 @@ data class SectionAreasUiState(
 )
 
 data class AreaToggleRow(
-    val id: AreaId,
+    val id: Area,
     val name: String,
     val isActive: Boolean,
     val recordedLevelCount: Int,
 )
 ```
 
-Intents: `AreaToggled(id: AreaId, isActive: Boolean)`, `BackClicked`.
+Intents: `AreaToggled(id: Area, isActive: Boolean)`, `BackClicked`.
 
-Effects: `NavigateBack`, `ShowMessage(text: String)`.
+Effects: `NavigateBack`, `ShowMessage(message: SectionAreasMessage)`.
 
 ---
 
@@ -685,8 +694,10 @@ false. The daily block mirrors Home's expanded card: the "HOY · <weekday>
 `GemaAccents.onWarningContainer` while it reads *Sin tomar* and
 `onSurfaceVariant` once taken, then the single PRIMARY `GButton`. The five
 destinations are `GListItem` rows on hairlines with `trailingText` for the
-counts: `studentCount`, `missingPeriodLevelCount` as "N faltan" in
-`onWarningContainer` text when greater than zero, `activityCount`. The last
+counts: `studentCount`, `missingPeriodLevelCount` as "N faltan" (new:
+`GListItem` needs a trailing color parameter — `trailingText` color is fixed
+to `onSurfaceVariant` today) in `onWarningContainer` text when greater than
+zero, `activityCount`. The last
 row reads *Entregar*, the goal named in `flows.md` §8, and still sends
 `ExportClicked`.
 
@@ -725,6 +736,7 @@ data class SectionDetailUiState(
     val todayAttendanceSummary: String = "",
     val missingPeriodLevelCount: Int = 0,
     val activityCount: Int = 0,
+    val today: LocalDate? = null,
 )
 ```
 
@@ -744,7 +756,8 @@ Effects: `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
 `NavigateToActivities(sectionId: SectionId)`,
 `NavigateToExport(sectionId: SectionId)`,
 `NavigateToSectionAreas(sectionId: SectionId)`,
-`NavigateToSectionForm(sectionId: SectionId)`, `NavigateBack`.
+`NavigateToSectionForm(schoolYearId: SchoolYearId, sectionId: SectionId)`,
+`NavigateBack`.
 
 ---
 
