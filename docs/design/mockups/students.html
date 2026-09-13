@@ -2,97 +2,39 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .srow { display: flex; align-items: center; gap: 12px; height: 64px; padding: 0 16px; border-bottom: 1px solid #DFE4D7; }
-    .sname { font-size: 15px; font-weight: 500; color: #191D17; }
-    .scode { font-size: 13px; color: #43483F; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden; position: relative;">
-  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-    </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Alumnos · 3ro A</span>
-      <span style="font-size: 13px; color: #43483F;">30 activos · 2 retirados</span>
-    </div>
-    <div style="display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; margin-right: 8px; border: 1px solid #73796E; border-radius: 12px; color: #3F6836;">
-      <svg class="ico" style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
-      <span style="font-size: 14px; font-weight: 500;">Importar</span>
-    </div>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; gap: 4px; padding: 8px 8px 0 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 1px;"><div style="font-size: 18px; font-weight: 600; line-height: 1.2;">Alumnos · 3ro A</div><div style="font-size: 13px; color: #6E7075;">30 activos · por apellido</div></div>
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"></path><path d="M7 8l5-5 5 5"></path><path d="M4 19h16"></path></svg></div>
   </div>
 
-  <div style="display: flex; padding: 4px 16px 12px 16px;">
-    <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1; height: 48px; padding: 0 16px; background: #ECEFE5; border-radius: 24px;">
-      <svg class="ico" style="width: 20px; height: 20px; color: #43483F;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
-      <span style="font-size: 15px; color: #43483F;">Buscar</span>
-    </div>
+  <div style="padding: 8px 16px 12px 16px;">
+    <div style="height: 48px; padding: 0 14px; display: flex; align-items: center; gap: 10px; border: 1px solid #C9C9C5; border-radius: 8px; box-sizing: border-box; color: #6E7075; font-size: 15px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.5-4.5"></path></svg><span>Buscar por apellido</span></div>
   </div>
 
-  <div style="display: flex; flex-direction: column; flex-grow: 1; border-top: 1px solid #DFE4D7;">
-    <div class="srow">
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span class="sname">ACOSTA RIVERA, Luz María</span>
-        <span class="scode">12345678901234</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="srow">
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span class="sname">BAUTISTA QUISPE, José</span>
-        <span class="scode">12345678901235</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="srow">
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span class="sname">CCAHUANA MAMANI, Rosa</span>
-        <span class="scode">12345678901236</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="srow">
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span class="sname">DELGADO HUAMÁN, Pedro</span>
-        <span class="scode">12345678901237</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="srow">
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span class="sname">ESPINOZA VEGA, Ana</span>
-        <span class="scode">12345678901238</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="srow">
-      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;">
-        <span class="sname">FLORES CANO, Miguel</span>
-        <span class="scode">12345678901239</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-
-    <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 16px; background: #ECEFE5;">
-      <span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #43483F;">RETIRADOS (2)</span>
-      <svg class="ico" style="width: 20px; height: 20px; color: #43483F;" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
-    </div>
+  <div style="display: flex; flex-direction: column; padding: 0 16px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Apaza Condori, Yesenia</div><div style="font-size: 13px; color: #6E7075; font-variant-numeric: tabular-nums;">12345678901234</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Ccahuana Flores, María</div><div style="font-size: 13px; color: #6E7075; font-variant-numeric: tabular-nums;">12345678901235</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Huanca Ríos, Diego</div><div style="font-size: 13px; color: #6E7075; font-variant-numeric: tabular-nums;">12345678901236</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Mamani Torres, Luis Alberto</div><div style="font-size: 13px; color: #6E7075; font-variant-numeric: tabular-nums;">12345678901237</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Quispe Huamán, Rosa</div><div style="font-size: 13px; color: #6E7075; font-variant-numeric: tabular-nums;">12345678901238</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid #E6E6E3; border-bottom: 1px solid #E6E6E3; box-sizing: border-box;"><div style="display: flex; flex-direction: column; gap: 2px;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Ramos Paucar, Jhon</div><div style="font-size: 13px; color: #6E7075; font-variant-numeric: tabular-nums;">12345678901239</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
   </div>
 
-  <div style="position: absolute; right: 16px; bottom: 24px; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 20px 0 16px; background: #C0EFB0; color: #285020; border-radius: 16px; font-size: 15px; font-weight: 500;">
-    <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 16px; background: #F6F6F4; color: #6E7075; font-size: 12px; font-weight: 600; letter-spacing: 1px;"><span>RETIRADOS (2)</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div>
+
+  <div style="position: absolute; right: 16px; bottom: 24px; height: 52px; padding: 0 18px 0 14px; display: flex; align-items: center; gap: 8px; background: #17181A; color: #FFFFFF; border-radius: 8px; font-size: 15px; font-weight: 500; box-shadow: 0 6px 18px rgba(23,24,26,0.18);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
     <span>Agregar alumno</span>
   </div>
 </div>
-</x-dc>
 </body>
 </html>
