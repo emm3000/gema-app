@@ -59,12 +59,14 @@ val gemaTypography: Typography = Typography(
         fontSize = 15.sp,
         fontWeight = FontWeight.Normal,
         lineHeight = 1.45.em,
+        letterSpacing = 0.sp,
     ),
     bodyMedium = baseline.bodyMedium.copy(
         fontFamily = gemaFontFamily,
         fontSize = 15.sp,
         fontWeight = FontWeight.Normal,
         lineHeight = 1.45.em,
+        letterSpacing = 0.sp,
     ),
     bodySmall = baseline.bodySmall.copy(
         fontFamily = gemaFontFamily,

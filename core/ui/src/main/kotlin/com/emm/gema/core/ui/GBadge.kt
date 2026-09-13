@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -42,14 +41,13 @@ fun GBadge(
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = GemaSpacing.small, vertical = GemaSpacing.extraSmall),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.labelSmall,
         )
     }
     if (onClick == null) {
         Surface(
             modifier = modifier,
-            shape = GemaShapes.control,
+            shape = GemaShapes.pill,
             color = color,
             contentColor = contentColor,
             content = content,
@@ -58,7 +56,7 @@ fun GBadge(
         Surface(
             onClick = onClick,
             modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget),
-            shape = GemaShapes.control,
+            shape = GemaShapes.pill,
             color = color,
             contentColor = contentColor,
         ) {

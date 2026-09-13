@@ -39,7 +39,7 @@ fun GBanner(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = GemaShapes.container,
+        shape = GemaShapes.control,
         color = containerColorOf(tone),
         contentColor = contentColorOf(tone),
     ) {
@@ -84,7 +84,7 @@ fun GBanner(
 
 @Composable
 private fun containerColorOf(tone: GBannerTone): Color = when (tone) {
-    GBannerTone.INFO -> MaterialTheme.colorScheme.surfaceVariant
+    GBannerTone.INFO -> MaterialTheme.colorScheme.surfaceContainerLow
     GBannerTone.WARNING -> GemaAccents.warningContainer
     GBannerTone.ERROR -> MaterialTheme.colorScheme.errorContainer
 }
