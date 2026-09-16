@@ -16,6 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
@@ -24,9 +28,9 @@ import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBadge
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
-import com.emm.gema.core.ui.GBorderedContainer
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GDateField
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
@@ -76,13 +80,14 @@ fun PeriodsScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(vertical = GemaSpacing.screenGutter),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             if (message != null) {
                 item {
                     GBanner(
                         text = message,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = GemaSpacing.medium),
                         tone = GBannerTone.ERROR,
                         actionText = "Entendido",
                         onActionClick = onMessageDismissed,
@@ -96,13 +101,18 @@ fun PeriodsScreen(
                     isEndOverlapping = row.id in state.overlappingEndIds,
                     onIntent = onIntent,
                 )
+                GDivider()
             }
             if (overlapErrorText != null) {
                 item {
                     GBanner(
                         text = overlapErrorText,
-                        modifier = Modifier.fillMaxWidth(),
-                        tone = GBannerTone.WARNING,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = GemaSpacing.medium)
+                            .semantics { liveRegion = LiveRegionMode.Polite },
+                        tone = GBannerTone.ERROR,
+                        hasLeadingDot = true,
                     )
                 }
             }
@@ -118,45 +128,62 @@ private fun PeriodEditor(
     onIntent: (PeriodsUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GBorderedContainer(modifier = modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(GemaSpacing.medium),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    val startDateLabel: String = stringResource(R.string.setup_year_date_start_label)
+    val endDateLabel: String = stringResource(R.string.setup_year_date_end_label)
+    val startDateContentDescription: String = stringResource(
+        R.string.setup_periods_date_field_content_description,
+        row.label,
+        startDateLabel,
+    )
+    val endDateContentDescription: String = stringResource(
+        R.string.setup_periods_date_field_content_description,
+        row.label,
+        endDateLabel,
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = GemaSpacing.rowGap),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics(mergeDescendants = true) {},
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.rowGap),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                GText(
-                    text = row.label,
-                    style = GTextStyle.TITLE_MEDIUM,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                if (row.isCurrent) {
-                    GBadge(text = stringResource(R.string.setup_periods_current_badge))
-                }
+            GText(
+                text = row.label,
+                style = GTextStyle.TITLE_MEDIUM,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            if (row.isCurrent) {
+                GBadge(text = stringResource(R.string.setup_periods_current_badge))
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
-            ) {
-                GDateField(
-                    value = row.startDate,
-                    onValueChange = { onIntent(PeriodsUiIntent.StartDateChanged(row.id, it)) },
-                    isError = isStartOverlapping,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                )
-                GDateField(
-                    value = row.endDate,
-                    onValueChange = { onIntent(PeriodsUiIntent.EndDateChanged(row.id, it)) },
-                    isError = isEndOverlapping,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                )
-            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        ) {
+            GDateField(
+                value = row.startDate,
+                onValueChange = { onIntent(PeriodsUiIntent.StartDateChanged(row.id, it)) },
+                label = startDateLabel,
+                isError = isStartOverlapping,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics(mergeDescendants = true) { contentDescription = startDateContentDescription },
+            )
+            GDateField(
+                value = row.endDate,
+                onValueChange = { onIntent(PeriodsUiIntent.EndDateChanged(row.id, it)) },
+                label = endDateLabel,
+                isError = isEndOverlapping,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics(mergeDescendants = true) { contentDescription = endDateContentDescription },
+            )
         }
     }
 }
