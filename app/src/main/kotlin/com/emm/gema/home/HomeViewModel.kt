@@ -20,7 +20,6 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
-import java.time.Clock
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.channels.Channel
@@ -45,10 +44,10 @@ class HomeViewModel(
     private val getAttendanceDay: GetAttendanceDayUseCase,
     private val getMissingPeriodLevelCount: GetMissingPeriodLevelCountUseCase,
     private val dateNames: DateNameProvider,
-    private val clock: Clock,
+    private val today: Flow<LocalDate>,
 ) : ViewModel() {
 
-    private var today: LocalDate = LocalDate.now(clock)
+    private var currentDay: LocalDate? = null
 
     private val _state: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -60,8 +59,8 @@ class HomeViewModel(
         viewModelScope.launch {
             getActiveSchoolYear()
                 .flatMapLatest { schoolYear ->
-                    dayTicker(clock)
-                        .onEach { date -> today = date }
+                    today
+                        .onEach { date -> currentDay = date }
                         .flatMapLatest { date -> schoolYearState(schoolYear, date) }
                 }
                 .collect { schoolYearState -> _state.value = merge(schoolYearState) }
@@ -75,7 +74,7 @@ class HomeViewModel(
         when (intent) {
             is HomeUiIntent.SectionClicked -> emit(HomeUiEffect.NavigateToSectionDetail(intent.id))
             is HomeUiIntent.TakeAttendanceClicked ->
-                emit(HomeUiEffect.NavigateToAttendanceDay(intent.id, today))
+                currentDay?.let { day -> emit(HomeUiEffect.NavigateToAttendanceDay(intent.id, day)) }
             HomeUiIntent.AddSectionClicked -> withSchoolYear { HomeUiEffect.NavigateToSectionForm(it, null) }
             HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
             HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }
