@@ -16,6 +16,8 @@ sealed interface StudentsUiIntent {
 
     data object ImportClicked : StudentsUiIntent
 
+    data object SearchToggled : StudentsUiIntent
+
     data object WithdrawnSectionToggled : StudentsUiIntent
 
     data object BackClicked : StudentsUiIntent

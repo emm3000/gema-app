@@ -1,5 +1,6 @@
 package com.emm.gema.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,8 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -36,9 +40,11 @@ fun GSearchField(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(GemaSpacing.minimumTouchTarget),
-        shape = GemaShapes.pill,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+            .height(GemaSpacing.minimumTouchTarget)
+            .semantics { contentDescription = placeholder },
+        shape = GemaShapes.control,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(GemaBorder.hairline, MaterialTheme.colorScheme.outline),
     ) {
         Row(
             modifier = Modifier
@@ -87,6 +93,6 @@ fun GSearchField(
 @Composable
 private fun GSearchFieldPreview() {
     GemaTheme {
-        GSearchField(query = "", onQueryChange = {}, placeholder = "Buscar")
+        GSearchField(query = "", onQueryChange = {}, placeholder = "Buscar por apellido")
     }
 }
