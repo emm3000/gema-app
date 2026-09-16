@@ -117,7 +117,7 @@ private fun WorkedCompetenciesFooter(selectedCount: Int, totalCount: Int) {
                 selectedCount,
                 totalCount,
             ),
-            style = GTextStyle.LABEL_SMALL,
+            style = GTextStyle.BODY_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = GemaSpacing.medium, bottom = GemaSpacing.small),
         )
