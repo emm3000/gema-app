@@ -91,19 +91,24 @@ private fun LazyListScope.rejection(fileName: String, rejection: ImportRejection
     item { GFileCard(title = fileName) }
     item {
         GBanner(
-            text = rejection.reason,
+            text = reasonText(rejection.reason),
             modifier = Modifier.fillMaxWidth(),
             tone = GBannerTone.ERROR,
             hasLeadingDot = true,
         )
     }
     if (rejection.expected != null) {
-        item { GListItem(title = "Sección abierta", trailingText = rejection.expected) }
+        item {
+            GListItem(
+                title = stringResource(R.string.import_preview_expected_label),
+                trailingText = rejection.expected,
+            )
+        }
     }
     if (rejection.found != null) {
         item {
             GListItem(
-                title = rejection.foundLabel.orEmpty(),
+                title = foundLabelText(requireNotNull(rejection.foundLabel)),
                 trailingText = rejection.found,
                 trailingTextColor = MaterialTheme.colorScheme.error,
             )
@@ -111,7 +116,7 @@ private fun LazyListScope.rejection(fileName: String, rejection: ImportRejection
     }
     item {
         GText(
-            text = rejection.instruction,
+            text = instructionText(rejection.instruction),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = GemaSpacing.medium),
@@ -119,6 +124,28 @@ private fun LazyListScope.rejection(fileName: String, rejection: ImportRejection
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+}
+
+@Composable
+private fun reasonText(reason: ImportRejectionReason): String = when (reason) {
+    ImportRejectionReason.NotASiagieTemplate -> stringResource(R.string.import_preview_reason_not_a_template)
+    ImportRejectionReason.EmptyRoster -> stringResource(R.string.import_preview_reason_empty_roster)
+    is ImportRejectionReason.MalformedRow -> stringResource(R.string.import_preview_reason_malformed_row, reason.row)
+    ImportRejectionReason.SectionMismatch -> stringResource(R.string.import_preview_reason_section_mismatch)
+}
+
+@Composable
+private fun instructionText(instruction: ImportInstruction): String = when (instruction) {
+    ImportInstruction.PICK_ANOTHER_FILE -> stringResource(R.string.import_preview_instruction_pick_another_file)
+    ImportInstruction.FIX_FILE -> stringResource(R.string.import_preview_instruction_fix_file)
+    ImportInstruction.PICK_ANOTHER_FILE_OR_OPEN_SECTION ->
+        stringResource(R.string.import_preview_instruction_pick_another_file_or_open_section)
+}
+
+@Composable
+private fun foundLabelText(foundLabel: ImportFoundLabel): String = when (foundLabel) {
+    ImportFoundLabel.GRADE -> stringResource(R.string.import_preview_found_label_grade)
+    ImportFoundLabel.SECTION -> stringResource(R.string.import_preview_found_label_section)
 }
 
 private fun LazyListScope.plan(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {

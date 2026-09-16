@@ -6,6 +6,16 @@
     <string name="import_preview_group_expanded">Expandido</string>
     <string name="import_preview_group_collapsed">Contraído</string>
     <string name="import_preview_withdrawals_helper">Desmarca a quien siga en el aula.</string>
+    <string name="import_preview_reason_not_a_template">Este archivo no es una plantilla de SIAGIE</string>
+    <string name="import_preview_reason_empty_roster">La plantilla no tiene alumnos</string>
+    <string name="import_preview_reason_malformed_row">La fila %1$d del archivo no tiene un código de estudiante válido</string>
+    <string name="import_preview_reason_section_mismatch">Este archivo no es de esta sección</string>
+    <string name="import_preview_instruction_pick_another_file">Elige otro archivo. No se cambió nada.</string>
+    <string name="import_preview_instruction_fix_file">Corrige el archivo y vuelve a intentarlo. No se cambió nada.</string>
+    <string name="import_preview_instruction_pick_another_file_or_open_section">Elige otro archivo o abre la sección correcta. No se cambió nada.</string>
+    <string name="import_preview_found_label_grade">Grado en el archivo</string>
+    <string name="import_preview_found_label_section">Archivo</string>
+    <string name="import_preview_expected_label">Sección abierta</string>
 
     <string name="student_form_error_invalid_code">El código del estudiante tiene %1$d dígitos</string>
     <string name="student_form_error_duplicate_code">Ese código ya es de otro alumno de la sección</string>

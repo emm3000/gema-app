@@ -30,12 +30,34 @@ data class ImportWithdrawalRow(
 )
 
 data class ImportRejection(
-    val reason: String,
-    val instruction: String,
+    val reason: ImportRejectionReason,
+    val instruction: ImportInstruction,
     val expected: String?,
     val found: String?,
-    val foundLabel: String?,
+    val foundLabel: ImportFoundLabel?,
 )
+
+sealed interface ImportRejectionReason {
+
+    data object NotASiagieTemplate : ImportRejectionReason
+
+    data object EmptyRoster : ImportRejectionReason
+
+    data class MalformedRow(val row: Int) : ImportRejectionReason
+
+    data object SectionMismatch : ImportRejectionReason
+}
+
+enum class ImportInstruction {
+    PICK_ANOTHER_FILE,
+    FIX_FILE,
+    PICK_ANOTHER_FILE_OR_OPEN_SECTION,
+}
+
+enum class ImportFoundLabel {
+    GRADE,
+    SECTION,
+}
 
 enum class ImportGroup {
     CREATED,

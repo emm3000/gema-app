@@ -84,7 +84,11 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
-        assertThat(state.rejection?.instruction).isEqualTo("Elige otro archivo. No se cambió nada.")
+        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.NotASiagieTemplate)
+        assertThat(state.rejection?.instruction).isEqualTo(ImportInstruction.PICK_ANOTHER_FILE)
+        assertThat(state.rejection?.expected).isNull()
+        assertThat(state.rejection?.found).isNull()
+        assertThat(state.rejection?.foundLabel).isNull()
     }
 
     @Test
@@ -93,7 +97,11 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
-        assertThat(state.rejection?.instruction).isEqualTo("Elige otro archivo. No se cambió nada.")
+        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.EmptyRoster)
+        assertThat(state.rejection?.instruction).isEqualTo(ImportInstruction.PICK_ANOTHER_FILE)
+        assertThat(state.rejection?.expected).isNull()
+        assertThat(state.rejection?.found).isNull()
+        assertThat(state.rejection?.foundLabel).isNull()
     }
 
     @Test
@@ -102,8 +110,11 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
-        assertThat(state.rejection?.instruction)
-            .isEqualTo("Corrige el archivo y vuelve a intentarlo. No se cambió nada.")
+        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.MalformedRow(15))
+        assertThat(state.rejection?.instruction).isEqualTo(ImportInstruction.FIX_FILE)
+        assertThat(state.rejection?.expected).isNull()
+        assertThat(state.rejection?.found).isNull()
+        assertThat(state.rejection?.foundLabel).isNull()
     }
 
     @Test
@@ -116,11 +127,11 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
+        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.SectionMismatch)
         assertThat(state.rejection?.expected).isEqualTo("6to A")
         assertThat(state.rejection?.found).isEqualTo("3ro")
-        assertThat(state.rejection?.foundLabel).isEqualTo("Grado en el archivo")
-        assertThat(state.rejection?.instruction)
-            .isEqualTo("Elige otro archivo o abre la sección correcta. No se cambió nada.")
+        assertThat(state.rejection?.foundLabel).isEqualTo(ImportFoundLabel.GRADE)
+        assertThat(state.rejection?.instruction).isEqualTo(ImportInstruction.PICK_ANOTHER_FILE_OR_OPEN_SECTION)
         assertThat(state.canApply).isFalse()
     }
 
@@ -134,11 +145,11 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
+        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.SectionMismatch)
         assertThat(state.rejection?.expected).isEqualTo("6to A")
         assertThat(state.rejection?.found).isEqualTo("B")
-        assertThat(state.rejection?.foundLabel).isEqualTo("Archivo")
-        assertThat(state.rejection?.instruction)
-            .isEqualTo("Elige otro archivo o abre la sección correcta. No se cambió nada.")
+        assertThat(state.rejection?.foundLabel).isEqualTo(ImportFoundLabel.SECTION)
+        assertThat(state.rejection?.instruction).isEqualTo(ImportInstruction.PICK_ANOTHER_FILE_OR_OPEN_SECTION)
     }
 
     @Test
