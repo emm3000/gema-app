@@ -1,6 +1,5 @@
 package com.emm.gema.feature.setup.year
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,20 +13,20 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.kindLabel
 import com.emm.gema.feature.setup.R
 import com.emm.gema.feature.setup.resolve
-import com.emm.gema.core.theme.GemaBorder
-import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GDialog
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
@@ -138,10 +137,6 @@ fun SetupYearScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     PeriodsList(periods = state.periods, onIntent = onIntent)
-                    GText(
-                        text = stringResource(R.string.setup_year_periods_caption),
-                        style = GTextStyle.BODY_SMALL,
-                    )
                 }
             }
         }
@@ -158,18 +153,17 @@ private fun PeriodsList(
     onIntent: (SetupYearUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(GemaShapes.container)
-            .border(GemaBorder.hairline, MaterialTheme.colorScheme.outline, GemaShapes.container),
-    ) {
-        periods.forEachIndexed { index, row ->
+    Column(modifier = modifier.fillMaxWidth()) {
+        GDivider()
+        periods.forEach { row ->
+            val ordinal: String = row.ordinal.toRomanNumeral()
+            val rangeLabel: String = row.error?.resolve() ?: shortRangeLabel(row.startDate, row.endDate)
             GListItem(
-                title = row.error?.resolve() ?: shortRangeLabel(row.startDate, row.endDate),
-                leadingText = row.ordinal.toRomanNumeral(),
-                showDivider = index < periods.lastIndex,
+                title = rangeLabel,
+                leadingText = ordinal,
+                hasChevron = true,
                 onClick = { onIntent(SetupYearUiIntent.PeriodClicked(row.ordinal)) },
+                modifier = Modifier.semantics { contentDescription = "Periodo $ordinal, $rangeLabel" },
             )
         }
     }
