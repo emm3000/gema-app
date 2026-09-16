@@ -267,6 +267,7 @@ private fun SummaryGroup(state: ExportUiState, onIntent: (ExportUiIntent) -> Uni
                     variant = pdfVariant,
                     enabled = state.periodId != null && state.activeExport == null,
                     isBusy = state.activeExport == ActiveExport.SUMMARY_PDF,
+                    contentDescription = stringResource(R.string.export_summary_pdf_description),
                 )
                 GButton(
                     text = stringResource(R.string.export_summary_csv),
@@ -275,6 +276,7 @@ private fun SummaryGroup(state: ExportUiState, onIntent: (ExportUiIntent) -> Uni
                     variant = GButtonVariant.SECONDARY,
                     enabled = state.periodId != null && state.activeExport == null,
                     isBusy = state.activeExport == ActiveExport.SUMMARY_CSV,
+                    contentDescription = stringResource(R.string.export_summary_csv_description),
                 )
             }
         }

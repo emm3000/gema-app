@@ -213,11 +213,19 @@ fun GButton(
     isBusy: Boolean = false,
     icon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
+    contentDescription: String? = null,
 )
 ```
 
 `icon` renders before `text`, `trailingIcon` after it — SchoolYears' TEXT
 "Periodos" button uses `trailingIcon` for its chevron.
+
+`contentDescription` overrides the spoken label TalkBack reads without
+changing the visible `text`, the click action or the button role. Use it
+when the visible label is short and its meaning depends on the surrounding
+group — Export's "PDF" and "CSV" buttons in the Resumen group read as
+"Generar resumen en PDF" / "Generar resumen en CSV". Leave it `null` when
+the visible `text` already says what the button does on its own.
 
 Wraps `Button` (primary), `OutlinedButton` (secondary), `Button` with
 `colorScheme.error` (destructive), `TextButton` (text). Tokens:
