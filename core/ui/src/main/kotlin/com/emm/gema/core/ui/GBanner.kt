@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -26,9 +27,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaShapes
@@ -135,13 +145,32 @@ private fun GBannerMessage(title: String?, text: String?, message: (@Composable 
 
 @Composable
 private fun GBannerLinkAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Text(
-        text = text,
-        modifier = modifier.clickable(onClick = onClick),
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        textDecoration = TextDecoration.Underline,
-    )
+    val style: TextStyle = MaterialTheme.typography.labelLarge.copy(textDecoration = TextDecoration.Underline)
+    val textMeasurer: TextMeasurer = rememberTextMeasurer()
+    Box(
+        modifier = modifier
+            .layoutAtSizeOf { constraints: Constraints ->
+                textMeasurer.measure(text = text, style = style, constraints = constraints).size
+            }
+            .clickable(role = Role.Button, onClick = onClick)
+            .sizeIn(minWidth = GemaSpacing.minimumTouchTarget, minHeight = GemaSpacing.minimumTouchTarget),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = text, style = style, color = MaterialTheme.colorScheme.primary)
+    }
+}
+
+private fun Modifier.layoutAtSizeOf(
+    measureContent: (Constraints) -> IntSize,
+): Modifier = layout { measurable, constraints ->
+    val looseConstraints: Constraints = constraints.copy(minWidth = 0, minHeight = 0)
+    val reportedSize: IntSize = measureContent(looseConstraints)
+    val placeable: Placeable = measurable.measure(looseConstraints.copy(maxHeight = Constraints.Infinity))
+    val placeableSize: IntSize = IntSize(placeable.width, placeable.height)
+    val contentOffset: IntOffset = Alignment.Center.align(reportedSize, placeableSize, layoutDirection)
+    layout(reportedSize.width, reportedSize.height) {
+        placeable.place(-contentOffset)
+    }
 }
 
 @Composable
