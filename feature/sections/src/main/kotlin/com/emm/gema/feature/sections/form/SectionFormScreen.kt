@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -253,7 +253,7 @@ private fun DeleteCountRow(count: Int, label: String, rowDescription: String, mo
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.rowGap),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(modifier = Modifier.width(GemaSpacing.narrowCellWidth), contentAlignment = Alignment.CenterEnd) {
+        Box(modifier = Modifier.widthIn(min = GemaSpacing.narrowCellWidth), contentAlignment = Alignment.CenterEnd) {
             GText(text = count.toString(), style = GTextStyle.NUMERAL)
         }
         GText(
