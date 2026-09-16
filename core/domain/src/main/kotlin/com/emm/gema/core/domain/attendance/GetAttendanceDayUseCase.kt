@@ -19,9 +19,6 @@ class GetAttendanceDayUseCase(
         students.filter { it.attends(date) }.map { student -> student.entryOf(records) }
     }
 
-    private fun Student.attends(date: LocalDate): Boolean =
-        withdrawalDate == null || date.isBefore(withdrawalDate)
-
     private fun Student.entryOf(records: List<AttendanceRecord>): AttendanceEntry {
         val record: AttendanceRecord? = records.find { it.studentId == id }
         return AttendanceEntry(
