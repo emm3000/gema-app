@@ -26,7 +26,7 @@
     <string name="setup_year_cancel">Cancelar</string>
     <string name="setup_section_step_label">Paso 2 de 2</string>
     <string name="setup_section_title">Tu primera sección</string>
-    <string name="setup_section_helper_text">Ya casi. Después puedes crear todas las secciones que dictes.</string>
+    <string name="setup_section_helper_text">Como figura en tu registro, por ejemplo 3ro A.</string>
     <string name="setup_section_grade_label">Grado</string>
     <string name="setup_section_name_label">Nombre de la sección</string>
     <string name="setup_section_areas_banner">Todas las áreas quedan activas.</string>

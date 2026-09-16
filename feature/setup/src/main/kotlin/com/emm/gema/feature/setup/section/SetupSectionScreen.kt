@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -69,7 +67,7 @@ fun SetupSectionScreen(
                 .padding(padding)
                 .verticalScroll(scrollState)
                 .padding(vertical = GemaSpacing.screenGutter),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.large),
         ) {
             GStepHeader(
                 step = stringResource(R.string.setup_section_step_label),
@@ -111,19 +109,20 @@ fun SetupSectionScreen(
                 modifier = Modifier.fillMaxWidth(),
                 errorText = sectionNameError,
             )
-            GBanner(
-                text = stringResource(R.string.setup_section_areas_banner),
-                modifier = Modifier.fillMaxWidth(),
-                icon = Icons.Filled.Info,
-                actionText = stringResource(R.string.setup_section_areas_link),
-                onActionClick = { onIntent(SetupSectionUiIntent.AreaSelectionClicked) },
-                actionStyle = GBannerActionStyle.LINK,
-            )
-            GText(
-                text = stringResource(R.string.setup_section_multigrade_caption),
-                style = GTextStyle.BODY_SMALL,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium)) {
+                GBanner(
+                    text = stringResource(R.string.setup_section_areas_banner),
+                    modifier = Modifier.fillMaxWidth(),
+                    actionText = stringResource(R.string.setup_section_areas_link),
+                    onActionClick = { onIntent(SetupSectionUiIntent.AreaSelectionClicked) },
+                    actionStyle = GBannerActionStyle.LINK,
+                )
+                GText(
+                    text = stringResource(R.string.setup_section_multigrade_caption),
+                    style = GTextStyle.BODY_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
