@@ -31,8 +31,10 @@ data class ImportWithdrawalRow(
 
 data class ImportRejection(
     val reason: String,
+    val instruction: String,
     val expected: String?,
     val found: String?,
+    val foundLabel: String?,
 )
 
 enum class ImportGroup {

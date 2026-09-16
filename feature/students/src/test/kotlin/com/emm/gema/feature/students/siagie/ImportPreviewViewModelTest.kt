@@ -79,6 +79,34 @@ class ImportPreviewViewModelTest {
     }
 
     @Test
+    fun `a file that is not a SIAGIE template tells the teacher to pick another one`() = runTest {
+        reader.roster = null
+
+        val state: ImportPreviewUiState = viewModel().state.value
+
+        assertThat(state.rejection?.instruction).isEqualTo("Elige otro archivo. No se cambió nada.")
+    }
+
+    @Test
+    fun `an empty roster tells the teacher to pick another file`() = runTest {
+        reader.roster = SiagieRoster(gradeNumber = 6, sectionName = null, students = emptyList())
+
+        val state: ImportPreviewUiState = viewModel().state.value
+
+        assertThat(state.rejection?.instruction).isEqualTo("Elige otro archivo. No se cambió nada.")
+    }
+
+    @Test
+    fun `a malformed row tells the teacher to fix the file`() = runTest {
+        reader.malformedRow = 15
+
+        val state: ImportPreviewUiState = viewModel().state.value
+
+        assertThat(state.rejection?.instruction)
+            .isEqualTo("Corrige el archivo y vuelve a intentarlo. No se cambió nada.")
+    }
+
+    @Test
     fun `a template of another grade is rejected with both grades`() = runTest {
         reader.roster = SiagieRoster(
             gradeNumber = 3,
@@ -90,7 +118,27 @@ class ImportPreviewViewModelTest {
 
         assertThat(state.rejection?.expected).isEqualTo("6to A")
         assertThat(state.rejection?.found).isEqualTo("3ro")
+        assertThat(state.rejection?.foundLabel).isEqualTo("Grado en el archivo")
+        assertThat(state.rejection?.instruction)
+            .isEqualTo("Elige otro archivo o abre la sección correcta. No se cambió nada.")
         assertThat(state.canApply).isFalse()
+    }
+
+    @Test
+    fun `a template of another section is rejected with both section names`() = runTest {
+        reader.roster = SiagieRoster(
+            gradeNumber = 6,
+            sectionName = "B",
+            students = listOf(entry(FIRST_CODE, "ALVARADO QUISPE, MARIA")),
+        )
+
+        val state: ImportPreviewUiState = viewModel().state.value
+
+        assertThat(state.rejection?.expected).isEqualTo("6to A")
+        assertThat(state.rejection?.found).isEqualTo("B")
+        assertThat(state.rejection?.foundLabel).isEqualTo("Archivo")
+        assertThat(state.rejection?.instruction)
+            .isEqualTo("Elige otro archivo o abre la sección correcta. No se cambió nada.")
     }
 
     @Test

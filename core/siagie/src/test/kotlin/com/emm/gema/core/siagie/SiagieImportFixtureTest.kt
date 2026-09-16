@@ -131,7 +131,7 @@ class SiagieImportFixtureTest {
         val preview: SiagieImportPreview = previewImport(sectionId, fixture().absolutePath)
 
         assertThat(preview).isEqualTo(
-            SiagieImportPreview.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6))
+            SiagieImportPreview.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6), FIXTURE_NAME)
         )
         assertThat(students.listBySection(sectionId)).isEmpty()
     }
@@ -143,7 +143,9 @@ class SiagieImportFixtureTest {
 
         val preview: SiagieImportPreview = previewImport(sectionId, broken.absolutePath)
 
-        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.MalformedRow(row = 6)))
+        assertThat(preview).isEqualTo(
+            SiagieImportPreview.Rejected(SiagieImportRejection.MalformedRow(row = 6), FIXTURE_NAME)
+        )
         assertThat(students.listBySection(sectionId)).isEmpty()
     }
 
@@ -155,7 +157,9 @@ class SiagieImportFixtureTest {
 
         val preview: SiagieImportPreview = previewImport(sectionId, notATemplate.absolutePath)
 
-        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate))
+        assertThat(preview).isEqualTo(
+            SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate, notATemplate.name)
+        )
     }
 
     private fun sectionOf(grade: Grade): Section =

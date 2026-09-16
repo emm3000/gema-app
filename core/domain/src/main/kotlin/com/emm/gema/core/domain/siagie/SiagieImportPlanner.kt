@@ -12,7 +12,7 @@ internal sealed interface PlannedImport {
 
     data class Ready(val plan: SiagieImportPlan, val content: ByteArray) : PlannedImport
 
-    data class Rejected(val reason: SiagieImportRejection) : PlannedImport
+    data class Rejected(val reason: SiagieImportRejection, val fileName: String) : PlannedImport
 }
 
 class SiagieImportPlanner(
@@ -31,12 +31,12 @@ class SiagieImportPlanner(
         val roster: SiagieRoster = when (val result: SiagieRosterResult = reader.read(fileName, content)) {
             is SiagieRosterResult.Parsed -> result.roster
             is SiagieRosterResult.Malformed ->
-                return PlannedImport.Rejected(SiagieImportRejection.MalformedRow(result.row))
+                return PlannedImport.Rejected(SiagieImportRejection.MalformedRow(result.row), fileName)
             SiagieRosterResult.NotASiagieTemplate ->
-                return PlannedImport.Rejected(SiagieImportRejection.NotASiagieTemplate)
+                return PlannedImport.Rejected(SiagieImportRejection.NotASiagieTemplate, fileName)
         }
         val rejection: SiagieImportRejection? = rejectionOf(section, roster)
-        if (rejection != null) return PlannedImport.Rejected(rejection)
+        if (rejection != null) return PlannedImport.Rejected(rejection, fileName)
         val plan: SiagieImportPlan = planOf(fileName, roster, students.listBySection(sectionId))
         return PlannedImport.Ready(plan, content)
     }

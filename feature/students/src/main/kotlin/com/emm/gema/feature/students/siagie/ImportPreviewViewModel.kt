@@ -26,6 +26,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+private const val PICK_ANOTHER_FILE: String = "Elige otro archivo. No se cambió nada."
+
+private const val PICK_ANOTHER_FILE_OR_OPEN_SECTION: String =
+    "Elige otro archivo o abre la sección correcta. No se cambió nada."
+
 class ImportPreviewViewModel(
     private val sectionId: SectionId,
     private val uri: String,
@@ -66,12 +71,13 @@ class ImportPreviewViewModel(
         val preview: SiagieImportPreview = runCatching { previewImport(sectionId, uri) }
             .getOrElse {
                 _effects.send(ImportPreviewUiEffect.ShowMessage(ImportPreviewMessage.ImportFailed))
-                SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate)
+                SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate, fileName = "")
             }
         _state.value = when (preview) {
             is SiagieImportPreview.Ready -> _state.value.readyWith(preview.plan)
             is SiagieImportPreview.Rejected -> _state.value.copy(
                 isLoading = false,
+                fileName = preview.fileName,
                 rejection = rejectionOf(preview.reason, section),
             )
         }
@@ -132,28 +138,38 @@ class ImportPreviewViewModel(
     private fun rejectionOf(reason: SiagieImportRejection, section: Section?): ImportRejection = when (reason) {
         SiagieImportRejection.NotASiagieTemplate -> ImportRejection(
             reason = "Este archivo no es una plantilla de SIAGIE",
+            instruction = PICK_ANOTHER_FILE,
             expected = null,
             found = null,
+            foundLabel = null,
         )
         SiagieImportRejection.EmptyRoster -> ImportRejection(
             reason = "La plantilla no tiene alumnos",
+            instruction = PICK_ANOTHER_FILE,
             expected = null,
             found = null,
+            foundLabel = null,
         )
         is SiagieImportRejection.MalformedRow -> ImportRejection(
             reason = "La fila ${reason.row} del archivo no tiene un código de estudiante válido",
+            instruction = "Corrige el archivo y vuelve a intentarlo. No se cambió nada.",
             expected = null,
             found = null,
+            foundLabel = null,
         )
         is SiagieImportRejection.GradeMismatch -> ImportRejection(
             reason = "Este archivo no es de esta sección",
+            instruction = PICK_ANOTHER_FILE_OR_OPEN_SECTION,
             expected = sectionTitle.ifEmpty { section?.title().orEmpty() },
             found = gradeOrdinalLabel(reason.found),
+            foundLabel = "Grado en el archivo",
         )
         is SiagieImportRejection.SectionMismatch -> ImportRejection(
             reason = "Este archivo no es de esta sección",
+            instruction = PICK_ANOTHER_FILE_OR_OPEN_SECTION,
             expected = sectionTitle.ifEmpty { section?.title().orEmpty() },
             found = reason.found,
+            foundLabel = "Archivo",
         )
     }
 

@@ -22,8 +22,8 @@ import com.emm.gema.core.theme.GemaTheme
 @Composable
 fun GFileCard(
     title: String,
-    subtitle: String,
     modifier: Modifier = Modifier,
+    subtitle: String? = null,
     icon: ImageVector = Icons.Filled.Description,
 ) {
     Surface(
@@ -43,11 +43,13 @@ fun GFileCard(
             )
             Column {
                 GText(text = title, style = GTextStyle.TITLE_MEDIUM)
-                GText(
-                    text = subtitle,
-                    style = GTextStyle.BODY_LARGE,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                if (subtitle != null) {
+                    GText(
+                        text = subtitle,
+                        style = GTextStyle.BODY_LARGE,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }

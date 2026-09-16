@@ -20,8 +20,10 @@ class FakeSiagieDocuments(private val fileName: String) : SiagieDocuments {
 class FakeSiagieRosterReader : SiagieRosterReader {
 
     var roster: SiagieRoster? = null
+    var malformedRow: Int? = null
 
     override fun read(fileName: String, content: ByteArray): SiagieRosterResult {
+        malformedRow?.let { row: Int -> return SiagieRosterResult.Malformed(row) }
         val parsed: SiagieRoster = roster ?: return SiagieRosterResult.NotASiagieTemplate
         return SiagieRosterResult.Parsed(parsed)
     }

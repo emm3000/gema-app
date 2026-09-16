@@ -79,7 +79,7 @@ fun ImportPreviewScreen(
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
         ) {
             if (state.rejection != null) {
-                rejection(state.rejection)
+                rejection(fileName = state.fileName, rejection = state.rejection)
             } else {
                 plan(state = state, onIntent = onIntent)
             }
@@ -87,7 +87,8 @@ fun ImportPreviewScreen(
     }
 }
 
-private fun LazyListScope.rejection(rejection: ImportRejection) {
+private fun LazyListScope.rejection(fileName: String, rejection: ImportRejection) {
+    item { GFileCard(title = fileName) }
     item {
         GBanner(
             text = rejection.reason,
@@ -102,7 +103,7 @@ private fun LazyListScope.rejection(rejection: ImportRejection) {
     if (rejection.found != null) {
         item {
             GListItem(
-                title = "Archivo",
+                title = rejection.foundLabel.orEmpty(),
                 trailingText = rejection.found,
                 trailingTextColor = MaterialTheme.colorScheme.error,
             )
@@ -110,7 +111,7 @@ private fun LazyListScope.rejection(rejection: ImportRejection) {
     }
     item {
         GText(
-            text = "Elige otro archivo o abre la sección correcta. No se cambió nada.",
+            text = rejection.instruction,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = GemaSpacing.medium),
@@ -217,6 +218,14 @@ private fun ColumnScope.withdrawals(state: ImportPreviewUiState, onIntent: (Impo
                     },
                 )
             }
+            GText(
+                text = stringResource(R.string.import_preview_withdrawals_helper),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.small),
+                style = GTextStyle.BODY_SMALL,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

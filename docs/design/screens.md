@@ -1053,10 +1053,9 @@ on hairlines with the count as `NUMERAL` trailing text and an expand chevron
 renders as `TITLE_MEDIUM_EMPHASIS` with no override); the group matching `expandedGroup` lists its rows
 below, `GCheckRow`s for the withdrawals (default on) with one `bodySmall`
 helper ("Desmarca a quien siga en el aula."). The reassurance line stays as
-`bodySmall`. The `bottomAction` is a `Row` of two `GButton`s, as today:
-SECONDARY *Cancelar* beside PRIMARY *Aplicar importación* (new: the primary
-takes weight 2 and names the action; today both weigh 1 and it reads
-"Aplicar"); `isApplying` sets `isBusy` on the primary. `created` and
+`bodySmall`. The `bottomAction` is a `Row` of two `GButton`s: SECONDARY
+*Cancelar* sized to its own text, PRIMARY *Aplicar importación* filling the
+remaining width; `isApplying` sets `isBusy` on the primary. `created` and
 `updated` do not have to sum to `rosterSize`: `SiagieImportPlanner` de-dups
 the roster by Student Code before counting, and `updated` drops any Student
 the file did not actually change, so both groups can undercount the file.
@@ -1090,39 +1089,43 @@ the file did not actually change, so both groups can undercount the file.
 A roster whose Student Code is missing or malformed in the middle is rejected
 with the row number, never truncated at that row.
 
-Rejection state replaces the body. An ERROR `GBanner` carries `reason` (new: a
-leading dot in its `icon` slot; no icon renders today); when the rejection has
-an `expected`/`found` pair it renders as two `GListItem` rows with the value
-as `trailingText` (new: the found value in `error` ink, the status-ink rule in
-`system.md`; proposal for the same `core:ui` ticket as the other
-trailing-color notes, since `trailingText` is `onSurfaceVariant` today), then
-one `bodyLarge` line says what to do and that nothing changed. The
-`bottomAction` is always a single SECONDARY `GButton` *Volver a alumnos* that
-sends `CancelClicked` (new: today the Cancelar / Aplicar row stays, and
-Aplicar has nothing to apply); the screen has no re-pick intent.
+Rejection state replaces the body. A `GFileCard` with `fileName` (no
+`subtitle`, which is optional in `core:ui`) sits above an ERROR `GBanner`
+that carries `reason` (a leading dot in its `icon` slot; no icon renders
+today); when the rejection has an `expected`/`found` pair it renders as two
+`GListItem` rows with the value as `trailingText` (new: the found value in
+`error` ink, the status-ink rule in `system.md`; proposal for the same
+`core:ui` ticket as the other trailing-color notes, since `trailingText` is
+`onSurfaceVariant` today), then one `bodyLarge` line renders `instruction`
+and says nothing changed. The `bottomAction` is always a single SECONDARY
+`GButton` *Volver a alumnos* that sends `CancelClicked` (new: today the
+Cancelar / Aplicar row stays, and Aplicar has nothing to apply); the screen
+has no re-pick intent.
 
 `SiagieImportRejection` has five cases; only two of them carry an
 `expected`/`found` pair, and only those two have anything to do with the
 Section being wrong, so "abre la sección correcta" is not part of the other
-three:
+three. `ImportRejection` carries the per-case `instruction` and the
+found-row's `foundLabel` as `UiState` fields, so the screen never hardcodes
+either:
 
 - `NotASiagieTemplate`: `reason` "Este archivo no es una plantilla de
-  SIAGIE.", no pair. Instruction: "Elige otro archivo. No se cambió nada." —
-  the file itself is unusable, no Section is involved.
+  SIAGIE.", no pair. `instruction`: "Elige otro archivo. No se cambió nada."
+  — the file itself is unusable, no Section is involved.
 - `EmptyRoster`: `reason` "La plantilla no tiene alumnos.", no pair.
-  Instruction: "Elige otro archivo. No se cambió nada."
+  `instruction`: "Elige otro archivo. No se cambió nada."
 - `MalformedRow(row)`: `reason` names the row, e.g. "La fila 15 tiene un
-  código de alumno inválido o vacío.", no pair. Instruction: "Corrige el
+  código de alumno inválido o vacío.", no pair. `instruction`: "Corrige el
   archivo y vuelve a intentarlo. No se cambió nada." — the file needs fixing,
   not a different Section.
 - `GradeMismatch(expected, found)`: `reason` "El grado de la plantilla no
-  coincide con la sección.", pair "Sección abierta" / "Grado en el archivo".
-  Instruction: "Elige otro archivo o abre la sección correcta. No se cambió
-  nada."
+  coincide con la sección.", pair "Sección abierta" / `foundLabel` "Grado en
+  el archivo". `instruction`: "Elige otro archivo o abre la sección
+  correcta. No se cambió nada."
 - `SectionMismatch(expected, found)`: `reason` "Este archivo no es de esta
-  sección.", pair "Sección abierta" / "Archivo" (the wireframe below shows
-  this case). Instruction: "Elige otro archivo o abre la sección correcta.
-  No se cambió nada."
+  sección.", pair "Sección abierta" / `foundLabel` "Archivo" (the wireframe
+  below shows this case). `instruction`: "Elige otro archivo o abre la
+  sección correcta. No se cambió nada."
 
 ```
 +------------------------------------------+
@@ -1172,8 +1175,10 @@ data class ImportWithdrawalRow(
 
 data class ImportRejection(
     val reason: String,
+    val instruction: String,
     val expected: String?,
     val found: String?,
+    val foundLabel: String?,
 )
 
 enum class ImportGroup { CREATED, UPDATED, WITHDRAWN }

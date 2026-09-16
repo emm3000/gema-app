@@ -5,6 +5,7 @@
     <string name="import_preview_message_applied">%1$d nuevos, %2$d actualizados, %3$d retirados</string>
     <string name="import_preview_group_expanded">Expandido</string>
     <string name="import_preview_group_collapsed">Contraído</string>
+    <string name="import_preview_withdrawals_helper">Desmarca a quien siga en el aula.</string>
 
     <string name="student_form_error_invalid_code">El código del estudiante tiene %1$d dígitos</string>
     <string name="student_form_error_duplicate_code">Ese código ya es de otro alumno de la sección</string>
