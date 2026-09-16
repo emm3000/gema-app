@@ -115,7 +115,7 @@ fun SetupSectionScreen(
                     modifier = Modifier.fillMaxWidth(),
                     actionText = stringResource(R.string.setup_section_areas_link),
                     onActionClick = { onIntent(SetupSectionUiIntent.AreaSelectionClicked) },
-                    actionStyle = GBannerActionStyle.LINK,
+                    actionStyle = GBannerActionStyle.STACKED_LINK,
                 )
                 GText(
                     text = stringResource(R.string.setup_section_multigrade_caption),

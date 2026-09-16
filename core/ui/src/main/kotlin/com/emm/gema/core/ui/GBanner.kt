@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -61,6 +64,9 @@ fun GBanner(
                     Spacer(modifier = Modifier.height(GemaSpacing.small))
                     GButton(text = actionText, onClick = onActionClick, variant = GButtonVariant.TEXT)
                 }
+                if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.STACKED_LINK) {
+                    GBannerStackedLinkAction(text = actionText, onClick = onActionClick)
+                }
             }
             if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.LINK) {
                 GBannerLinkAction(text = actionText, onClick = onActionClick)
@@ -102,6 +108,36 @@ private fun GBannerLinkAction(text: String, onClick: () -> Unit) {
         color = MaterialTheme.colorScheme.primary,
         textDecoration = TextDecoration.Underline,
     )
+}
+
+@Composable
+private fun GBannerStackedLinkAction(text: String, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = GemaSpacing.minimumTouchTarget),
+        color = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.primary,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline,
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
 }
 
 @Composable
@@ -148,6 +184,19 @@ private fun GBannerDotLinkPreview() {
             actionText = "Respaldar",
             onActionClick = {},
             actionStyle = GBannerActionStyle.LINK,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GBannerStackedLinkPreview() {
+    GemaTheme {
+        GBanner(
+            text = "Todas las áreas quedan activas.",
+            actionText = "No dicto todas las áreas",
+            onActionClick = {},
+            actionStyle = GBannerActionStyle.STACKED_LINK,
         )
     }
 }
