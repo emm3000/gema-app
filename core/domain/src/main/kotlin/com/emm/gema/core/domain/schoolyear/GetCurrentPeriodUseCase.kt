@@ -10,6 +10,6 @@ class GetCurrentPeriodUseCase(
 
     suspend operator fun invoke(schoolYearId: SchoolYearId): Period? {
         val today: LocalDate = LocalDate.now(clock)
-        return repository.findBySchoolYear(schoolYearId).find { it.contains(today) }
+        return repository.findBySchoolYear(schoolYearId).periodFor(today)
     }
 }
