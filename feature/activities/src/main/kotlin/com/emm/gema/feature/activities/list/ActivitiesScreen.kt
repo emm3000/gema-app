@@ -38,6 +38,8 @@ fun ActivitiesScreen(
     modifier: Modifier = Modifier,
 ) {
     val currentPeriodBadge: String = stringResource(R.string.activities_list_badge_current)
+    val periodLabel: String = stringResource(R.string.activities_list_period_label)
+    val newActivityLabel: String = stringResource(R.string.activities_list_new_activity)
     val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
@@ -50,7 +52,7 @@ fun ActivitiesScreen(
         },
         fab = {
             GExtendedFab(
-                text = "Nueva actividad",
+                text = newActivityLabel,
                 icon = Icons.Filled.Add,
                 onClick = { onIntent(ActivitiesUiIntent.AddActivityClicked) },
             )
@@ -68,15 +70,16 @@ fun ActivitiesScreen(
                 },
                 selected = state.selectedPeriodId,
                 onSelect = { onIntent(ActivitiesUiIntent.PeriodSelected(it)) },
+                label = periodLabel,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = GemaSpacing.small),
             )
             if (state.activities.isEmpty()) {
                 GEmptyState(
-                    title = "Todavía no hay actividades",
-                    message = "Registra una actividad para este periodo y enlázala a las competencias trabajadas.",
-                    actionLabel = "Nueva actividad",
+                    title = stringResource(R.string.activities_list_empty_title),
+                    message = stringResource(R.string.activities_list_empty_message),
+                    actionLabel = newActivityLabel,
                     onActionClick = { onIntent(ActivitiesUiIntent.AddActivityClicked) },
                 )
             } else {

@@ -9,6 +9,10 @@
     <string name="activities_list_badge_current">ACTUAL</string>
     <string name="activities_list_title">Actividades · %s</string>
     <string name="activities_list_subtitle">Más recientes primero</string>
+    <string name="activities_list_period_label">Periodo</string>
+    <string name="activities_list_new_activity">Nueva actividad</string>
+    <string name="activities_list_empty_title">Todavía no hay actividades</string>
+    <string name="activities_list_empty_message">Registra una actividad para este periodo y enlázala a las competencias trabajadas.</string>
     <string name="activity_evidence_subtitle">%1$s · %2$s</string>
     <string name="activity_evidence_edit_content_description">Editar actividad</string>
     <string name="activity_evidence_untouched_label">sin marcar</string>
@@ -17,4 +21,6 @@
     <string name="activity_evidence_summary_untouched">%1$d sin marcar</string>
     <string name="activity_evidence_summary_content_description">%1$d de %2$d con evidencia, %3$d sin marcar</string>
     <string name="activity_form_subtitle">%1$s · %2$s</string>
+    <string name="activity_form_title_new">Nueva actividad</string>
+    <string name="activity_form_title_edit">Editar actividad</string>
 </resources>
