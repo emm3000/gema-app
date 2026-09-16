@@ -4,7 +4,7 @@ sealed interface SiagieImportPreview {
 
     data class Ready(val plan: SiagieImportPlan) : SiagieImportPreview
 
-    data class Rejected(val reason: SiagieImportRejection) : SiagieImportPreview
+    data class Rejected(val reason: SiagieImportRejection, val fileName: String) : SiagieImportPreview
 }
 
 sealed interface SiagieImportRejection {

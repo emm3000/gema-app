@@ -190,7 +190,7 @@ class SiagieImportUseCasesTest {
         val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         assertThat(preview).isEqualTo(
-            SiagieImportPreview.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6))
+            SiagieImportPreview.Rejected(SiagieImportRejection.GradeMismatch(expected = 3, found = 6), FILE_NAME)
         )
     }
 
@@ -206,7 +206,7 @@ class SiagieImportUseCasesTest {
         val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
         assertThat(preview).isEqualTo(
-            SiagieImportPreview.Rejected(SiagieImportRejection.SectionMismatch(expected = "A", found = "B"))
+            SiagieImportPreview.Rejected(SiagieImportRejection.SectionMismatch(expected = "A", found = "B"), FILE_NAME)
         )
     }
 
@@ -217,7 +217,7 @@ class SiagieImportUseCasesTest {
 
         val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
-        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate))
+        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.NotASiagieTemplate, FILE_NAME))
     }
 
     @Test
@@ -227,7 +227,7 @@ class SiagieImportUseCasesTest {
 
         val preview: SiagieImportPreview = previewImport(sectionId, URI)
 
-        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.EmptyRoster))
+        assertThat(preview).isEqualTo(SiagieImportPreview.Rejected(SiagieImportRejection.EmptyRoster, FILE_NAME))
     }
 
     @Test

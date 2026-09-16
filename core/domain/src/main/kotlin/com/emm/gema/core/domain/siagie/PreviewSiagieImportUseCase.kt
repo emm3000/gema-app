@@ -9,6 +9,6 @@ class PreviewSiagieImportUseCase(
     suspend operator fun invoke(sectionId: SectionId, uri: String): SiagieImportPreview =
         when (val planned: PlannedImport = planner.plan(sectionId, uri)) {
             is PlannedImport.Ready -> SiagieImportPreview.Ready(planned.plan)
-            is PlannedImport.Rejected -> SiagieImportPreview.Rejected(planned.reason)
+            is PlannedImport.Rejected -> SiagieImportPreview.Rejected(planned.reason, planned.fileName)
         }
 }
