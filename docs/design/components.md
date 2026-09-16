@@ -808,6 +808,7 @@ fun GDialog(
     modifier: Modifier = Modifier,
     dismissText: String? = null,
     isDestructive: Boolean = false,
+    usePlatformDefaultWidth: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 )
 ```
@@ -818,6 +819,14 @@ Wraps `AlertDialog`. Tokens: `GemaShapes.container`, `colorScheme.surface`,
 `content` is a slot rather than a `message: String` because both real uses show a
 list — what deleting a Section destroys, what restoring a Backup replaces. A
 confirmation that names quantities is a confirmation; "Estas seguro?" is not.
+
+`usePlatformDefaultWidth` defaults to `true`, the platform's own content-width
+dialog sizing — every existing caller keeps that. SetupYear's Period editor is
+the one caller that sets it `false` and pairs it with a `fillMaxWidth()` +
+`GemaSpacing.screenGutter` modifier, because the platform default squeezes its
+two side-by-side `GDateField`s below the width `DD/MM/YYYY` needs at font scale
+1.0 — the same pair reflows to two lines by design only at scale 1.3 (see
+`GDateField`).
 
 ### GBottomSheet
 

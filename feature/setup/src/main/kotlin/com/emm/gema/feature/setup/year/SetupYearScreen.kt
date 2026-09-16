@@ -179,8 +179,11 @@ private fun PeriodEditorDialog(
         confirmText = stringResource(R.string.setup_year_confirm),
         onConfirm = { onIntent(SetupYearUiIntent.EditorConfirmed) },
         onDismiss = { onIntent(SetupYearUiIntent.EditorDismissed) },
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = GemaSpacing.screenGutter),
         dismissText = stringResource(R.string.setup_year_cancel),
+        usePlatformDefaultWidth = false,
     ) {
         GText(
             text = stringResource(R.string.setup_year_period_dialog_subtitle),

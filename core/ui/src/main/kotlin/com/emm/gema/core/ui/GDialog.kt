@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.window.DialogProperties
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaTheme
 
@@ -20,11 +21,13 @@ fun GDialog(
     modifier: Modifier = Modifier,
     dismissText: String? = null,
     isDestructive: Boolean = false,
+    usePlatformDefaultWidth: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
+        properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth),
         shape = GemaShapes.container,
         containerColor = MaterialTheme.colorScheme.surface,
         title = { Text(text = title, style = MaterialTheme.typography.titleMedium) },
