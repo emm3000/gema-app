@@ -3,14 +3,19 @@ package com.emm.gema.feature.sections.form
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.SectionId
@@ -51,6 +56,11 @@ private fun sectionFormSubtitle(state: SectionFormUiState): String? {
         state.sectionName,
         pluralStringResource(R.plurals.sections_form_student_count, state.studentCount, state.studentCount),
     )
+}
+
+private fun sectionFormTitle(state: SectionFormUiState): String {
+    val grade: Grade = state.grade ?: return state.sectionName
+    return "${grade.label()} ${state.sectionName}"
 }
 
 @Composable
@@ -120,26 +130,14 @@ fun SectionFormScreen(
                 errorText = state.sectionNameError?.let { stringResource(sectionFormMessageRes(it)) },
             )
             if (state.canDelete) {
-                Column(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                    verticalArrangement = Arrangement.Bottom,
-                ) {
-                    GDivider()
-                    GButton(
-                        text = stringResource(R.string.sections_form_delete_button),
-                        onClick = { onIntent(SectionFormUiIntent.DeleteClicked) },
-                        variant = GButtonVariant.DESTRUCTIVE,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = GemaSpacing.medium),
-                    )
-                }
+                DangerZone(onIntent = onIntent)
             }
         }
     }
 
     if (state.deleteConfirmation != null) {
         DeleteSectionDialog(
+            sectionTitle = sectionFormTitle(state),
             confirmation = state.deleteConfirmation,
             onConfirm = { onIntent(SectionFormUiIntent.DeleteConfirmed) },
             onDismiss = { onIntent(SectionFormUiIntent.DeleteDismissed) },
@@ -148,14 +146,42 @@ fun SectionFormScreen(
 }
 
 @Composable
+private fun DangerZone(onIntent: (SectionFormUiIntent) -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = GemaSpacing.extraLarge),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    ) {
+        GText(
+            text = stringResource(R.string.sections_form_delete_eyebrow),
+            style = GTextStyle.LABEL_SMALL,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        GButton(
+            text = stringResource(R.string.sections_form_delete_button),
+            onClick = { onIntent(SectionFormUiIntent.DeleteClicked) },
+            variant = GButtonVariant.DESTRUCTIVE,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        GText(
+            text = stringResource(R.string.sections_form_delete_helper),
+            style = GTextStyle.BODY_SMALL,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
 private fun DeleteSectionDialog(
+    sectionTitle: String,
     confirmation: DeleteConfirmation,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     GDialog(
-        title = stringResource(R.string.sections_form_delete_dialog_title),
+        title = stringResource(R.string.sections_form_delete_dialog_title, sectionTitle),
         confirmText = stringResource(R.string.sections_form_delete_confirm),
         onConfirm = onConfirm,
         onDismiss = onDismiss,
@@ -164,12 +190,65 @@ private fun DeleteSectionDialog(
         isDestructive = true,
     ) {
         GText(
-            text = stringResource(
-                R.string.sections_form_delete_message,
-                confirmation.studentCount,
-                confirmation.attendanceDayCount,
-                confirmation.periodLevelCount,
-            ),
+            text = stringResource(R.string.sections_form_delete_message),
+            style = GTextStyle.BODY_LARGE,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            GDivider()
+            DeleteCountRow(
+                count = confirmation.studentCount,
+                label = pluralStringResource(R.plurals.sections_form_delete_row_students, confirmation.studentCount),
+                rowDescription = pluralStringResource(
+                    R.plurals.sections_form_student_count,
+                    confirmation.studentCount,
+                    confirmation.studentCount,
+                ),
+            )
+            GDivider()
+            DeleteCountRow(
+                count = confirmation.attendanceDayCount,
+                label = pluralStringResource(
+                    R.plurals.sections_form_delete_row_attendance_days,
+                    confirmation.attendanceDayCount,
+                ),
+                rowDescription = pluralStringResource(
+                    R.plurals.sections_form_delete_attendance_days_count,
+                    confirmation.attendanceDayCount,
+                    confirmation.attendanceDayCount,
+                ),
+            )
+            GDivider()
+            DeleteCountRow(
+                count = confirmation.periodLevelCount,
+                label = pluralStringResource(
+                    R.plurals.sections_form_delete_row_period_levels,
+                    confirmation.periodLevelCount,
+                ),
+                rowDescription = pluralStringResource(
+                    R.plurals.sections_form_delete_period_levels_count,
+                    confirmation.periodLevelCount,
+                    confirmation.periodLevelCount,
+                ),
+            )
+            GDivider()
+        }
+    }
+}
+
+@Composable
+private fun DeleteCountRow(count: Int, label: String, rowDescription: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = GemaSpacing.compactLineHeight)
+            .semantics(mergeDescendants = true) { contentDescription = rowDescription },
+        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.rowGap),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        GText(text = count.toString(), style = GTextStyle.NUMERAL)
+        GText(
+            text = label,
             style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
