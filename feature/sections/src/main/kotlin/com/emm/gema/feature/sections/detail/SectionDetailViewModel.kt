@@ -19,6 +19,8 @@ import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
+import com.emm.gema.core.theme.DateNameProvider
+import com.emm.gema.core.theme.todayLabelOf
 import com.emm.gema.feature.sections.attendanceSummaryLabel
 import java.time.Clock
 import java.time.LocalDate
@@ -39,6 +41,7 @@ class SectionDetailViewModel(
     private val getSectionDetailExtras: GetSectionDetailExtrasUseCase,
     private val getAttendanceDay: GetAttendanceDayUseCase,
     private val clock: Clock,
+    private val dateNames: DateNameProvider,
 ) : ViewModel() {
 
     private val today: LocalDate = LocalDate.now(clock)
@@ -46,6 +49,7 @@ class SectionDetailViewModel(
     private val _state: MutableStateFlow<SectionDetailUiState> = MutableStateFlow(
         SectionDetailUiState(
             today = today,
+            todayLabel = todayLabelOf(today, dateNames),
             todayAttendanceSummary = AttendanceDaySummary(0, 0, 0).attendanceSummaryLabel(),
         ),
     )
@@ -65,8 +69,11 @@ class SectionDetailViewModel(
         }
         viewModelScope.launch {
             getAttendanceDay(sectionId, today).collect { entries: List<AttendanceEntry> ->
-                _state.value = _state.value
-                    .copy(todayAttendanceSummary = entries.summarise().attendanceSummaryLabel())
+                val summary: AttendanceDaySummary = entries.summarise()
+                _state.value = _state.value.copy(
+                    todayAttendanceSummary = summary.attendanceSummaryLabel(),
+                    isTodayAttendanceTaken = summary.isTaken,
+                )
             }
         }
     }

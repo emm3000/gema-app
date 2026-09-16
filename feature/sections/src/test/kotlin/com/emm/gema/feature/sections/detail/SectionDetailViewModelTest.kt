@@ -28,8 +28,10 @@ import com.emm.gema.core.domain.student.GetStudentsUseCase
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
+import com.emm.gema.core.theme.DateNameProvider
 import com.emm.gema.feature.sections.FakeActivityRepository
 import com.emm.gema.feature.sections.FakeAttendanceRepository
+import com.emm.gema.feature.sections.FakeDateNameProvider
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakePeriodRepository
 import com.emm.gema.feature.sections.FakeSchoolYearRepository
@@ -84,6 +86,7 @@ class SectionDetailViewModelTest {
     private val attendanceRepository = FakeAttendanceRepository()
     private val activityRepository = FakeActivityRepository()
     private val siagieImportStore = FakeSiagieImportStore()
+    private val dateNames: DateNameProvider = FakeDateNameProvider()
     private val clock: Clock = Clock.fixed(
         today.atStartOfDay(ZoneId.of("America/Lima")).toInstant(),
         ZoneId.of("America/Lima"),
@@ -107,6 +110,7 @@ class SectionDetailViewModelTest {
         ),
         getAttendanceDay = GetAttendanceDayUseCase(studentRepository, attendanceRepository),
         clock = clock,
+        dateNames = dateNames,
     )
 
     @Test
@@ -117,6 +121,7 @@ class SectionDetailViewModelTest {
         assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.studentCount).isEqualTo(1)
         assertThat(state.today).isEqualTo(today)
+        assertThat(state.todayLabel).isEqualTo("HOY · LUNES 1 DE JUNIO")
     }
 
     @Test
@@ -220,12 +225,14 @@ class SectionDetailViewModelTest {
     @Test
     fun `today is announced as untaken until the first student is recorded`() = runTest {
         assertThat(viewModel().state.value.todayAttendanceSummary).isEqualTo("Sin tomar")
+        assertThat(viewModel().state.value.isTodayAttendanceTaken).isFalse()
 
         attendanceRepository.record(
             AttendanceRecord(sectionId, StudentId("student-1"), today, AttendanceStatus.ABSENT),
         )
 
         assertThat(viewModel().state.value.todayAttendanceSummary).isEqualTo("1 de 2 presentes")
+        assertThat(viewModel().state.value.isTodayAttendanceTaken).isTrue()
     }
 
     @Test

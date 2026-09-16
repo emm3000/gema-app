@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.summarise
+import com.emm.gema.core.theme.DateNameProvider
+import com.emm.gema.core.theme.todayLabelOf
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase

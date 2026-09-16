@@ -15,6 +15,6 @@ val sectionsModule: Module = module {
     }
     viewModel { (sectionId: SectionId) -> SectionAreasViewModel(sectionId, get(), get(), get(), get()) }
     viewModel { (sectionId: SectionId) ->
-        SectionDetailViewModel(sectionId, get(), get(), get(), get(), get(), get(), get())
+        SectionDetailViewModel(sectionId, get(), get(), get(), get(), get(), get(), get(), get())
     }
 }

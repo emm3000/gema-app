@@ -40,6 +40,7 @@ import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
+import com.emm.gema.core.theme.DateNameProvider
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.Instant

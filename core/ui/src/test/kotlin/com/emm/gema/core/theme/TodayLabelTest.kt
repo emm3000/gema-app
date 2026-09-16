@@ -1,4 +1,4 @@
-package com.emm.gema.home
+package com.emm.gema.core.theme
 
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate

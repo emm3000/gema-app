@@ -1,4 +1,4 @@
-package com.emm.gema.home
+package com.emm.gema.core.theme
 
 import java.time.DayOfWeek
 import java.time.Month
