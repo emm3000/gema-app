@@ -175,13 +175,4 @@ class SetupYearViewModelTest {
             expectNoEvents()
         }
     }
-
-    @Test
-    fun `going back leaves the flow`() = runTest {
-        viewModel.effects.test {
-            viewModel.onIntent(SetupYearUiIntent.BackClicked)
-
-            assertThat(awaitItem()).isEqualTo(SetupYearUiEffect.NavigateBack)
-        }
-    }
 }

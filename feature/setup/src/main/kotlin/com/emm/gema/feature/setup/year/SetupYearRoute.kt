@@ -1,6 +1,5 @@
 package com.emm.gema.feature.setup.year
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -14,14 +13,11 @@ import org.koin.compose.koinInject
 @Composable
 fun SetupYearRoute(
     onDraftReady: () -> Unit,
-    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SetupYearViewModel = koinViewModel(),
     draftStore: SetupDraftStore = koinInject(),
 ) {
     val state: State<SetupYearUiState> = viewModel.state.collectAsStateWithLifecycle()
-
-    BackHandler(onBack = { viewModel.onIntent(SetupYearUiIntent.BackClicked) })
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
@@ -30,7 +26,6 @@ fun SetupYearRoute(
                     draftStore.put(effect.draft)
                     onDraftReady()
                 }
-                SetupYearUiEffect.NavigateBack -> onBack()
             }
         }
     }
