@@ -5,4 +5,5 @@ plugins {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    testImplementation(testFixtures(project(":core:ui")))
 }
