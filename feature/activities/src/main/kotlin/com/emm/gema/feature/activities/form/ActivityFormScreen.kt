@@ -106,7 +106,7 @@ fun ActivityFormScreen(
                             label = "Nombre",
                             modifier = Modifier.fillMaxWidth(),
                         )
-                        Column {
+                        Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium)) {
                             GDateField(
                                 value = state.date,
                                 onValueChange = { onIntent(ActivityFormUiIntent.DateChanged(it)) },
