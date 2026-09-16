@@ -2273,7 +2273,6 @@ gating a fixed "Elige entre X y Y días" string, not a stored error message).
 |  | Restaurar reemplaza todo lo que hay  ||
 |  | en este teléfono y reinicia la app.  ||
 |  | No se puede deshacer.                ||
-|  | Te preguntamos antes.                ||
 |  +--------------------------------------+|
 |  ----------------------------------------|
 |  RECORDATORIO                            |
@@ -2362,6 +2361,7 @@ Copy changes (for the implementation ticket)
 - `backup_reminder_label`: "RECORDARME CADA" -> "RECORDATORIO" eyebrow, plus a "Cada" label on the `GTextField` itself (matches the wireframe and mockup, which show separate strings)
 - `backup_reminder_days`: "días" -> "días sin respaldar" (matches the wireframe and mockup)
 - New: "Pasado ese tiempo, Inicio muestra el aviso de respaldo." helper line under the reminder field (no string key yet; the line is not rendered today)
+- New: "La app se reinicia al terminar. No es un error." line in the restore confirmation dialog (no string key yet; the dialog carries no such line today)
 
 ---
 
