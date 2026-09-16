@@ -2,6 +2,7 @@
 name: ticket-writer
 description: Writes GitHub issues for Gema screens or slices from the design contract. Use when a wave needs tickets before dispatch. Returns the issue numbers grouped by wave.
 model: opus
+effort: high
 tools: Read, Glob, Grep, Bash
 ---
 

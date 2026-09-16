@@ -2,6 +2,7 @@
 name: pr-reviewer
 description: Read-only two-axis review of one Gema pull request. Use after a peer reports a PR URL. Returns MERGE or FIX FIRST with blocking items only.
 model: opus
+effort: high
 tools: Read, Glob, Grep, Bash
 ---
 
