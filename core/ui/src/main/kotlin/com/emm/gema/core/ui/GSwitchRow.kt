@@ -2,9 +2,11 @@ package com.emm.gema.core.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -14,8 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -34,10 +34,7 @@ fun GSwitchRow(
             .fillMaxWidth()
             .heightIn(min = GemaSpacing.compactRowHeight)
             .toggleable(value = isChecked, onValueChange = onCheckedChange, role = Role.Switch)
-            .padding(horizontal = GemaSpacing.medium)
-            .semantics {
-                contentDescription = if (subtitle != null) "$title. $subtitle" else title
-            },
+            .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -50,6 +47,7 @@ fun GSwitchRow(
                 )
             }
         }
+        Spacer(modifier = Modifier.width(GemaSpacing.small))
         Switch(checked = isChecked, onCheckedChange = null)
     }
 }

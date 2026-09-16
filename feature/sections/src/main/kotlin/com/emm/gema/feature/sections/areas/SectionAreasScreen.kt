@@ -86,6 +86,9 @@ fun SectionAreasScreen(
     }
 }
 
+internal fun recordedLevelsNoteCount(isActive: Boolean, recordedLevelCount: Int): Int? =
+    recordedLevelCount.takeIf { !isActive && it > 0 }
+
 @Composable
 private fun AreaSwitchList(
     areas: List<AreaToggleRow>,
@@ -99,14 +102,9 @@ private fun AreaSwitchList(
             .border(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant, GemaShapes.container),
     ) {
         areas.forEachIndexed { index, row ->
-            val recordedLevelsNote: String? = if (!row.isActive && row.recordedLevelCount > 0) {
-                pluralStringResource(
-                    R.plurals.sections_areas_recorded_levels,
-                    row.recordedLevelCount,
-                    row.recordedLevelCount,
-                )
-            } else {
-                null
+            val recordedLevelsCount: Int? = recordedLevelsNoteCount(row.isActive, row.recordedLevelCount)
+            val recordedLevelsNote: String? = recordedLevelsCount?.let {
+                pluralStringResource(R.plurals.sections_areas_recorded_levels, it, it)
             }
             GSwitchRow(
                 title = row.name,
@@ -114,7 +112,11 @@ private fun AreaSwitchList(
                 onCheckedChange = { onIntent(SectionAreasUiIntent.AreaToggled(row.id, it)) },
                 modifier = Modifier.fillMaxWidth(),
                 subtitle = recordedLevelsNote,
-                subtitleColor = GemaAccents.onWarningContainer,
+                subtitleColor = if (recordedLevelsNote != null) {
+                    GemaAccents.onWarningContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
             )
             if (index < areas.lastIndex) {
                 GDivider()
