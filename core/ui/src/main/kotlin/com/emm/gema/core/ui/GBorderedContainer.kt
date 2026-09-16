@@ -13,18 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
+import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 
 @Composable
 fun GBorderedContainer(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface,
     fillMaxWidth: Boolean = true,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(GemaSpacing.none),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -32,7 +31,6 @@ fun GBorderedContainer(
         modifier = if (fillMaxWidth) modifier.fillMaxWidth() else modifier,
         shape = GemaShapes.container,
         color = containerColor,
-        contentColor = contentColor,
         border = BorderStroke(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(
