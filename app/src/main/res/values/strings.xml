@@ -29,6 +29,7 @@
         <item quantity="other">%1$s · %2$d niveles faltan</item>
     </plurals>
 
+    <string name="home_period_with_countdown">%1$s · %2$s</string>
     <plurals name="home_period_days_left">
         <item quantity="one">Falta %1$d día · cierra %2$s</item>
         <item quantity="other">Faltan %1$d días · cierra %2$s</item>

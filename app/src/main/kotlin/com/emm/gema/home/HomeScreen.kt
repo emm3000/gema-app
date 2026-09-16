@@ -204,7 +204,9 @@ private fun HomeTitle(yearLabel: String) {
 @Composable
 private fun CurrentPeriodRow(label: String, daysLeft: Int?, endDate: LocalDate?) {
     val title: String = if (daysLeft != null && endDate != null) {
-        "$label · " + pluralStringResource(R.plurals.home_period_days_left, daysLeft, daysLeft, endDate.dayMonthLabel())
+        val countdown: String =
+            pluralStringResource(R.plurals.home_period_days_left, daysLeft, daysLeft, endDate.dayMonthLabel())
+        stringResource(R.string.home_period_with_countdown, label, countdown)
     } else {
         label
     }
