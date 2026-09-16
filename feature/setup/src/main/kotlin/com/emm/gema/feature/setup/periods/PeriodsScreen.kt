@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
@@ -130,16 +130,6 @@ private fun PeriodEditor(
 ) {
     val startDateLabel: String = stringResource(R.string.setup_year_date_start_label)
     val endDateLabel: String = stringResource(R.string.setup_year_date_end_label)
-    val startDateContentDescription: String = stringResource(
-        R.string.setup_periods_date_field_content_description,
-        row.label,
-        startDateLabel,
-    )
-    val endDateContentDescription: String = stringResource(
-        R.string.setup_periods_date_field_content_description,
-        row.label,
-        endDateLabel,
-    )
 
     Column(
         modifier = modifier
@@ -173,7 +163,7 @@ private fun PeriodEditor(
                 isError = isStartOverlapping,
                 modifier = Modifier
                     .weight(1f)
-                    .semantics(mergeDescendants = true) { contentDescription = startDateContentDescription },
+                    .semantics { stateDescription = row.label },
             )
             GDateField(
                 value = row.endDate,
@@ -182,7 +172,7 @@ private fun PeriodEditor(
                 isError = isEndOverlapping,
                 modifier = Modifier
                     .weight(1f)
-                    .semantics(mergeDescendants = true) { contentDescription = endDateContentDescription },
+                    .semantics { stateDescription = row.label },
             )
         }
     }
