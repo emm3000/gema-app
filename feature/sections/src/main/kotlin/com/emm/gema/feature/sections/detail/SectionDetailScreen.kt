@@ -24,13 +24,12 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-import com.emm.gema.core.theme.fullLabel
-import com.emm.gema.core.ui.GBadge
-import com.emm.gema.core.ui.GBadgeTone
+import com.emm.gema.core.theme.label
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GIcon
 import com.emm.gema.core.ui.GListItem
@@ -40,8 +39,10 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.sections.ATTENDANCE_UNTAKEN_LABEL
 import com.emm.gema.feature.sections.R
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 fun SectionDetailScreen(
@@ -99,6 +100,14 @@ private fun sectionDetailSubtitle(state: SectionDetailUiState): String {
 }
 
 @Composable
+private fun todayEyebrowLabel(today: LocalDate?): String {
+    val date: LocalDate = today ?: return ""
+    val weekday: String = date.dayOfWeek.label().uppercase(Locale.ROOT)
+    val month: String = date.month.label().uppercase(Locale.ROOT)
+    return stringResource(R.string.sections_detail_attendance_today_label, weekday, date.dayOfMonth, month)
+}
+
+@Composable
 private fun TemplateLoadedLine(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
@@ -133,18 +142,19 @@ private fun AttendanceCard(
         verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
     ) {
         GText(
-            text = stringResource(R.string.sections_detail_attendance_today_label),
+            text = todayEyebrowLabel(state.today),
             style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        GText(
-            text = state.today?.let { today: LocalDate -> today.fullLabel() }.orEmpty(),
-            style = GTextStyle.NUMERAL,
-        )
+        val isAttendanceUntaken: Boolean = state.todayAttendanceSummary == ATTENDANCE_UNTAKEN_LABEL
         GText(
             text = state.todayAttendanceSummary,
             style = GTextStyle.BODY_LARGE,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (isAttendanceUntaken) {
+                GemaAccents.onWarningContainer
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
         )
         GButton(
             text = stringResource(R.string.sections_detail_take_attendance),
@@ -163,7 +173,7 @@ private fun HubList(
     onIntent: (SectionDetailUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val missingLevelsBadge: (@Composable () -> Unit)? = missingLevelsBadge(state.missingPeriodLevelCount)
+    val missingLevelsText: String? = missingLevelsTrailingText(state.missingPeriodLevelCount)
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -186,8 +196,9 @@ private fun HubList(
         GListItem(
             title = stringResource(R.string.sections_detail_period_levels),
             leadingIcon = Icons.AutoMirrored.Filled.Assignment,
+            trailingText = missingLevelsText,
+            trailingTextColor = GemaAccents.onWarningContainer,
             hasChevron = true,
-            trailing = missingLevelsBadge,
             onClick = { onIntent(SectionDetailUiIntent.PeriodLevelsClicked) },
         )
         GListItem(
@@ -208,11 +219,13 @@ private fun HubList(
 }
 
 @Composable
-private fun missingLevelsBadge(missingPeriodLevelCount: Int): (@Composable () -> Unit)? {
+private fun missingLevelsTrailingText(missingPeriodLevelCount: Int): String? {
     if (missingPeriodLevelCount <= 0) return null
-    val text: String =
-        pluralStringResource(R.plurals.sections_detail_missing_levels, missingPeriodLevelCount, missingPeriodLevelCount)
-    return { GBadge(text = text, tone = GBadgeTone.ERROR) }
+    return pluralStringResource(
+        R.plurals.sections_detail_missing_levels,
+        missingPeriodLevelCount,
+        missingPeriodLevelCount,
+    )
 }
 
 @PreviewLightDark
