@@ -2,7 +2,9 @@ package com.emm.gema.feature.export
 
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.student.StudentId
@@ -74,14 +76,34 @@ class ExportScreenTest : RobolectricComposeTest() {
     }
 
     @Test
-    fun `unavailable state renders the import template banner action`() {
+    fun `import template link sends ImportTemplateClicked`() {
+        val intents = mutableListOf<ExportUiIntent>()
         composeTestRule.setContent {
             GemaTheme {
-                ExportScreen(state = baseState.copy(gradesExportState = GradesExportUiState.Unavailable), onIntent = {})
+                ExportScreen(
+                    state = baseState.copy(gradesExportState = GradesExportUiState.Unavailable),
+                    onIntent = { intents += it },
+                )
             }
         }
 
-        composeTestRule.onNodeWithText("Importar plantilla").assertIsEnabled()
+        composeTestRule.onNodeWithText("Importar plantilla").performClick()
+
+        assertThat(intents).containsExactly(ExportUiIntent.ImportTemplateClicked)
+    }
+
+    @Test
+    fun `back button sends BackClicked`() {
+        val intents = mutableListOf<ExportUiIntent>()
+        composeTestRule.setContent {
+            GemaTheme {
+                ExportScreen(state = baseState, onIntent = { intents += it })
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Volver").performClick()
+
+        assertThat(intents).containsExactly(ExportUiIntent.BackClicked)
     }
 
     @Test
