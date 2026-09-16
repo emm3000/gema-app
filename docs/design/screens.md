@@ -1090,8 +1090,8 @@ with the row number, never truncated at that row.
 
 Rejection state replaces the body. A `GFileCard` with `fileName` (no
 `subtitle`, which is optional in `core:ui`) sits above an ERROR `GBanner`
-that carries `reason` (a leading dot in its `icon` slot; no icon renders
-today); when the rejection has an `expected`/`found` pair it renders as two
+that carries `reason` (a leading dot in its `icon` slot); when the rejection
+has an `expected`/`found` pair it renders as two
 `GListItem` rows with the value as `trailingText`, the found value in `error`
 ink through `trailingTextColor`, then one `bodyLarge` line renders
 `instruction` and says nothing changed. The `bottomAction` is always a single
