@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.attendance.AttendanceStatus
 import com.emm.gema.core.domain.section.Grade
-import com.emm.gema.core.domain.section.label
+import com.emm.gema.core.domain.section.sectionTitle
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaShapes
@@ -280,7 +280,7 @@ private fun AttendanceDayScreenPreview() {
         AttendanceDayScreen(
             state = AttendanceDayUiState(
                 isLoading = false,
-                sectionTitle = "${Grade.THIRD.label()} A",
+                sectionTitle = sectionTitle(Grade.THIRD, "A"),
                 date = LocalDate.of(2026, 9, 10),
                 presentCount = 2,
                 totalCount = 3,
