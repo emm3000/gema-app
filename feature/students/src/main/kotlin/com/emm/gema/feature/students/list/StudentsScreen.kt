@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
@@ -34,6 +33,7 @@ import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSearchField
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.students.R
 
@@ -50,23 +50,18 @@ fun StudentsScreen(
         state.activeStudents.size,
         state.activeStudents.size,
     )
-    val withdrawnCountLabel: String = pluralStringResource(
-        R.plurals.students_withdrawn_count,
-        state.withdrawnStudents.size,
-        state.withdrawnStudents.size,
-    )
     val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "Alumnos · ${state.sectionTitle}",
-                subtitle = "$activeCountLabel · $withdrawnCountLabel",
+                subtitle = "$activeCountLabel · por apellido",
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
                 isContentScrolled = listState.canScrollBackward,
                 actions = {
                     GIconButton(
                         icon = Icons.Filled.Search,
-                        contentDescription = "Buscar",
+                        contentDescription = if (state.isSearchVisible) "Cerrar búsqueda" else "Buscar",
                         onClick = { onIntent(StudentsUiIntent.SearchToggled) },
                     )
                     GIconButton(
@@ -136,7 +131,7 @@ fun StudentsScreen(
                     title = row.displayName,
                     modifier = Modifier.fillMaxWidth(),
                     subtitle = row.studentCode,
-                    subtitleStyle = studentCodeSubtitleStyle(),
+                    subtitleStyle = GTextStyle.BODY_SMALL_TABULAR,
                     hasChevron = true,
                     onClick = { onIntent(StudentsUiIntent.StudentClicked(row.id)) },
                 )
@@ -160,10 +155,6 @@ fun StudentsScreen(
         }
     }
 }
-
-@Composable
-private fun studentCodeSubtitleStyle(): TextStyle =
-    MaterialTheme.typography.bodySmall.copy(fontFeatureSettings = "tnum")
 
 @Composable
 private fun WithdrawnStudentItem(

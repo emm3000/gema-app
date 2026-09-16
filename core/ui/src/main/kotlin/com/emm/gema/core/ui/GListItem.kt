@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -30,7 +29,7 @@ fun GListItem(
     titleStyle: GTextStyle = GTextStyle.BODY_LARGE,
     subtitle: String? = null,
     subtitleColor: Color? = null,
-    subtitleStyle: TextStyle? = null,
+    subtitleStyle: GTextStyle = GTextStyle.BODY_MEDIUM,
     leadingText: String? = null,
     leadingIcon: ImageVector? = null,
     titleLeading: (@Composable () -> Unit)? = null,
@@ -45,7 +44,7 @@ fun GListItem(
         {
             Text(
                 text = text,
-                style = subtitleStyle ?: MaterialTheme.typography.bodyMedium,
+                style = subtitleStyle.toTextStyle(),
                 color = subtitleColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

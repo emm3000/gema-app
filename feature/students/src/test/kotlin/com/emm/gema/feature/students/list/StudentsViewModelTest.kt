@@ -106,18 +106,31 @@ class StudentsViewModelTest {
     }
 
     @Test
-    fun `search is hidden until toggled, and hiding it clears the query`() {
+    fun `search is hidden by default`() {
         val viewModel: StudentsViewModel = viewModel()
 
         assertThat(viewModel.state.value.isSearchVisible).isFalse()
+    }
+
+    @Test
+    fun `toggling search shows it`() {
+        val viewModel: StudentsViewModel = viewModel()
 
         viewModel.onIntent(StudentsUiIntent.SearchToggled)
-        assertThat(viewModel.state.value.isSearchVisible).isTrue()
 
+        assertThat(viewModel.state.value.isSearchVisible).isTrue()
+    }
+
+    @Test
+    fun `hiding search clears the query`() {
+        val viewModel: StudentsViewModel = viewModel()
+
+        viewModel.onIntent(StudentsUiIntent.SearchToggled)
         viewModel.onIntent(StudentsUiIntent.QueryChanged("acosta"))
         assertThat(viewModel.state.value.query).isEqualTo("acosta")
 
         viewModel.onIntent(StudentsUiIntent.SearchToggled)
+
         assertThat(viewModel.state.value.isSearchVisible).isFalse()
         assertThat(viewModel.state.value.query).isEmpty()
     }
