@@ -2265,6 +2265,7 @@ gating a fixed "Elige entre X y Y días" string, not a stored error message).
 |  +--------------------------------------+|
 |  | Restaurar reemplaza todo lo que hay  ||
 |  | en este teléfono y reinicia la app.  ||
+|  | No se puede deshacer.                ||
 |  | Te preguntamos antes.                ||
 |  +--------------------------------------+|
 |  ----------------------------------------|
@@ -2350,7 +2351,7 @@ Copy changes (for the implementation ticket)
 
 - `backup_subtitle`: "Todo vive en este teléfono" -> "Todo lo de este teléfono en un archivo .gema" (matches the wireframe and mockup)
 - `backup_create_hint`: "Se crea un archivo .gema y se abre el menú para compartir." -> "Se crea el archivo y se abre el menú para compartirlo: WhatsApp, Drive, Bluetooth o USB." (matches the wireframe and mockup)
-- `backup_restore_warning`: "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app." -> "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app. Te preguntamos antes." (matches the wireframe and mockup)
+- `backup_restore_warning`: "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app." -> "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app. No se puede deshacer. Te preguntamos antes." (matches the wireframe and mockup)
 - `backup_reminder_label`: "RECORDARME CADA" -> "RECORDATORIO" eyebrow, plus a "Cada" label on the `GTextField` itself (matches the wireframe and mockup, which show separate strings)
 - `backup_reminder_days`: "días" -> "días sin respaldar" (matches the wireframe and mockup)
 - New: "Pasado ese tiempo, Inicio muestra el aviso de respaldo." helper line under the reminder field (no string key yet; the line is not rendered today)
