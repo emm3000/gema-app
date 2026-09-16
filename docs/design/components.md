@@ -785,7 +785,9 @@ with the first line of the message instead of the row center — this keeps the
 glyph at the top when the message wraps to multiple lines. The icon carries a
 2dp top offset, the dot a 7dp top offset, to optically center each against the
 first line's cap height. The side `LINK` action stays vertically centered on
-the whole row.
+the whole row. Its touch target is a `GemaSpacing.minimumTouchTarget` (48dp)
+button centered on the label, but the row measures only the label, so the
+target overflows into the row padding and never changes the banner layout.
 
 Wraps `Surface`, radius `GemaShapes.control` (8dp), no border. Tokens:
 `colorScheme.surfaceContainerLow` (INFO), `colorScheme.errorContainer` /
