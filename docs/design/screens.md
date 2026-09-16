@@ -14,7 +14,7 @@ Conventions, from `.claude/rules/architecture.md` and `naming.md`:
   living beside the feature. A domain model never reaches a `UiState` directly.
 
 Types referenced below and owned by `domain`: `SchoolYearId`, `PeriodId`,
-`SectionId`, `StudentId`, `AreaId`, `CompetencyId`, `ActivityId`, `Grade`,
+`SectionId`, `StudentId`, `Area`, `CompetencyId`, `ActivityId`, `Grade`,
 `PeriodKind`, `AchievementLevel`, `UnworkedComment`, `AttendanceStatus`.
 Dates are `kotlinx.datetime.LocalDate` / `YearMonth`.
 
@@ -58,7 +58,7 @@ editor. *Continuar* is the `bottomAction` PRIMARY `GButton`.
 ```
 +------------------------------------------+
 |  PASO 1 DE 2                             |
-|  Configura tu año escolar                |
+|  Tu año escolar                          |
 |  Calculamos las fechas de los periodos   |
 |  por ti. Puedes ajustar cualquiera.      |
 |                                          |
@@ -94,8 +94,10 @@ Tapping a Period row opens a `GDialog` over this screen. Its title is the
 Period label; `GDialog` has no subtitle param, so "Solo cambia este periodo"
 renders as content-slot text above the two `GDateField`s, which sit side by
 side (they reflow to two lines at font scale
-1.3, see `components.md`). The buttons are the dialog's text buttons; the
-confirm reads `primary`.
+1.3, see `components.md`). `GDialog`'s dismiss button is a TEXT `GButton`
+("Cancelar"); the confirm is a filled PRIMARY `GButton` ("Guardar"), never a
+text button — `GDialog.kt` renders `confirmButton` as `GButton(variant =
+GButtonVariant.PRIMARY)` unless `isDestructive` is set.
 
 ```
 +------------------------------------------+
@@ -107,7 +109,7 @@ confirm reads `primary`.
 |  | 18/05/2026    |  | 31/07/2026     |   |
 |  +---------------+  +----------------+   |
 |                                          |
-|                    Cancelar    Guardar   |
+|                    Cancelar   [ Guardar ]|
 +------------------------------------------+
 ```
 
@@ -162,6 +164,13 @@ dividing `startDate..endDate` evenly, shown as a compact list, and corrected one
 Period at a time through `editor`. Changing the range or the kind recomputes
 every Period and discards those corrections. See ADR 0013.
 
+Copy changes (for the implementation ticket)
+
+- `setup_year_helper_text`: "Solo lo que necesitamos para empezar. Todo se
+  puede corregir después." -> "Calculamos las fechas de los periodos por ti.
+  Puedes ajustar cualquiera." (explains the new auto-computed Period dates,
+  ADR 0013).
+
 ---
 
 ## 2. SetupSection
@@ -176,7 +185,8 @@ Registro layout: the same `GStepHeader` as step 1, "PASO 2 DE 2", with a
 one-line description ("Como figura en tu registro, por ejemplo 3ro A."). The
 grade is a `GChoiceChipRow` of six equal 48dp chips under a "GRADO" eyebrow;
 the selected chip fills `primaryContainer` with a 2dp `primary` border, the
-digit stays `onSurface`. The name is a `GTextField`. The Area default is an
+digit is `onPrimaryContainer` (`GChoiceChipRow.kt`: unselected digits are
+`onSurface`). The name is a `GTextField`. The Area default is an
 INFO `GBanner` (`surfaceContainerLow`, `control` radius) with the statement
 on the first line and "No dicto todas las áreas" as its LINK action, so the
 default path stays one tap and the exception is still visible. The multigrade
@@ -228,6 +238,13 @@ Intents: `GradeSelected(grade: Grade)`, `SectionNameChanged(value: String)`,
 
 Effects: `NavigateToHome`, `NavigateToSectionAreas(sectionId: SectionId)`,
 `NavigateBack`, `ShowMessage(message: SetupSectionMessage)`.
+
+Copy changes (for the implementation ticket)
+
+- `setup_section_helper_text`: "Ya casi. Después puedes crear todas las
+  secciones que dictes." -> "Como figura en tu registro, por ejemplo 3ro A."
+  (tells the Teacher the expected name format instead of generic
+  encouragement).
 
 ---
 
@@ -371,11 +388,14 @@ Primary action: `GExtendedFab` *Nuevo año*.
 Registro layout: `GTopBar` with the title and the rule as its subtitle ("Toca
 un año para activarlo. Nada se borra."), so the screen needs no explanatory
 paragraph. Years are rows on the screen ground separated by hairlines, not
-cards: `label` as `titleLarge`, then the `startDate` · `endDate` range and the
-`periodKind`, formatted in the UI, and the section count as two `bodyLarge`
-lines in `onSurfaceVariant`. The active
-year carries a PRIMARY `GBadge` "ACTUAL" beside its label — the same badge the
-Period picker uses for the current Period. The whole row sends `YearClicked`;
+cards (new: rows replace `GYearCard`): `label` as `GTextStyle.NUMERAL` — the
+only 20dp/600 `GText` style the code has, and the year label is itself a
+numeral — then the `startDate` · `endDate` range and the `periodKind`,
+formatted in the UI, and the section count as two `bodyLarge` lines in
+`onSurfaceVariant`. The active
+year carries a PRIMARY `GBadge` "ACTIVO" beside its label — a different badge
+text than the Period picker's "ACTUAL", since an active year and a current
+Period are different concepts. The whole row sends `YearClicked`;
 "Periodos" is a trailing TEXT `GButton` with a chevron so it reads as a second
 action rather than as the row. The `GExtendedFab` is the one dark object on
 the screen.
@@ -386,7 +406,7 @@ the screen.
 |      Toca un año para activarlo. Nada    |
 |      se borra.                           |
 +------------------------------------------+
-|  2026  (ACTUAL)               Periodos > |
+|  2026  (ACTIVO)               Periodos > |
 |  1 mar – 20 dic · 4 bimestres            |
 |  2 secciones                             |
 |  ----------------------------------------|
@@ -423,6 +443,12 @@ Effects: `NavigateToPeriods(id: SchoolYearId)`, `NavigateToSetupYear`,
 `NavigateBack`.
 
 Note: tapping a year switches the active year; it never deletes or archives.
+
+Copy changes (for the implementation ticket)
+
+- `school_years_subtitle`: "Toca un año para activarlo" -> "Toca un año para
+  activarlo. Nada se borra." (states up front that switching years never
+  deletes anything, principle 5).
 
 ---
 
@@ -509,6 +535,11 @@ Intents: `StartDateChanged(id: PeriodId, value: LocalDate)`,
 
 Effects: `NavigateBack`, `ShowMessage(message: PeriodsMessage)`.
 
+Copy changes (for the implementation ticket)
+
+No copy changes: the title, the "ACTUAL" current-Period badge and the visible
+labels already match `setup_periods_title` and `setup_periods_current_badge`.
+
 ---
 
 ## 6. SectionForm
@@ -521,7 +552,8 @@ Entry: Home FAB (create), SectionDetail overflow (rename).
 Shows Grade and name. Primary action: *Guardar*.
 
 Registro layout: `GTopBar` reads "Nueva sección" when `sectionId` is null and
-"Editar sección" with the current title as subtitle otherwise. The grade
+"Editar sección" with `sections_form_subtitle` — grade, section name and
+student count, e.g. "3ro A · 30 alumnos" — as subtitle otherwise. The grade
 `GChoiceChipRow` and the name `GTextField` are the same controls as
 SetupSection. When `canDelete` is true, a "ZONA DE RIESGO" eyebrow groups a
 DESTRUCTIVE `GButton` "Eliminar sección" with one `bodySmall` helper line
@@ -533,7 +565,7 @@ PRIMARY `GButton`.
 ```
 +------------------------------------------+
 |  <   Editar sección                      |
-|      3ro A                               |
+|      3ro A · 30 alumnos                  |
 +------------------------------------------+
 |  GRADO                                   |
 |  +----+ +----+ +----+ +----+ +----+ +--+ |
@@ -557,7 +589,27 @@ PRIMARY `GButton`.
 The confirmation is a `GDialog(isDestructive = true)`. Its content is a
 short statement followed by the three `DeleteConfirmation` counts as
 hairline rows, each count in `NUMERAL` style beside its noun, so the Teacher
-reads what is lost before reaching the `error`-colored confirm.
+reads what is lost before reaching the confirm. `periodLevelCount` is
+`GetSectionDeletionImpactUseCase` summing `GetPeriodLevelCountUseCase` across
+every Period of the Section, not one Period, so its row reads "niveles de
+logro" rather than "niveles del periodo" — matching `sections_form_delete_message`.
+`isDestructive` makes `GDialog`'s confirm a DESTRUCTIVE `GButton`
+("Eliminar"): `GButton.kt` renders that variant as an outlined button
+(`error`-colored 1dp border and text, no fill), not filled and not a plain
+text button; the dismiss ("Cancelar") stays a TEXT `GButton`.
+
+Copy changes (for the implementation ticket)
+
+- `sections_form_delete_dialog_title`: "¿Eliminar la sección?" ->
+  "¿Eliminar 3ro A?" (names the Section, so the Teacher confirms the right
+  one).
+- `sections_form_delete_message`: "Se perderán %1$d estudiantes, %2$d días
+  de asistencia y %3$d niveles de logro." -> "Se borra de forma definitiva:"
+  followed by the three counts as rows ("alumnos", "días de asistencia",
+  "niveles de logro"); "alumnos" matches `sections_form_student_count` and
+  the rest of the app.
+- New helper under the delete button: "Borra alumnos, asistencia y niveles
+  de esta sección. Te preguntamos antes."
 
 ```
 +------------------------------------------+
@@ -568,7 +620,7 @@ reads what is lost before reaching the `error`-colored confirm.
 |  ----------------------------------------|
 |    84  días de asistencia                |
 |  ----------------------------------------|
-|   112  niveles del periodo               |
+|   112  niveles de logro                  |
 |  ----------------------------------------|
 |                    Cancelar    Eliminar  |
 +------------------------------------------+
@@ -622,8 +674,11 @@ The recorded-level note is no longer a banner under the list: when an Area
 with `recordedLevelCount > 0` is off, that count renders as the row's
 `subtitle` (new: `GSwitchRow` needs a subtitle color parameter — its subtitle
 color is fixed to `onSurfaceVariant` today) in `GemaAccents.onWarningContainer`
-text ("12 niveles registrados. Quedan guardados."), next to the switch that
-caused it. Rows with a long name wrap to two lines rather than truncating.
+text ("12 niveles registrados. Quedan guardados y dejan de exportarse."),
+next to the switch that caused it. The note keeps the consequence `sections_areas_recorded_levels`
+states: the levels stay saved and stop being exported. The text-only use of
+`onWarningContainer` follows the note under the color table in `system.md`.
+Rows with a long name wrap to two lines rather than truncating.
 
 ```
 +------------------------------------------+
@@ -645,7 +700,7 @@ caused it. Rows with a long name wrap to two lines rather than truncating.
 |  ----------------------------------------|
 |  Educación Física                 ( OFF) |
 |  12 niveles registrados. Quedan          |
-|  guardados.                              |
+|  guardados y dejan de exportarse.        |
 |  ----------------------------------------|
 |  Educación Religiosa              (ON )  |
 |  ----------------------------------------|
@@ -675,6 +730,17 @@ Intents: `AreaToggled(id: Area, isActive: Boolean)`, `BackClicked`.
 
 Effects: `NavigateBack`, `ShowMessage(message: SectionAreasMessage)`.
 
+Copy changes (for the implementation ticket)
+
+- `sections_areas_title`: "Áreas de %1$s" -> "Áreas · %1$s" (the middle dot
+  is the top-bar separator every Registro screen uses).
+- `sections_areas_subtitle`: "Cada toque se guarda solo" -> "Cada cambio se
+  guarda solo" (a switch is a change, not a toque; AttendanceDay keeps
+  "toque").
+- `sections_areas_recorded_levels`: same words, moved from the footer banner
+  to the subtitle of the row that is off; the plural keeps "Quedan guardados
+  y dejan de exportarse."
+
 ---
 
 ## 8. SectionDetail
@@ -697,9 +763,10 @@ destinations are `GListItem` rows on hairlines with `trailingText` for the
 counts: `studentCount`, `missingPeriodLevelCount` as "N faltan" (new:
 `GListItem` needs a trailing color parameter — `trailingText` color is fixed
 to `onSurfaceVariant` today) in `onWarningContainer` text when greater than
-zero, `activityCount`. The last
-row reads *Entregar*, the goal named in `flows.md` §8, and still sends
-`ExportClicked`.
+zero, `activityCount`. Both pending lines use `onWarningContainer` as text
+on `surface`, the exception the note under the color table in `system.md`
+allows. The last row reads *Entregar*, the goal named in `flows.md` §8, and
+still sends `ExportClicked`.
 
 ```
 +------------------------------------------+
@@ -758,6 +825,16 @@ Effects: `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
 `NavigateToSectionAreas(sectionId: SectionId)`,
 `NavigateToSectionForm(schoolYearId: SchoolYearId, sectionId: SectionId)`,
 `NavigateBack`.
+
+Copy changes (for the implementation ticket)
+
+- `sections_detail_export`: "Exportar" -> "Entregar" (the Teacher's goal,
+  `flows.md` §8; the Export screen title already reads "Entregar").
+- `sections_detail_attendance_today_label`: "ASISTENCIA DE HOY" -> "HOY ·
+  <weekday> <day> de <month>" (the same eyebrow Home renders from
+  `todayLabel`, so both screens read the same line).
+- New status line above the primary button: `todayAttendanceSummary`
+  ("Sin tomar" / "N de M presentes"), no new string.
 
 ---
 

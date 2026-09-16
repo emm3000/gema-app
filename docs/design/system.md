@@ -69,6 +69,12 @@ Note: dark mode is correctness-only — it exists so contrast stays compliant
 in a dark environment, not as a designed alternate theme. There is no theme
 toggle.
 
+Note: `onWarningContainer` and `onErrorContainer` may be used as text on
+`surface` without their container for a one-line pending or overdue status
+(Home's section status line, SectionDetail's status and "N faltan",
+SectionAreas' recorded-levels subtitle). Both pass 7:1 on white. Banners and
+row tints keep the container pair.
+
 ## Typography
 
 IBM Plex Sans, bundled as a variable TTF. Width axis (`wdth`) pinned to 100,
