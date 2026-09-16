@@ -28,6 +28,10 @@ Character count: 68/80.
 ## Full description (max 4000 characters)
 
 ```
+Aviso: Gema es una aplicación independiente. No pertenece, no representa ni
+está afiliada al Ministerio de Educación del Perú (MINEDU), a SIAGIE ni a
+ninguna otra entidad del gobierno.
+
 Gema es un cuaderno de notas digital para docentes de primaria en el Perú.
 Funciona completamente sin internet: no necesita cuenta, no pide inicio de
 sesión y no envía datos a ningún servidor. Toda la información se guarda en
@@ -92,9 +96,25 @@ Gema es gratuita, sin anuncios y sin compras dentro de la aplicación.
 Dirigida a docentes de educación primaria (EBR) en el Perú que necesitan
 llevar asistencia y logros de aprendizaje de forma confiable, sin depender
 de una conexión a internet.
+
+Fuentes oficiales
+
+Las competencias y la escala provienen de publicaciones del MINEDU:
+
+- Currículo Nacional (CNEB):
+  https://www.minedu.gob.pe/curriculo/pdf/curriculo-nacional-2016.pdf
+- Programa Curricular de Primaria:
+  https://www.minedu.gob.pe/curriculo/pdf/programa-nivel-primaria-ebr.pdf
+- SIAGIE: https://siagie.minedu.gob.pe
+- MINEDU: https://www.gob.pe/minedu
 ```
 
-Character count: 3283/4000.
+Character count: 3841/4000.
+
+The opening notice and the "Fuentes oficiales" section answer the Play
+Misleading Claims rejection of 2026-09-14 ("Missing Source Link for
+Government Information"). Keep both whenever the description changes, and
+check that every URL still loads before submitting.
 
 ## Screenshots
 
