@@ -47,7 +47,7 @@ fun ColumnModeBar(
             Column(modifier = Modifier.weight(1f)) {
                 GText(
                     text = heading,
-                    style = GTextStyle.LABEL_SMALL_EMPHASIS,
+                    style = GTextStyle.LABEL_SMALL,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

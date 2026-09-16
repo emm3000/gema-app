@@ -124,7 +124,7 @@ fun ActivityFormScreen(
                                 )
                             }
                         }
-                        GText(text = "Competencias trabajadas".uppercase(), style = GTextStyle.LABEL_SMALL_EMPHASIS)
+                        GText(text = "Competencias trabajadas".uppercase(), style = GTextStyle.LABEL_SMALL)
                     }
                 }
                 state.competencyGroups.forEach { group ->

@@ -28,7 +28,7 @@ fun GGroupHeader(
     count: Int? = null,
     isExpanded: Boolean? = null,
     onClick: (() -> Unit)? = null,
-    titleStyle: GTextStyle = GTextStyle.LABEL_SMALL_EMPHASIS,
+    titleStyle: GTextStyle = GTextStyle.LABEL_SMALL,
     titleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     countInTitle: Boolean = true,

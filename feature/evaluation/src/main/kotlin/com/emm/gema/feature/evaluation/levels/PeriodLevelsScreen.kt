@@ -200,7 +200,7 @@ private fun GridHeader(
             modifier = Modifier
                 .width(GemaSpacing.gridNameColumnWidth)
                 .padding(horizontal = GemaSpacing.medium),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(

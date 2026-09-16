@@ -119,7 +119,7 @@ private fun RestoreSection(state: BackupUiState, onIntent: (BackupUiIntent) -> U
     Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
         GText(
             text = stringResource(R.string.backup_restore_title),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
         )
         GButton(
             text = stringResource(R.string.backup_restore_choose),
@@ -144,7 +144,7 @@ private fun ReminderSection(state: BackupUiState, onIntent: (BackupUiIntent) -> 
     ) {
         GText(
             text = stringResource(R.string.backup_reminder_label),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,

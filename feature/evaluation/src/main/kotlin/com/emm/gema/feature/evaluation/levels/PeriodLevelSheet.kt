@@ -38,7 +38,7 @@ fun PeriodLevelSheet(
     ) {
         GText(
             text = stringResource(R.string.period_levels_sheet_label_achievement_level),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GLevelPicker(
@@ -50,7 +50,7 @@ fun PeriodLevelSheet(
         )
         GText(
             text = stringResource(R.string.period_levels_sheet_label_unworked),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(
@@ -70,7 +70,7 @@ fun PeriodLevelSheet(
         }
         GText(
             text = stringResource(R.string.period_levels_sheet_label_conclusion),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         val conclusionHint: String = stringResource(R.string.period_levels_sheet_conclusion_hint)
@@ -86,7 +86,7 @@ fun PeriodLevelSheet(
         if (sheet.evidence.isNotEmpty()) {
             GText(
                 text = stringResource(R.string.period_levels_sheet_label_evidence),
-                style = GTextStyle.LABEL_SMALL_EMPHASIS,
+                style = GTextStyle.LABEL_SMALL,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
