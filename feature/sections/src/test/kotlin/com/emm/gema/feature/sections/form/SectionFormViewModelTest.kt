@@ -182,6 +182,26 @@ class SectionFormViewModelTest {
     }
 
     @Test
+    fun `an empty section still confirms deletion with zero counts`() {
+        val viewModel: SectionFormViewModel = viewModelFor(existing.id)
+
+        viewModel.onIntent(SectionFormUiIntent.DeleteClicked)
+
+        assertThat(viewModel.state.value.deleteConfirmation).isEqualTo(DeleteConfirmation(0, 0, 0))
+    }
+
+    @Test
+    fun `going back emits the navigate back effect`() = runTest {
+        val viewModel: SectionFormViewModel = viewModelFor(existing.id)
+
+        viewModel.effects.test {
+            viewModel.onIntent(SectionFormUiIntent.BackClicked)
+
+            assertThat(awaitItem()).isEqualTo(SectionFormUiEffect.NavigateBack)
+        }
+    }
+
+    @Test
     fun `dismissing the confirmation keeps the section`() {
         val viewModel: SectionFormViewModel = viewModelFor(existing.id)
 
