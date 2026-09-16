@@ -229,6 +229,39 @@ class SectionDetailViewModelTest {
     }
 
     @Test
+    fun `the activities row opens the activity list of this section`() = runTest {
+        val viewModel: SectionDetailViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(SectionDetailUiIntent.ActivitiesClicked)
+
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToActivities(sectionId))
+        }
+    }
+
+    @Test
+    fun `the export row opens the export flow of this section`() = runTest {
+        val viewModel: SectionDetailViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(SectionDetailUiIntent.ExportClicked)
+
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateToExport(sectionId))
+        }
+    }
+
+    @Test
+    fun `the back action leaves the hub`() = runTest {
+        val viewModel: SectionDetailViewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(SectionDetailUiIntent.BackClicked)
+
+            assertThat(awaitItem()).isEqualTo(SectionDetailUiEffect.NavigateBack)
+        }
+    }
+
+    @Test
     fun `the attendance row and the primary action both open today`() = runTest {
         val viewModel: SectionDetailViewModel = viewModel()
 

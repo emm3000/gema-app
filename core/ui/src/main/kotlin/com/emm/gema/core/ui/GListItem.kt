@@ -35,6 +35,7 @@ fun GListItem(
     titleLeading: (@Composable () -> Unit)? = null,
     titleTrailing: (@Composable () -> Unit)? = null,
     trailingText: String? = null,
+    trailingTextColor: Color? = null,
     hasChevron: Boolean = false,
     showDivider: Boolean = true,
     onClick: (() -> Unit)? = null,
@@ -61,6 +62,7 @@ fun GListItem(
                 titleLeading = titleLeading,
                 titleTrailing = titleTrailing,
                 trailingText = trailingText,
+                trailingTextColor = trailingTextColor,
                 hasChevron = hasChevron,
                 showDivider = showDivider,
                 trailing = trailing,
@@ -77,6 +79,7 @@ fun GListItem(
                 titleLeading = titleLeading,
                 titleTrailing = titleTrailing,
                 trailingText = trailingText,
+                trailingTextColor = trailingTextColor,
                 hasChevron = hasChevron,
                 showDivider = showDivider,
                 trailing = trailing,
@@ -95,6 +98,7 @@ private fun GListItemBody(
     titleLeading: (@Composable () -> Unit)?,
     titleTrailing: (@Composable () -> Unit)?,
     trailingText: String?,
+    trailingTextColor: Color?,
     hasChevron: Boolean,
     showDivider: Boolean,
     trailing: (@Composable () -> Unit)?,
@@ -123,6 +127,7 @@ private fun GListItemBody(
     }
     val trailingContent: (@Composable () -> Unit)? = gListItemTrailing(
         trailingText = trailingText,
+        trailingTextColor = trailingTextColor,
         hasChevron = hasChevron,
         trailing = trailing,
     )
@@ -156,6 +161,7 @@ private fun GListItemBody(
 
 private fun gListItemTrailing(
     trailingText: String?,
+    trailingTextColor: Color?,
     hasChevron: Boolean,
     trailing: (@Composable () -> Unit)?,
 ): (@Composable () -> Unit)? {
@@ -169,7 +175,7 @@ private fun gListItemTrailing(
                 Text(
                     text = trailingText,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = trailingTextColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             trailing?.invoke()
