@@ -6,4 +6,6 @@ fun gradeOrdinalLabel(number: Int): String = gradeOrdinals[number - 1]
 
 fun Grade.label(): String = gradeOrdinalLabel(number)
 
-fun Section.title(): String = "${grade.label()} $name"
+fun sectionTitle(grade: Grade, name: String): String = "${grade.label()} $name"
+
+fun Section.title(): String = sectionTitle(grade, name)

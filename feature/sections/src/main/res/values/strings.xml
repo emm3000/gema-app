@@ -73,6 +73,11 @@
         <item quantity="other">niveles de logro</item>
     </plurals>
 
+    <plurals name="sections_form_delete_student_count">
+        <item quantity="one">%d alumno</item>
+        <item quantity="other">%d alumnos</item>
+    </plurals>
+
     <plurals name="sections_form_delete_attendance_days_count">
         <item quantity="one">%d día de asistencia</item>
         <item quantity="other">%d días de asistencia</item>
