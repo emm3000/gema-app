@@ -12,7 +12,7 @@ metadata:
 
 ## Activation Contract
 
-Run when the owner invokes `/wave` with one or more issue numbers. Each number becomes one peer session and one dispatch. Stop and report if any number is not an open `ready-for-agent` issue.
+Run when the owner invokes `/wave` with one or more issue numbers, or when the orchestrator starts the next wave itself after the previous wave is fully merged. Each number becomes one peer session and one dispatch. Stop and report if any number is not an open `ready-for-agent` issue.
 
 ## Hard Rules
 
@@ -32,7 +32,7 @@ Run when the owner invokes `/wave` with one or more issue numbers. Each number b
 ## Execution Steps
 
 1. For each issue run `gh issue view <n> --json title,labels,body`. Confirm the label and derive a short lowercase pane name from the title (one word, no digits).
-2. Classify each ticket with the table. Tell the owner the plan in one line per ticket: `@<name> #<n> <model>:<effort>`.
+2. Classify each ticket with the table. The table binds: deviate only with a one-line reason stated in the plan, never silently. Tell the owner the plan in one line per ticket: `@<name> #<n> <model>:<effort>`, before booting anything.
 3. Run `scripts/gema-wave <name>:<model>:<effort> ...` once with every ticket.
 4. Poll `ListAgents` until every pane name is listed, at most 60 seconds.
 5. Send each peer one dispatch built from the playbook checklist: issue, docs to read, branch `<type>/<n>-<slug>`, its worktree `../gema-<name>`, the acceptance-criteria line, gates, TDD or visual check per the table, `Closes #<n>`, no merge, reply with the PR URL. Ask for `notify_when_idle`.
