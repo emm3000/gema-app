@@ -4,6 +4,8 @@
     <string name="backup_last_title">ÚLTIMO RESPALDO</string>
     <string name="backup_last_never">Todavía no creaste ningún respaldo</string>
     <string name="backup_last_today">hoy</string>
+    <string name="backup_last_date_suffix">" · %1$s"</string>
+    <string name="backup_last_overdue_description">Respaldo atrasado</string>
     <string name="backup_create">Crear respaldo</string>
     <string name="backup_create_hint">Se crea el archivo y se abre el menú para compartirlo: WhatsApp, Drive, Bluetooth o USB.</string>
     <string name="backup_restore_title">RESTAURAR</string>

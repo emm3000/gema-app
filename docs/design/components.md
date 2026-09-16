@@ -753,7 +753,7 @@ enum class GBannerActionStyle { BUTTON, LINK }
 
 @Composable
 fun GBanner(
-    text: String,
+    text: String?,
     modifier: Modifier = Modifier,
     title: String? = null,
     tone: GBannerTone = GBannerTone.INFO,
@@ -762,8 +762,14 @@ fun GBanner(
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null,
     actionStyle: GBannerActionStyle = GBannerActionStyle.BUTTON,
+    message: (@Composable () -> Unit)? = null,
 )
 ```
+
+`message` is an optional slot that replaces the `title` / `text` pair when the
+message needs mixed `GText` styles, e.g. the Backup strip's `LABEL_SMALL`
+eyebrow over a `NUMERAL` elapsed label with a `BODY_MEDIUM` date. Pass
+`text = null` with it. Slot content inherits the tone's content color.
 
 `icon` renders a leading glyph when the mockup calls for one; `hasLeadingDot`
 renders an 8dp filled circle instead, for a status banner that has no glyph
