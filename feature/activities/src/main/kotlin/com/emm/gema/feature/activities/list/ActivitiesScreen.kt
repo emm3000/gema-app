@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.MaterialTheme
@@ -36,12 +38,14 @@ fun ActivitiesScreen(
     modifier: Modifier = Modifier,
 ) {
     val currentPeriodBadge: String = stringResource(R.string.activities_list_badge_current)
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = stringResource(R.string.activities_list_title, state.sectionTitle),
                 subtitle = stringResource(R.string.activities_list_subtitle),
                 onBackClick = { onIntent(ActivitiesUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
             )
         },
         fab = {
@@ -76,7 +80,7 @@ fun ActivitiesScreen(
                     onActionClick = { onIntent(ActivitiesUiIntent.AddActivityClicked) },
                 )
             } else {
-                LazyColumn(contentPadding = PaddingValues(vertical = GemaSpacing.small)) {
+                LazyColumn(state = listState, contentPadding = PaddingValues(vertical = GemaSpacing.small)) {
                     items(state.activities, key = { it.id.value }) { row ->
                         GListItem(
                             title = row.name,

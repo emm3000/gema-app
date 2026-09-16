@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,11 +46,13 @@ fun SetupYearScreen(
     onIntent: (SetupYearUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "",
                 onBackClick = { onIntent(SetupYearUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
             )
         },
         modifier = modifier,
@@ -62,6 +66,7 @@ fun SetupYearScreen(
         },
     ) { padding: PaddingValues ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),

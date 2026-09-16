@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -57,12 +59,14 @@ fun AttendanceDayScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "Asistencia · ${state.sectionTitle}",
                 subtitle = stringResource(R.string.attendance_day_subtitle_saves_itself),
                 onBackClick = { onIntent(AttendanceDayUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
                 actions = {
                     GCalendarIconButton(
                         value = state.date,
@@ -82,6 +86,7 @@ fun AttendanceDayScreen(
                 .padding(padding),
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),

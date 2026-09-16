@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Download
@@ -49,12 +51,14 @@ fun StudentsScreen(
         state.withdrawnStudents.size,
         state.withdrawnStudents.size,
     )
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "Alumnos · ${state.sectionTitle}",
                 subtitle = "$activeCountLabel · $withdrawnCountLabel",
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
                 actions = {
                     GButton(
                         text = "Importar",
@@ -76,6 +80,7 @@ fun StudentsScreen(
         modifier = modifier,
     ) { padding: PaddingValues ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),

@@ -1,5 +1,6 @@
 package com.emm.gema.feature.setup.section
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,11 +43,13 @@ fun SetupSectionScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    val scrollState: ScrollState = rememberScrollState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "",
                 onBackClick = { onIntent(SetupSectionUiIntent.BackClicked) },
+                showHairline = scrollState.value > 0,
             )
         },
         modifier = modifier,
@@ -64,7 +67,7 @@ fun SetupSectionScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(vertical = GemaSpacing.screenGutter),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {

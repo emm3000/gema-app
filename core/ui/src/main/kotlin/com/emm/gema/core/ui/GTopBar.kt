@@ -10,8 +10,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaTheme
 
 @Composable
@@ -22,9 +26,20 @@ fun GTopBar(
     onBackClick: (() -> Unit)? = null,
     titleContent: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
+    showHairline: Boolean = false,
 ) {
+    val hairlineColor: Color = MaterialTheme.colorScheme.outlineVariant
     TopAppBar(
-        modifier = modifier,
+        modifier = modifier.drawBehind {
+            if (showHairline) {
+                drawLine(
+                    color = hairlineColor,
+                    start = Offset(x = 0f, y = size.height),
+                    end = Offset(x = size.width, y = size.height),
+                    strokeWidth = GemaBorder.hairline.toPx(),
+                )
+            }
+        },
         title = titleContent ?: {
             Column {
                 Text(text = title, style = MaterialTheme.typography.titleMedium)
@@ -59,5 +74,13 @@ fun GTopBar(
 private fun GTopBarPreview() {
     GemaTheme {
         GTopBar(title = "Respaldo", subtitle = "Último hace 12 días", onBackClick = {})
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GTopBarScrolledPreview() {
+    GemaTheme {
+        GTopBar(title = "Respaldo", subtitle = "Último hace 12 días", onBackClick = {}, showHairline = true)
     }
 }
