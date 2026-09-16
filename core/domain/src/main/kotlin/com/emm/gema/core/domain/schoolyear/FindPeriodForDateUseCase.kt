@@ -7,5 +7,5 @@ class FindPeriodForDateUseCase(
 ) {
 
     suspend operator fun invoke(schoolYearId: SchoolYearId, date: LocalDate): Period? =
-        repository.findBySchoolYear(schoolYearId).find { it.contains(date) }
+        repository.findBySchoolYear(schoolYearId).periodFor(date)
 }
