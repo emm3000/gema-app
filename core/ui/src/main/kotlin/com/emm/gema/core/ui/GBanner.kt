@@ -60,17 +60,9 @@ fun GBanner(
             GBannerLeading(icon = icon, hasLeadingDot = hasLeadingDot, tone = tone)
             Column(modifier = Modifier.weight(1f)) {
                 GBannerMessage(title = title, text = text)
-                if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.BUTTON) {
-                    Spacer(modifier = Modifier.height(GemaSpacing.small))
-                    GButton(text = actionText, onClick = onActionClick, variant = GButtonVariant.TEXT)
-                }
-                if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.STACKED_LINK) {
-                    GBannerStackedLinkAction(text = actionText, onClick = onActionClick)
-                }
+                GBannerColumnAction(actionText = actionText, onActionClick = onActionClick, actionStyle = actionStyle)
             }
-            if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.LINK) {
-                GBannerLinkAction(text = actionText, onClick = onActionClick)
-            }
+            GBannerSideAction(actionText = actionText, onActionClick = onActionClick, actionStyle = actionStyle)
         }
     }
 }
@@ -86,6 +78,26 @@ private fun GBannerLeading(icon: ImageVector?, hasLeadingDot: Boolean, tone: GBa
                 .clip(CircleShape)
                 .background(dotColorOf(tone)),
         )
+    }
+}
+
+@Composable
+private fun GBannerColumnAction(actionText: String?, onActionClick: (() -> Unit)?, actionStyle: GBannerActionStyle) {
+    if (actionText == null || onActionClick == null) return
+    when (actionStyle) {
+        GBannerActionStyle.BUTTON -> {
+            Spacer(modifier = Modifier.height(GemaSpacing.small))
+            GButton(text = actionText, onClick = onActionClick, variant = GButtonVariant.TEXT)
+        }
+        GBannerActionStyle.STACKED_LINK -> GBannerStackedLinkAction(text = actionText, onClick = onActionClick)
+        GBannerActionStyle.LINK -> Unit
+    }
+}
+
+@Composable
+private fun GBannerSideAction(actionText: String?, onActionClick: (() -> Unit)?, actionStyle: GBannerActionStyle) {
+    if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.LINK) {
+        GBannerLinkAction(text = actionText, onClick = onActionClick)
     }
 }
 
