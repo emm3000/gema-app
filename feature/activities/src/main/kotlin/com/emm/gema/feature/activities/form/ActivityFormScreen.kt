@@ -58,7 +58,11 @@ fun ActivityFormScreen(
     GScreen(
         topBar = {
             GTopBar(
-                title = if (state.activityId == null) "Nueva actividad" else "Editar actividad",
+                title = if (state.activityId == null) {
+                    stringResource(R.string.activity_form_title_new)
+                } else {
+                    stringResource(R.string.activity_form_title_edit)
+                },
                 subtitle = activityFormSubtitle(state),
                 onBackClick = { onIntent(ActivityFormUiIntent.BackClicked) },
                 isContentScrolled = listState.canScrollBackward,
