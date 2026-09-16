@@ -51,41 +51,63 @@ fun GListItem(
             )
         }
     }
+    val leadingContent: (@Composable () -> Unit)? = gListItemLeading(leadingIcon, leadingText)
+    val trailingContent: (@Composable () -> Unit)? = gListItemTrailing(
+        trailingText = trailingText,
+        trailingTextColor = trailingTextColor,
+        hasChevron = hasChevron,
+        trailing = trailing,
+    )
+    GListItemSurface(onClick = onClick, modifier = heightModifier, color = MaterialTheme.colorScheme.surface) {
+        GListItemBody(
+            title = title,
+            titleStyle = titleStyle,
+            subtitleContent = subtitleContent,
+            leadingContent = leadingContent,
+            titleLeading = titleLeading,
+            titleTrailing = titleTrailing,
+            trailingContent = trailingContent,
+            showDivider = showDivider,
+        )
+    }
+}
+
+@Composable
+private fun GListItemSurface(
+    onClick: (() -> Unit)?,
+    modifier: Modifier,
+    color: Color,
+    content: @Composable () -> Unit,
+) {
     if (onClick != null) {
-        Surface(onClick = onClick, modifier = heightModifier, color = MaterialTheme.colorScheme.surface) {
-            GListItemBody(
-                title = title,
-                titleStyle = titleStyle,
-                subtitleContent = subtitleContent,
-                leadingText = leadingText,
-                leadingIcon = leadingIcon,
-                titleLeading = titleLeading,
-                titleTrailing = titleTrailing,
-                trailingText = trailingText,
-                trailingTextColor = trailingTextColor,
-                hasChevron = hasChevron,
-                showDivider = showDivider,
-                trailing = trailing,
-            )
-        }
+        Surface(onClick = onClick, modifier = modifier, color = color, content = content)
     } else {
-        Surface(modifier = heightModifier, color = MaterialTheme.colorScheme.surface) {
-            GListItemBody(
-                title = title,
-                titleStyle = titleStyle,
-                subtitleContent = subtitleContent,
-                leadingText = leadingText,
-                leadingIcon = leadingIcon,
-                titleLeading = titleLeading,
-                titleTrailing = titleTrailing,
-                trailingText = trailingText,
-                trailingTextColor = trailingTextColor,
-                hasChevron = hasChevron,
-                showDivider = showDivider,
-                trailing = trailing,
+        Surface(modifier = modifier, color = color, content = content)
+    }
+}
+
+@Composable
+private fun gListItemLeading(leadingIcon: ImageVector?, leadingText: String?): (@Composable () -> Unit)? = when {
+    leadingIcon != null -> {
+        {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
+    leadingText != null -> {
+        {
+            Text(
+                text = leadingText,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.width(GemaSpacing.leadingLabelWidth),
+            )
+        }
+    }
+    else -> null
 }
 
 @Composable
@@ -93,45 +115,12 @@ private fun GListItemBody(
     title: String,
     titleStyle: GTextStyle,
     subtitleContent: (@Composable () -> Unit)?,
-    leadingText: String?,
-    leadingIcon: ImageVector?,
+    leadingContent: (@Composable () -> Unit)?,
     titleLeading: (@Composable () -> Unit)?,
     titleTrailing: (@Composable () -> Unit)?,
-    trailingText: String?,
-    trailingTextColor: Color?,
-    hasChevron: Boolean,
+    trailingContent: (@Composable () -> Unit)?,
     showDivider: Boolean,
-    trailing: (@Composable () -> Unit)?,
 ) {
-    val leadingContent: (@Composable () -> Unit)? = when {
-        leadingIcon != null -> {
-            {
-                Icon(
-                    imageVector = leadingIcon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        leadingText != null -> {
-            {
-                Text(
-                    text = leadingText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.width(GemaSpacing.leadingLabelWidth),
-                )
-            }
-        }
-        else -> null
-    }
-    val trailingContent: (@Composable () -> Unit)? = gListItemTrailing(
-        trailingText = trailingText,
-        trailingTextColor = trailingTextColor,
-        hasChevron = hasChevron,
-        trailing = trailing,
-    )
-
     Column {
         ListItem(
             leadingContent = leadingContent,
