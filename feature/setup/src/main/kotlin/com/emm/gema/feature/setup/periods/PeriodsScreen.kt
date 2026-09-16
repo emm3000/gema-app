@@ -89,7 +89,7 @@ fun PeriodsScreen(
                             .fillMaxWidth()
                             .padding(bottom = GemaSpacing.medium),
                         tone = GBannerTone.ERROR,
-                        actionText = "Entendido",
+                        actionText = stringResource(R.string.setup_message_understood),
                         onActionClick = onMessageDismissed,
                     )
                 }

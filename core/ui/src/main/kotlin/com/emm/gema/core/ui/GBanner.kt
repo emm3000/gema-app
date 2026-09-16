@@ -139,6 +139,7 @@ private fun GBannerStackedLinkAction(text: String, onClick: () -> Unit) {
         ) {
             Text(
                 text = text,
+                modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline,
@@ -207,6 +208,19 @@ private fun GBannerStackedLinkPreview() {
         GBanner(
             text = "Todas las áreas quedan activas.",
             actionText = "No dicto todas las áreas",
+            onActionClick = {},
+            actionStyle = GBannerActionStyle.STACKED_LINK,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GBannerStackedLinkLongLabelPreview() {
+    GemaTheme {
+        GBanner(
+            text = "Todas las áreas quedan activas.",
+            actionText = "No dicto todas las áreas curriculares de este grado en esta sección",
             onActionClick = {},
             actionStyle = GBannerActionStyle.STACKED_LINK,
         )
