@@ -53,7 +53,7 @@ fun SetupSectionScreen(
         modifier = modifier,
         bottomAction = {
             GButton(
-                text = "Terminar",
+                text = stringResource(R.string.setup_section_finish),
                 onClick = { onIntent(SetupSectionUiIntent.FinishClicked) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = state.canFinish,
@@ -79,7 +79,7 @@ fun SetupSectionScreen(
                     text = message,
                     modifier = Modifier.fillMaxWidth(),
                     tone = GBannerTone.ERROR,
-                    actionText = "Entendido",
+                    actionText = stringResource(R.string.setup_message_understood),
                     onActionClick = onMessageDismissed,
                 )
             }

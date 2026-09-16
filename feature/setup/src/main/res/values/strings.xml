@@ -35,4 +35,6 @@
     <string name="setup_periods_title">Periodos %1$s</string>
     <string name="setup_periods_current_badge">ACTUAL</string>
     <string name="setup_periods_date_field_content_description">%1$s, %2$s</string>
+    <string name="setup_section_finish">Terminar</string>
+    <string name="setup_message_understood">Entendido</string>
 </resources>
