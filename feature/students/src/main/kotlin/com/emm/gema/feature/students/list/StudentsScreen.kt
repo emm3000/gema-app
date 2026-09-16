@@ -12,9 +12,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
@@ -27,6 +30,7 @@ import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GEmptyState
 import com.emm.gema.core.ui.GExtendedFab
 import com.emm.gema.core.ui.GGroupHeader
+import com.emm.gema.core.ui.GIconButton
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSearchField
@@ -60,11 +64,15 @@ fun StudentsScreen(
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
                 isContentScrolled = listState.canScrollBackward,
                 actions = {
-                    GButton(
-                        text = "Importar",
-                        onClick = { onIntent(StudentsUiIntent.ImportClicked) },
-                        variant = GButtonVariant.SECONDARY,
+                    GIconButton(
+                        icon = Icons.Filled.Search,
+                        contentDescription = "Buscar",
+                        onClick = { onIntent(StudentsUiIntent.SearchToggled) },
+                    )
+                    GIconButton(
                         icon = Icons.Filled.Download,
+                        contentDescription = "Importar",
+                        onClick = { onIntent(StudentsUiIntent.ImportClicked) },
                     )
                 },
             )
@@ -100,15 +108,17 @@ fun StudentsScreen(
                     )
                 }
             }
-            item {
-                GSearchField(
-                    query = state.query,
-                    onQueryChange = { onIntent(StudentsUiIntent.QueryChanged(it)) },
-                    placeholder = "Buscar",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = GemaSpacing.screenGutter),
-                )
+            if (state.isSearchVisible) {
+                item {
+                    GSearchField(
+                        query = state.query,
+                        onQueryChange = { onIntent(StudentsUiIntent.QueryChanged(it)) },
+                        placeholder = "Buscar por apellido",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = GemaSpacing.screenGutter),
+                    )
+                }
             }
             if (state.isEmpty) {
                 item {
@@ -126,6 +136,7 @@ fun StudentsScreen(
                     title = row.displayName,
                     modifier = Modifier.fillMaxWidth(),
                     subtitle = row.studentCode,
+                    subtitleStyle = studentCodeSubtitleStyle(),
                     hasChevron = true,
                     onClick = { onIntent(StudentsUiIntent.StudentClicked(row.id)) },
                 )
@@ -137,6 +148,7 @@ fun StudentsScreen(
                         count = state.withdrawnStudents.size,
                         isExpanded = state.isWithdrawnExpanded,
                         onClick = { onIntent(StudentsUiIntent.WithdrawnSectionToggled) },
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     )
                 }
             }
@@ -148,6 +160,10 @@ fun StudentsScreen(
         }
     }
 }
+
+@Composable
+private fun studentCodeSubtitleStyle(): TextStyle =
+    MaterialTheme.typography.bodySmall.copy(fontFeatureSettings = "tnum")
 
 @Composable
 private fun WithdrawnStudentItem(

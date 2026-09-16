@@ -60,11 +60,19 @@ class StudentsViewModel(
             is StudentsUiIntent.ImportFilePicked ->
                 emit(StudentsUiEffect.NavigateToImportPreview(sectionId, intent.uri))
             StudentsUiIntent.ImportClicked -> emit(StudentsUiEffect.OpenDocumentPicker(siagieMimeTypes))
+            StudentsUiIntent.SearchToggled -> toggleSearch()
             StudentsUiIntent.AddStudentClicked ->
                 emit(StudentsUiEffect.NavigateToStudentForm(sectionId, null))
             StudentsUiIntent.WithdrawnSectionToggled ->
                 update { it.copy(isWithdrawnExpanded = !it.isWithdrawnExpanded) }
             StudentsUiIntent.BackClicked -> emit(StudentsUiEffect.NavigateBack)
+        }
+    }
+
+    private fun toggleSearch() {
+        update { current ->
+            val isSearchVisible: Boolean = !current.isSearchVisible
+            current.copy(isSearchVisible = isSearchVisible, query = if (isSearchVisible) current.query else "")
         }
     }
 

@@ -106,6 +106,23 @@ class StudentsViewModelTest {
     }
 
     @Test
+    fun `search is hidden until toggled, and hiding it clears the query`() {
+        val viewModel: StudentsViewModel = viewModel()
+
+        assertThat(viewModel.state.value.isSearchVisible).isFalse()
+
+        viewModel.onIntent(StudentsUiIntent.SearchToggled)
+        assertThat(viewModel.state.value.isSearchVisible).isTrue()
+
+        viewModel.onIntent(StudentsUiIntent.QueryChanged("acosta"))
+        assertThat(viewModel.state.value.query).isEqualTo("acosta")
+
+        viewModel.onIntent(StudentsUiIntent.SearchToggled)
+        assertThat(viewModel.state.value.isSearchVisible).isFalse()
+        assertThat(viewModel.state.value.query).isEmpty()
+    }
+
+    @Test
     fun `the withdrawn section is collapsed until it is tapped`() {
         val viewModel: StudentsViewModel = viewModel()
 

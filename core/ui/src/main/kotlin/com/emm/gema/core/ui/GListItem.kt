@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
@@ -29,6 +30,7 @@ fun GListItem(
     titleStyle: GTextStyle = GTextStyle.BODY_LARGE,
     subtitle: String? = null,
     subtitleColor: Color? = null,
+    subtitleStyle: TextStyle? = null,
     leadingText: String? = null,
     leadingIcon: ImageVector? = null,
     titleLeading: (@Composable () -> Unit)? = null,
@@ -39,13 +41,21 @@ fun GListItem(
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val heightModifier: Modifier = modifier.heightIn(min = GemaSpacing.minimumTouchTarget)
+    val subtitleContent: (@Composable () -> Unit)? = subtitle?.let { text ->
+        {
+            Text(
+                text = text,
+                style = subtitleStyle ?: MaterialTheme.typography.bodyMedium,
+                color = subtitleColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
     if (onClick != null) {
         Surface(onClick = onClick, modifier = heightModifier, color = MaterialTheme.colorScheme.surface) {
             GListItemBody(
                 title = title,
                 titleStyle = titleStyle,
-                subtitle = subtitle,
-                subtitleColor = subtitleColor,
+                subtitleContent = subtitleContent,
                 leadingText = leadingText,
                 leadingIcon = leadingIcon,
                 titleLeading = titleLeading,
@@ -60,8 +70,7 @@ fun GListItem(
             GListItemBody(
                 title = title,
                 titleStyle = titleStyle,
-                subtitle = subtitle,
-                subtitleColor = subtitleColor,
+                subtitleContent = subtitleContent,
                 leadingText = leadingText,
                 leadingIcon = leadingIcon,
                 titleLeading = titleLeading,
@@ -78,8 +87,7 @@ fun GListItem(
 private fun GListItemBody(
     title: String,
     titleStyle: GTextStyle,
-    subtitle: String?,
-    subtitleColor: Color?,
+    subtitleContent: (@Composable () -> Unit)?,
     leadingText: String?,
     leadingIcon: ImageVector?,
     titleLeading: (@Composable () -> Unit)?,
@@ -88,15 +96,6 @@ private fun GListItemBody(
     showDivider: Boolean,
     trailing: (@Composable () -> Unit)?,
 ) {
-    val subtitleContent: (@Composable () -> Unit)? = subtitle?.let { text ->
-        {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = subtitleColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
     val leadingContent: (@Composable () -> Unit)? = when {
         leadingIcon != null -> {
             {

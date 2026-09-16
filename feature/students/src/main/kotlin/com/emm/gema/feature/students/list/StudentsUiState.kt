@@ -7,6 +7,7 @@ data class StudentsUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
     val query: String = "",
+    val isSearchVisible: Boolean = false,
     val activeStudents: List<StudentRow> = emptyList(),
     val withdrawnStudents: List<StudentRow> = emptyList(),
     val isWithdrawnExpanded: Boolean = false,
