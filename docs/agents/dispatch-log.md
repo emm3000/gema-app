@@ -28,3 +28,6 @@ Last 20 PRs, oldest first. Model:effort is what actually ran, which may differ f
 | #275 | #255 | 4 | sonnet:medium | FIX FIRST | checklist: 3 glyph-banner screenshots missing |
 | #279 | #254 | 1 | sonnet:low | MERGE | |
 | #280 | #268 | 3 | sonnet:medium | MERGE | |
+| #281 | #266 | 4 | sonnet:medium | MERGE | ran below table row (additive `GButton` parameter, one screen) |
+| #285 | #267 | 1 | sonnet:low | MERGE | |
+| #286 | #271 | 4 | sonnet:medium | FIX FIRST | checklist: TalkBack screenshot focused the wrong node; ran below table row |
