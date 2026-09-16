@@ -40,8 +40,7 @@ fun GSearchField(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(GemaSpacing.minimumTouchTarget)
-            .semantics { contentDescription = placeholder },
+            .height(GemaSpacing.minimumTouchTarget),
         shape = GemaShapes.control,
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(GemaBorder.hairline, MaterialTheme.colorScheme.outline),
@@ -69,7 +68,9 @@ fun GSearchField(
                 BasicTextField(
                     value = query,
                     onValueChange = onQueryChange,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = placeholder },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

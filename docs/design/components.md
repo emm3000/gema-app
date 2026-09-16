@@ -396,6 +396,7 @@ fun GListItem(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    subtitleStyle: GTextStyle = GTextStyle.BODY_MEDIUM,
     leadingText: String? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,

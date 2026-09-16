@@ -41,7 +41,9 @@ internal fun GTextStyle.toTextStyle(): TextStyle = when (this) {
         fontFeatureSettings = "tnum",
     )
     GTextStyle.BODY_LARGE -> MaterialTheme.typography.bodyLarge
+    GTextStyle.BODY_MEDIUM -> MaterialTheme.typography.bodyMedium
     GTextStyle.BODY_SMALL -> MaterialTheme.typography.bodySmall
+    GTextStyle.BODY_SMALL_TABULAR -> MaterialTheme.typography.bodySmall.copy(fontFeatureSettings = "tnum")
     GTextStyle.LABEL_LARGE_EMPHASIS -> MaterialTheme.typography.labelLarge.copy(
         fontWeight = FontWeight.SemiBold,
     )

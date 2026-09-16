@@ -847,9 +847,10 @@ Entry: SectionDetail. Lists Students by surname.
 Primary action: `GExtendedFab` *Agregar alumno*.
 
 Registro layout: `GTopBar` "Alumnos · 3ro A" with the active count and the
-sort rule as subtitle ("30 activos · por apellido"), and *Importar* as its one
-action, a glyph-only `GIconButton` (new: today it is a SECONDARY `GButton`
-with a label and an icon; the glyph keeps the top bar quiet and the FAB as
+sort rule as subtitle ("30 activos · por apellido"), and two glyph-only
+`GIconButton` actions: a search trigger (dispatches `SearchToggled`) next to
+*Importar* (new: today *Importar* is the only action, a SECONDARY `GButton`
+with a label and an icon; the glyphs keep the top bar quiet and the FAB as
 the only labelled action). The `GSearchField` (48dp, `surface` fill, 1dp
 `outline` border, `control` radius, placeholder "Buscar por apellido": the
 target `components.md` schedules for the Students ticket; today it is a
@@ -868,7 +869,7 @@ Students ticket (today's default is `surfaceVariant`). The
 
 ```
 +------------------------------------------+
-|  <   Alumnos · 3ro A               [up]  |
+|  <   Alumnos · 3ro A          [search][up]|
 |      30 activos · por apellido           |
 +------------------------------------------+
 |  +------------------------------------+  |
@@ -890,8 +891,8 @@ Students ticket (today's default is `surfaceVariant`). The
 +------------------------------------------+
 ```
 
-The top bar carries *Importar* alone; *Agregar alumno* is the extended FAB,
-bottom-right.
+The top bar carries the search trigger and *Importar*; *Agregar alumno* is
+the extended FAB, bottom-right.
 
 ```kotlin
 data class StudentsUiState(
@@ -914,7 +915,8 @@ data class StudentRow(
 
 Intents: `QueryChanged(value: String)`, `StudentClicked(id: StudentId)`,
 `AddStudentClicked`, `ImportClicked`, `ImportFilePicked(uri: String)`,
-`WithdrawnSectionToggled`, `ReactivateClicked(id: StudentId)`, `BackClicked`.
+`SearchToggled`, `WithdrawnSectionToggled`, `ReactivateClicked(id: StudentId)`,
+`BackClicked`.
 
 Effects: `NavigateToStudentForm(sectionId: SectionId, studentId: StudentId?)`,
 `OpenDocumentPicker(mimeTypes: List<String>)`,
