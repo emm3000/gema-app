@@ -11,4 +11,9 @@
     <string name="student_form_error_missing_name">Escribe los apellidos y nombres</string>
     <string name="student_form_error_missing_withdrawal_date">Elige la fecha de retiro</string>
     <string name="student_form_message_save_failed">No se pudo guardar al alumno</string>
+    <string name="student_form_siagie_origin_note">Viene de la plantilla SIAGIE. Si cambias el código, la exportación no lo encontrará.</string>
+    <string name="student_form_estado_label">ESTADO</string>
+    <string name="student_form_estado_active">Estado: Activo</string>
+    <string name="student_form_estado_withdrawn">Estado: Retirado</string>
+    <string name="student_form_withdrawal_helper">Desde esa fecha deja de aparecer en la asistencia. Nada se borra.</string>
 </resources>

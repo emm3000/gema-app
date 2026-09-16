@@ -9,11 +9,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
@@ -22,7 +27,6 @@ import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
 import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
-import com.emm.gema.core.ui.GCompactNote
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GSegmentOption
@@ -104,21 +108,37 @@ fun StudentFormScreen(
                 errorText = state.fullNameError.asText(),
             )
             if (state.hasSiagieId) {
-                GCompactNote(
-                    text = "Vino de la plantilla SIAGIE. Cambiar el código a mano puede romper la exportación.",
+                GBanner(
+                    text = stringResource(R.string.student_form_siagie_origin_note),
                     modifier = Modifier.fillMaxWidth(),
+                    tone = GBannerTone.INFO,
+                    icon = Icons.Filled.Description,
                 )
             }
-            HorizontalDivider()
-            GText(text = "Estado", style = GTextStyle.LABEL_SMALL, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            GText(
+                text = stringResource(R.string.student_form_estado_label),
+                style = GTextStyle.LABEL_SMALL,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.semantics { heading() },
+            )
             GSegmentedPicker(
                 options = listOf(
-                    GSegmentOption(value = false, label = "Activo", contentDescription = "Activo"),
-                    GSegmentOption(value = true, label = "Retirado", contentDescription = "Retirado"),
+                    GSegmentOption(
+                        value = false,
+                        label = "Activo",
+                        contentDescription = stringResource(R.string.student_form_estado_active),
+                    ),
+                    GSegmentOption(
+                        value = true,
+                        label = "Retirado",
+                        contentDescription = stringResource(R.string.student_form_estado_withdrawn),
+                    ),
                 ),
                 selected = state.isWithdrawn,
                 onSelect = { onIntent(StudentFormUiIntent.WithdrawnToggled(it ?: state.isWithdrawn)) },
                 modifier = Modifier.fillMaxWidth(),
+                activeContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                activeContentColor = MaterialTheme.colorScheme.onSurface,
             )
             if (state.isWithdrawn) {
                 GDateField(
@@ -129,8 +149,10 @@ fun StudentFormScreen(
                     errorText = state.withdrawalDateError.asText(),
                 )
                 GText(
-                    text = "Conserva su asistencia y sus niveles. Deja de aparecer en las listas.",
-                    style = GTextStyle.LABEL_SMALL,
+                    text = stringResource(R.string.student_form_withdrawal_helper),
+                    style = GTextStyle.BODY_SMALL,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 )
             }
         }
