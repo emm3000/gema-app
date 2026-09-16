@@ -19,12 +19,9 @@ class GetMonthlyAttendanceSummaryUseCase(
     ) { students: List<Student>, records: List<AttendanceRecord> ->
         MonthlyAttendanceSummary(
             recordedDayCount = records.map { it.date }.distinct().size,
-            rows = students.filter { it.attends(month) }.orderedByName().map { it.countsOf(records) },
+            rows = students.filter { it.attendsMonth(month) }.orderedByName().map { it.countsOf(records) },
         )
     }
-
-    private fun Student.attends(month: YearMonth): Boolean =
-        withdrawalDate == null || withdrawalDate.isAfter(month.atDay(1))
 
     private fun Student.countsOf(records: List<AttendanceRecord>): StudentAttendanceMonthCount {
         val own: List<AttendanceRecord> = records.filter { it.studentId == id }

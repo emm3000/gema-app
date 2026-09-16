@@ -16,7 +16,7 @@ class ExportMonthlyAttendanceUseCase(
 ) {
 
     suspend operator fun invoke(sectionId: SectionId, month: YearMonth, templateUri: String): AttendanceExportFile {
-        val students: List<Student> = studentRepository.listBySection(sectionId)
+        val students: List<Student> = studentRepository.listBySection(sectionId).filter { it.attendsMonth(month) }
         val records: List<AttendanceRecord> = attendanceRepository.observeBySectionAndMonth(sectionId, month).first()
 
         val entries: List<AttendanceExportEntry> = students.map { student ->

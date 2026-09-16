@@ -3,9 +3,6 @@ package com.emm.gema.core.domain.attendance
 import com.emm.gema.core.domain.fake.InMemoryAttendanceRepository
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
 import com.emm.gema.core.domain.section.SectionId
-import com.emm.gema.core.domain.siagie.AttendanceExportEntry
-import com.emm.gema.core.domain.siagie.AttendanceExportFile
-import com.emm.gema.core.domain.siagie.MonthlyAttendanceExporter
 import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
@@ -19,7 +16,7 @@ import org.junit.Test
 private val sectionId: SectionId = SectionId("section-1")
 private val september: YearMonth = YearMonth.of(2026, 9)
 
-class MonthlyAttendanceUseCasesTest {
+class GetMonthlyAttendanceSummaryUseCaseTest {
 
     private val luz: Student = student("student-1", "12345678901234", "ACOSTA RIVERA, Luz Maria")
     private val jose: Student = student("student-2", "12345678901235", "BAUTISTA QUISPE, Jose")
@@ -75,6 +72,15 @@ class MonthlyAttendanceUseCasesTest {
     }
 
     @Test
+    fun `a student withdrawn during the month is still present in the summary`() = runTest {
+        studentRepository.save(jose.copy(withdrawalDate = september.atDay(15)))
+
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
+
+        assertThat(summary.rows.map { it.studentId }).containsExactly(luz.id, jose.id)
+    }
+
+    @Test
     fun `a different month keeps its own records apart`() = runTest {
         attendanceRepository.record(record(luz.id, september.atDay(1), AttendanceStatus.ABSENT))
         attendanceRepository.record(record(luz.id, september.minusMonths(1).atDay(1), AttendanceStatus.LATE))
@@ -86,24 +92,6 @@ class MonthlyAttendanceUseCasesTest {
         assertThat(luzCounts[AttendanceStatus.LATE]).isEqualTo(0)
     }
 
-    @Test
-    fun `export builds one entry per student with its dated statuses and hands them to the writer`() = runTest {
-        attendanceRepository.record(record(luz.id, september.atDay(1), AttendanceStatus.PRESENT))
-        attendanceRepository.record(record(jose.id, september.atDay(1), AttendanceStatus.ABSENT))
-        val exporter = RecordingMonthlyAttendanceExporter()
-        val exportMonthlyAttendance = ExportMonthlyAttendanceUseCase(studentRepository, attendanceRepository, exporter)
-
-        val file: AttendanceExportFile = exportMonthlyAttendance(sectionId, september, "content://attendance.xlsx")
-
-        assertThat(file).isEqualTo(AttendanceExportFile("exported.xlsx", "/tmp/exported.xlsx"))
-        assertThat(exporter.receivedUri).isEqualTo("content://attendance.xlsx")
-        assertThat(exporter.receivedMonth).isEqualTo(september)
-        val luzEntry: AttendanceExportEntry = exporter.receivedEntries.single { it.studentCode == luz.code }
-        assertThat(luzEntry.statusesByDate).containsEntry(september.atDay(1), AttendanceStatus.PRESENT)
-        val joseEntry: AttendanceExportEntry = exporter.receivedEntries.single { it.studentCode == jose.code }
-        assertThat(joseEntry.statusesByDate).containsEntry(september.atDay(1), AttendanceStatus.ABSENT)
-    }
-
     private fun record(studentId: StudentId, date: LocalDate, status: AttendanceStatus): AttendanceRecord =
         AttendanceRecord(sectionId = sectionId, studentId = studentId, date = date, status = status)
 
@@ -113,22 +101,4 @@ class MonthlyAttendanceUseCasesTest {
         code = StudentCode(code),
         fullName = fullName,
     )
-}
-
-private class RecordingMonthlyAttendanceExporter : MonthlyAttendanceExporter {
-
-    var receivedUri: String? = null
-    var receivedMonth: YearMonth? = null
-    var receivedEntries: List<AttendanceExportEntry> = emptyList()
-
-    override suspend fun export(
-        templateUri: String,
-        month: YearMonth,
-        entries: List<AttendanceExportEntry>,
-    ): AttendanceExportFile {
-        receivedUri = templateUri
-        receivedMonth = month
-        receivedEntries = entries
-        return AttendanceExportFile("exported.xlsx", "/tmp/exported.xlsx")
-    }
 }
