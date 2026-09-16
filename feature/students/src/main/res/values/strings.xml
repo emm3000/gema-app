@@ -9,6 +9,7 @@
     <string name="import_preview_reason_not_a_template">Este archivo no es una plantilla de SIAGIE</string>
     <string name="import_preview_reason_empty_roster">La plantilla no tiene alumnos</string>
     <string name="import_preview_reason_malformed_row">La fila %1$d del archivo no tiene un código de estudiante válido</string>
+    <string name="import_preview_reason_grade_mismatch">El grado de la plantilla no coincide con la sección</string>
     <string name="import_preview_reason_section_mismatch">Este archivo no es de esta sección</string>
     <string name="import_preview_instruction_pick_another_file">Elige otro archivo. No se cambió nada.</string>
     <string name="import_preview_instruction_fix_file">Corrige el archivo y vuelve a intentarlo. No se cambió nada.</string>

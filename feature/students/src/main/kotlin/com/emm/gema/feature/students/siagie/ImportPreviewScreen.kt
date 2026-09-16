@@ -131,6 +131,7 @@ private fun reasonText(reason: ImportRejectionReason): String = when (reason) {
     ImportRejectionReason.NotASiagieTemplate -> stringResource(R.string.import_preview_reason_not_a_template)
     ImportRejectionReason.EmptyRoster -> stringResource(R.string.import_preview_reason_empty_roster)
     is ImportRejectionReason.MalformedRow -> stringResource(R.string.import_preview_reason_malformed_row, reason.row)
+    ImportRejectionReason.GradeMismatch -> stringResource(R.string.import_preview_reason_grade_mismatch)
     ImportRejectionReason.SectionMismatch -> stringResource(R.string.import_preview_reason_section_mismatch)
 }
 

@@ -127,7 +127,7 @@ class ImportPreviewViewModelTest {
 
         val state: ImportPreviewUiState = viewModel().state.value
 
-        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.SectionMismatch)
+        assertThat(state.rejection?.reason).isEqualTo(ImportRejectionReason.GradeMismatch)
         assertThat(state.rejection?.expected).isEqualTo("6to A")
         assertThat(state.rejection?.found).isEqualTo("3ro")
         assertThat(state.rejection?.foundLabel).isEqualTo(ImportFoundLabel.GRADE)

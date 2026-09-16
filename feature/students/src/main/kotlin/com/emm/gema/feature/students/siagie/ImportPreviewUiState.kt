@@ -45,6 +45,8 @@ sealed interface ImportRejectionReason {
 
     data class MalformedRow(val row: Int) : ImportRejectionReason
 
+    data object GradeMismatch : ImportRejectionReason
+
     data object SectionMismatch : ImportRejectionReason
 }
 
