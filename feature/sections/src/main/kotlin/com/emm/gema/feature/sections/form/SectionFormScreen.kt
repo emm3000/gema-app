@@ -10,21 +10,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.label
+import com.emm.gema.core.domain.section.sectionTitle
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -40,6 +47,7 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.core.ui.toTextStyle
 import com.emm.gema.feature.sections.R
 
 @Composable
@@ -65,7 +73,7 @@ private fun sectionFormSubtitle(state: SectionFormUiState): String? {
 
 private fun sectionFormTitle(state: SectionFormUiState): String {
     val grade: Grade = state.grade ?: return state.sectionName
-    return "${grade.label()} ${state.sectionName}"
+    return sectionTitle(grade, state.sectionName)
 }
 
 @Composable
@@ -201,63 +209,89 @@ private fun DeleteSectionDialog(
             style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Column(modifier = Modifier.fillMaxWidth().padding(top = GemaSpacing.small)) {
-            GDivider()
-            DeleteCountRow(
-                count = confirmation.studentCount,
-                label = pluralStringResource(R.plurals.sections_form_delete_row_students, confirmation.studentCount),
-                rowDescription = pluralStringResource(
-                    R.plurals.sections_form_student_count,
-                    confirmation.studentCount,
-                    confirmation.studentCount,
-                ),
-            )
-            GDivider()
-            DeleteCountRow(
-                count = confirmation.attendanceDayCount,
-                label = pluralStringResource(
-                    R.plurals.sections_form_delete_row_attendance_days,
-                    confirmation.attendanceDayCount,
-                ),
-                rowDescription = pluralStringResource(
-                    R.plurals.sections_form_delete_attendance_days_count,
-                    confirmation.attendanceDayCount,
-                    confirmation.attendanceDayCount,
-                ),
-            )
-            GDivider()
-            DeleteCountRow(
-                count = confirmation.periodLevelCount,
-                label = pluralStringResource(
-                    R.plurals.sections_form_delete_row_period_levels,
-                    confirmation.periodLevelCount,
-                ),
-                rowDescription = pluralStringResource(
-                    R.plurals.sections_form_delete_period_levels_count,
-                    confirmation.periodLevelCount,
-                    confirmation.periodLevelCount,
-                ),
-            )
+        DeleteCounts(confirmation = confirmation, modifier = Modifier.padding(top = GemaSpacing.small))
+    }
+}
+
+private data class DeleteCountRowSpec(val count: Int, val label: String, val rowDescription: String)
+
+@Composable
+private fun deleteCountRowSpecs(confirmation: DeleteConfirmation): List<DeleteCountRowSpec> = listOf(
+    DeleteCountRowSpec(
+        count = confirmation.studentCount,
+        label = pluralStringResource(R.plurals.sections_form_delete_row_students, confirmation.studentCount),
+        rowDescription = pluralStringResource(
+            R.plurals.sections_form_delete_student_count,
+            confirmation.studentCount,
+            confirmation.studentCount,
+        ),
+    ),
+    DeleteCountRowSpec(
+        count = confirmation.attendanceDayCount,
+        label = pluralStringResource(
+            R.plurals.sections_form_delete_row_attendance_days,
+            confirmation.attendanceDayCount,
+        ),
+        rowDescription = pluralStringResource(
+            R.plurals.sections_form_delete_attendance_days_count,
+            confirmation.attendanceDayCount,
+            confirmation.attendanceDayCount,
+        ),
+    ),
+    DeleteCountRowSpec(
+        count = confirmation.periodLevelCount,
+        label = pluralStringResource(
+            R.plurals.sections_form_delete_row_period_levels,
+            confirmation.periodLevelCount,
+        ),
+        rowDescription = pluralStringResource(
+            R.plurals.sections_form_delete_period_levels_count,
+            confirmation.periodLevelCount,
+            confirmation.periodLevelCount,
+        ),
+    ),
+)
+
+@Composable
+private fun widestCountWidth(specs: List<DeleteCountRowSpec>): Dp {
+    val textMeasurer: TextMeasurer = rememberTextMeasurer()
+    val numeralStyle: TextStyle = GTextStyle.NUMERAL.toTextStyle()
+    val density: Density = LocalDensity.current
+    val widestCountPx: Int = specs.maxOf { spec: DeleteCountRowSpec ->
+        textMeasurer.measure(text = spec.count.toString(), style = numeralStyle).size.width
+    }
+    val widestCountWidth: Dp = with(density) { widestCountPx.toDp() }
+    return widestCountWidth.coerceAtLeast(GemaSpacing.narrowCellWidth)
+}
+
+@Composable
+private fun DeleteCounts(confirmation: DeleteConfirmation, modifier: Modifier = Modifier) {
+    val specs: List<DeleteCountRowSpec> = deleteCountRowSpecs(confirmation)
+    val countWidth: Dp = widestCountWidth(specs)
+    Column(modifier = modifier.fillMaxWidth()) {
+        GDivider()
+        specs.forEach { spec: DeleteCountRowSpec ->
+            DeleteCountRow(spec = spec, countWidth = countWidth)
             GDivider()
         }
     }
 }
 
 @Composable
-private fun DeleteCountRow(count: Int, label: String, rowDescription: String, modifier: Modifier = Modifier) {
+private fun DeleteCountRow(spec: DeleteCountRowSpec, countWidth: Dp, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = GemaSpacing.compactLineHeight)
-            .semantics(mergeDescendants = true) { contentDescription = rowDescription },
+            .semantics(mergeDescendants = true) { contentDescription = spec.rowDescription },
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.rowGap),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(modifier = Modifier.widthIn(min = GemaSpacing.narrowCellWidth), contentAlignment = Alignment.CenterEnd) {
-            GText(text = count.toString(), style = GTextStyle.NUMERAL)
+        Box(modifier = Modifier.width(countWidth), contentAlignment = Alignment.CenterEnd) {
+            GText(text = spec.count.toString(), style = GTextStyle.NUMERAL)
         }
         GText(
-            text = label,
+            text = spec.label,
             style = GTextStyle.BODY_LARGE,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

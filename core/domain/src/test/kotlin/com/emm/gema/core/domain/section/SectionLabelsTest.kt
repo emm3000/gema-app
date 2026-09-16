@@ -20,6 +20,11 @@ class SectionLabelsTest {
     }
 
     @Test
+    fun `sectionTitle combines the grade ordinal and the section name`() {
+        assertThat(sectionTitle(Grade.THIRD, "A")).isEqualTo("3ro A")
+    }
+
+    @Test
     fun `a section title combines the grade ordinal and the section name`() {
         val section = Section(
             id = SectionId("section"),

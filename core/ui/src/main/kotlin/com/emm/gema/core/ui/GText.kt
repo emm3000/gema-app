@@ -33,7 +33,7 @@ fun GText(
 }
 
 @Composable
-internal fun GTextStyle.toTextStyle(): TextStyle = when (this) {
+fun GTextStyle.toTextStyle(): TextStyle = when (this) {
     GTextStyle.TITLE_MEDIUM -> MaterialTheme.typography.titleMedium
     GTextStyle.TITLE_MEDIUM_EMPHASIS -> MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
     GTextStyle.NUMERAL -> MaterialTheme.typography.titleLarge.copy(
