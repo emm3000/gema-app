@@ -189,6 +189,17 @@ class StudentFormViewModelTest {
     }
 
     @Test
+    fun `back clicked navigates back`() = runTest {
+        val viewModel: StudentFormViewModel = viewModelFor(luz.id)
+
+        viewModel.effects.test {
+            viewModel.onIntent(StudentFormUiIntent.BackClicked)
+
+            assertThat(awaitItem()).isEqualTo(StudentFormUiEffect.NavigateBack)
+        }
+    }
+
+    @Test
     fun `a failing save is reported`() = runTest {
         val viewModel: StudentFormViewModel = viewModelFor(luz.id)
         repository.failsOnce = true
