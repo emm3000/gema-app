@@ -1049,8 +1049,7 @@ rule ("Nada se escribe hasta que apliques"). `fileName` renders as
 `titleMedium` with a file glyph, then "`sectionTitle` · `rosterSize` alumnos
 en el archivo" in `onSurfaceVariant`. The three groups are `GListItem` rows
 on hairlines with the count as `NUMERAL` trailing text and an expand chevron
-(down closed, up open) (new: today they are `GGroupHeader` rows, whose count
-renders as `TITLE_MEDIUM_EMPHASIS` with no override); the group matching `expandedGroup` lists its rows
+(down closed, up open); the group matching `expandedGroup` lists its rows
 below, `GCheckRow`s for the withdrawals (default on) with one `bodySmall`
 helper ("Desmarca a quien siga en el aula."). The reassurance line stays as
 `bodySmall`. The `bottomAction` is a `Row` of two `GButton`s: SECONDARY
@@ -1093,13 +1092,10 @@ Rejection state replaces the body. A `GFileCard` with `fileName` (no
 `subtitle`, which is optional in `core:ui`) sits above an ERROR `GBanner`
 that carries `reason` (a leading dot in its `icon` slot; no icon renders
 today); when the rejection has an `expected`/`found` pair it renders as two
-`GListItem` rows with the value as `trailingText` (new: the found value in
-`error` ink, the status-ink rule in `system.md`; proposal for the same
-`core:ui` ticket as the other trailing-color notes, since `trailingText` is
-`onSurfaceVariant` today), then one `bodyLarge` line renders `instruction`
-and says nothing changed. The `bottomAction` is always a single SECONDARY
-`GButton` *Volver a alumnos* that sends `CancelClicked` (new: today the
-Cancelar / Aplicar row stays, and Aplicar has nothing to apply); the screen
+`GListItem` rows with the value as `trailingText`, the found value in `error`
+ink through `trailingTextColor`, then one `bodyLarge` line renders
+`instruction` and says nothing changed. The `bottomAction` is always a single
+SECONDARY `GButton` *Volver a alumnos* that sends `CancelClicked`; the screen
 has no re-pick intent.
 
 `SiagieImportRejection` has five cases; only two of them carry an
@@ -1110,20 +1106,20 @@ found-row's `foundLabel` as `UiState` fields, so the screen never hardcodes
 either:
 
 - `NotASiagieTemplate`: `reason` "Este archivo no es una plantilla de
-  SIAGIE.", no pair. `instruction`: "Elige otro archivo. No se cambió nada."
+  SIAGIE", no pair. `instruction`: "Elige otro archivo. No se cambió nada."
   — the file itself is unusable, no Section is involved.
-- `EmptyRoster`: `reason` "La plantilla no tiene alumnos.", no pair.
+- `EmptyRoster`: `reason` "La plantilla no tiene alumnos", no pair.
   `instruction`: "Elige otro archivo. No se cambió nada."
-- `MalformedRow(row)`: `reason` names the row, e.g. "La fila 15 tiene un
-  código de alumno inválido o vacío.", no pair. `instruction`: "Corrige el
+- `MalformedRow(row)`: `reason` names the row, e.g. "La fila 15 del archivo no
+  tiene un código de estudiante válido", no pair. `instruction`: "Corrige el
   archivo y vuelve a intentarlo. No se cambió nada." — the file needs fixing,
   not a different Section.
 - `GradeMismatch(expected, found)`: `reason` "El grado de la plantilla no
-  coincide con la sección.", pair "Sección abierta" / `foundLabel` "Grado en
+  coincide con la sección", pair "Sección abierta" / `foundLabel` "Grado en
   el archivo". `instruction`: "Elige otro archivo o abre la sección
   correcta. No se cambió nada."
 - `SectionMismatch(expected, found)`: `reason` "Este archivo no es de esta
-  sección.", pair "Sección abierta" / `foundLabel` "Archivo" (the wireframe
+  sección", pair "Sección abierta" / `foundLabel` "Archivo" (the wireframe
   below shows this case). `instruction`: "Elige otro archivo o abre la
   sección correcta. No se cambió nada."
 
@@ -1134,7 +1130,7 @@ either:
 +------------------------------------------+
 |  [f] 4 Primaria EBR.xlsx                 |
 |                                          |
-|  • Este archivo no es de esta sección.   |
+|  • Este archivo no es de esta sección    |
 |                                          |
 |  ----------------------------------------|
 |  Sección abierta     3ro A               |
@@ -1160,7 +1156,10 @@ data class ImportPreviewUiState(
     val proposedWithdrawals: List<ImportWithdrawalRow> = emptyList(),
     val expandedGroup: ImportGroup? = null,
     val isApplying: Boolean = false,
-)
+) {
+    val canApply: Boolean
+        get() = !isLoading && !isApplying && rejection == null
+}
 
 data class ImportStudentRow(
     val studentCode: String,
@@ -1174,15 +1173,32 @@ data class ImportWithdrawalRow(
 )
 
 data class ImportRejection(
-    val reason: String,
-    val instruction: String,
+    val reason: ImportRejectionReason,
+    val instruction: ImportInstruction,
     val expected: String?,
     val found: String?,
-    val foundLabel: String?,
+    val foundLabel: ImportFoundLabel?,
 )
+
+sealed interface ImportRejectionReason {
+    data object NotASiagieTemplate : ImportRejectionReason
+    data object EmptyRoster : ImportRejectionReason
+    data class MalformedRow(val row: Int) : ImportRejectionReason
+    data object GradeMismatch : ImportRejectionReason
+    data object SectionMismatch : ImportRejectionReason
+}
+
+enum class ImportInstruction { PICK_ANOTHER_FILE, FIX_FILE, PICK_ANOTHER_FILE_OR_OPEN_SECTION }
+
+enum class ImportFoundLabel { GRADE, SECTION }
 
 enum class ImportGroup { CREATED, UPDATED, WITHDRAWN }
 ```
+
+The ViewModel emits these typed values in `ImportRejection`; the screen never
+holds copy directly and resolves `reason`, `instruction` and `foundLabel` to
+text with `stringResource` per case. `canApply` is computed on
+`ImportPreviewUiState` as `!isLoading && !isApplying && rejection == null`.
 
 Intents: `GroupToggled(group: ImportGroup)`,
 `WithdrawalToggled(studentId: StudentId, isSelected: Boolean)`, `ApplyClicked`,
