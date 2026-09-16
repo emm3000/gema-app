@@ -8,5 +8,4 @@ enum class GTextStyle {
     BODY_SMALL,
     LABEL_LARGE_EMPHASIS,
     LABEL_SMALL,
-    LABEL_SMALL_EMPHASIS,
 }

@@ -3,13 +3,17 @@ package com.emm.gema.core.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaTheme
@@ -17,15 +21,25 @@ import com.emm.gema.core.theme.GemaTheme
 @Composable
 fun GBorderedContainer(
     modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    fillMaxWidth: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = if (fillMaxWidth) modifier.fillMaxWidth() else modifier,
         shape = GemaShapes.container,
-        color = MaterialTheme.colorScheme.surface,
+        color = containerColor,
+        contentColor = contentColor,
         border = BorderStroke(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant),
     ) {
-        Column(content = content)
+        Column(
+            modifier = Modifier.padding(contentPadding),
+            horizontalAlignment = horizontalAlignment,
+            content = content,
+        )
     }
 }
 

@@ -46,7 +46,6 @@ internal fun GTextStyle.toTextStyle(): TextStyle = when (this) {
         fontWeight = FontWeight.SemiBold,
     )
     GTextStyle.LABEL_SMALL -> MaterialTheme.typography.labelSmall
-    GTextStyle.LABEL_SMALL_EMPHASIS -> MaterialTheme.typography.labelSmall
 }
 
 @PreviewLightDark
@@ -57,7 +56,6 @@ private fun GTextPreview() {
             GText(text = "Título de sección", style = GTextStyle.TITLE_MEDIUM)
             GText(text = "Cuerpo de texto", style = GTextStyle.BODY_LARGE)
             GText(text = "Etiqueta", style = GTextStyle.LABEL_SMALL)
-            GText(text = "Encabezado de sección", style = GTextStyle.LABEL_SMALL_EMPHASIS)
             GText(text = "24/30", style = GTextStyle.LABEL_LARGE_EMPHASIS)
             GText(text = "26", style = GTextStyle.TITLE_MEDIUM_EMPHASIS)
             GText(text = "28", style = GTextStyle.NUMERAL)

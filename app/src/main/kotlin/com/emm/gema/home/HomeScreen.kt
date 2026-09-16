@@ -135,7 +135,7 @@ fun HomeScreen(
                             top = GemaSpacing.large,
                             bottom = GemaSpacing.small,
                         ),
-                        style = GTextStyle.LABEL_SMALL_EMPHASIS,
+                        style = GTextStyle.LABEL_SMALL,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }

@@ -134,7 +134,7 @@ private fun AttendanceCard(
     ) {
         GText(
             text = stringResource(R.string.sections_detail_attendance_today_label),
-            style = GTextStyle.LABEL_SMALL_EMPHASIS,
+            style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         GText(
