@@ -31,3 +31,6 @@ Last 20 PRs, oldest first. Model:effort is what actually ran, which may differ f
 | #281 | #266 | 4 | sonnet:medium | MERGE | ran below table row (additive `GButton` parameter, one screen) |
 | #285 | #267 | 1 | sonnet:low | MERGE | |
 | #286 | #271 | 4 | sonnet:medium | FIX FIRST | checklist: TalkBack screenshot focused the wrong node; ran below table row |
+| #288 | #270 | 1 | sonnet:low | MERGE | |
+| #289 | #269 | 4 | opus:medium | MERGE | |
+| #290 | #283 | 4 | opus:medium | MERGE | |
