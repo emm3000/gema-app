@@ -21,6 +21,7 @@ object GemaSpacing {
     val minimumTouchTarget: Dp = 48.dp
     val indicatorStroke: Dp = 2.dp
     val narrowFieldWidth: Dp = 112.dp
+    val compactFieldWidth: Dp = 96.dp
     val gridNameColumnWidth: Dp = 150.dp
     val gridCellWidth: Dp = 56.dp
     val gridRowHeight: Dp = 56.dp

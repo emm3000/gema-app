@@ -20,4 +20,5 @@ data class RestoreConfirmation(
     val uri: String,
     val fileName: String,
     val currentSchoolYearCount: Int,
+    val currentStudentCount: Int,
 )
