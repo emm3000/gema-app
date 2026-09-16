@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsConfiguration
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -48,5 +51,28 @@ class GDateFieldTest : RobolectricComposeTest() {
             .height
 
         assertThat(fieldHeightPx).isGreaterThan(baselineHeightPx)
+    }
+
+    @Test
+    fun `content description replaces the label instead of announcing both`() {
+        val value: LocalDate = LocalDate.of(2026, 3, 1)
+        val description: String = "Inicio del I Bimestre"
+
+        composeTestRule.setContent {
+            GemaTheme {
+                GDateField(
+                    value = value,
+                    onValueChange = {},
+                    label = "Inicio",
+                    contentDescription = description,
+                    modifier = Modifier.testTag("field"),
+                )
+            }
+        }
+
+        val config: SemanticsConfiguration = composeTestRule.onNodeWithTag("field").fetchSemanticsNode().config
+
+        assertThat(config.getOrNull(SemanticsProperties.ContentDescription)).containsExactly(description)
+        assertThat(config.getOrNull(SemanticsProperties.Text).orEmpty()).isEmpty()
     }
 }

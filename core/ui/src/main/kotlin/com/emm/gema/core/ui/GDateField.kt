@@ -21,6 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaTheme
@@ -44,6 +47,7 @@ fun GDateField(
     minDate: LocalDate? = null,
     maxDate: LocalDate? = null,
     isEnabled: Boolean = true,
+    contentDescription: String? = null,
 ) {
     var isPickerVisible: Boolean by remember { mutableStateOf(false) }
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
@@ -64,14 +68,29 @@ fun GDateField(
             Text(text = text, color = MaterialTheme.colorScheme.error)
         }
     }
+    val fieldModifier: Modifier = if (contentDescription != null) {
+        modifier.semantics { this.contentDescription = contentDescription }
+    } else {
+        modifier
+    }
+    val labelContent: (@Composable () -> Unit)? = label?.let { text ->
+        {
+            val labelModifier: Modifier = if (contentDescription != null) {
+                Modifier.clearAndSetSemantics {}
+            } else {
+                Modifier
+            }
+            Text(text = text, modifier = labelModifier)
+        }
+    }
 
     OutlinedTextField(
         value = displayValue,
         onValueChange = {},
-        modifier = modifier,
+        modifier = fieldModifier,
         enabled = isEnabled,
         readOnly = true,
-        label = label?.let { text -> { Text(text = text) } },
+        label = labelContent,
         isError = isError,
         supportingText = supportingContent,
         trailingIcon = {
@@ -139,6 +158,23 @@ private fun GDateFieldPreview() {
             value = LocalDate.of(previewYear, previewMonth, previewDay),
             onValueChange = {},
             label = "Fecha de inicio",
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GDateFieldWithContentDescriptionPreview() {
+    val previewYear: Int = 2026
+    val previewMonth: Int = 3
+    val previewDay: Int = 2
+
+    GemaTheme {
+        GDateField(
+            value = LocalDate.of(previewYear, previewMonth, previewDay),
+            onValueChange = {},
+            label = "Inicio",
+            contentDescription = "Inicio del I Bimestre",
         )
     }
 }

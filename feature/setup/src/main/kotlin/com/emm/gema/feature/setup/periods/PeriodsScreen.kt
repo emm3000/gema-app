@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.PeriodKind
@@ -130,6 +129,8 @@ private fun PeriodEditor(
 ) {
     val startDateLabel: String = stringResource(R.string.setup_year_date_start_label)
     val endDateLabel: String = stringResource(R.string.setup_year_date_end_label)
+    val startDateDescription: String = stringResource(R.string.setup_periods_start_description, row.label)
+    val endDateDescription: String = stringResource(R.string.setup_periods_end_description, row.label)
 
     Column(
         modifier = modifier
@@ -161,18 +162,16 @@ private fun PeriodEditor(
                 onValueChange = { onIntent(PeriodsUiIntent.StartDateChanged(row.id, it)) },
                 label = startDateLabel,
                 isError = isStartOverlapping,
-                modifier = Modifier
-                    .weight(1f)
-                    .semantics { stateDescription = row.label },
+                contentDescription = startDateDescription,
+                modifier = Modifier.weight(1f),
             )
             GDateField(
                 value = row.endDate,
                 onValueChange = { onIntent(PeriodsUiIntent.EndDateChanged(row.id, it)) },
                 label = endDateLabel,
                 isError = isEndOverlapping,
-                modifier = Modifier
-                    .weight(1f)
-                    .semantics { stateDescription = row.label },
+                contentDescription = endDateDescription,
+                modifier = Modifier.weight(1f),
             )
         }
     }

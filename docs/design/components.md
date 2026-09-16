@@ -318,17 +318,29 @@ Purpose: one date, entered the same way everywhere.
 fun GDateField(
     value: LocalDate?,
     onValueChange: (LocalDate) -> Unit,
-    label: String,
     modifier: Modifier = Modifier,
+    label: String? = null,
     errorText: String? = null,
+    isError: Boolean = errorText != null,
     minDate: LocalDate? = null,
     maxDate: LocalDate? = null,
     isEnabled: Boolean = true,
+    contentDescription: String? = null,
 )
 ```
 
 Wraps a read-only `GTextField` that opens `DatePickerDialog`. Tokens: inherited
 from `GTextField`.
+
+`contentDescription` is additive and optional. When non-null, TalkBack
+announces it in place of the visible `label` while the selected date value
+and `errorText` are still announced; the visible `label` text does not
+change. Use it for a repeated field whose visible label is ambiguous without
+the row it belongs to — Periods has a start and an end `GDateField` per row,
+each visually labeled just "Inicio" / "Fin", so it passes "Inicio del I
+Bimestre" / "Fin del I Bimestre" to name which Period row the field belongs
+to. When `null`, semantics match a `GDateField` with no `contentDescription`
+at all.
 
 Tradeoff: the picker opens in **calendar** mode, not the text-input mode
 Material3 defaults to for some locales, and typing into the field is disabled.
