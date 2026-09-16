@@ -42,15 +42,15 @@ fun GCheckRow(
                     onValueChange = onCheckedChange,
                     role = Role.Checkbox,
                 )
-                .padding(horizontal = GemaSpacing.medium),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.rowGap),
+            verticalAlignment = Alignment.Top,
         ) {
             Checkbox(checked = isChecked, onCheckedChange = null, enabled = isEnabled)
             if (prefix != null) {
                 Text(
                     text = prefix,
                     modifier = Modifier
-                        .padding(start = GemaSpacing.small)
+                        .padding(start = GemaSpacing.rowGap)
                         .widthIn(min = GemaSpacing.large),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -58,7 +58,7 @@ fun GCheckRow(
             }
             Column(
                 modifier = Modifier
-                    .padding(start = GemaSpacing.small)
+                    .padding(start = GemaSpacing.rowGap)
                     .weight(1f),
             ) {
                 Text(
