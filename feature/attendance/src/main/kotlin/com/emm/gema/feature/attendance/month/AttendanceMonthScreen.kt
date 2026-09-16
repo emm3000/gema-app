@@ -77,10 +77,11 @@ fun AttendanceMonthScreen(
         modifier = modifier,
         bottomAction = {
             GButton(
-                text = "Exportar el mes",
+                text = "Exportar el mes a SIAGIE",
                 onClick = { onIntent(AttendanceMonthUiIntent.ExportClicked) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = state.canExport && !state.isExporting,
+                isBusy = state.isExporting,
                 icon = Icons.Filled.Upload,
             )
         },
@@ -206,7 +207,7 @@ private fun AttendanceMonthDataRow(row: AttendanceMonthRow, modifier: Modifier =
                     text = row.displayName,
                     style = GTextStyle.BODY_LARGE,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             },
@@ -217,7 +218,7 @@ private fun AttendanceMonthDataRow(row: AttendanceMonthRow, modifier: Modifier =
                         text = count.toString(),
                         style = GTextStyle.BODY_LARGE,
                         color = if (count == 0) {
-                            MaterialTheme.colorScheme.outlineVariant
+                            MaterialTheme.colorScheme.outline
                         } else {
                             MaterialTheme.colorScheme.onSurface
                         },
