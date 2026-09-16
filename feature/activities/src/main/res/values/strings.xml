@@ -5,7 +5,7 @@
     <string name="activity_form_period_change_warning">Esta actividad se moverá a otro periodo.</string>
     <string name="activities_list_badge_current">ACTUAL</string>
     <string name="activities_list_title">Actividades · %s</string>
-    <string name="activities_list_subtitle">Las más nuevas primero</string>
+    <string name="activities_list_subtitle">Más recientes primero</string>
     <string name="activity_evidence_subtitle">%1$s · %2$s</string>
     <string name="activity_evidence_edit_content_description">Editar actividad</string>
     <string name="activity_evidence_untouched_label">sin marcar</string>
