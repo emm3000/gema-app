@@ -2,10 +2,7 @@ package com.emm.gema.core.domain.attendance
 
 import com.emm.gema.core.domain.fake.InMemoryAttendanceRepository
 import com.emm.gema.core.domain.fake.InMemoryStudentRepository
-import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.student.Student
-import com.emm.gema.core.domain.student.StudentCode
-import com.emm.gema.core.domain.student.StudentId
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.LocalDate
@@ -14,7 +11,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-private val sectionId: SectionId = SectionId("section-1")
 private val today: LocalDate = LocalDate.of(2026, 9, 10)
 private val yesterday: LocalDate = today.minusDays(1)
 private val tomorrow: LocalDate = today.plusDays(1)
@@ -137,10 +133,3 @@ class AttendanceUseCasesTest {
         assertThat(countAttendanceDays(sectionId)).isEqualTo(2)
     }
 }
-
-private fun student(id: String, code: String, fullName: String): Student = Student(
-    id = StudentId(id),
-    sectionId = sectionId,
-    code = StudentCode(code),
-    fullName = fullName,
-)
