@@ -9,7 +9,6 @@ import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.backup.BackupSettings
 import com.emm.gema.core.domain.backup.BackupSettingsRepository
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
-import com.emm.gema.core.domain.date.DateNameProvider
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.WorkedCompetencyRepository
@@ -43,15 +42,14 @@ import com.emm.gema.core.domain.student.StudentRepository
 import com.emm.gema.core.domain.student.orderedByName
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
-import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
-import java.time.Month
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
@@ -86,7 +84,7 @@ class HomeViewModelTest {
         )
     )
     private val activeSchoolYearRepository = FakeActiveSchoolYearRepository(schoolYear.id)
-    private val dateNames = FakeDateNameProvider()
+    private val dateNames: DateNameProvider = FakeDateNameProvider()
     private val attendanceRepository = FakeAttendanceRepository()
     private val workedCompetencyRepository = FakeWorkedCompetencyRepository()
     private val studentRepository = FakeStudentRepository(
@@ -265,6 +263,20 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `taking attendance before the first day arrives waits for that day`() = runTest {
+        val today: MutableSharedFlow<LocalDate> = MutableSharedFlow()
+        val viewModel: HomeViewModel = homeOn(today, clockDate = LocalDate.of(2026, 9, 10))
+
+        viewModel.effects.test {
+            viewModel.onIntent(HomeUiIntent.TakeAttendanceClicked(SectionId("section-1")))
+            today.emit(LocalDate.of(2026, 9, 10))
+
+            assertThat(awaitItem())
+                .isEqualTo(HomeUiEffect.NavigateToAttendanceDay(SectionId("section-1"), LocalDate.of(2026, 9, 10)))
+        }
+    }
+
+    @Test
     fun `each section counts the levels still missing in the current period`() {
         workedCompetencyRepository.worked.value = setOf(
             Triple(SectionId("section-1"), periods[1].id, Competency.idOf(Area.PPSS, 1)),
@@ -285,8 +297,11 @@ class HomeViewModelTest {
     private fun homeAt(today: LocalDate, lastBackupAt: Instant? = null): HomeViewModel =
         homeOn(MutableStateFlow(today), lastBackupAt)
 
-    private fun homeOn(today: MutableStateFlow<LocalDate>, lastBackupAt: Instant? = null): HomeViewModel {
-        val clock: Clock = Clock.fixed(today.value.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"))
+    private fun homeOn(today: MutableStateFlow<LocalDate>, lastBackupAt: Instant? = null): HomeViewModel =
+        homeOn(today, today.value, lastBackupAt)
+
+    private fun homeOn(today: Flow<LocalDate>, clockDate: LocalDate, lastBackupAt: Instant? = null): HomeViewModel {
+        val clock: Clock = Clock.fixed(clockDate.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"))
         val settings = FakeBackupSettingsRepository(
             BackupSettings(lastBackupAt = lastBackupAt, reminderThresholdDays = REMINDER_THRESHOLD_DAYS),
         )
@@ -475,36 +490,6 @@ class HomeViewModelTest {
         override suspend fun activate(schoolYearId: SchoolYearId) {
             activeId.value = schoolYearId
         }
-    }
-
-    private class FakeDateNameProvider : DateNameProvider {
-        private val weekdays: Map<DayOfWeek, String> = mapOf(
-            DayOfWeek.MONDAY to "Lunes",
-            DayOfWeek.TUESDAY to "Martes",
-            DayOfWeek.WEDNESDAY to "Miércoles",
-            DayOfWeek.THURSDAY to "Jueves",
-            DayOfWeek.FRIDAY to "Viernes",
-            DayOfWeek.SATURDAY to "Sábado",
-            DayOfWeek.SUNDAY to "Domingo",
-        )
-        private val months: Map<Month, String> = mapOf(
-            Month.JANUARY to "Enero",
-            Month.FEBRUARY to "Febrero",
-            Month.MARCH to "Marzo",
-            Month.APRIL to "Abril",
-            Month.MAY to "Mayo",
-            Month.JUNE to "Junio",
-            Month.JULY to "Julio",
-            Month.AUGUST to "Agosto",
-            Month.SEPTEMBER to "Setiembre",
-            Month.OCTOBER to "Octubre",
-            Month.NOVEMBER to "Noviembre",
-            Month.DECEMBER to "Diciembre",
-        )
-
-        override fun weekdayName(dayOfWeek: DayOfWeek): String = weekdays.getValue(dayOfWeek)
-        override fun monthName(month: Month): String = months.getValue(month)
-        override fun todayPrefix(): String = "HOY"
     }
 }
 
