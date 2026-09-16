@@ -1,34 +1,12 @@
 package com.emm.gema.home
 
-import com.emm.gema.core.domain.date.DateNameProvider
 import com.google.common.truth.Truth.assertThat
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.Month
 import org.junit.Test
 
 class TodayLabelTest {
 
-    private val dateNames = object : DateNameProvider {
-        private val weekdays: Map<DayOfWeek, String> = mapOf(
-            DayOfWeek.MONDAY to "Lunes",
-            DayOfWeek.TUESDAY to "Martes",
-            DayOfWeek.WEDNESDAY to "Miércoles",
-            DayOfWeek.THURSDAY to "Jueves",
-            DayOfWeek.FRIDAY to "Viernes",
-            DayOfWeek.SATURDAY to "Sábado",
-            DayOfWeek.SUNDAY to "Domingo",
-        )
-        private val months: Map<Month, String> = mapOf(
-            Month.JANUARY to "Enero",
-            Month.SEPTEMBER to "Setiembre",
-            Month.DECEMBER to "Diciembre",
-        )
-
-        override fun weekdayName(dayOfWeek: DayOfWeek): String = weekdays.getValue(dayOfWeek)
-        override fun monthName(month: Month): String = months.getValue(month)
-        override fun todayPrefix(): String = "HOY"
-    }
+    private val dateNames: DateNameProvider = FakeDateNameProvider()
 
     @Test
     fun `formats a Thursday in September`() {

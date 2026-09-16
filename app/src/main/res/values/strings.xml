@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Gema</string>
-    <string name="home_today_prefix">HOY</string>
+    <string name="home_today_label">HOY · %1$s %2$d DE %3$s</string>
     <string name="home_empty_title">Aún no hay nada</string>
     <string name="home_empty_message">Crea tu primera sección para empezar a registrar asistencia y niveles de logro.</string>
     <string name="home_add_section">Nueva sección</string>
@@ -31,7 +31,7 @@
 
     <string name="home_period_with_countdown">%1$s · %2$s</string>
     <plurals name="home_period_days_left">
-        <item quantity="one">Falta %1$d día · cierra %2$s</item>
-        <item quantity="other">Faltan %1$d días · cierra %2$s</item>
+        <item quantity="one">falta %1$d día · cierra %2$s</item>
+        <item quantity="other">faltan %1$d días · cierra %2$s</item>
     </plurals>
 </resources>

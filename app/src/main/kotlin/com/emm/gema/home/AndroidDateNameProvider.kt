@@ -2,7 +2,6 @@ package com.emm.gema.home
 
 import android.content.res.Resources
 import com.emm.gema.R
-import com.emm.gema.core.domain.date.DateNameProvider
 import com.emm.gema.core.ui.R as CoreUiR
 import java.time.DayOfWeek
 import java.time.Month
@@ -15,5 +14,6 @@ class AndroidDateNameProvider(private val resources: Resources) : DateNameProvid
     override fun monthName(month: Month): String =
         resources.getStringArray(CoreUiR.array.month_names_full)[month.value - 1]
 
-    override fun todayPrefix(): String = resources.getString(R.string.home_today_prefix)
+    override fun todayLabel(weekday: String, dayOfMonth: Int, month: String): String =
+        resources.getString(R.string.home_today_label, weekday, dayOfMonth, month)
 }
