@@ -117,6 +117,8 @@ import com.emm.gema.core.siagie.XlsxSiagieRosterReader
 import com.emm.gema.evaluation.CacheDirSummaryDocuments
 import com.emm.gema.evaluation.PdfDocumentPeriodLevelSummaryRenderer
 import com.emm.gema.feature.backup.BackupViewModel
+import com.emm.gema.core.domain.date.DateNameProvider
+import com.emm.gema.home.AndroidDateNameProvider
 import com.emm.gema.home.HomeViewModel
 import com.emm.gema.navigation.StartDestinationViewModel
 import org.koin.android.ext.koin.androidContext
@@ -229,6 +231,7 @@ val appModule: Module = module {
     factory<SetReminderThresholdUseCase> { SetReminderThresholdUseCase(get()) }
 
     viewModel { StartDestinationViewModel(get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    single<DateNameProvider> { AndroidDateNameProvider(androidContext().resources) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModelOf(::BackupViewModel)
 }

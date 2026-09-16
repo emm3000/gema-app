@@ -54,6 +54,8 @@ internal const val HOME_PRIMARY_ACTION_TEST_TAG: String = "home_primary_action"
 
 internal fun sectionRowTestTag(id: SectionId): String = "home_section_row_${id.value}"
 
+internal fun sectionAttendanceButtonTestTag(id: SectionId): String = "home_attendance_button_${id.value}"
+
 @Composable
 fun HomeScreen(
     state: HomeUiState,
@@ -130,8 +132,6 @@ fun HomeScreen(
                         title = stringResource(R.string.home_empty_title),
                         message = stringResource(R.string.home_empty_message),
                         modifier = gutter,
-                        actionLabel = stringResource(R.string.home_add_section),
-                        onActionClick = { onIntent(HomeUiIntent.AddSectionClicked) },
                     )
                 }
             }
@@ -203,15 +203,15 @@ private fun HomeTitle(yearLabel: String) {
 
 @Composable
 private fun CurrentPeriodRow(label: String, daysLeft: Int?, endDate: LocalDate?) {
+    val title: String = if (daysLeft != null && endDate != null) {
+        "$label · " + pluralStringResource(R.plurals.home_period_days_left, daysLeft, daysLeft, endDate.dayMonthLabel())
+    } else {
+        label
+    }
     GListItem(
-        title = label,
+        title = title,
         modifier = Modifier.fillMaxWidth(),
         titleStyle = GTextStyle.TITLE_MEDIUM,
-        subtitle = if (daysLeft != null && endDate != null) {
-            pluralStringResource(R.plurals.home_period_days_left, daysLeft, daysLeft, endDate.dayMonthLabel())
-        } else {
-            null
-        },
         leadingIcon = Icons.Filled.CalendarMonth,
         showDivider = false,
     )
@@ -254,7 +254,7 @@ private fun PendingSectionRow(row: SectionRow, isPrimary: Boolean, onIntent: (Ho
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = GemaSpacing.screenGutter, end = GemaSpacing.screenGutter, bottom = GemaSpacing.medium)
-                .then(if (isPrimary) Modifier.testTag(HOME_PRIMARY_ACTION_TEST_TAG) else Modifier),
+                .testTag(if (isPrimary) HOME_PRIMARY_ACTION_TEST_TAG else sectionAttendanceButtonTestTag(row.id)),
             variant = if (isPrimary) GButtonVariant.PRIMARY else GButtonVariant.SECONDARY,
         )
         GDivider()
@@ -273,11 +273,12 @@ private fun statusLine(row: SectionRow): String {
     return pluralStringResource(R.plurals.home_status_missing_levels, missingLevelCount, attendance, missingLevelCount)
 }
 
+internal fun hasPendingStatus(row: SectionRow): Boolean =
+    !row.attendance.isTaken || (row.missingLevelCount ?: 0) > 0
+
 @Composable
-private fun statusColor(row: SectionRow): Color {
-    val hasPending: Boolean = !row.attendance.isTaken || (row.missingLevelCount ?: 0) > 0
-    return if (hasPending) GemaAccents.onWarningContainer else MaterialTheme.colorScheme.onSurfaceVariant
-}
+private fun statusColor(row: SectionRow): Color =
+    if (hasPendingStatus(row)) GemaAccents.onWarningContainer else MaterialTheme.colorScheme.onSurfaceVariant
 
 @Composable
 private fun attendanceLabel(summary: AttendanceDaySummary): String = if (summary.isTaken) {
