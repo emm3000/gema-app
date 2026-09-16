@@ -1,36 +1,28 @@
 package com.emm.gema.feature.sections.detail
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Checklist
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaAccents
-import com.emm.gema.core.theme.GemaBorder
-import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-import com.emm.gema.core.theme.label
 import com.emm.gema.core.ui.GButton
+import com.emm.gema.core.ui.GDivider
 import com.emm.gema.core.ui.GIcon
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GMenuAction
@@ -39,10 +31,8 @@ import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
-import com.emm.gema.feature.sections.ATTENDANCE_UNTAKEN_LABEL
 import com.emm.gema.feature.sections.R
 import java.time.LocalDate
-import java.util.Locale
 
 @Composable
 fun SectionDetailScreen(
@@ -79,13 +69,12 @@ fun SectionDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(top = GemaSpacing.small),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
+                .padding(horizontal = GemaSpacing.screenGutter),
         ) {
             if (state.hasStoredTemplate) {
                 TemplateLoadedLine()
             }
-            AttendanceCard(state = state, onIntent = onIntent)
+            AttendanceStatusBlock(state = state, onIntent = onIntent)
             HubList(state = state, onIntent = onIntent)
         }
     }
@@ -100,17 +89,9 @@ private fun sectionDetailSubtitle(state: SectionDetailUiState): String {
 }
 
 @Composable
-private fun todayEyebrowLabel(today: LocalDate?): String {
-    val date: LocalDate = today ?: return ""
-    val weekday: String = date.dayOfWeek.label().uppercase(Locale.ROOT)
-    val month: String = date.month.label().uppercase(Locale.ROOT)
-    return stringResource(R.string.sections_detail_attendance_today_label, weekday, date.dayOfMonth, month)
-}
-
-@Composable
 private fun TemplateLoadedLine(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier,
+        modifier = modifier.heightIn(min = GemaSpacing.compactLineHeight),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -128,42 +109,38 @@ private fun TemplateLoadedLine(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AttendanceCard(
+private fun AttendanceStatusBlock(
     state: SectionDetailUiState,
     onIntent: (SectionDetailUiIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(GemaShapes.container)
-            .border(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant, GemaShapes.container)
-            .padding(GemaSpacing.medium),
-        verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
         GText(
-            text = todayEyebrowLabel(state.today),
+            text = state.todayLabel,
             style = GTextStyle.LABEL_SMALL,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = GemaSpacing.eyebrowGap, bottom = GemaSpacing.small),
         )
-        val isAttendanceUntaken: Boolean = state.todayAttendanceSummary == ATTENDANCE_UNTAKEN_LABEL
-        GText(
-            text = state.todayAttendanceSummary,
-            style = GTextStyle.BODY_LARGE,
-            color = if (isAttendanceUntaken) {
-                GemaAccents.onWarningContainer
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-        )
-        GButton(
-            text = stringResource(R.string.sections_detail_take_attendance),
-            onClick = { onIntent(SectionDetailUiIntent.TakeAttendanceClicked) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = GemaSpacing.small),
-            icon = Icons.Filled.Check,
-        )
+        Column(
+            modifier = Modifier.padding(bottom = GemaSpacing.large),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.compactGap),
+        ) {
+            GText(
+                text = state.todayAttendanceSummary,
+                style = GTextStyle.BODY_LARGE,
+                color = if (state.isTodayAttendanceTaken) {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    GemaAccents.onWarningContainer
+                },
+            )
+            GButton(
+                text = stringResource(R.string.sections_detail_take_attendance),
+                onClick = { onIntent(SectionDetailUiIntent.TakeAttendanceClicked) },
+                modifier = Modifier.fillMaxWidth(),
+                icon = Icons.Filled.Check,
+            )
+        }
     }
 }
 
@@ -174,28 +151,21 @@ private fun HubList(
     modifier: Modifier = Modifier,
 ) {
     val missingLevelsText: String? = missingLevelsTrailingText(state.missingPeriodLevelCount)
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(GemaShapes.container)
-            .border(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant, GemaShapes.container),
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        GDivider()
         GListItem(
             title = stringResource(R.string.sections_detail_students),
-            leadingIcon = Icons.Filled.Group,
             trailingText = state.studentCount.toString(),
             hasChevron = true,
             onClick = { onIntent(SectionDetailUiIntent.StudentsClicked) },
         )
         GListItem(
             title = stringResource(R.string.sections_detail_attendance),
-            leadingIcon = Icons.Filled.CalendarMonth,
             hasChevron = true,
             onClick = { onIntent(SectionDetailUiIntent.AttendanceClicked) },
         )
         GListItem(
             title = stringResource(R.string.sections_detail_period_levels),
-            leadingIcon = Icons.AutoMirrored.Filled.Assignment,
             trailingText = missingLevelsText,
             trailingTextColor = GemaAccents.onWarningContainer,
             hasChevron = true,
@@ -203,16 +173,13 @@ private fun HubList(
         )
         GListItem(
             title = stringResource(R.string.sections_detail_activities),
-            leadingIcon = Icons.Filled.Checklist,
             trailingText = state.activityCount.toString(),
             hasChevron = true,
             onClick = { onIntent(SectionDetailUiIntent.ActivitiesClicked) },
         )
         GListItem(
             title = stringResource(R.string.sections_detail_export),
-            leadingIcon = Icons.Filled.Upload,
             hasChevron = true,
-            showDivider = false,
             onClick = { onIntent(SectionDetailUiIntent.ExportClicked) },
         )
     }
@@ -242,6 +209,7 @@ private fun SectionDetailScreenPreview() {
                 missingPeriodLevelCount = 12,
                 activityCount = 5,
                 today = LocalDate.of(2026, 9, 10),
+                todayLabel = "HOY · MARTES 10 DE SETIEMBRE",
                 todayAttendanceSummary = "Sin tomar",
             ),
             onIntent = {},

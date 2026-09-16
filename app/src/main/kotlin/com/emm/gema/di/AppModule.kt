@@ -114,11 +114,11 @@ import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.core.siagie.XlsxMonthlyAttendanceWriter
 import com.emm.gema.core.siagie.XlsxSiagieGradesWriter
 import com.emm.gema.core.siagie.XlsxSiagieRosterReader
+import com.emm.gema.core.theme.DateNameProvider
 import com.emm.gema.evaluation.CacheDirSummaryDocuments
 import com.emm.gema.evaluation.PdfDocumentPeriodLevelSummaryRenderer
 import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.home.AndroidDateNameProvider
-import com.emm.gema.home.DateNameProvider
 import com.emm.gema.home.HomeViewModel
 import com.emm.gema.home.dayTicker
 import com.emm.gema.navigation.StartDestinationViewModel

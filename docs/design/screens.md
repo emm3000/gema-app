@@ -760,15 +760,16 @@ Registro layout: `GTopBar` with `sectionTitle`, "`studentCount` alumnos ·
 `currentPeriodLabel`" as the subtitle, and the overflow (Áreas / Renombrar)
 as its one action. `hasStoredTemplate` renders as a `bodySmall` line with a
 `primary` check glyph, "Plantilla SIAGIE cargada", and renders nothing when
-false. The daily block mirrors Home's expanded card: the "HOY · <weekday>
-<day> de <month>" eyebrow, `todayAttendanceSummary` as `bodyLarge` in
-`GemaAccents.onWarningContainer` while it reads *Sin tomar* and
-`onSurfaceVariant` once taken, then the single PRIMARY `GButton`. The five
-destinations are `GListItem` rows on hairlines with `trailingText` for the
-counts: `studentCount`, `missingPeriodLevelCount` as "N faltan" (new:
-`GListItem` needs a trailing color parameter — `trailingText` color is fixed
-to `onSurfaceVariant` today) in `onWarningContainer` text when greater than
-zero, `activityCount`. Both pending lines use `onWarningContainer` as text
+false. The daily block has no card, no border, no rounded container — just
+the "HOY · <weekday> <day> de <month>" eyebrow, `todayAttendanceSummary` as
+`bodyLarge` in `GemaAccents.onWarningContainer` while it reads *Sin tomar*
+and `onSurfaceVariant` once taken, then the single PRIMARY `GButton`. The
+five destinations are `GListItem` rows on hairlines (a leading hairline
+above the first row, a closing one below the last, no leading icons) with
+`trailingText` for the counts: `studentCount`, `missingPeriodLevelCount` as
+"N faltan" via `GListItem`'s `trailingTextColor` (#216) in
+`onWarningContainer` text when greater than zero, `activityCount`. Both
+pending lines use `onWarningContainer` as text
 on `surface`, the exception the note under the color table in `system.md`
 allows. The last row reads *Entregar*, the goal named in `flows.md` §8, and
 still sends `ExportClicked`.
@@ -805,16 +806,23 @@ data class SectionDetailUiState(
     val studentCount: Int = 0,
     val currentPeriodLabel: String? = null,
     val hasStoredTemplate: Boolean = false,
+    val today: LocalDate? = null,
+    val todayLabel: String = "",
     val todayAttendanceSummary: String = "",
+    val isTodayAttendanceTaken: Boolean = false,
     val missingPeriodLevelCount: Int = 0,
     val activityCount: Int = 0,
-    val today: LocalDate? = null,
 )
 ```
 
-`todayAttendanceSummary` reads *Sin tomar* until the first Student of the day is
-recorded, then *N de M presentes*. Both this screen and Home's section cards
-format the same `AttendanceDaySummary` from `core:domain`; neither counts
+`todayLabel` is the shared "HOY · <weekday> <day> de <month>" eyebrow —
+`core:ui`'s `todayLabelOf` (next to `DateLabels.kt`), the same formatter and
+`DateNameProvider` Home uses. `todayAttendanceSummary` reads *Sin tomar* until
+the first Student of the day is recorded, then *N de M presentes*;
+`isTodayAttendanceTaken` (from `AttendanceDaySummary.isTaken`) is what the
+status line's color reads, never a string comparison. Both this screen and
+Home's section cards format the same `AttendanceDaySummary` from
+`core:domain`; neither counts
 Students itself. `currentPeriodLabel`, `hasStoredTemplate`,
 `missingPeriodLevelCount` and `activityCount` arrive with their own tickets.
 
@@ -835,9 +843,9 @@ Copy changes (for the implementation ticket)
 
 - `sections_detail_export`: "Exportar" -> "Entregar" (the Teacher's goal,
   `flows.md` §8; the Export screen title already reads "Entregar").
-- `sections_detail_attendance_today_label`: "ASISTENCIA DE HOY" -> "HOY ·
-  <weekday> <day> de <month>" (the same eyebrow Home renders from
-  `todayLabel`, so both screens read the same line).
+- `sections_detail_attendance_today_label` ("ASISTENCIA DE HOY") is removed:
+  the eyebrow now reads `todayLabel`, sourced from `core:ui`'s shared
+  `today_label` string via `todayLabelOf`, the same one Home renders.
 - New status line above the primary button: `todayAttendanceSummary`
   ("Sin tomar" / "N de M presentes"), no new string.
 

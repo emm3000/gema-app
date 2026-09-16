@@ -440,10 +440,10 @@ Wraps `ListItem` inside a clickable `Surface`. Tokens: `GTextStyle.BODY_LARGE`
 hairline divider (`GListItem.kt` still draws it with `colorScheme.outline`
 today — #166 scope).
 
-`trailingTextColor` defaults to `colorScheme.onSurfaceVariant`, matching the
-`subtitleColor` pattern. SectionDetail (#216) passes `GemaAccents.onWarningContainer`
-for a "N faltan" count, the exception `system.md` allows for a pending count
-on `surface`.
+`subtitleColor` and `trailingTextColor` are both nullable: null falls back to
+`colorScheme.onSurfaceVariant`. SectionDetail (#216) passes
+`GemaAccents.onWarningContainer` as `trailingTextColor` for a "N faltan"
+count, the exception `system.md` allows for a pending count on `surface`.
 
 Tradeoff: no leading avatar or icon slot — `leadingText` is a short label
 (a Roman numeral, an ordinal), not an image slot. Every list in this app is

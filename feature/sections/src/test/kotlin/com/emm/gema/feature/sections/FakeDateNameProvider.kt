@@ -1,4 +1,4 @@
-package com.emm.gema.home
+package com.emm.gema.feature.sections
 
 import com.emm.gema.core.theme.DateNameProvider
 import java.time.DayOfWeek
