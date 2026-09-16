@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,6 +18,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.section.Area
+import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaBorder
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
@@ -83,40 +82,8 @@ fun SectionAreasScreen(
             item {
                 AreaSwitchList(areas = state.areas, onIntent = onIntent)
             }
-            val recordedAreas: List<AreaToggleRow> = state.areas.filter { it.recordedLevelCount > 0 }
-            if (recordedAreas.isNotEmpty()) {
-                item {
-                    GBanner(
-                        text = recordedAreasBannerText(recordedAreas),
-                        modifier = Modifier.fillMaxWidth(),
-                        tone = GBannerTone.WARNING,
-                        icon = Icons.Filled.Warning,
-                    )
-                }
-            }
         }
     }
-}
-
-@Composable
-private fun recordedAreasBannerText(recordedAreas: List<AreaToggleRow>): String {
-    if (recordedAreas.size == 1) {
-        val area: AreaToggleRow = recordedAreas.single()
-        return pluralStringResource(
-            R.plurals.sections_areas_recorded_levels,
-            area.recordedLevelCount,
-            area.name,
-            area.recordedLevelCount,
-        )
-    }
-    val areaNames: String = joinAreaNames(recordedAreas.map { it.name })
-    return stringResource(R.string.sections_areas_recorded_levels_multiple, areaNames)
-}
-
-private fun joinAreaNames(names: List<String>): String = when (names.size) {
-    0 -> ""
-    1 -> names.single()
-    else -> "${names.dropLast(1).joinToString(", ")} y ${names.last()}"
 }
 
 @Composable
@@ -132,11 +99,22 @@ private fun AreaSwitchList(
             .border(GemaBorder.hairline, MaterialTheme.colorScheme.outlineVariant, GemaShapes.container),
     ) {
         areas.forEachIndexed { index, row ->
+            val recordedLevelsNote: String? = if (!row.isActive && row.recordedLevelCount > 0) {
+                pluralStringResource(
+                    R.plurals.sections_areas_recorded_levels,
+                    row.recordedLevelCount,
+                    row.recordedLevelCount,
+                )
+            } else {
+                null
+            }
             GSwitchRow(
                 title = row.name,
                 isChecked = row.isActive,
                 onCheckedChange = { onIntent(SectionAreasUiIntent.AreaToggled(row.id, it)) },
                 modifier = Modifier.fillMaxWidth(),
+                subtitle = recordedLevelsNote,
+                subtitleColor = GemaAccents.onWarningContainer,
             )
             if (index < areas.lastIndex) {
                 GDivider()
