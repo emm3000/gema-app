@@ -99,7 +99,6 @@ enum class GTextStyle {
     BODY_SMALL,
     LABEL_LARGE_EMPHASIS,
     LABEL_SMALL,
-    LABEL_SMALL_EMPHASIS,
     NUMERAL,
 }
 
@@ -915,7 +914,7 @@ Wraps `Surface` + `GText`. A tinted, full-bleed, tappable divider between a
 list's primary rows and a collapsed secondary group — Students' withdrawn
 roster today. Tokens: `GemaSpacing.compactRowHeight`, `surfaceContainerLow`
 background / `onSurfaceVariant` text, `surfaceContainerHigh` pressed state,
-`GTextStyle.LABEL_SMALL_EMPHASIS`.
+`GTextStyle.LABEL_SMALL`.
 
 Wave 2: Students sits outside the Phase 4 screen waves (#168/#169/#170), so
 this token swap lands with the Students screen's own ticket, not Phase 4.

@@ -22,10 +22,10 @@ import.
 - The Export screen ("Entregar") always asks the Teacher to confirm a single
   Period and Section before generating a file; there is no "export
   everything" action.
-- Blockers (students without a level, a `C` without a Descriptive Conclusion,
-  competencies not marked as worked) are scoped to that one Period and
-  Section, and are surfaced as tap-through rows inside the grades card rather
-  than a separate summary across periods.
+- Blockers (a `C` without a Descriptive Conclusion; a missing level never
+  blocks, since `GetGradesExportPlanUseCase` skips unrecorded cells) are
+  scoped to that one Period and Section, and are surfaced as tap-through rows
+  inside the grades card rather than a separate summary across periods.
 - A Teacher who teaches several Sections, or wants several Periods filed,
   repeats the export once per Period-Section pair — this is the SIAGIE
   workflow's own granularity, not an app limitation to remove later.

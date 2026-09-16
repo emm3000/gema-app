@@ -140,7 +140,7 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
             GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
             if (isUntouched) {
                 GText(
-                    text = stringResource(R.string.activity_evidence_no_evidence_label),
+                    text = stringResource(R.string.activity_evidence_untouched_label),
                     style = GTextStyle.LABEL_SMALL,
                     color = GemaAccents.onWarningContainer,
                 )
