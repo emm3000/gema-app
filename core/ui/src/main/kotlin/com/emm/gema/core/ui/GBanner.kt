@@ -40,7 +40,7 @@ private val bannerDotTopOffset = 7.dp
 
 @Composable
 fun GBanner(
-    text: String,
+    text: String?,
     modifier: Modifier = Modifier,
     title: String? = null,
     tone: GBannerTone = GBannerTone.INFO,
@@ -49,6 +49,7 @@ fun GBanner(
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null,
     actionStyle: GBannerActionStyle = GBannerActionStyle.BUTTON,
+    message: (@Composable () -> Unit)? = null,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -63,7 +64,7 @@ fun GBanner(
         ) {
             GBannerLeading(icon = icon, hasLeadingDot = hasLeadingDot, tone = tone)
             Column(modifier = Modifier.weight(1f)) {
-                GBannerMessage(title = title, text = text)
+                GBannerMessage(title = title, text = text, message = message)
                 GBannerColumnAction(actionText = actionText, onActionClick = onActionClick, actionStyle = actionStyle)
             }
             GBannerSideAction(
@@ -121,11 +122,13 @@ private fun GBannerSideAction(
 }
 
 @Composable
-private fun GBannerMessage(title: String?, text: String) {
-    if (title != null) {
+private fun GBannerMessage(title: String?, text: String?, message: (@Composable () -> Unit)?) {
+    if (message != null) {
+        message()
+    } else if (title != null) {
         Text(text = title, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
-        Text(text = text, style = MaterialTheme.typography.bodySmall)
-    } else {
+        if (text != null) Text(text = text, style = MaterialTheme.typography.bodySmall)
+    } else if (text != null) {
         Text(text = text, style = MaterialTheme.typography.bodyMedium)
     }
 }
@@ -216,6 +219,25 @@ private fun GBannerDotLinkPreview() {
             actionText = "Respaldar",
             onActionClick = {},
             actionStyle = GBannerActionStyle.LINK,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GBannerMessageSlotPreview() {
+    GemaTheme {
+        GBanner(
+            text = null,
+            tone = GBannerTone.ERROR,
+            hasLeadingDot = true,
+            message = {
+                GText(text = "ÚLTIMO RESPALDO", style = GTextStyle.LABEL_SMALL)
+                Row {
+                    GText(text = "hace 12 días", modifier = Modifier.alignByBaseline(), style = GTextStyle.NUMERAL)
+                    GText(text = " · 29/08/2026", modifier = Modifier.alignByBaseline(), style = GTextStyle.BODY_MEDIUM)
+                }
+            },
         )
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.backup.MAXIMUM_REMINDER_THRESHOLD_DAYS
@@ -87,11 +88,15 @@ fun BackupScreen(
 @Composable
 private fun LastBackupCard(state: BackupUiState, onIntent: (BackupUiIntent) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.small)) {
+        val overdueDescription: String = stringResource(R.string.backup_last_overdue_description)
         GBanner(
-            title = stringResource(R.string.backup_last_title),
-            text = lastBackupLabel(state),
+            text = null,
+            modifier = Modifier.semantics(mergeDescendants = true) {
+                if (state.isBackupOverdue) stateDescription = overdueDescription
+            },
             tone = if (state.isBackupOverdue) GBannerTone.ERROR else GBannerTone.INFO,
             hasLeadingDot = state.isBackupOverdue,
+            message = { LastBackupMessage(state = state) },
         )
         GButton(
             text = stringResource(R.string.backup_create),
@@ -241,15 +246,27 @@ private fun RestoreCountRow(count: Int, label: String, rowDescription: String) {
 }
 
 @Composable
-private fun lastBackupLabel(state: BackupUiState): String {
-    val days: Int = state.daysSinceLastBackup ?: return stringResource(R.string.backup_last_never)
+private fun LastBackupMessage(state: BackupUiState) {
+    GText(text = stringResource(R.string.backup_last_title), style = GTextStyle.LABEL_SMALL)
+    val days: Int? = state.daysSinceLastBackup
+    if (days == null) {
+        GText(text = stringResource(R.string.backup_last_never), style = GTextStyle.BODY_MEDIUM)
+        return
+    }
     val date: String = state.lastBackupDate?.asDayMonthYear().orEmpty()
     val elapsed: String = if (days == 0) {
         stringResource(R.string.backup_last_today)
     } else {
         pluralStringResource(R.plurals.backup_last_days_ago, days, days)
     }
-    return "$elapsed · $date"
+    Row {
+        GText(text = elapsed, modifier = Modifier.alignByBaseline(), style = GTextStyle.NUMERAL)
+        GText(
+            text = stringResource(R.string.backup_last_date_suffix, date),
+            modifier = Modifier.alignByBaseline(),
+            style = GTextStyle.BODY_MEDIUM,
+        )
+    }
 }
 
 @Composable

@@ -2264,13 +2264,12 @@ Entry: Home overflow or the reminder banner.
 Registro layout: `GTopBar` "Respaldo" with one line of subtitle saying what
 the file holds. The last-backup line is a strip with the "ÚLTIMO RESPALDO"
 eyebrow and the days-and-date label as `NUMERAL` ("hace 12 días · 29 ago")
-(new: the label is a computed string, not a stored `lastBackupLabel` field,
-and it renders as `TITLE_MEDIUM`, not `NUMERAL`): while the reminder is due
-it is the ERROR strip (`errorContainer`, leading dot), the same signal as
-the Home banner (new: the leading element is a `Warning` triangle icon, not
-a dot); otherwise it is the INFO strip on `surfaceContainerLow` (new: today
-it is a bordered `GCard` on plain `surface`, not a borderless INFO strip on
-`surfaceContainerLow`). *Crear respaldo* is the one PRIMARY `GButton`
+(new: the label is computed in the screen, not a stored `lastBackupLabel`
+field; only the elapsed part is `NUMERAL`, the "· date" part is `BODY_MEDIUM`):
+while the reminder is due it is the ERROR strip (`errorContainer`, leading
+dot), the same signal as the Home banner, and TalkBack reads the strip as one
+node ending in the state "Respaldo atrasado"; otherwise it is the INFO strip
+on `surfaceContainerLow` with no state. *Crear respaldo* is the one PRIMARY `GButton`
 (`isCreating` sets `isBusy`), with a `bodySmall` helper naming the share
 sheet. A "RESTAURAR" eyebrow groups the SECONDARY *Elegir archivo .gema* and
 a WARNING `GBanner` ("Restaurar reemplaza todo lo que hay en este teléfono y
