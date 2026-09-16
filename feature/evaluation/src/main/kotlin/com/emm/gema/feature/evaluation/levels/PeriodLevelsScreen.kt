@@ -65,7 +65,7 @@ fun PeriodLevelsScreen(
                 title = "Niveles - ${state.sectionTitle}",
                 subtitle = state.periodLabel,
                 onBackClick = { onIntent(PeriodLevelsUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
                 actions = {
                     GButton(
                         text = "Competencias",

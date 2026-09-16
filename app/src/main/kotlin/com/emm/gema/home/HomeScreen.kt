@@ -71,7 +71,7 @@ fun HomeScreen(
             HomeTopBar(
                 yearLabel = state.schoolYearLabel,
                 onIntent = onIntent,
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         fab = {
@@ -162,11 +162,11 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeTopBar(yearLabel: String, onIntent: (HomeUiIntent) -> Unit, showHairline: Boolean) {
+private fun HomeTopBar(yearLabel: String, onIntent: (HomeUiIntent) -> Unit, isContentScrolled: Boolean) {
     GTopBar(
         title = "",
         titleContent = { HomeTitle(yearLabel = yearLabel) },
-        showHairline = showHairline,
+        isContentScrolled = isContentScrolled,
         actions = {
             GIconButton(
                 icon = Icons.Filled.Download,

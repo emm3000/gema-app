@@ -61,7 +61,7 @@ fun ActivityFormScreen(
                 title = if (state.activityId == null) "Nueva actividad" else "Editar actividad",
                 subtitle = activityFormSubtitle(state),
                 onBackClick = { onIntent(ActivityFormUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,

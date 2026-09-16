@@ -52,7 +52,7 @@ fun SetupYearScreen(
             GTopBar(
                 title = "",
                 onBackClick = { onIntent(SetupYearUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,

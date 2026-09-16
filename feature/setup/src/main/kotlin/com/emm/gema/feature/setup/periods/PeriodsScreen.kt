@@ -57,7 +57,7 @@ fun PeriodsScreen(
                 title = stringResource(R.string.setup_periods_title, state.schoolYearLabel),
                 subtitle = periodKindCountLabel,
                 onBackClick = { onIntent(PeriodsUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,

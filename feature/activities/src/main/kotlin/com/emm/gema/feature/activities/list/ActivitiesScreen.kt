@@ -45,7 +45,7 @@ fun ActivitiesScreen(
                 title = stringResource(R.string.activities_list_title, state.sectionTitle),
                 subtitle = stringResource(R.string.activities_list_subtitle),
                 onBackClick = { onIntent(ActivitiesUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         fab = {

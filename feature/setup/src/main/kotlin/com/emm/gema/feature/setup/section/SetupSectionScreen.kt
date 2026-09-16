@@ -49,7 +49,7 @@ fun SetupSectionScreen(
             GTopBar(
                 title = "",
                 onBackClick = { onIntent(SetupSectionUiIntent.BackClicked) },
-                showHairline = scrollState.value > 0,
+                isContentScrolled = scrollState.value > 0,
             )
         },
         modifier = modifier,

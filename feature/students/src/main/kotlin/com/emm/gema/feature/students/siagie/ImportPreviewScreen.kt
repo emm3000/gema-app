@@ -55,7 +55,7 @@ fun ImportPreviewScreen(
                 title = "Importar de SIAGIE",
                 subtitle = NOTHING_IS_WRITTEN,
                 onBackClick = { onIntent(ImportPreviewUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,

@@ -26,12 +26,12 @@ fun GTopBar(
     onBackClick: (() -> Unit)? = null,
     titleContent: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    showHairline: Boolean = false,
+    isContentScrolled: Boolean = false,
 ) {
     val hairlineColor: Color = MaterialTheme.colorScheme.outlineVariant
     TopAppBar(
         modifier = modifier.drawBehind {
-            if (showHairline) {
+            if (isContentScrolled) {
                 drawLine(
                     color = hairlineColor,
                     start = Offset(x = 0f, y = size.height),
@@ -81,6 +81,6 @@ private fun GTopBarPreview() {
 @Composable
 private fun GTopBarScrolledPreview() {
     GemaTheme {
-        GTopBar(title = "Respaldo", subtitle = "Último hace 12 días", onBackClick = {}, showHairline = true)
+        GTopBar(title = "Respaldo", subtitle = "Último hace 12 días", onBackClick = {}, isContentScrolled = true)
     }
 }

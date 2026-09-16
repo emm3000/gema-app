@@ -42,7 +42,7 @@ fun SchoolYearsScreen(
                 title = stringResource(R.string.school_years_title),
                 subtitle = stringResource(R.string.school_years_subtitle),
                 onBackClick = { onIntent(SchoolYearsUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,

@@ -49,7 +49,7 @@ fun SectionAreasScreen(
                 title = stringResource(R.string.sections_areas_title, state.sectionTitle),
                 subtitle = stringResource(R.string.sections_areas_subtitle),
                 onBackClick = { onIntent(SectionAreasUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,

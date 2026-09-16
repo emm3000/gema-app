@@ -66,7 +66,7 @@ fun AttendanceDayScreen(
                 title = "Asistencia · ${state.sectionTitle}",
                 subtitle = stringResource(R.string.attendance_day_subtitle_saves_itself),
                 onBackClick = { onIntent(AttendanceDayUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
                 actions = {
                     GCalendarIconButton(
                         value = state.date,

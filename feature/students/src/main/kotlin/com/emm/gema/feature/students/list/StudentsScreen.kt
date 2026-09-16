@@ -58,7 +58,7 @@ fun StudentsScreen(
                 title = "Alumnos · ${state.sectionTitle}",
                 subtitle = "$activeCountLabel · $withdrawnCountLabel",
                 onBackClick = { onIntent(StudentsUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
                 actions = {
                     GButton(
                         text = "Importar",

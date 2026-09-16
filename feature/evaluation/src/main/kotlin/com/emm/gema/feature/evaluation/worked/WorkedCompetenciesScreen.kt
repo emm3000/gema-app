@@ -45,7 +45,7 @@ fun WorkedCompetenciesScreen(
                 title = "Competencias trabajadas",
                 subtitle = "${state.areaName} · ${state.periodLabel}",
                 onBackClick = { onIntent(WorkedCompetenciesUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
             )
         },
         modifier = modifier,
