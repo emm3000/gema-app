@@ -850,13 +850,16 @@ Registro layout: `GTopBar` "Alumnos · 3ro A" with the active count and the
 sort rule as subtitle ("30 activos · por apellido"), and *Importar* as its one
 action, a glyph-only `GIconButton` (new: today it is a SECONDARY `GButton`
 with a label and an icon; the glyph keeps the top bar quiet and the FAB as
-the only labelled action). The `GSearchField` (48dp, filled `surfaceVariant`
-pill, no border, placeholder "Buscar por apellido") renders only while `isSearchVisible` is
+the only labelled action). The `GSearchField` (48dp, `surface` fill, 1dp
+`outline` border, `control` radius, placeholder "Buscar por apellido": the
+target `components.md` schedules for the Students ticket; today it is a
+filled `surfaceVariant` pill) renders only while `isSearchVisible` is
 true (today's screen always shows it and its `UiState` lacks the flag; the
 flag is the contract above). Each Student is a `GListItem` on a hairline:
 `displayName` as `bodyLarge` (the component's default title style; wraps,
-never truncates), `studentCode` as a `bodyMedium` subtitle in
-`onSurfaceVariant` (the component's default, not tabular), a chevron. The withdrawn
+never truncates), `studentCode` as a tabular `bodySmall` subtitle in
+`onSurfaceVariant` (new: `GListItem` renders subtitles as `bodyMedium`
+without tabular figures today), a chevron. The withdrawn
 roster collapses under a full-bleed `GGroupHeader` ("RETIRADOS (2)",
 `labelSmall`, 48dp) with an expand chevron; its fill is the
 `surfaceContainerLow` swap `components.md` already schedules for the
@@ -872,13 +875,13 @@ Students ticket (today's default is `surfaceVariant`). The
 |  | (o) Buscar por apellido            |  |
 |  +------------------------------------+  |
 |  ----------------------------------------|
-|  Apaza Condori, Yesenia                > |
+|  APAZA CONDORI, YESENIA                > |
 |  12345678901234                          |
 |  ----------------------------------------|
-|  Ccahuana Flores, María                > |
+|  CCAHUANA FLORES, MARÍA                > |
 |  12345678901235                          |
 |  ----------------------------------------|
-|  Huanca Ríos, Diego                    > |
+|  HUANCA RÍOS, DIEGO                    > |
 |  12345678901236                          |
 |  ----------------------------------------|
 |  RETIRADOS (2)                         v |
@@ -955,7 +958,7 @@ only while `isWithdrawn` is true. *Guardar* is the `bottomAction` PRIMARY
 |    14 de 14 dígitos                      |
 |  +------------------------------------+  |
 |  | Apellidos y nombres                |  |
-|  | Huanca Ríos, Diego                 |  |
+|  | HUANCA RÍOS, DIEGO                 |  |
 |  +------------------------------------+  |
 |    Apellidos primero, como en SIAGIE.    |
 |                                          |
@@ -1022,9 +1025,10 @@ Shows what the import will do. Nothing is written until *Aplicar*.
 Registro layout: `GTopBar` "Importar de SIAGIE" whose subtitle states the
 rule ("Nada se escribe hasta que apliques"). `fileName` renders as
 `titleMedium` with a file glyph, then "`sectionTitle` · `rosterSize` alumnos
-en el archivo" in `onSurfaceVariant`. The three groups are `GGroupHeader` rows
-on hairlines with the count as trailing text and an expand chevron
-(down closed, up open); the group matching `expandedGroup` lists its rows
+en el archivo" in `onSurfaceVariant`. The three groups are `GListItem` rows
+on hairlines with the count as `NUMERAL` trailing text and an expand chevron
+(down closed, up open) (new: today they are `GGroupHeader` rows, whose count
+renders as `TITLE_MEDIUM_EMPHASIS` with no override); the group matching `expandedGroup` lists its rows
 below, `GCheckRow`s for the withdrawals (default on) with one `bodySmall`
 helper ("Desmarca a quien siga en el aula."). The reassurance line stays as
 `bodySmall`. The `bottomAction` is a `Row` of two `GButton`s, as today:
@@ -1046,8 +1050,8 @@ takes weight 2 and names the action; today both weigh 1 and it reads
 |  Se actualizarán                   26  v |
 |  ----------------------------------------|
 |  Se propondrán como retirados       2  ^ |
-|  [x] López Silva, Ana                    |
-|  [x] Torres Pino, Luis                   |
+|  [x] LÓPEZ SILVA, ANA                    |
+|  [x] TORRES PINO, LUIS                   |
 |      Desmarca a quien siga en el aula.   |
 |  ----------------------------------------|
 |                                          |
@@ -1063,9 +1067,10 @@ with the row number, never truncated at that row.
 
 Rejection state replaces the body. An ERROR `GBanner` carries `reason` (new: a
 leading dot in its `icon` slot; no icon renders today); `expected` and `found`
-render as two `GListItem` rows with the value as `trailingText` (new: the found value in
-`onErrorContainer`, proposal for the same `core:ui` ticket as the other
-trailing-color notes; `trailingText` is `onSurfaceVariant` today), then one
+render as two `GListItem` rows with the value as `trailingText` (new: the
+found value in `error` ink, the status-ink rule in `system.md`; proposal for
+the same `core:ui` ticket as the other trailing-color notes, since
+`trailingText` is `onSurfaceVariant` today), then one
 `bodyLarge` line says what to do and that nothing changed. The
 `bottomAction` becomes a single SECONDARY `GButton` *Volver a alumnos* that
 sends `CancelClicked` (new: today the Cancelar / Aplicar row stays, and
@@ -1256,10 +1261,10 @@ columns in tabular figures. A zero count renders in `outline` color (today
 `outlineVariant`, too faint on white) so the non-zero counts carry the row;
 color is never the only signal, the digit is there. `recordedDayCount` is
 the `bodySmall` footer line. The PRIMARY `bottomAction` is disabled while
-`canExport` is false; `exportUnavailableReason` renders as a `GBanner` above
-it when set (new: the field exists on the state and today's screen never
-shows it) and `isExporting` sets `isBusy` (supported by `GButton`, not
-passed today).
+`canExport` is false, and `isExporting` sets `isBusy` (supported by
+`GButton`, not passed today). `exportUnavailableReason` stays unrendered in
+this batch: the ViewModel never assigns it, so a banner for it would never
+show.
 
 ```
 +------------------------------------------+
@@ -1270,13 +1275,13 @@ passed today).
 |  ----------------------------------------|
 |  ALUMNO                 P    T    F   FJ |
 |  ----------------------------------------|
-|  Apaza Condori, Yesenia 18   1    0    1 |
+|  APAZA CONDORI, YESENIA 18   1    0    1 |
 |  ----------------------------------------|
-|  Ccahuana Flores, María 15   2    3    0 |
+|  CCAHUANA FLORES, MARÍA 15   2    3    0 |
 |  ----------------------------------------|
-|  Huanca Ríos, Diego     20   0    0    0 |
+|  HUANCA RÍOS, DIEGO     20   0    0    0 |
 |  ----------------------------------------|
-|  Mamani Torres, Luis    12   1    6    1 |
+|  MAMANI TORRES, LUIS    12   1    6    1 |
 |  Alberto                                 |
 |  ----------------------------------------|
 |  20 días de clase registrados            |
@@ -1337,12 +1342,13 @@ minimum with 12dp vertical padding: the checkbox (`primary` fill when
 checked), `siagieOrdinal` as the `labelSmall` prefix, the name as `bodyLarge`
 wrapping to as many lines as it needs; nothing truncates. A row that is
 unmarked while `recordedLevelCount` is greater than zero carries the warning
-as its `subtitle` ("8 niveles registrados. No se exportan mientras esté
-desmarcada."), next to the box that caused it (new: today one WARNING
+as its `subtitle` ("8 niveles registrados. Quedan guardados y dejan de
+exportarse.", the wording the shipped strings carry: the fear to answer is
+that unmarking deletes), next to the box that caused it (new: today one WARNING
 `GBanner` in the footer aggregates every such Competency; the subtitle in
-`GemaAccents.onWarningContainer` text is a proposal for the same `core:ui`
-ticket as the `GSwitchRow` note, since `GCheckRow` hardcodes
-`onSurfaceVariant`). The footer is one `bodySmall` line: "`selectedCount` de
+`GemaAccents.onWarningContainer` text follows the status-ink rule in
+`system.md` and is a proposal for the same `core:ui` ticket as the
+`GSwitchRow` note, since `GCheckRow` hardcodes `onSurfaceVariant`). The footer is one `bodySmall` line: "`selectedCount` de
 N marcadas · cada cambio se guarda solo".
 
 ```
@@ -1362,9 +1368,8 @@ N marcadas · cada cambio se guarda solo".
 |  ----------------------------------------|
 |  [ ] 03  Construye interpretaciones      |
 |          históricas                      |
-|          8 niveles registrados. No se    |
-|          exportan mientras esté          |
-|          desmarcada.                     |
+|          8 niveles registrados. Quedan   |
+|          guardados y dejan de exportarse.|
 |  ----------------------------------------|
 |  [ ] 04  Gestiona responsablemente el    |
 |          espacio y el ambiente           |
