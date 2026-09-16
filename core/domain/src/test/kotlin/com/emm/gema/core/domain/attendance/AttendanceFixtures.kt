@@ -7,15 +7,15 @@ import com.emm.gema.core.domain.student.StudentId
 import java.time.LocalDate
 import java.time.YearMonth
 
-internal val monthlySectionId: SectionId = SectionId("section-1")
+internal val sectionId: SectionId = SectionId("section-1")
 internal val september: YearMonth = YearMonth.of(2026, 9)
 
-internal fun monthlyRecord(studentId: StudentId, date: LocalDate, status: AttendanceStatus): AttendanceRecord =
-    AttendanceRecord(sectionId = monthlySectionId, studentId = studentId, date = date, status = status)
+internal fun record(studentId: StudentId, date: LocalDate, status: AttendanceStatus): AttendanceRecord =
+    AttendanceRecord(sectionId = sectionId, studentId = studentId, date = date, status = status)
 
-internal fun monthlyStudent(id: String, code: String, fullName: String): Student = Student(
+internal fun student(id: String, code: String, fullName: String): Student = Student(
     id = StudentId(id),
-    sectionId = monthlySectionId,
+    sectionId = sectionId,
     code = StudentCode(code),
     fullName = fullName,
 )

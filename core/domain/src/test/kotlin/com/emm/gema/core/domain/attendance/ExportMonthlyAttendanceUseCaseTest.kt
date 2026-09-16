@@ -15,8 +15,8 @@ import org.junit.Test
 
 class ExportMonthlyAttendanceUseCaseTest {
 
-    private val luz: Student = monthlyStudent("student-1", "12345678901234", "ACOSTA RIVERA, Luz Maria")
-    private val jose: Student = monthlyStudent("student-2", "12345678901235", "BAUTISTA QUISPE, Jose")
+    private val luz: Student = student("student-1", "12345678901234", "ACOSTA RIVERA, Luz Maria")
+    private val jose: Student = student("student-2", "12345678901235", "BAUTISTA QUISPE, Jose")
 
     private val studentRepository = InMemoryStudentRepository(listOf(jose, luz))
     private val attendanceRepository = InMemoryAttendanceRepository()
@@ -29,11 +29,11 @@ class ExportMonthlyAttendanceUseCaseTest {
 
     @Test
     fun `export builds one entry per student with its dated statuses and hands them to the writer`() = runTest {
-        attendanceRepository.record(monthlyRecord(luz.id, september.atDay(1), AttendanceStatus.PRESENT))
-        attendanceRepository.record(monthlyRecord(jose.id, september.atDay(1), AttendanceStatus.ABSENT))
+        attendanceRepository.record(record(luz.id, september.atDay(1), AttendanceStatus.PRESENT))
+        attendanceRepository.record(record(jose.id, september.atDay(1), AttendanceStatus.ABSENT))
 
         val file: AttendanceExportFile =
-            exportMonthlyAttendance(monthlySectionId, september, "content://attendance.xlsx")
+            exportMonthlyAttendance(sectionId, september, "content://attendance.xlsx")
 
         assertThat(file).isEqualTo(AttendanceExportFile("exported.xlsx", "/tmp/exported.xlsx"))
         assertThat(exporter.receivedUri).isEqualTo("content://attendance.xlsx")
@@ -48,27 +48,27 @@ class ExportMonthlyAttendanceUseCaseTest {
     fun `a student withdrawn before the month never reaches an export entry`() = runTest {
         studentRepository.save(jose.copy(withdrawalDate = september.atDay(1).minusDays(1)))
         attendanceRepository.record(
-            monthlyRecord(jose.id, september.minusMonths(1).atEndOfMonth(), AttendanceStatus.PRESENT),
+            record(jose.id, september.minusMonths(1).atEndOfMonth(), AttendanceStatus.PRESENT),
         )
 
-        exportMonthlyAttendance(monthlySectionId, september, "content://attendance.xlsx")
+        exportMonthlyAttendance(sectionId, september, "content://attendance.xlsx")
 
         assertThat(exporter.receivedEntries.map { it.studentCode }).containsExactly(luz.code)
     }
 
     @Test
     fun `summary and export agree on which students are included for the same section and month`() = runTest {
-        val ana: Student = monthlyStudent("student-3", "12345678901236", "CASTRO LEON, Ana")
+        val ana: Student = student("student-3", "12345678901236", "CASTRO LEON, Ana")
         studentRepository.save(jose.copy(withdrawalDate = september.atDay(1).minusDays(1)))
         studentRepository.save(ana.copy(withdrawalDate = september.atDay(15)))
         val getMonthlySummary = GetMonthlyAttendanceSummaryUseCase(studentRepository, attendanceRepository)
 
-        val summary: MonthlyAttendanceSummary = getMonthlySummary(monthlySectionId, september).first()
-        exportMonthlyAttendance(monthlySectionId, september, "content://attendance.xlsx")
+        val summary: MonthlyAttendanceSummary = getMonthlySummary(sectionId, september).first()
+        exportMonthlyAttendance(sectionId, september, "content://attendance.xlsx")
 
         val summaryIds: Set<StudentId> = summary.rows.map { it.studentId }.toSet()
         val exportIds: Set<StudentId?> = exporter.receivedEntries.map { entry ->
-            studentRepository.findByCode(monthlySectionId, entry.studentCode)?.id
+            studentRepository.findByCode(sectionId, entry.studentCode)?.id
         }.toSet()
         assertThat(exportIds).isEqualTo(summaryIds)
         assertThat(exportIds).containsExactly(luz.id, ana.id)
