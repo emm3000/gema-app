@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.theme.GemaSpacing
@@ -26,6 +27,7 @@ fun GCheckRow(
     modifier: Modifier = Modifier,
     prefix: String? = null,
     subtitle: String? = null,
+    subtitleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     isEnabled: Boolean = true,
     showBottomDivider: Boolean = false,
 ) {
@@ -68,7 +70,7 @@ fun GCheckRow(
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = subtitleColor,
                     )
                 }
             }
