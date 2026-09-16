@@ -153,7 +153,7 @@ class ImportPreviewViewModel(
             foundLabel = null,
         )
         is SiagieImportRejection.GradeMismatch -> ImportRejection(
-            reason = ImportRejectionReason.SectionMismatch,
+            reason = ImportRejectionReason.GradeMismatch,
             instruction = ImportInstruction.PICK_ANOTHER_FILE_OR_OPEN_SECTION,
             expected = sectionTitle.ifEmpty { section?.title().orEmpty() },
             found = gradeOrdinalLabel(reason.found),
