@@ -249,6 +249,22 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `after midnight home shows the new day and takes attendance for it`() = runTest {
+        val today: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.of(2026, 9, 10))
+        val viewModel: HomeViewModel = homeOn(today)
+
+        today.value = LocalDate.of(2026, 9, 11)
+
+        assertThat(viewModel.state.value.todayLabel).isEqualTo("HOY · VIERNES 11 DE SETIEMBRE")
+        viewModel.effects.test {
+            viewModel.onIntent(HomeUiIntent.TakeAttendanceClicked(SectionId("section-1")))
+
+            assertThat(awaitItem())
+                .isEqualTo(HomeUiEffect.NavigateToAttendanceDay(SectionId("section-1"), LocalDate.of(2026, 9, 11)))
+        }
+    }
+
+    @Test
     fun `each section counts the levels still missing in the current period`() {
         workedCompetencyRepository.worked.value = setOf(
             Triple(SectionId("section-1"), periods[1].id, Competency.idOf(Area.PPSS, 1)),
@@ -267,9 +283,10 @@ class HomeViewModelTest {
     }
 
     private fun homeAt(today: LocalDate, lastBackupAt: Instant? = null): HomeViewModel =
-        homeAtClock(Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC")), lastBackupAt)
+        homeOn(MutableStateFlow(today), lastBackupAt)
 
-    private fun homeAtClock(clock: Clock, lastBackupAt: Instant? = null): HomeViewModel {
+    private fun homeOn(today: MutableStateFlow<LocalDate>, lastBackupAt: Instant? = null): HomeViewModel {
+        val clock: Clock = Clock.fixed(today.value.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneId.of("UTC"))
         val settings = FakeBackupSettingsRepository(
             BackupSettings(lastBackupAt = lastBackupAt, reminderThresholdDays = REMINDER_THRESHOLD_DAYS),
         )
@@ -287,7 +304,7 @@ class HomeViewModelTest {
                 periodLevelRepository = FakePeriodLevelRepository(),
             ),
             dateNames = dateNames,
-            clock = clock,
+            today = today,
         )
     }
 

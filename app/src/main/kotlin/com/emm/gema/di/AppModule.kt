@@ -120,6 +120,7 @@ import com.emm.gema.feature.backup.BackupViewModel
 import com.emm.gema.core.domain.date.DateNameProvider
 import com.emm.gema.home.AndroidDateNameProvider
 import com.emm.gema.home.HomeViewModel
+import com.emm.gema.home.dayTicker
 import com.emm.gema.navigation.StartDestinationViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
@@ -232,6 +233,6 @@ val appModule: Module = module {
 
     viewModel { StartDestinationViewModel(get(), get()) }
     single<DateNameProvider> { AndroidDateNameProvider(androidContext().resources) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get(), get(), dayTicker(get())) }
     viewModelOf(::BackupViewModel)
 }
