@@ -25,14 +25,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
-
-private val leadingDotSize: Dp = 8.dp
 
 @Composable
 fun GBanner(
@@ -79,7 +76,7 @@ private fun GBannerLeading(icon: ImageVector?, hasLeadingDot: Boolean, tone: GBa
     } else if (hasLeadingDot) {
         Box(
             modifier = Modifier
-                .size(leadingDotSize)
+                .size(GemaSpacing.small)
                 .clip(CircleShape)
                 .background(dotColorOf(tone)),
         )
