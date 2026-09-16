@@ -104,6 +104,7 @@ import com.emm.gema.core.domain.siagie.SiagieImportStore
 import com.emm.gema.core.domain.siagie.SiagieRosterReader
 import com.emm.gema.core.domain.setup.CompleteSetupUseCase
 import com.emm.gema.core.domain.setup.SetupRepository
+import com.emm.gema.core.domain.student.CountAllStudentsUseCase
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.emm.gema.core.domain.student.GetStudentUseCase
 import com.emm.gema.core.domain.student.GetStudentsUseCase
@@ -210,6 +211,7 @@ val appModule: Module = module {
     factory<GetStudentsUseCase> { GetStudentsUseCase(get()) }
     factory<GetStudentUseCase> { GetStudentUseCase(get()) }
     factory<GetStudentCountsUseCase> { GetStudentCountsUseCase(get()) }
+    factory<CountAllStudentsUseCase> { CountAllStudentsUseCase(get(), get(), get()) }
     factory<WithdrawStudentUseCase> { WithdrawStudentUseCase(get()) }
     factory<ReactivateStudentUseCase> { ReactivateStudentUseCase(get()) }
     factory<GetAttendanceDayUseCase> { GetAttendanceDayUseCase(get(), get()) }

@@ -2366,8 +2366,8 @@ data class RestoreConfirmation(
 ```
 
 `DEFAULT_REMINDER_THRESHOLD_DAYS` (`core:domain`) is `7`. `currentStudentCount`
-(new) does not exist on `RestoreConfirmation` today; the confirmation dialog
-needs it to render the "57 alumnos" row the wireframe shows.
+renders the "57 alumnos" row the wireframe shows and counts every Student on
+the device, active and withdrawn, since a restore replaces both.
 
 Intents: `CreateBackupClicked`, `ChooseRestoreFileClicked`,
 `RestoreFilePicked(uri: String)`, `RestoreConfirmed`, `RestoreDismissed`,

@@ -9,18 +9,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeStudentRepository(
-    countsBySection: Map<SectionId, Int> = emptyMap(),
+    vararg students: Student,
 ) : StudentRepository {
 
-    private val counts: MutableStateFlow<Map<SectionId, Int>> = MutableStateFlow(countsBySection)
+    private val stored: MutableStateFlow<List<Student>> = MutableStateFlow(students.toList())
 
     override fun observeBySection(sectionId: SectionId): Flow<List<Student>> =
         throw UnsupportedOperationException("not needed by BackupViewModelTest")
 
-    override fun observeCountsBySection(): Flow<Map<SectionId, Int>> = counts
+    override fun observeCountsBySection(): Flow<Map<SectionId, Int>> =
+        throw UnsupportedOperationException("not needed by BackupViewModelTest")
 
     override suspend fun listBySection(sectionId: SectionId): List<Student> =
-        throw UnsupportedOperationException("not needed by BackupViewModelTest")
+        stored.value.filter { it.sectionId == sectionId }
 
     override suspend fun findById(id: StudentId): Student? =
         throw UnsupportedOperationException("not needed by BackupViewModelTest")
