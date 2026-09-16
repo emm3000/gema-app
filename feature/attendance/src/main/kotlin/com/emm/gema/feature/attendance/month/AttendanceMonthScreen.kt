@@ -167,7 +167,11 @@ private fun AttendanceMonthColumns(
         modifier = modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(modifier = Modifier.weight(1f).padding(horizontal = GemaSpacing.medium)) { name() }
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.extraSmall),
+        ) { name() }
         counts.forEach { cell: @Composable () -> Unit ->
             Box(modifier = Modifier.width(GemaSpacing.narrowCellWidth)) { cell() }
         }

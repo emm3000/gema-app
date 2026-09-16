@@ -34,7 +34,10 @@ fun GTableHeaderBand(modifier: Modifier = Modifier, content: @Composable () -> U
 @Composable
 fun GTableRow(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Column(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxWidth().heightIn(min = GemaSpacing.compactRowHeight)) {
+        Box(
+            modifier = Modifier.fillMaxWidth().heightIn(min = GemaSpacing.compactRowHeight),
+            propagateMinConstraints = true,
+        ) {
             content()
         }
         HorizontalDivider()
