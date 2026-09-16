@@ -7,3 +7,4 @@ Cause values: `checklist` (a recurring item from the screen dispatch checklist, 
 | PR | Issue | Row | Model:effort | First review | Cause |
 |---|---|---|---|---|---|
 | #274 | #265 | 3 | sonnet:medium | MERGE | minor doc nit fixed before merge |
+| #275 | #255 | 4 | sonnet:medium | FIX FIRST | checklist: 3 glyph-banner screenshots missing |

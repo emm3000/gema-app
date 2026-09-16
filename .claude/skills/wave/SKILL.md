@@ -23,7 +23,7 @@ Run when the owner invokes `/wave` with one or more issue numbers, or when the o
 
 ## Decision Gates
 
-Rows are ordered by blast radius: how much a mistake breaks and whether a gate catches it. A ticket that matches several rows takes the lowest row that matches.
+Rows are ordered by blast radius: how much a mistake breaks and whether a gate catches it. A ticket that matches several rows takes the highest-numbered row that matches.
 
 | Row | Work | Model:effort | Extra instruction |
 |---|---|---|---|
