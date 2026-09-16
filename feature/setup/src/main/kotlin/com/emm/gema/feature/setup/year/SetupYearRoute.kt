@@ -1,5 +1,6 @@
 package com.emm.gema.feature.setup.year
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -19,6 +20,8 @@ fun SetupYearRoute(
     draftStore: SetupDraftStore = koinInject(),
 ) {
     val state: State<SetupYearUiState> = viewModel.state.collectAsStateWithLifecycle()
+
+    BackHandler(onBack = { viewModel.onIntent(SetupYearUiIntent.BackClicked) })
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
