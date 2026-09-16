@@ -126,12 +126,13 @@ hub.
 **SectionDetail** is a hub, not a dashboard. It shows Grade and name, the Student
 count, whether a SIAGIE Template is stored, and today's attendance state ("not
 taken" / "28 of 30 present"). It offers exactly six destinations — Students,
-Attendance, Period Levels, Activities, Export, and an overflow with Areas /
-Rename / Delete. The primary action is *Take attendance today*, because that is
-the daily job.
+Attendance, Period Levels, Activities, Export, and an overflow with Rename and
+Areas. The primary action is *Take attendance today*, because that is the daily
+job.
 
-Deleting a Section with Students or records confirms with what will be lost
-(US 14); an empty Section deletes with a plain confirm (US 13).
+Deleting a Section happens from `SectionForm`, not from this hub: with Students
+or records it confirms with what will be lost (US 14); an empty Section deletes
+with a plain confirm (US 13).
 
 ## 3. Students (US 15, 20-24 — ticket #6)
 

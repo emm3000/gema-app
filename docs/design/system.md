@@ -94,6 +94,10 @@ weight range 400-600, Latin and Spanish subset, all layout features kept:
 | `titleSmall` | 12sp / 600, +1px tracking | Registro value, mirrors `labelSmall`. M3 components that read `titleSmall` directly |
 | `labelMedium` | 12sp / 600, +1px tracking | Registro value, mirrors `labelSmall`. `GBadge` text, `DatePicker` |
 
+The mockup HTML rounds these sizes for browser rendering (for example 18px top
+bar titles, 14px buttons, 11px field labels); the Kotlin type scale above is
+the source of truth.
+
 `gemaTypography` keeps these seven `GTextStyle` slots. It also sets
 `bodyMedium`, `titleSmall` and `labelMedium` to Registro values, because
 about 15 `core:ui` components and M3's `ListItem`, `Dialog` and `DatePicker`
