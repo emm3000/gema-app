@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -62,9 +64,16 @@ fun HomeScreen(
     val gutter: Modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.extraSmall)
+    val listState: LazyListState = rememberLazyListState()
 
     GScreen(
-        topBar = { HomeTopBar(yearLabel = state.schoolYearLabel, onIntent = onIntent) },
+        topBar = {
+            HomeTopBar(
+                yearLabel = state.schoolYearLabel,
+                onIntent = onIntent,
+                showHairline = listState.canScrollBackward,
+            )
+        },
         fab = {
             GExtendedFab(
                 text = stringResource(R.string.home_add_section),
@@ -76,6 +85,7 @@ fun HomeScreen(
         modifier = modifier,
     ) { padding: PaddingValues ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
@@ -152,10 +162,11 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeTopBar(yearLabel: String, onIntent: (HomeUiIntent) -> Unit) {
+private fun HomeTopBar(yearLabel: String, onIntent: (HomeUiIntent) -> Unit, showHairline: Boolean) {
     GTopBar(
         title = "",
         titleContent = { HomeTitle(yearLabel = yearLabel) },
+        showHairline = showHairline,
         actions = {
             GIconButton(
                 icon = Icons.Filled.Download,

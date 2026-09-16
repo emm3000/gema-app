@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +38,7 @@ fun ExportScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
+    val scrollState: ScrollState = rememberScrollState()
     GScreen(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
@@ -45,6 +47,7 @@ fun ExportScreen(
                 title = stringResource(R.string.export_title, state.sectionTitle),
                 subtitle = state.periodLabel,
                 onBackClick = { onIntent(ExportUiIntent.BackClicked) },
+                showHairline = scrollState.value > 0,
             )
         },
     ) { scaffoldPadding ->
@@ -52,7 +55,7 @@ fun ExportScreen(
             modifier = Modifier
                 .padding(scaffoldPadding)
                 .padding(vertical = GemaSpacing.screenGutter)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             GradesCard(state = state, onIntent = onIntent)

@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -52,12 +54,14 @@ fun ActivityFormScreen(
     message: String? = null,
     dateErrorText: String? = null,
 ) {
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = if (state.activityId == null) "Nueva actividad" else "Editar actividad",
                 subtitle = activityFormSubtitle(state),
                 onBackClick = { onIntent(ActivityFormUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
             )
         },
         modifier = modifier,
@@ -77,6 +81,7 @@ fun ActivityFormScreen(
                 .padding(padding),
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),

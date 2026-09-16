@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +48,7 @@ fun ActivityEvidenceScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
@@ -56,6 +59,7 @@ fun ActivityEvidenceScreen(
                     state.periodLabel,
                 ),
                 onBackClick = { onIntent(ActivityEvidenceUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
                 actions = {
                     GIconButton(
                         icon = Icons.Filled.MoreVert,
@@ -82,6 +86,7 @@ fun ActivityEvidenceScreen(
             }
             CompetencySelector(state = state, onIntent = onIntent)
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = GemaSpacing.small),
             ) {

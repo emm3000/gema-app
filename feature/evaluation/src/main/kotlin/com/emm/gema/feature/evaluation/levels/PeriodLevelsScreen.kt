@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -56,12 +58,14 @@ fun PeriodLevelsScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "Niveles - ${state.sectionTitle}",
                 subtitle = state.periodLabel,
                 onBackClick = { onIntent(PeriodLevelsUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
                 actions = {
                     GButton(
                         text = "Competencias",
@@ -109,7 +113,7 @@ fun PeriodLevelsScreen(
             }
             Selectors(state = state, onIntent = onIntent)
             if (state.hasWorkedCompetencies) {
-                Grid(state = state, onIntent = onIntent)
+                Grid(state = state, onIntent = onIntent, listState = listState)
             } else {
                 GEmptyState(
                     title = "Todavía no elegiste competencias",
@@ -159,7 +163,7 @@ private fun Selectors(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiInten
 }
 
 @Composable
-private fun Grid(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) -> Unit) {
+private fun Grid(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) -> Unit, listState: LazyListState) {
     val bandScroll: ScrollState = rememberScrollState()
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -171,7 +175,7 @@ private fun Grid(state: PeriodLevelsUiState, onIntent: (PeriodLevelsUiIntent) ->
             onIntent = onIntent,
         )
         GDivider()
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
             items(state.visibleRows, key = { it.studentId.value }) { row ->
                 GridRow(row = row, bandScroll = bandScroll, currentCell = state.currentCell(), onIntent = onIntent)
                 GDivider()

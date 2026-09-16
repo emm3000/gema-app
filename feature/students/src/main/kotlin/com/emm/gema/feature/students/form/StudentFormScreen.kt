@@ -1,5 +1,6 @@
 package com.emm.gema.feature.students.form
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,12 +43,14 @@ fun StudentFormScreen(
     message: String? = null,
     onMessageDismissed: () -> Unit = {},
 ) {
+    val scrollState: ScrollState = rememberScrollState()
     GScreen(
         topBar = {
             GTopBar(
                 title = if (state.studentId == null) "Nuevo alumno" else "Editar alumno",
                 subtitle = state.sectionTitle.ifBlank { null },
                 onBackClick = { onIntent(StudentFormUiIntent.BackClicked) },
+                showHairline = scrollState.value > 0,
             )
         },
         modifier = modifier,
@@ -64,7 +67,7 @@ fun StudentFormScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(vertical = GemaSpacing.medium),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {

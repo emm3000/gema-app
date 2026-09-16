@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -46,6 +47,7 @@ fun BackupScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
+    val scrollState: ScrollState = rememberScrollState()
     GScreen(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
@@ -54,13 +56,14 @@ fun BackupScreen(
                 title = stringResource(R.string.backup_title),
                 subtitle = stringResource(R.string.backup_subtitle),
                 onBackClick = { onIntent(BackupUiIntent.BackClicked) },
+                showHairline = scrollState.value > 0,
             )
         },
     ) { scaffoldPadding ->
         Column(
             modifier = Modifier
                 .padding(scaffoldPadding)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
         ) {
             LastBackupCard(state = state, onIntent = onIntent)

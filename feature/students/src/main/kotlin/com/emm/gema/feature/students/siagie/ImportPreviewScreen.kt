@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -46,12 +48,14 @@ fun ImportPreviewScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState? = null,
 ) {
+    val listState: LazyListState = rememberLazyListState()
     GScreen(
         topBar = {
             GTopBar(
                 title = "Importar de SIAGIE",
                 subtitle = NOTHING_IS_WRITTEN,
                 onBackClick = { onIntent(ImportPreviewUiIntent.BackClicked) },
+                showHairline = listState.canScrollBackward,
             )
         },
         modifier = modifier,
@@ -59,6 +63,7 @@ fun ImportPreviewScreen(
         bottomAction = { ImportActions(state = state, onIntent = onIntent) },
     ) { padding: PaddingValues ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
