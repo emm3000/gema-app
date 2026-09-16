@@ -52,10 +52,15 @@ fun <T> GSegmentedPicker(
                     activeContainerColor = option.selectedContainerColor ?: activeContainerColor,
                     activeContentColor = activeContentColor,
                 ),
-                border = if (isSelected && (option.selectedBorderColor ?: activeBorderColor) != null) {
-                    BorderStroke(GemaSpacing.indicatorStroke, (option.selectedBorderColor ?: activeBorderColor)!!)
-                } else {
-                    SegmentedButtonDefaults.borderStroke(color = MaterialTheme.colorScheme.outline)
+                border = run {
+                    val selectedBorder: Color? = option.selectedBorderColor
+                    when {
+                        isSelected && selectedBorder != null ->
+                            SegmentedButtonDefaults.borderStroke(color = selectedBorder)
+                        isSelected && activeBorderColor != null ->
+                            BorderStroke(GemaSpacing.indicatorStroke, activeBorderColor)
+                        else -> SegmentedButtonDefaults.borderStroke(color = MaterialTheme.colorScheme.outline)
+                    }
                 },
                 enabled = isEnabled,
                 modifier = Modifier.semantics { contentDescription = option.contentDescription },

@@ -18,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.activity.EvidenceMark
 import com.emm.gema.core.domain.curriculum.CompetencyId
@@ -118,12 +120,19 @@ private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (Activi
 @Composable
 private fun SummaryStrip(state: ActivityEvidenceUiState) {
     val untouchedCount: Int = state.totalCount - state.recordedCount
+    val summaryContentDescription: String = stringResource(
+        R.string.activity_evidence_summary_content_description,
+        state.recordedCount,
+        state.totalCount,
+        untouchedCount,
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small)
             .background(MaterialTheme.colorScheme.surfaceContainerLow, GemaShapes.control)
-            .padding(GemaSpacing.small),
+            .padding(GemaSpacing.small)
+            .semantics(mergeDescendants = true) { contentDescription = summaryContentDescription },
         verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
@@ -140,11 +149,13 @@ private fun SummaryStrip(state: ActivityEvidenceUiState) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        GText(
-            text = stringResource(R.string.activity_evidence_summary_untouched, untouchedCount),
-            style = GTextStyle.BODY_SMALL,
-            color = GemaAccents.onWarningContainer,
-        )
+        if (untouchedCount > 0) {
+            GText(
+                text = stringResource(R.string.activity_evidence_summary_untouched, untouchedCount),
+                style = GTextStyle.BODY_SMALL,
+                color = GemaAccents.onWarningContainer,
+            )
+        }
     }
 }
 
@@ -164,12 +175,15 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
         ) {
             GText(
                 text = row.displayName,
-                modifier = Modifier.weight(1f),
-                style = GTextStyle.BODY_LARGE,
+                modifier = Modifier
+                    .weight(1f)
+                    .alignByBaseline(),
+                style = GTextStyle.TITLE_MEDIUM,
             )
             if (isUntouched) {
                 GText(
                     text = stringResource(R.string.activity_evidence_untouched_label),
+                    modifier = Modifier.alignByBaseline(),
                     style = GTextStyle.LABEL_SMALL,
                     color = GemaAccents.onWarningContainer,
                 )
