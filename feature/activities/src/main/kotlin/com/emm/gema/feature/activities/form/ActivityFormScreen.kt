@@ -106,7 +106,7 @@ fun ActivityFormScreen(
                             label = "Nombre",
                             modifier = Modifier.fillMaxWidth(),
                         )
-                        Column(verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium)) {
+                        Column {
                             GDateField(
                                 value = state.date,
                                 onValueChange = { onIntent(ActivityFormUiIntent.DateChanged(it)) },
@@ -119,6 +119,7 @@ fun ActivityFormScreen(
                                     text = "Cae en el ${state.resolvedPeriodLabel}.",
                                     style = GTextStyle.BODY_SMALL,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = GemaSpacing.small),
                                 )
                             }
                             if (state.periodChangeFromLabel != null && state.resolvedPeriodLabel != null) {
@@ -128,7 +129,7 @@ fun ActivityFormScreen(
                                         state.periodChangeFromLabel,
                                         state.resolvedPeriodLabel,
                                     ),
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().padding(top = GemaSpacing.rowGap),
                                     tone = GBannerTone.WARNING,
                                 )
                             }

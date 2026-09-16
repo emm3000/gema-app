@@ -17,6 +17,7 @@ import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.labelFor
+import com.emm.gema.core.domain.schoolyear.periodFor
 import com.emm.gema.core.domain.section.GetSectionUseCase
 import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
@@ -105,7 +106,7 @@ class ActivityFormViewModel(
 
     private suspend fun resolvePeriod(date: LocalDate) {
         val loadedSchoolYear: SchoolYear = schoolYear ?: return
-        val period: Period? = periods.find { it.contains(date) }
+        val period: Period? = periods.periodFor(date)
 
         if (period == null) {
             _state.value = _state.value.copy(
