@@ -138,6 +138,7 @@ private fun GListItemBody(
                     titleLeading?.invoke()
                     Text(
                         text = title,
+                        modifier = Modifier.weight(1f, fill = false),
                         style = titleStyle.toTextStyle(),
                         color = MaterialTheme.colorScheme.onSurface,
                     )

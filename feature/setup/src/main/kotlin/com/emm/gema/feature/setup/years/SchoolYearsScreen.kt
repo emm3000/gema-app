@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -105,13 +106,13 @@ private fun SchoolYearItem(
         subtitle = subtitle,
         subtitleStyle = GTextStyle.BODY_LARGE,
         onClick = { onIntent(SchoolYearsUiIntent.YearClicked(row.id)) },
-        hasChevron = true,
         showDivider = showDivider,
         trailing = {
             GButton(
                 text = stringResource(R.string.school_years_periods_label),
                 onClick = { onIntent(SchoolYearsUiIntent.PeriodsClicked(row.id)) },
                 variant = GButtonVariant.TEXT,
+                trailingIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             )
         },
     )

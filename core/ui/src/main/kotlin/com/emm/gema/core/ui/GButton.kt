@@ -39,6 +39,7 @@ fun GButton(
     enabled: Boolean = true,
     isBusy: Boolean = false,
     icon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
 ) {
     val buttonModifier: Modifier = modifier
         .heightIn(min = GemaSpacing.minimumTouchTarget)
@@ -58,7 +59,7 @@ fun GButton(
                 disabledContentColor = disabledContentColor,
             ),
         ) {
-            GButtonLabel(text = text, isBusy = isBusy, icon = icon)
+            GButtonLabel(text = text, isBusy = isBusy, icon = icon, trailingIcon = trailingIcon)
         }
 
         GButtonVariant.SECONDARY -> OutlinedButton(
@@ -72,7 +73,7 @@ fun GButton(
                 disabledContentColor = disabledContentColor,
             ),
         ) {
-            GButtonLabel(text = text, isBusy = isBusy, icon = icon)
+            GButtonLabel(text = text, isBusy = isBusy, icon = icon, trailingIcon = trailingIcon)
         }
 
         GButtonVariant.DESTRUCTIVE -> OutlinedButton(
@@ -90,7 +91,7 @@ fun GButton(
                 disabledContentColor = disabledContentColor,
             ),
         ) {
-            GButtonLabel(text = text, isBusy = isBusy, icon = icon)
+            GButtonLabel(text = text, isBusy = isBusy, icon = icon, trailingIcon = trailingIcon)
         }
 
         GButtonVariant.TEXT -> TextButton(
@@ -102,13 +103,13 @@ fun GButton(
                 disabledContentColor = disabledContentColor,
             ),
         ) {
-            GButtonLabel(text = text, isBusy = isBusy, icon = icon)
+            GButtonLabel(text = text, isBusy = isBusy, icon = icon, trailingIcon = trailingIcon)
         }
     }
 }
 
 @Composable
-private fun GButtonLabel(text: String, isBusy: Boolean, icon: ImageVector?) {
+private fun GButtonLabel(text: String, isBusy: Boolean, icon: ImageVector?, trailingIcon: ImageVector?) {
     if (isBusy) {
         CircularProgressIndicator(
             modifier = Modifier.size(GemaSpacing.medium),
@@ -131,6 +132,13 @@ private fun GButtonLabel(text: String, isBusy: Boolean, icon: ImageVector?) {
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
             )
+            if (trailingIcon != null) {
+                Icon(
+                    imageVector = trailingIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(GemaSpacing.buttonIconSize),
+                )
+            }
         }
     }
 }
