@@ -23,11 +23,19 @@ Run when the owner invokes `/wave` with one or more issue numbers, or when the o
 
 ## Decision Gates
 
-| Ticket kind | Model:effort | Extra instruction |
-|---|---|---|
-| Layout or restyle only | sonnet:medium | visual check |
-| Adds or changes behavior | sonnet:medium | load `mattpocock-skills:tdd`, red-green-refactor |
-| Migration, xlsx bytes, cross-module | opus:high | visual check if a screen changes |
+Rows are ordered by blast radius: how much a mistake breaks and whether a gate catches it. A ticket that matches several rows takes the lowest row that matches.
+
+| Row | Work | Model:effort | Extra instruction |
+|---|---|---|---|
+| 1 | Docs, strings, plurals, renames; every criterion is a command with empty output | sonnet:low | none: detekt, tests and the criteria fail loudly |
+| 2 | One screen, layout or restyle only | sonnet:medium | visual check |
+| 3 | Behavior in a ViewModel or use case | sonnet:medium | load `mattpocock-skills:tdd`, red-green-refactor |
+| 4 | A `core:ui` default or parameter that changes N screens | opus:medium | visual check of every affected screen |
+| 5 | Migration, xlsx bytes, cross-module | opus:high | visual check if a screen changes |
+
+Reviews and other roles keep the playbook rules: restyle reviews sonnet:medium, screen/logic/migration reviews opus:high, post-review fixes sonnet:low, ticket-writer opus:high, design fable.
+
+Every row is a bet until `docs/agents/dispatch-log.md` says otherwise. When a row shows two or more first-review FIX FIRST verdicts for reasons the checklist did not cover, raise it one step and note why here.
 
 ## Execution Steps
 
