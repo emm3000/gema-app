@@ -260,13 +260,12 @@ private fun ImportActions(
             GButton(
                 text = "Cancelar",
                 onClick = { onIntent(ImportPreviewUiIntent.CancelClicked) },
-                modifier = Modifier.weight(1f),
                 variant = GButtonVariant.SECONDARY,
             )
             GButton(
                 text = "Aplicar importación",
                 onClick = { onIntent(ImportPreviewUiIntent.ApplyClicked) },
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(1f),
                 enabled = state.canApply,
                 isBusy = state.isApplying,
             )
