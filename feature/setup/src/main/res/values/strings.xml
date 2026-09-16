@@ -34,6 +34,8 @@
     <string name="setup_section_multigrade_caption">Si enseñas en aula multigrado, crea una sección por grado.</string>
     <string name="setup_periods_title">Periodos %1$s</string>
     <string name="setup_periods_current_badge">ACTUAL</string>
+    <string name="setup_periods_start_description">Inicio del %1$s</string>
+    <string name="setup_periods_end_description">Fin del %1$s</string>
     <string name="setup_section_finish">Terminar</string>
     <string name="setup_message_understood">Entendido</string>
 </resources>
