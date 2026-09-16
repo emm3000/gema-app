@@ -14,6 +14,8 @@
     <string name="export_summary_description">Una tabla por área, con los niveles del periodo.</string>
     <string name="export_summary_pdf">PDF</string>
     <string name="export_summary_csv">CSV</string>
+    <string name="export_summary_pdf_description">Generar resumen en PDF</string>
+    <string name="export_summary_csv_description">Generar resumen en CSV</string>
     <string name="export_attendance_title">ASISTENCIA PARA SIAGIE</string>
     <string name="export_attendance_subtitle">%1$s · %2$d días registrados</string>
     <string name="export_attendance_export">Exportar el mes</string>

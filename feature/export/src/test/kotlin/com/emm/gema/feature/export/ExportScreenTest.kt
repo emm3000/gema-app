@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.schoolyear.PeriodId
 import com.emm.gema.core.domain.student.StudentId
@@ -66,6 +67,45 @@ class ExportScreenTest : RobolectricComposeTest() {
         composeTestRule.onNodeWithText("Exportar el mes").assertIsEnabled()
         composeTestRule.onNodeWithText("PDF").assertIsEnabled()
         composeTestRule.onNodeWithText("CSV").assertIsEnabled()
+    }
+
+    @Test
+    fun `resumen pdf button sends ExportSummaryPdfClicked`() {
+        val intents: MutableList<ExportUiIntent> = mutableListOf()
+        composeTestRule.setContent {
+            GemaTheme {
+                ExportScreen(state = baseState, onIntent = { intents += it })
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Generar resumen en PDF").performScrollTo().performClick()
+
+        assertThat(intents).containsExactly(ExportUiIntent.ExportSummaryPdfClicked)
+    }
+
+    @Test
+    fun `resumen csv button sends ExportSummaryCsvClicked`() {
+        val intents: MutableList<ExportUiIntent> = mutableListOf()
+        composeTestRule.setContent {
+            GemaTheme {
+                ExportScreen(state = baseState, onIntent = { intents += it })
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Generar resumen en CSV").performScrollTo().performClick()
+
+        assertThat(intents).containsExactly(ExportUiIntent.ExportSummaryCsvClicked)
+    }
+
+    @Test
+    fun `resumen pdf button keeps its description while busy`() {
+        composeTestRule.setContent {
+            GemaTheme {
+                ExportScreen(state = baseState.copy(activeExport = ActiveExport.SUMMARY_PDF), onIntent = {})
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Generar resumen en PDF").performScrollTo().assertIsNotEnabled()
     }
 
     @Test

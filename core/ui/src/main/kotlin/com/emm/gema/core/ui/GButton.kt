@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.emm.gema.core.theme.GemaShapes
@@ -40,10 +42,18 @@ fun GButton(
     isBusy: Boolean = false,
     icon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
+    contentDescription: String? = null,
 ) {
     val buttonModifier: Modifier = modifier
         .heightIn(min = GemaSpacing.minimumTouchTarget)
         .alpha(if (isBusy) BUSY_ALPHA else 1f)
+        .let { base ->
+            if (contentDescription != null) {
+                base.semantics(mergeDescendants = true) { this.contentDescription = contentDescription }
+            } else {
+                base
+            }
+        }
     val isClickable: Boolean = enabled && !isBusy
     val disabledContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
     val disabledContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -156,5 +166,13 @@ private fun GButtonPreview() {
 private fun GButtonWithIconPreview() {
     GemaTheme {
         GButton(text = "Exportar el mes", onClick = {}, icon = Icons.Filled.Upload)
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GButtonWithContentDescriptionPreview() {
+    GemaTheme {
+        GButton(text = "PDF", onClick = {}, contentDescription = "Generar resumen en PDF")
     }
 }
