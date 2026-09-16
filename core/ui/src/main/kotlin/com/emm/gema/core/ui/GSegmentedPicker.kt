@@ -22,6 +22,8 @@ data class GSegmentOption<T>(
     val value: T,
     val label: String,
     val contentDescription: String,
+    val selectedContainerColor: Color? = null,
+    val selectedBorderColor: Color? = null,
 )
 
 @Composable
@@ -47,11 +49,11 @@ fun <T> GSegmentedPicker(
                     baseShape = GemaShapes.control,
                 ),
                 colors = SegmentedButtonDefaults.colors(
-                    activeContainerColor = activeContainerColor,
+                    activeContainerColor = option.selectedContainerColor ?: activeContainerColor,
                     activeContentColor = activeContentColor,
                 ),
-                border = if (isSelected && activeBorderColor != null) {
-                    BorderStroke(GemaSpacing.indicatorStroke, activeBorderColor)
+                border = if (isSelected && (option.selectedBorderColor ?: activeBorderColor) != null) {
+                    BorderStroke(GemaSpacing.indicatorStroke, (option.selectedBorderColor ?: activeBorderColor)!!)
                 } else {
                     SegmentedButtonDefaults.borderStroke(color = MaterialTheme.colorScheme.outline)
                 },
