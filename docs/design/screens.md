@@ -921,6 +921,12 @@ Effects: `NavigateToStudentForm(sectionId: SectionId, studentId: StudentId?)`,
 `NavigateToImportPreview(sectionId: SectionId, uri: String)`, `NavigateBack`,
 `ShowMessage(message: StudentsMessage)`.
 
+Copy changes (for the implementation ticket)
+
+- `GSearchField` placeholder (`StudentsScreen.kt`, hardcoded, no string
+  resource key yet): "Buscar" -> "Buscar por apellido" (states the list is
+  searched by surname, matching the sort rule in the subtitle).
+
 ---
 
 ## 10. StudentForm
@@ -1034,7 +1040,10 @@ helper ("Desmarca a quien siga en el aula."). The reassurance line stays as
 `bodySmall`. The `bottomAction` is a `Row` of two `GButton`s, as today:
 SECONDARY *Cancelar* beside PRIMARY *Aplicar importación* (new: the primary
 takes weight 2 and names the action; today both weigh 1 and it reads
-"Aplicar"); `isApplying` sets `isBusy` on the primary.
+"Aplicar"); `isApplying` sets `isBusy` on the primary. `created` and
+`updated` do not have to sum to `rosterSize`: `SiagieImportPlanner` de-dups
+the roster by Student Code before counting, and `updated` drops any Student
+the file did not actually change, so both groups can undercount the file.
 
 ```
 +------------------------------------------+
@@ -1066,15 +1075,38 @@ A roster whose Student Code is missing or malformed in the middle is rejected
 with the row number, never truncated at that row.
 
 Rejection state replaces the body. An ERROR `GBanner` carries `reason` (new: a
-leading dot in its `icon` slot; no icon renders today); `expected` and `found`
-render as two `GListItem` rows with the value as `trailingText` (new: the
-found value in `error` ink, the status-ink rule in `system.md`; proposal for
-the same `core:ui` ticket as the other trailing-color notes, since
-`trailingText` is `onSurfaceVariant` today), then one
-`bodyLarge` line says what to do and that nothing changed. The
-`bottomAction` becomes a single SECONDARY `GButton` *Volver a alumnos* that
+leading dot in its `icon` slot; no icon renders today); when the rejection has
+an `expected`/`found` pair it renders as two `GListItem` rows with the value
+as `trailingText` (new: the found value in `error` ink, the status-ink rule in
+`system.md`; proposal for the same `core:ui` ticket as the other
+trailing-color notes, since `trailingText` is `onSurfaceVariant` today), then
+one `bodyLarge` line says what to do and that nothing changed. The
+`bottomAction` is always a single SECONDARY `GButton` *Volver a alumnos* that
 sends `CancelClicked` (new: today the Cancelar / Aplicar row stays, and
 Aplicar has nothing to apply); the screen has no re-pick intent.
+
+`SiagieImportRejection` has five cases; only two of them carry an
+`expected`/`found` pair, and only those two have anything to do with the
+Section being wrong, so "abre la sección correcta" is not part of the other
+three:
+
+- `NotASiagieTemplate`: `reason` "Este archivo no es una plantilla de
+  SIAGIE.", no pair. Instruction: "Elige otro archivo. No se cambió nada." —
+  the file itself is unusable, no Section is involved.
+- `EmptyRoster`: `reason` "La plantilla no tiene alumnos.", no pair.
+  Instruction: "Elige otro archivo. No se cambió nada."
+- `MalformedRow(row)`: `reason` names the row, e.g. "La fila 15 tiene un
+  código de alumno inválido o vacío.", no pair. Instruction: "Corrige el
+  archivo y vuelve a intentarlo. No se cambió nada." — the file needs fixing,
+  not a different Section.
+- `GradeMismatch(expected, found)`: `reason` "El grado de la plantilla no
+  coincide con la sección.", pair "Sección abierta" / "Grado en el archivo".
+  Instruction: "Elige otro archivo o abre la sección correcta. No se cambió
+  nada."
+- `SectionMismatch(expected, found)`: `reason` "Este archivo no es de esta
+  sección.", pair "Sección abierta" / "Archivo" (the wireframe below shows
+  this case). Instruction: "Elige otro archivo o abre la sección correcta.
+  No se cambió nada."
 
 ```
 +------------------------------------------+
@@ -1246,8 +1278,8 @@ regenerates it from the emulator).
 Entry: AttendanceDay footer. Monthly counts per Student, plus the SIAGIE
 attendance export. Primary action: *Exportar el mes a SIAGIE*.
 
-Registro layout: `GTopBar` "Resumen del mes · 3ro A", subtitle
-"Asistencia", and a `GIconButton` calendar action that opens
+Registro layout: `GTopBar` "Asistencia · 3ro A", subtitle
+"Resumen del mes", and a `GIconButton` calendar action that opens
 `GMonthPickerDialog` (`MonthPicked`), as today (`GCalendarIconButton` wraps a
 day picker and does not fit a `YearMonth`). Under it the month stepper mirrors the
 day stepper on AttendanceDay: `GIconButton` pair around the month label
@@ -1268,8 +1300,8 @@ show.
 
 ```
 +------------------------------------------+
-|  <   Resumen del mes · 3ro A       [cal] |
-|      Asistencia                          |
+|  <   Asistencia · 3ro A            [cal] |
+|      Resumen del mes                     |
 +------------------------------------------+
 |   <        setiembre 2026        (>)     |
 |  ----------------------------------------|
@@ -1324,6 +1356,13 @@ nothing to store. `ExportClicked` opens the system document picker
 that exact file and hands the result to `ShareFile`. This differs from the
 grades card in `Export` (#20), which reads a template stored at import time.
 
+Copy changes (for the implementation ticket)
+
+- Primary/bottom-action button (`AttendanceMonthScreen.kt`, hardcoded, no
+  string resource key yet): "Exportar el mes" -> "Exportar el mes a SIAGIE"
+  (names the export target, matching how ImportPreview and Export name
+  SIAGIE explicitly).
+
 ---
 
 ## 14. WorkedCompetencies
@@ -1344,7 +1383,9 @@ wrapping to as many lines as it needs; nothing truncates. A row that is
 unmarked while `recordedLevelCount` is greater than zero carries the warning
 as its `subtitle` ("8 niveles registrados. Quedan guardados y dejan de
 exportarse.", the wording the shipped strings carry: the fear to answer is
-that unmarking deletes), next to the box that caused it (new: today one WARNING
+that unmarking deletes; `recordedLevelCount` counts a Student row the moment
+it has an achievement level or an unworked comment, so "niveles" here also
+covers rows recorded only as a comment), next to the box that caused it (new: today one WARNING
 `GBanner` in the footer aggregates every such Competency; the subtitle in
 `GemaAccents.onWarningContainer` text follows the status-ink rule in
 `system.md` and is a proposal for the same `core:ui` ticket as the
@@ -1406,6 +1447,16 @@ Effects: `NavigateBack`, `ShowMessage(message: WorkedCompetenciesMessage)`.
 
 Note: unmarking a Competency that already has Period Levels warns but never
 deletes; the levels stop being exported and reappear if it is remarked.
+
+Copy changes (for the implementation ticket)
+
+- `worked_competencies_hint`: "Marca solo las competencias que trabajaste.
+  Solo esas se exportan." -> "Marca solo las que trabajaste este periodo.
+  Solo esas entran a la tabla y a SIAGIE." (names both destinations — the
+  Period Levels table and the SIAGIE export — instead of only the export).
+- `worked_competencies_marked_count`: "%1$d de %2$d marcada(s)" -> "%1$d de
+  %2$d marcada(s) · cada cambio se guarda solo" (the same save-on-toggle
+  reassurance AttendanceDay and SectionAreas carry in their footer/subtitle).
 
 ---
 

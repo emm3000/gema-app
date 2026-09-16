@@ -146,7 +146,8 @@ SectionDetail ---> Students ---+---> StudentForm   (add / edit / withdraw)
 register and the SIAGIE Template. Withdrawn Students are collapsed under a
 "Withdrawn (n)" footer rather than hidden, so reactivation stays discoverable
 (US 21). A search field appears only when the list exceeds one screen. Primary
-action: FAB *Add Student*; the overflow carries *Import from SIAGIE*.
+action: FAB *Add Student*; a top-bar `GIconButton` carries *Import from
+SIAGIE*.
 
 **StudentForm** takes Student Code (14 digits, validated inline and for
 uniqueness within the Section) and full name. Withdrawal is a dated action on an
