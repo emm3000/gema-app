@@ -37,7 +37,7 @@ done
     echo "id = \"$name\""
     echo 'type = "terminal"'
     echo "directory = \"$repo\""
-    echo "commands = [\"scripts/gema-session $name $model $effort\"]"
+    echo "commands = [\"scripts/gema-session $name $model $effort; exit\"]"
     echo
   done
 } > "$config"
