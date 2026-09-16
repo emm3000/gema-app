@@ -11,7 +11,7 @@ import com.emm.gema.core.domain.activity.SaveActivityUseCase
 import com.emm.gema.core.domain.curriculum.Competency
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
-import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
+import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.PeriodId
@@ -37,7 +37,7 @@ class ActivityFormViewModel(
     private val clock: Clock = Clock.systemDefaultZone(),
     private val getSection: GetSectionUseCase,
     private val getSchoolYear: GetSchoolYearUseCase,
-    private val findPeriodForDate: FindPeriodForDateUseCase,
+    private val getPeriods: GetPeriodsUseCase,
     private val getWorkedCompetencies: GetWorkedCompetenciesUseCase,
     private val getActivity: GetActivityUseCase,
     private val saveActivity: SaveActivityUseCase,
@@ -53,6 +53,7 @@ class ActivityFormViewModel(
 
     private var section: Section? = null
     private var schoolYear: SchoolYear? = null
+    private var periods: List<Period> = emptyList()
     private var originalPeriodId: PeriodId? = null
     private var originalPeriodLabel: String? = null
 
@@ -78,10 +79,11 @@ class ActivityFormViewModel(
         val loadedSchoolYear: SchoolYear = getSchoolYear(loadedSection.schoolYearId) ?: return
         section = loadedSection
         schoolYear = loadedSchoolYear
+        periods = getPeriods(loadedSchoolYear.id).first()
 
         val activity: Activity? = activityId?.let { getActivity(it) }
         originalPeriodId = activity?.periodId
-        originalPeriodLabel = activity?.date?.let { findPeriodForDate(loadedSchoolYear.id, it) }
+        originalPeriodLabel = originalPeriodId?.let { id -> periods.find { it.id == id } }
             ?.let { loadedSchoolYear.periodKind.labelFor(it.number) }
         val date: LocalDate = activity?.date ?: LocalDate.now(clock)
 
@@ -103,7 +105,7 @@ class ActivityFormViewModel(
 
     private suspend fun resolvePeriod(date: LocalDate) {
         val loadedSchoolYear: SchoolYear = schoolYear ?: return
-        val period: Period? = findPeriodForDate(loadedSchoolYear.id, date)
+        val period: Period? = periods.find { it.contains(date) }
 
         if (period == null) {
             _state.value = _state.value.copy(

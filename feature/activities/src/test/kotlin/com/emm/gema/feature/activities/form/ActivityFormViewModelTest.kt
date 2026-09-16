@@ -13,6 +13,7 @@ import com.emm.gema.core.domain.curriculum.GetWorkedCompetenciesUseCase
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.id.IdGenerator
 import com.emm.gema.core.domain.schoolyear.FindPeriodForDateUseCase
+import com.emm.gema.core.domain.schoolyear.GetPeriodsUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.Period
 import com.emm.gema.core.domain.schoolyear.PeriodId
@@ -66,6 +67,14 @@ class ActivityFormViewModelTest {
         Period(secondPeriodId, schoolYearId, 2, LocalDate.of(2026, 5, 11), LocalDate.of(2026, 7, 24))
     private val today: LocalDate = LocalDate.of(2026, 3, 10)
     private val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC)
+    private val existingActivity: Activity = Activity(
+        id = ActivityId("activity-1"),
+        sectionId = sectionId,
+        periodId = firstPeriodId,
+        name = "Debate del aula",
+        date = LocalDate.of(2026, 3, 10),
+        competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
+    )
 
     private val activityRepository: FakeActivityRepository = FakeActivityRepository()
     private val evidenceLevelRepository: FakeEvidenceLevelRepository = FakeEvidenceLevelRepository(activityRepository)
@@ -105,15 +114,7 @@ class ActivityFormViewModelTest {
     fun `changing the date to another period sets the origin period label`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
         workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
-        val existing = Activity(
-            id = ActivityId("activity-1"),
-            sectionId = sectionId,
-            periodId = firstPeriodId,
-            name = "Debate del aula",
-            date = LocalDate.of(2026, 3, 10),
-            competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
-        )
-        activityRepository.save(existing)
+        activityRepository.save(existingActivity)
 
         val viewModel: ActivityFormViewModel = viewModel(activityId = ActivityId("activity-1"))
         viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 6, 1)))
@@ -127,15 +128,7 @@ class ActivityFormViewModelTest {
     fun `changing the date back to the original period clears the origin period label`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
         workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
-        val existing = Activity(
-            id = ActivityId("activity-1"),
-            sectionId = sectionId,
-            periodId = firstPeriodId,
-            name = "Debate del aula",
-            date = LocalDate.of(2026, 3, 10),
-            competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
-        )
-        activityRepository.save(existing)
+        activityRepository.save(existingActivity)
 
         val viewModel: ActivityFormViewModel = viewModel(activityId = ActivityId("activity-1"))
         viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 6, 1)))
@@ -147,10 +140,35 @@ class ActivityFormViewModelTest {
     @Test
     fun `create mode never sets the origin period label`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        val viewModel: ActivityFormViewModel = viewModel(activityId = null)
+        viewModel.onIntent(ActivityFormUiIntent.CompetencyToggled(Competency.idOf(Area.PPSS, 1), true))
 
-        val state: ActivityFormUiState = viewModel(activityId = null).state.value
+        viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 6, 1)))
 
-        assertThat(state.periodChangeFromLabel).isNull()
+        assertThat(viewModel.state.value.periodChangeFromLabel).isNull()
+    }
+
+    @Test
+    fun `the origin period label survives the Period's dates being edited`() = runTest {
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        activityRepository.save(existingActivity)
+        val editedFirstPeriod: Period = Period(
+            firstPeriodId,
+            schoolYearId,
+            1,
+            LocalDate.of(2026, 4, 1),
+            LocalDate.of(2026, 5, 10),
+        )
+
+        val viewModel: ActivityFormViewModel = viewModel(
+            activityId = ActivityId("activity-1"),
+            periods = listOf(editedFirstPeriod, secondPeriod),
+        )
+        viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 6, 1)))
+
+        assertThat(viewModel.state.value.periodChangeFromLabel).isEqualTo("I Bimestre")
     }
 
     @Test
@@ -163,7 +181,7 @@ class ActivityFormViewModelTest {
             clock = clock,
             getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
             getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
-            findPeriodForDate = FindPeriodForDateUseCase(FakePeriodRepository(periods)),
+            getPeriods = GetPeriodsUseCase(FakePeriodRepository(periods)),
             getWorkedCompetencies = GetWorkedCompetenciesUseCase(
                 competencyRepository,
                 workedCompetencyRepository,
@@ -192,15 +210,7 @@ class ActivityFormViewModelTest {
     @Test
     fun `deleting an activity deletes its evidence levels too`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
-        val existing = Activity(
-            id = ActivityId("activity-1"),
-            sectionId = sectionId,
-            periodId = firstPeriodId,
-            name = "Debate del aula",
-            date = LocalDate.of(2026, 3, 10),
-            competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
-        )
-        activityRepository.save(existing)
+        activityRepository.save(existingActivity)
         evidenceLevelRepository.save(
             EvidenceLevel(
                 EvidenceLevelKey(ActivityId("activity-1"), StudentId("student-1"), Competency.idOf(Area.PPSS, 1)),
@@ -219,13 +229,16 @@ class ActivityFormViewModelTest {
         assertThat(evidenceLevelRepository.levels.value).isEmpty()
     }
 
-    private fun viewModel(activityId: ActivityId?): ActivityFormViewModel = ActivityFormViewModel(
+    private fun viewModel(
+        activityId: ActivityId?,
+        periods: List<Period> = listOf(firstPeriod, secondPeriod),
+    ): ActivityFormViewModel = ActivityFormViewModel(
         sectionId = sectionId,
         activityId = activityId,
         clock = clock,
         getSection = GetSectionUseCase(FakeSectionRepository(listOf(section))),
         getSchoolYear = GetSchoolYearUseCase(FakeSchoolYearRepository(listOf(schoolYear))),
-        findPeriodForDate = FindPeriodForDateUseCase(FakePeriodRepository(listOf(firstPeriod, secondPeriod))),
+        getPeriods = GetPeriodsUseCase(FakePeriodRepository(periods)),
         getWorkedCompetencies = GetWorkedCompetenciesUseCase(
             competencyRepository,
             workedCompetencyRepository,
@@ -234,7 +247,7 @@ class ActivityFormViewModelTest {
         getActivity = GetActivityUseCase(activityRepository),
         saveActivity = SaveActivityUseCase(
             FakeSectionRepository(listOf(section)),
-            FindPeriodForDateUseCase(FakePeriodRepository(listOf(firstPeriod, secondPeriod))),
+            FindPeriodForDateUseCase(FakePeriodRepository(periods)),
             activityRepository,
             IdGenerator { "activity-new" },
         ),
