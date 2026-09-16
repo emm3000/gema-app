@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,7 @@ fun GTableHeaderBand(modifier: Modifier = Modifier, content: @Composable () -> U
 @Composable
 fun GTableRow(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Column(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxWidth().height(GemaSpacing.compactRowHeight)) {
+        Box(modifier = Modifier.fillMaxWidth().heightIn(min = GemaSpacing.compactRowHeight)) {
             content()
         }
         HorizontalDivider()
