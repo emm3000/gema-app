@@ -1798,7 +1798,7 @@ showing the fixed `activity_form_period_change_warning` string, not a
 non-blank `dateError` renders through `GDateField`'s own `errorText` slot.
 "COMPETENCIAS TRABAJADAS" is an eyebrow; each `CompetencyGroup` is its
 `areaName` as a plain `bodySmall` weight-500 label on the screen ground
-(new: today it is a `GGroupHeader` strip, `LABEL_SMALL_EMPHASIS` on
+(new: today it is a `GGroupHeader` strip, `LABEL_SMALL` on
 `surfaceVariant`, which is not in the Registro palette) followed by
 `GCheckRow`s with the SIAGIE ordinal as prefix. In edit mode
 (`canDelete`) a "ZONA DE RIESGO" eyebrow groups a DESTRUCTIVE `GButton`
@@ -1908,6 +1908,7 @@ Copy changes (for the implementation ticket)
 
 - New: "ZONA DE RIESGO" eyebrow label above the delete button (no string key yet; the group itself is not rendered today)
 - New: "Borra también sus evidencias. Te preguntamos antes." helper line under *Eliminar actividad* (no string key yet)
+- `activity_form_period_change_warning`: "Esta actividad se moverá a otro periodo." -> "Con esta fecha la actividad pasa del `{fromPeriod}` al `{toPeriod}`. Sus evidencias se mueven con ella." (names the specific Periods and evidence, matches the wireframe and mockup)
 
 ---
 
@@ -1926,7 +1927,7 @@ is not part of it today), and the overflow (Editar actividad) as its one
 action. The Competency is a `GDropdownPicker` ("PPSS 01 · Construye su
 identidad"). A summary strip mirrors AttendanceDay: `recordedCount` as
 `NUMERAL` with "de `totalCount` con evidencia", and the untouched count as
-a `bodySmall` line in `GemaAccents.onWarningContainer` text ("6 sin tocar")
+a `bodySmall` line in `GemaAccents.onWarningContainer` text ("6 sin marcar")
 (new: today the strip is a plain `Row`, not a `surfaceContainerLow`
 container; it shows only "`recordedCount`/`totalCount`" in
 `LABEL_LARGE_EMPHASIS`/`onSurfaceVariant`, with no separate untouched
@@ -1939,10 +1940,10 @@ letter with the `primaryContainer` fill and 2dp `primary` border, letter in
 `GLevelPicker` selects every option, dash included, with the same
 `primaryContainer` fill and `primary` border today). An untouched row
 (`mark == null`) draws its chips with a dashed `outline` border and a
-trailing "sin tocar" label, the same treatment as an unmarked attendance row
+trailing "sin marcar" label, the same treatment as an unmarked attendance row
 (new: the whole row gets a `GemaAccents.warningContainer` background wash,
 the trailing label reads "sin evidencia" from
-`activity_evidence_no_evidence_label`, and the chip borders are the same
+`activity_evidence_untouched_label`, and the chip borders are the same
 solid `outline` stroke as any unselected chip — `GSegmentedPicker` does not
 support a dashed border).
 
@@ -1957,7 +1958,7 @@ support a dashed border).
 |  | PPSS 01 · Construye su identidad v |  |
 |  +------------------------------------+  |
 |  +------------------------------------+  |
-|  | 24 de 30 con evidencia  6 sin tocar|  |
+|  | 24 de 30 con evidencia  6 sin marcar|  |
 |  +------------------------------------+  |
 |  ----------------------------------------|
 |  APAZA CONDORI, YESENIA                  |
@@ -1965,7 +1966,7 @@ support a dashed border).
 |  |[AD]| | A  | | B  | | C  | | —  |      |
 |  +----+ +----+ +----+ +----+ +----+      |
 |  ----------------------------------------|
-|  HUANCA RÍOS, DIEGO            sin tocar |
+|  HUANCA RÍOS, DIEGO            sin marcar |
 |  +----+ +----+ +----+ +----+ +----+      |
 |  : AD : : A  : : B  : : C  : : —  :      |
 |  +----+ +----+ +----+ +----+ +----+      |
@@ -2022,7 +2023,7 @@ Effects: `NavigateToActivityForm(sectionId: SectionId, activityId: ActivityId?)`
 
 Copy changes (for the implementation ticket)
 
-- `activity_evidence_no_evidence_label`: "sin evidencia" -> "sin tocar" (matches the untouched-row wording the Registro layout and wireframe use)
+- `activity_evidence_untouched_label`: "sin evidencia" -> "sin marcar" (matches the untouched-row wording the Registro layout and wireframe use)
 
 ---
 
@@ -2050,7 +2051,9 @@ renders inside a WARNING `GBanner` today, not as plain colored text), and
 *Generar archivo* is the one PRIMARY `GButton` on the screen, disabled until
 `Ready`. `templateMismatch` renders as a WARNING `GBanner` in the same
 group. The attendance group shows "`attendanceMonth` · `attendanceDayCount`
-días registrados" and a SECONDARY *Exportar el mes*; the Resumen group has
+días registrados" and a SECONDARY *Exportar el mes*, which first opens a
+SIAGIE attendance-template picker (`OpenAttendanceTemplatePicker` /
+`AttendanceTemplatePicked`) before exporting; the Resumen group has
 one `bodyLarge` line and two SECONDARY buttons, PDF and CSV, side by side
 (new: the descriptive line under "Resumen para imprimir" is not rendered
 today; the card holds only the title and the two buttons).
@@ -2194,7 +2197,9 @@ is busy; every action on the screen — Grades' *Generar archivo*, Attendance's
 *Exportar*, and both Resumen buttons — disables while any export is in
 flight (`activeExport != null`), not only its own sibling. Its
 `ExportMessage.EXPORT_FAILED` on failure is the same message the grades card
-uses — one failure message for the whole screen. Each output is one table
+uses; `ExportMessage` also defines `ATTENDANCE_EXPORT_FAILED` for the
+attendance card and `EXPORT_UNAVAILABLE` for the missing-Template state — the
+screen does not share one failure message across every card. Each output is one table
 per active Area (a title row, then
 "Estudiante" plus one column per Worked Competency), not one flat table
 spanning every Area — see ADR 0020.
@@ -2203,7 +2208,9 @@ Note: screen title is "Entregar · {sectionTitle}" (`export_title`), because
 "Entregar" is the Teacher's goal, not the file format. Every blocking gap now lists as a tap-through row inside the
 grades card itself — no separate bottom sheet — and `ExportGradesClicked`
 (now labelled *Generar archivo*) is enabled only when `gradesExportState` is
-`Ready`, i.e. nothing is pending.
+`Ready`. `PeriodLevel.isIncomplete` only blocks a C level with a blank
+Descriptive Conclusion, and `GetGradesExportPlanUseCase` skips unrecorded
+cells entirely, so a missing level never blocks the export.
 
 Copy changes (for the implementation ticket)
 
@@ -2236,7 +2243,7 @@ it is a bordered `GCard` on plain `surface`, not a borderless INFO strip on
 (`isCreating` sets `isBusy`), with a `bodySmall` helper naming the share
 sheet. A "RESTAURAR" eyebrow groups the SECONDARY *Elegir archivo .gema* and
 a WARNING `GBanner` ("Restaurar reemplaza todo lo que hay en este teléfono y
-reinicia la app. Te preguntamos antes."). A "RECORDATORIO" eyebrow groups a
+reinicia la app. No se puede deshacer."). A "RECORDATORIO" eyebrow groups a
 short numeric `GTextField` (label "Cada", 96dp wide) beside its unit "días
 sin respaldar" and a `bodySmall` helper; `reminderThresholdError` renders as
 the field's error text (new: today one "RECORDARME CADA" label stands in
@@ -2351,7 +2358,7 @@ Copy changes (for the implementation ticket)
 
 - `backup_subtitle`: "Todo vive en este teléfono" -> "Todo lo de este teléfono en un archivo .gema" (matches the wireframe and mockup)
 - `backup_create_hint`: "Se crea un archivo .gema y se abre el menú para compartir." -> "Se crea el archivo y se abre el menú para compartirlo: WhatsApp, Drive, Bluetooth o USB." (matches the wireframe and mockup)
-- `backup_restore_warning`: "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app." -> "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app. No se puede deshacer. Te preguntamos antes." (matches the wireframe and mockup)
+- `backup_restore_warning`: "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app." -> "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app. No se puede deshacer." (shipped in #204; matches `feature/backup/src/main/res/values/strings.xml`)
 - `backup_reminder_label`: "RECORDARME CADA" -> "RECORDATORIO" eyebrow, plus a "Cada" label on the `GTextField` itself (matches the wireframe and mockup, which show separate strings)
 - `backup_reminder_days`: "días" -> "días sin respaldar" (matches the wireframe and mockup)
 - New: "Pasado ese tiempo, Inicio muestra el aviso de respaldo." helper line under the reminder field (no string key yet; the line is not rendered today)
