@@ -58,6 +58,8 @@ fun GLevelPicker(
         value = noEvidenceValue,
         label = NO_LEVEL_LABEL,
         contentDescription = noEvidenceContentDescription,
+        selectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        selectedBorderColor = MaterialTheme.colorScheme.outline,
     )
 
     GSegmentedPicker(

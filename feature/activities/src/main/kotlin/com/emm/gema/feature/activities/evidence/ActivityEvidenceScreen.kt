@@ -24,6 +24,7 @@ import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.evaluation.AchievementLevel
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaAccents
+import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -85,6 +86,7 @@ fun ActivityEvidenceScreen(
                 )
             }
             CompetencySelector(state = state, onIntent = onIntent)
+            SummaryStrip(state = state)
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
@@ -102,23 +104,46 @@ fun ActivityEvidenceScreen(
 
 @Composable
 private fun CompetencySelector(state: ActivityEvidenceUiState, onIntent: (ActivityEvidenceUiIntent) -> Unit) {
-    Row(
+    GDropdownPicker(
+        options = state.competencies.map { GPickerOption(value = it.id, label = it.label) },
+        selected = state.selectedCompetencyId,
+        onSelect = { onIntent(ActivityEvidenceUiIntent.CompetencySelected(it)) },
+        label = "Competencia",
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small),
-        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    )
+}
+
+@Composable
+private fun SummaryStrip(state: ActivityEvidenceUiState) {
+    val untouchedCount: Int = state.totalCount - state.recordedCount
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = GemaSpacing.screenGutter, vertical = GemaSpacing.small)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow, GemaShapes.control)
+            .padding(GemaSpacing.small),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall),
     ) {
-        GDropdownPicker(
-            options = state.competencies.map { GPickerOption(value = it.id, label = it.label) },
-            selected = state.selectedCompetencyId,
-            onSelect = { onIntent(ActivityEvidenceUiIntent.CompetencySelected(it)) },
-            label = "Competencia",
-            modifier = Modifier.weight(1f),
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(GemaSpacing.extraSmall)) {
+            GText(
+                text = "${state.recordedCount}",
+                modifier = Modifier.alignByBaseline(),
+                style = GTextStyle.NUMERAL,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            GText(
+                text = stringResource(R.string.activity_evidence_summary_recorded, state.totalCount),
+                modifier = Modifier.alignByBaseline(),
+                style = GTextStyle.BODY_LARGE,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         GText(
-            text = "${state.recordedCount}/${state.totalCount}",
-            style = GTextStyle.LABEL_LARGE_EMPHASIS,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            text = stringResource(R.string.activity_evidence_summary_untouched, untouchedCount),
+            style = GTextStyle.BODY_SMALL,
+            color = GemaAccents.onWarningContainer,
         )
     }
 }
@@ -135,9 +160,13 @@ private fun StudentRow(row: EvidenceLevelRow, onSelect: (EvidenceMark?) -> Unit)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
+            GText(
+                text = row.displayName,
+                modifier = Modifier.weight(1f),
+                style = GTextStyle.BODY_LARGE,
+            )
             if (isUntouched) {
                 GText(
                     text = stringResource(R.string.activity_evidence_untouched_label),

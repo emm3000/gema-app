@@ -360,6 +360,8 @@ data class GSegmentOption<T>(
     val value: T,
     val label: String,
     val contentDescription: String,
+    val selectedContainerColor: Color? = null,
+    val selectedBorderColor: Color? = null,
 )
 ```
 
@@ -374,6 +376,14 @@ styling with their own rules — see system.md: `GLevelPicker` uses a
 `primaryContainer` fill while the letter itself stays `onSurface` ink rather
 than switching to `onPrimary`; `GAttendanceToggle` uses a different fill per
 attendance status instead of one shared `primary` selected color.
+
+A single option can also override the picker-wide selected fill and border
+through `GSegmentOption.selectedContainerColor` / `selectedBorderColor`,
+falling back to `activeContainerColor` / `activeBorderColor` when null. Used
+by `GLevelPicker`'s explicit "no evidence" option on Activity Evidence: a
+`surfaceContainerHigh` fill and a plain `outline` border instead of
+`primaryContainer` / `primary`, because "no evidence" is a state, not an
+achievement — the other four level options are unaffected.
 
 Tradeoffs worth stating, because this is the control the app lives on:
 

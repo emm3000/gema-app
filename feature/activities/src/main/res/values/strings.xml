@@ -8,7 +8,10 @@
     <string name="activities_list_subtitle">Las más nuevas primero</string>
     <string name="activity_evidence_subtitle">%1$s · %2$s</string>
     <string name="activity_evidence_edit_content_description">Editar actividad</string>
-    <string name="activity_evidence_untouched_label">sin evidencia</string>
+    <string name="activity_evidence_untouched_label">sin marcar</string>
     <string name="activity_evidence_no_evidence_content_description">Sin nivel</string>
+    <string name="activity_evidence_summary_recorded">de %1$d con evidencia</string>
+    <string name="activity_evidence_summary_untouched">%1$d sin marcar</string>
+    <string name="activity_evidence_summary_content_description">%1$d de %2$d con evidencia, %3$d sin marcar</string>
     <string name="activity_form_subtitle">%1$s · %2$s</string>
 </resources>
