@@ -3,7 +3,6 @@ name: wave
 description: "Trigger: /wave, levantar wave, abrir peers, dispatch wave, lanzar sesiones. Boot one Warp pane per ticket and dispatch each ticket to its peer session."
 argument-hint: <issue numbers>
 allowed-tools: Bash(gh:*) Bash(scripts/gema-wave:*) Bash(git worktree:*) ListAgents SendMessage Read
-disable-model-invocation: true
 license: Apache-2.0
 metadata:
   author: "emm3000"
