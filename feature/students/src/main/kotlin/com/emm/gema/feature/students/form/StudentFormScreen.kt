@@ -116,7 +116,7 @@ fun StudentFormScreen(
                 )
             }
             GText(
-                text = stringResource(R.string.student_form_estado_label),
+                text = stringResource(R.string.student_form_status_label),
                 style = GTextStyle.LABEL_SMALL,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.semantics { heading() },
@@ -126,12 +126,12 @@ fun StudentFormScreen(
                     GSegmentOption(
                         value = false,
                         label = "Activo",
-                        contentDescription = stringResource(R.string.student_form_estado_active),
+                        contentDescription = stringResource(R.string.student_form_status_active),
                     ),
                     GSegmentOption(
                         value = true,
                         label = "Retirado",
-                        contentDescription = stringResource(R.string.student_form_estado_withdrawn),
+                        contentDescription = stringResource(R.string.student_form_status_withdrawn),
                     ),
                 ),
                 selected = state.isWithdrawn,
