@@ -3,6 +3,8 @@
     <string name="activity_form_message_outside_periods">Esa fecha no cae dentro de ningún periodo</string>
     <string name="activity_form_message_save_failed">No se pudo guardar la actividad</string>
     <string name="activity_form_period_change_warning">Con esta fecha la actividad pasa del %1$s al %2$s. Sus evidencias se mueven con ella.</string>
+    <string name="activity_form_resolved_period">Cae en el %1$s.</string>
+    <string name="activity_form_competencies_label">Competencias trabajadas</string>
     <string name="activity_form_delete_eyebrow">ZONA DE RIESGO</string>
     <string name="activity_form_delete_button">Eliminar actividad</string>
     <string name="activity_form_delete_helper">Borra también sus evidencias. Te preguntamos antes.</string>

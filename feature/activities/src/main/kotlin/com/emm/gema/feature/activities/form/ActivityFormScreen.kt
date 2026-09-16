@@ -14,6 +14,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.section.Grade
@@ -120,7 +123,10 @@ fun ActivityFormScreen(
                             )
                             if (state.resolvedPeriodLabel != null) {
                                 GText(
-                                    text = "Cae en el ${state.resolvedPeriodLabel}.",
+                                    text = stringResource(
+                                        R.string.activity_form_resolved_period,
+                                        state.resolvedPeriodLabel,
+                                    ),
                                     style = GTextStyle.BODY_SMALL,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(top = GemaSpacing.small),
@@ -133,12 +139,18 @@ fun ActivityFormScreen(
                                         state.periodChangeFromLabel,
                                         state.resolvedPeriodLabel,
                                     ),
-                                    modifier = Modifier.fillMaxWidth().padding(top = GemaSpacing.rowGap),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = GemaSpacing.rowGap)
+                                        .semantics { liveRegion = LiveRegionMode.Polite },
                                     tone = GBannerTone.WARNING,
                                 )
                             }
                         }
-                        GText(text = "Competencias trabajadas".uppercase(), style = GTextStyle.LABEL_SMALL)
+                        GText(
+                            text = stringResource(R.string.activity_form_competencies_label).uppercase(),
+                            style = GTextStyle.LABEL_SMALL,
+                        )
                     }
                 }
                 state.competencyGroups.forEach { group ->
