@@ -141,7 +141,7 @@ The Robolectric Compose tests from ADR 0024 (`HomeScreenTest`, `GAttendanceToggl
 
 - `docs/design/screens.md`: 21 screens with ASCII wireframes, `UiState` and intents. The HTML mockup wins over the wireframe. Twelve open product questions are listed at the end.
 - `docs/design/flows.md`: the navigation map, plus the constraint table that today acts as the only statement of design rationale.
-- `docs/design/mockups/`: 26 HTML mockups with PNGs (historical, as of this writing; Phase 3 shipped four Registro mockups — home, attendance day, period levels and period level sheet — and the setup-and-sections batch added seven more plus two dialogs, and the students-and-gates batch added five more plus the import rejection state, all updated in place and with their stale PNGs removed pending Phase 4 regeneration). `alternative-b-attendance-grid` and `alternative-c-levels-per-student` are explorations, not accepted designs. `docs/design/reviews/` holds 5 after-screenshots from the drift wave.
+- `docs/design/mockups/`: 33 HTML mockups with PNGs (historical, as of this writing; Phase 3 shipped four Registro mockups — home, attendance day, period levels and period level sheet — the setup-and-sections batch added seven more plus two dialogs, the students-and-gates batch added five more plus the import rejection state, and the activities, export and backup batch added five more plus the no-template and restore-confirmation states, all updated in place and with their stale PNGs removed pending Phase 4 regeneration). `alternative-b-attendance-grid` and `alternative-c-levels-per-student` are explorations, not accepted designs. `docs/design/reviews/` holds 5 after-screenshots from the drift wave.
 
 **Rules:** `.claude/rules/ui-components.md`
 

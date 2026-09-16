@@ -1690,27 +1690,49 @@ Notes:
 
 ## 17. Activities
 
-Mockup: [html](mockups/activities.html) · [png](mockups/activities.png)
+Mockup: [html](mockups/activities.html) (no PNG until Phase 4 regenerates
+it from the emulator).
+
 Entry: SectionDetail. Activities of the current Period, newest first.
-Primary action: FAB *Nueva actividad*.
+Primary action: `GExtendedFab` *Nueva actividad*.
+
+Registro layout: `GTopBar` "Actividades · 3ro A" with the sort rule as
+subtitle ("Más recientes primero"). The Period is a `GDropdownPicker` with
+the same shell as the Area picker on PeriodLevels. Each Activity is a
+`GListItem` on a hairline: the date as a leading `GDateChip` ("5 jul"; new:
+the chip renders `dd/MM`, e.g. "22/06", not the abbreviated-month format
+shown here), `name` as `titleMedium`, and the subtitle joins
+`competencyLabels` with "`evidenceRecordedCount` de `studentCount` con
+evidencia"; while evidence is still missing the subtitle reads in
+`GemaAccents.onWarningContainer` ink (the status-ink rule in `system.md`),
+and a complete Activity reads "M de M" in `onSurfaceVariant` (new: today
+the ink is inverted, default while missing and `onPrimaryContainer` when
+complete, and the "con evidencia" wording never drops; `GListItem` already
+takes `subtitleColor`, so this is a screen-side change, not a `core:ui`
+one). The `GExtendedFab` is the one
+dark object on the screen.
 
 ```
 +------------------------------------------+
-|  <   Actividades - 3ro A                 |
+|  <   Actividades · 3ro A                 |
+|      Más recientes primero               |
 +------------------------------------------+
-|  II Bimestre v                           |
+|  +------------------------------------+  |
+|  | Periodo                            |  |
+|  | II Bimestre                      v |  |
+|  +------------------------------------+  |
+|  ----------------------------------------|
+|  5 jul   Ficha de convivencia          > |
+|          PPSS 02 · 24 de 30 con evidencia|
+|  ----------------------------------------|
+|  22 jun  Debate del aula               > |
+|          PPSS 01, PPSS 02 · 30 de 30     |
+|  ----------------------------------------|
+|  10 jun  Lectura en grupo              > |
+|          COMU 01 · 18 de 30 con evidencia|
+|  ----------------------------------------|
 |                                          |
-|  | 05/07  Ficha de convivencia         > |
-|  | PPSS 02  -  24 de 30 con evidencia    |
-|  +--------------------------------------+
-|  | 22/06  Debate del aula              > |
-|  | PPSS 01, PPSS 02  -  30 de 30         |
-|  +--------------------------------------+
-|  | 10/06  Lectura en grupo             > |
-|  | COMU 01  -  18 de 30                  |
-|  +--------------------------------------+
-|                                          |
-|                                  (  +  ) |
+|                      [+ Nueva actividad] |
 +------------------------------------------+
 ```
 
@@ -1721,6 +1743,15 @@ data class ActivitiesUiState(
     val periods: List<PeriodOption> = emptyList(),
     val selectedPeriodId: PeriodId? = null,
     val activities: List<ActivityRow> = emptyList(),
+) {
+    val periodLabel: String
+        get() = periods.find { it.id == selectedPeriodId }?.label.orEmpty()
+}
+
+data class PeriodOption(
+    val id: PeriodId,
+    val label: String,
+    val isCurrent: Boolean,
 )
 
 data class ActivityRow(
@@ -1740,37 +1771,82 @@ Effects: `NavigateToActivityEvidence(activityId: ActivityId)`,
 `NavigateToActivityForm(sectionId: SectionId, activityId: ActivityId?)`,
 `NavigateBack`.
 
+Copy changes (for the implementation ticket)
+
+- `activities_list_subtitle`: "Las más nuevas primero" -> "Más recientes primero" (matches the Registro wording chosen for the subtitle)
+
 ---
 
 ## 18. ActivityForm
 
-Mockup: [html](mockups/activity-form.html) · [png](mockups/activity-form.png)
+Mockup: [html](mockups/activity-form.html) (no PNG until Phase 4
+regenerates it from the emulator).
+
 Entry: Activities. Primary action: *Guardar*.
+
+Registro layout: `GTopBar` "Nueva actividad" or "Editar actividad" with the
+Section as subtitle (new: once `resolvedPeriodLabel` is known the subtitle
+becomes "Sección · Periodo" instead of the Section alone). `name` is a
+`GTextField`; `date` is a `GDateField` followed by a separate `GText` line
+carrying `resolvedPeriodLabel` ("Cae en el III Bimestre."), because
+`GDateField` has no supporting-line parameter of its own beyond its error
+text. While `hasPeriodChangeWarning` is `true` a WARNING `GBanner` sits
+directly under the date and says where the Activity moves and that its
+evidence moves with it (new: today it is a plain error-colored `GText`
+showing the fixed `activity_form_period_change_warning` string, not a
+`GBanner`, and not a message naming the specific Periods or evidence). Any
+non-blank `dateError` renders through `GDateField`'s own `errorText` slot.
+"COMPETENCIAS TRABAJADAS" is an eyebrow; each `CompetencyGroup` is its
+`areaName` as a plain `bodySmall` weight-500 label on the screen ground
+(new: today it is a `GGroupHeader` strip, `LABEL_SMALL_EMPHASIS` on
+`surfaceVariant`, which is not in the Registro palette) followed by
+`GCheckRow`s with the SIAGIE ordinal as prefix. In edit mode
+(`canDelete`) a "ZONA DE RIESGO" eyebrow groups a DESTRUCTIVE `GButton`
+"Eliminar actividad" with one `bodySmall` helper ("Borra también sus
+evidencias. Te preguntamos antes."), the same anatomy as SectionForm (new:
+today the screen renders only a `GDivider` and the DESTRUCTIVE `GButton`;
+neither the "ZONA DE RIESGO" eyebrow nor the helper line exist yet); create
+mode is the same screen without that group. *Guardar* is the `bottomAction`
+PRIMARY `GButton`.
 
 ```
 +------------------------------------------+
-|  <   Nueva actividad                     |
+|  <   Editar actividad                    |
+|      3ro A                               |
 +------------------------------------------+
-|  Nombre                                  |
 |  +------------------------------------+  |
+|  | Nombre                             |  |
 |  | Debate del aula                    |  |
 |  +------------------------------------+  |
-|                                          |
-|  Fecha                                   |
 |  +------------------------------------+  |
-|  | 22/06/2026                         |  |
+|  | Fecha                          [c] |  |
+|  | 10/08/2026                         |  |
 |  +------------------------------------+  |
-|  Cae en el II Bimestre.                  |
+|    Cae en el III Bimestre.               |
+|  +--------------------------------------+|
+|  | Con esta fecha la actividad pasa del ||
+|  | II al III Bimestre. Sus evidencias   ||
+|  | se mueven con ella.                  ||
+|  +--------------------------------------+|
 |                                          |
-|  Competencias trabajadas                 |
-|  PERSONAL SOCIAL                         |
+|  COMPETENCIAS TRABAJADAS                 |
+|  Personal Social                         |
+|  ----------------------------------------|
 |  [x] 01  Construye su identidad          |
-|  [x] 02  Convive y participa democrat... |
-|  COMUNICACION                            |
-|  [ ] 01  Se comunica oralmente           |
+|  ----------------------------------------|
+|  [x] 02  Convive y participa             |
+|          democráticamente en la búsqueda |
+|          del bien común                  |
+|  Comunicación                            |
+|  ----------------------------------------|
+|  [ ] 01  Se comunica oralmente en su     |
+|          lengua materna                  |
+|  ----------------------------------------|
 |                                          |
-|  ---------------------------------------  |
-|  [  Eliminar actividad  ]                |
+|  ZONA DE RIESGO                          |
+|  [       Eliminar actividad          ]   |
+|  Borra también sus evidencias. Te        |
+|  preguntamos antes.                      |
 +------------------------------------------+
 |             [   Guardar   ]              |
 +------------------------------------------+
@@ -1780,22 +1856,33 @@ Entry: Activities. Primary action: *Guardar*.
 data class ActivityFormUiState(
     val isLoading: Boolean = true,
     val activityId: ActivityId? = null,
+    val grade: Grade? = null,
+    val sectionName: String = "",
     val name: String = "",
-    val nameError: String? = null,
     val date: LocalDate? = null,
+    val dateError: ActivityFormMessage? = null,
     val resolvedPeriodLabel: String? = null,
-    val periodChangeWarning: String? = null,
+    val hasPeriodChangeWarning: Boolean = false,
     val competencyGroups: List<CompetencyGroup> = emptyList(),
     val selectedCompetencyIds: Set<CompetencyId> = emptySet(),
-    val canSave: Boolean = false,
-    val canDelete: Boolean = false,
     val isDeleteConfirmVisible: Boolean = false,
-)
+) {
+    val canSave: Boolean
+        get() = name.isNotBlank() && date != null && resolvedPeriodLabel != null && selectedCompetencyIds.isNotEmpty()
+
+    val canDelete: Boolean
+        get() = activityId != null
+}
 
 data class CompetencyGroup(
-    val areaId: AreaId,
     val areaName: String,
     val competencies: List<CompetencyToggleRow>,
+)
+
+data class CompetencyToggleRow(
+    val id: CompetencyId,
+    val siagieOrdinal: Int,
+    val name: String,
 )
 ```
 
@@ -1804,45 +1891,89 @@ Intents: `NameChanged(value: String)`, `DateChanged(value: LocalDate)`,
 `DeleteClicked`, `DeleteConfirmed`, `DeleteDismissed`, `BackClicked`.
 
 Effects: `NavigateToActivityEvidence(activityId: ActivityId)`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: ActivityFormMessage)`.
 
 Notes:
 
 - `resolvedPeriodLabel` comes from the date (US 35); the Period is never picked.
-- `periodChangeWarning` is non-null while editing when the new date moves the
-  Activity to a different Period.
+- `hasPeriodChangeWarning` is `true` while editing when the new date moves the
+  Activity to a different Period; `canSave` and `canDelete` are computed from
+  the rest of the state, not stored fields.
 - The competency list is restricted to Worked Competencies of the resolved
   Period and active Areas.
+- `ActivityFormMessage` (`dateError` and `ShowMessage`) is `OUTSIDE_PERIODS` or
+  `SAVE_FAILED`.
+
+Copy changes (for the implementation ticket)
+
+- New: "ZONA DE RIESGO" eyebrow label above the delete button (no string key yet; the group itself is not rendered today)
+- New: "Borra también sus evidencias. Te preguntamos antes." helper line under *Eliminar actividad* (no string key yet)
 
 ---
 
 ## 19. ActivityEvidence
 
-Mockup: [html](mockups/activity-evidence.html) · [png](mockups/activity-evidence.png)
+Mockup: [html](mockups/activity-evidence.html) (no PNG until Phase 4
+regenerates it from the emulator).
+
 Entry: Activities. One Evidence Level per Student per Competency of this
 Activity. Saves on tap.
+
+Registro layout: `GTopBar` with `activityName`, the subtitle
+"`activityDateLabel` · `periodLabel`" (new: the `activity_evidence_subtitle`
+format string takes only these two parameters; "cada toque se guarda solo"
+is not part of it today), and the overflow (Editar actividad) as its one
+action. The Competency is a `GDropdownPicker` ("PPSS 01 · Construye su
+identidad"). A summary strip mirrors AttendanceDay: `recordedCount` as
+`NUMERAL` with "de `totalCount` con evidencia", and the untouched count as
+a `bodySmall` line in `GemaAccents.onWarningContainer` text ("6 sin tocar")
+(new: today the strip is a plain `Row`, not a `surfaceContainerLow`
+container; it shows only "`recordedCount`/`totalCount`" in
+`LABEL_LARGE_EMPHASIS`/`onSurfaceVariant`, with no separate untouched
+count). Each Student is a hairline row with the name as `titleMedium` and a
+`GLevelPicker` of five 52dp chips (AD, A, B, C, —). A graded row selects its
+letter with the `primaryContainer` fill and 2dp `primary` border, letter in
+`onSurface` ink. An explicit `NoEvidence` mark selects the dash chip with the
+`surfaceContainerHigh` fill and the plain `outline` border, never the
+`primary` border, because "no evidence" is a state, not an achievement (new:
+`GLevelPicker` selects every option, dash included, with the same
+`primaryContainer` fill and `primary` border today). An untouched row
+(`mark == null`) draws its chips with a dashed `outline` border and a
+trailing "sin tocar" label, the same treatment as an unmarked attendance row
+(new: the whole row gets a `GemaAccents.warningContainer` background wash,
+the trailing label reads "sin evidencia" from
+`activity_evidence_no_evidence_label`, and the chip borders are the same
+solid `outline` stroke as any unselected chip — `GSegmentedPicker` does not
+support a dashed border).
 
 ```
 +------------------------------------------+
 |  <   Debate del aula                [.:.]|
-|      22/06/2026 - II Bimestre            |
+|      22 jun · II Bimestre · cada toque   |
+|      se guarda solo                      |
 +------------------------------------------+
-|  PPSS 01 v                    24/30      |
-+------------------------------------------+
-|  ACOSTA RIVERA, Luz Maria                |
-|  +----+ +----+ +----+ +----+ +-------+   |
-|  | AD | | A  | | B  | | C  | |  ---  |   |
-|  +====+ +----+ +----+ +----+ +-------+   |
-|                                          |
-|  BAUTISTA QUISPE, Jose                   |
-|  +----+ +----+ +----+ +----+ +-------+   |
-|  | AD | | A  | | B  | | C  | |  ---  |   |
-|  +----+ +----+ +====+ +----+ +-------+   |
-|                                          |
-|  CCAHUANA MAMANI, Rosa                   |
-|  +----+ +----+ +----+ +----+ +-------+   |
-|  | AD | | A  | | B  | | C  | |  ---  |   |
-|  +----+ +----+ +----+ +----+ +=======+   |
+|  +------------------------------------+  |
+|  | Competencia                        |  |
+|  | PPSS 01 · Construye su identidad v |  |
+|  +------------------------------------+  |
+|  +------------------------------------+  |
+|  | 24 de 30 con evidencia  6 sin tocar|  |
+|  +------------------------------------+  |
+|  ----------------------------------------|
+|  APAZA CONDORI, YESENIA                  |
+|  +----+ +----+ +----+ +----+ +----+      |
+|  |[AD]| | A  | | B  | | C  | | —  |      |
+|  +----+ +----+ +----+ +----+ +----+      |
+|  ----------------------------------------|
+|  HUANCA RÍOS, DIEGO            sin tocar |
+|  +----+ +----+ +----+ +----+ +----+      |
+|  : AD : : A  : : B  : : C  : : —  :      |
+|  +----+ +----+ +----+ +----+ +----+      |
+|  ----------------------------------------|
+|  MAMANI TORRES, LUIS ALBERTO             |
+|  +----+ +----+ +----+ +----+ +----+      |
+|  | AD | | A  | | B  | | C  | |(—) |      |
+|  +----+ +----+ +----+ +----+ +----+      |
 +------------------------------------------+
 ```
 
@@ -1852,6 +1983,7 @@ rather than widening the row: one Competency at a time, one tap per Student.
 ```kotlin
 data class ActivityEvidenceUiState(
     val isLoading: Boolean = true,
+    val sectionId: SectionId? = null,
     val activityName: String = "",
     val activityDateLabel: String = "",
     val periodLabel: String = "",
@@ -1860,6 +1992,11 @@ data class ActivityEvidenceUiState(
     val recordedCount: Int = 0,
     val totalCount: Int = 0,
     val rows: List<EvidenceLevelRow> = emptyList(),
+)
+
+data class CompetencyColumn(
+    val id: CompetencyId,
+    val label: String,
 )
 
 data class EvidenceLevelRow(
@@ -1879,43 +2016,74 @@ Intents: `CompetencySelected(id: CompetencyId)`,
 `EditActivityClicked`, `BackClicked`.
 
 Effects: `NavigateToActivityForm(sectionId: SectionId, activityId: ActivityId?)`,
-`NavigateBack`, `ShowMessage(text: String)`.
+`NavigateBack`, `ShowMessage(message: ActivityEvidenceMessage)`.
+
+`ActivityEvidenceMessage` is `RECORD_FAILED`.
+
+Copy changes (for the implementation ticket)
+
+- `activity_evidence_no_evidence_label`: "sin evidencia" -> "sin tocar" (matches the untouched-row wording the Registro layout and wireframe use)
 
 ---
 
 ## 20. Export
 
-Mockup: [html](mockups/export.html) · [png](mockups/export.png)
+Mockup: [html](mockups/export.html) · no template
+[html](mockups/export-no-template.html) (no PNG until Phase 4 regenerates
+them from the emulator).
 
 Entry: SectionDetail. All three outputs for one Section and Period.
 
+Registro layout: `GTopBar` "Entregar · 3ro A" with `periodLabel` as its
+subtitle. The three outputs are eyebrow groups on the screen ground
+separated by hairlines and 24dp, not cards (principle 6, fewer cards) (new:
+today each group is still a `GCard` with a hairline border, and its title
+is sentence-case `TITLE_MEDIUM` text — "Notas para SIAGIE" — not an
+uppercase eyebrow): "NOTAS PARA SIAGIE", "ASISTENCIA PARA SIAGIE", "RESUMEN
+PARA IMPRIMIR". The grades group shows `templateFileName` with a file glyph
+in `onSurfaceVariant` (new: it is plain `BODY_LARGE` text today, with no
+glyph); when `gradesExportState` is `Blocked` the gap count reads as
+`bodyLarge` weight 500 in `GemaAccents.onWarningContainer` text (see the
+text-only note in `system.md`) above one `GListItem` per `ExportGapRow`
+(`studentName`, `competencyLabel` as subtitle, chevron) (new: the gap count
+renders inside a WARNING `GBanner` today, not as plain colored text), and
+*Generar archivo* is the one PRIMARY `GButton` on the screen, disabled until
+`Ready`. `templateMismatch` renders as a WARNING `GBanner` in the same
+group. The attendance group shows "`attendanceMonth` · `attendanceDayCount`
+días registrados" and a SECONDARY *Exportar el mes*; the Resumen group has
+one `bodyLarge` line and two SECONDARY buttons, PDF and CSV, side by side
+(new: the descriptive line under "Resumen para imprimir" is not rendered
+today; the card holds only the title and the two buttons).
+`activeExport` sets `isBusy` on the running button and disables the rest.
+The share note stays as the `bodySmall` footer.
+
 ```
 +------------------------------------------+
-|  <   Entregar - 3ro A                    |
+|  <   Entregar · 3ro A                    |
+|      II Bimestre                         |
 +------------------------------------------+
-|  II Bimestre                             |
+|  NOTAS PARA SIAGIE                       |
+|  [f] 3 Primaria EBR.xlsx                 |
+|  2 conclusiones descriptivas faltan      |
+|  ----------------------------------------|
+|  CCAHUANA FLORES, MARÍA                > |
+|  Personal Social · 02                    |
+|  ----------------------------------------|
+|  HUANCA RÍOS, DIEGO                    > |
+|  Comunicación · 01                       |
+|  ----------------------------------------|
+|  [    Generar archivo (disabled)     ]   |
 |                                          |
-|  +--------------------------------------+|
-|  | Notas para SIAGIE                    ||
-|  | 3 Primaria EBR.xlsx                  ||
-|  | ! 2 conclusiones descriptivas faltan ||
-|  |   BAUTISTA QUISPE, Jose            > ||
-|  |   Personal Social - 02                ||
-|  |   DELGADO HUAMAN, Pedro            > ||
-|  |   Comunicacion - 01                   ||
-|  |          [  Generar archivo  ]       ||
-|  +--------------------------------------+|
+|  ----------------------------------------|
+|  ASISTENCIA PARA SIAGIE                  |
+|  setiembre 2026 · 20 días registrados    |
+|  [         Exportar el mes           ]   |
 |                                          |
-|  +--------------------------------------+|
-|  | Asistencia para SIAGIE               ||
-|  | setiembre 2026 · 20 dias             ||
-|  |             [     Exportar       ]   ||
-|  +--------------------------------------+|
-|                                          |
-|  +--------------------------------------+|
-|  | Resumen para imprimir                ||
-|  |    [   PDF   ]      [   CSV    ]     ||
-|  +--------------------------------------+|
+|  ----------------------------------------|
+|  RESUMEN PARA IMPRIMIR                   |
+|  Una tabla por área, con los niveles     |
+|  del periodo.                            |
+|  [      PDF      ]  [      CSV      ]    |
 |                                          |
 |  El archivo conserva su nombre original  |
 |  y se comparte por WhatsApp, Bluetooth   |
@@ -1936,14 +2104,28 @@ When there are no blockers, the grades card drops the gap list and its
 |  |          [  Generar archivo  ]       ||
 ```
 
-When no Template is stored, the first card reads:
+When no Template is stored (`gradesExportState` is `Unavailable`), the
+grades group collapses to an INFO `GBanner` whose LINK action is *Importar
+plantilla* (`ImportTemplateClicked`), the group order is unchanged, and the
+Resumen group's PDF button takes the PRIMARY slot: that is how the screen
+promotes PDF/CSV (US 53) without a second primary (new: today `Unavailable`
+renders plain text plus a SECONDARY *Importar plantilla* `GButton`, not a
+`GBanner` — though `GBanner` already supports a LINK `actionStyle`, so
+wiring it is a screen-side change — and the Resumen card always renders
+both PDF and CSV as SECONDARY regardless of `gradesExportState`; it has no
+promotion logic yet).
 
 ```
-|  | Notas para SIAGIE          NO DISPO. ||
-|  | Esta seccion no tiene una plantilla  ||
-|  | SIAGIE importada. Importa una desde  ||
-|  | Alumnos, o usa el resumen PDF/CSV.   ||
-|  |             [  Importar plantilla ]  ||
+|  NOTAS PARA SIAGIE                       |
+|  +--------------------------------------+|
+|  | Esta sección no tiene una plantilla  ||
+|  | SIAGIE. Impórtala desde Alumnos para ||
+|  | generar las notas.                   ||
+|  | Importar plantilla                 > ||
+|  +--------------------------------------+|
+|  ...                                     |
+|  RESUMEN PARA IMPRIMIR                   |
+|  [  PDF (primary)  ]  [      CSV      ]  |
 ```
 
 ```kotlin
@@ -2023,39 +2205,103 @@ grades card itself — no separate bottom sheet — and `ExportGradesClicked`
 (now labelled *Generar archivo*) is enabled only when `gradesExportState` is
 `Ready`, i.e. nothing is pending.
 
+Copy changes (for the implementation ticket)
+
+- `export_grades_blocked`: "Faltan %1$d conclusiones descriptivas" -> "%1$d conclusiones descriptivas faltan" (matches the wireframe and mockup word order)
+- `export_grades_unavailable`: "Esta sección no tiene una plantilla SIAGIE importada. Importa una desde Alumnos, o usa el resumen PDF/CSV." -> "Esta sección no tiene una plantilla SIAGIE. Impórtala desde Alumnos para generar las notas." (matches the export-no-template mockup)
+- `export_attendance_subtitle`: "%1$s · %2$d días" -> "%1$s · %2$d días registrados" (matches the wireframe and mockup)
+- `export_attendance_export`: "Exportar" -> "Exportar el mes" (matches the wireframe and mockup)
+- New: "Una tabla por área, con los niveles del periodo." description line under "Resumen para imprimir" (no string key yet; the line is not rendered today)
+
 ---
 
 ## 21. Backup
 
-Mockup: [html](mockups/backup.html) · [png](mockups/backup.png)
+Mockup: [html](mockups/backup.html) · restore confirmation
+[html](mockups/backup-restore-confirm.html) (no PNG until Phase 4
+regenerates them from the emulator).
+
 Entry: Home overflow or the reminder banner.
+
+Registro layout: `GTopBar` "Respaldo" with one line of subtitle saying what
+the file holds. The last-backup line is a strip with the "ÚLTIMO RESPALDO"
+eyebrow and the days-and-date label as `NUMERAL` ("hace 12 días · 29 ago")
+(new: the label is a computed string, not a stored `lastBackupLabel` field,
+and it renders as `TITLE_MEDIUM`, not `NUMERAL`): while the reminder is due
+it is the ERROR strip (`errorContainer`, leading dot), the same signal as
+the Home banner (new: the leading element is a `Warning` triangle icon, not
+a dot); otherwise it is the INFO strip on `surfaceContainerLow` (new: today
+it is a bordered `GCard` on plain `surface`, not a borderless INFO strip on
+`surfaceContainerLow`). *Crear respaldo* is the one PRIMARY `GButton`
+(`isCreating` sets `isBusy`), with a `bodySmall` helper naming the share
+sheet. A "RESTAURAR" eyebrow groups the SECONDARY *Elegir archivo .gema* and
+a WARNING `GBanner` ("Restaurar reemplaza todo lo que hay en este teléfono y
+reinicia la app. Te preguntamos antes."). A "RECORDATORIO" eyebrow groups a
+short numeric `GTextField` (label "Cada", 96dp wide) beside its unit "días
+sin respaldar" and a `bodySmall` helper; `reminderThresholdError` renders as
+the field's error text (new: today one "RECORDARME CADA" label stands in
+for both the eyebrow and the field label — the `GTextField` itself has no
+label — the field is 112dp wide, the unit text is just "días", there is no
+helper line below it, and the error text comes from `isReminderThresholdInvalid`
+gating a fixed "Elige entre X y Y días" string, not a stored error message).
 
 ```
 +------------------------------------------+
 |  <   Respaldo                            |
+|      Todo lo de este teléfono en un      |
+|      archivo .gema                       |
 +------------------------------------------+
-|  Ultimo respaldo                         |
-|  hace 12 dias  -  29/08/2026             |
-|                                          |
 |  +--------------------------------------+|
-|  |       Crear respaldo                 ||
+|  | ÚLTIMO RESPALDO                    • ||
+|  | hace 12 días · 29 ago                ||
 |  +--------------------------------------+|
-|  Se crea un archivo .gema y se abre el   |
-|  menu para compartir.                    |
-|                                          |
-|  ---------------------------------------  |
-|  Restaurar                               |
+|  [          Crear respaldo           ]   |
+|  Se crea el archivo y se abre el menú    |
+|  para compartirlo: WhatsApp, Drive,      |
+|  Bluetooth o USB.                        |
+|  ----------------------------------------|
+|  RESTAURAR                               |
+|  [       Elegir archivo .gema        ]   |
 |  +--------------------------------------+|
-|  |    Elegir archivo .gema              ||
+|  | Restaurar reemplaza todo lo que hay  ||
+|  | en este teléfono y reinicia la app.  ||
+|  | Te preguntamos antes.                ||
 |  +--------------------------------------+|
-|  ! Restaurar reemplaza TODO lo que hay   |
-|    en este telefono y reinicia la app.   |
-|                                          |
-|  ---------------------------------------  |
-|  Recordarme cada                         |
-|  +----------+                            |
-|  |    7     | dias                       |
-|  +----------+                            |
+|  ----------------------------------------|
+|  RECORDATORIO                            |
+|  +--------+                              |
+|  | Cada   |  días sin respaldar          |
+|  | 7      |                              |
+|  +--------+                              |
+|  Pasado ese tiempo, Inicio muestra el    |
+|  aviso de respaldo.                      |
++------------------------------------------+
+```
+
+The restore confirmation is a `GDialog(isDestructive = true)` with
+`fileName` as its subtitle, one statement, the `RestoreConfirmation` counts
+as `NUMERAL` hairline rows (the same anatomy as the Section delete dialog),
+and a `bodySmall` line announcing the restart so it never reads as a crash
+(new: `GDialog` has no `subtitle` parameter, so `fileName` renders inside
+the first body sentence instead — "`fileName` reemplazará los datos de este
+teléfono."; the school-year count is one plain `BODY_LARGE` line, not a
+`NUMERAL` hairline row, and there is no `alumnos` row at all, because
+`RestoreConfirmation` carries no student count field today).
+
+```
++------------------------------------------+
+|  ¿Restaurar este respaldo?               |
+|  gema-2026-08-29.gema                    |
+|  Se reemplaza todo lo que hay en este    |
+|  teléfono:                               |
+|  ----------------------------------------|
+|     1  año escolar                       |
+|  ----------------------------------------|
+|    57  alumnos                           |
+|  ----------------------------------------|
+|  La app se reinicia al terminar. No es   |
+|  un error.                               |
+|                    Cancelar   Restaurar  |
 +------------------------------------------+
 ```
 
@@ -2063,20 +2309,27 @@ Entry: Home overflow or the reminder banner.
 data class BackupUiState(
     val isLoading: Boolean = true,
     val lastBackupDate: LocalDate? = null,
-    val lastBackupLabel: String = "",
-    val reminderThresholdDays: Int = 7,
-    val reminderThresholdError: String? = null,
+    val daysSinceLastBackup: Int? = null,
+    val reminderThresholdDays: Int = DEFAULT_REMINDER_THRESHOLD_DAYS,
+    val reminderThresholdInput: String = DEFAULT_REMINDER_THRESHOLD_DAYS.toString(),
+    val isReminderThresholdInvalid: Boolean = false,
+    val isBackupOverdue: Boolean = false,
     val isCreating: Boolean = false,
     val restoreConfirmation: RestoreConfirmation? = null,
     val isRestoring: Boolean = false,
 )
 
 data class RestoreConfirmation(
+    val uri: String,
     val fileName: String,
     val currentSchoolYearCount: Int,
     val currentStudentCount: Int,
 )
 ```
+
+`DEFAULT_REMINDER_THRESHOLD_DAYS` (`core:domain`) is `7`. `currentStudentCount`
+(new) does not exist on `RestoreConfirmation` today; the confirmation dialog
+needs it to render the "57 alumnos" row the wireframe shows.
 
 Intents: `CreateBackupClicked`, `ChooseRestoreFileClicked`,
 `RestoreFilePicked(uri: String)`, `RestoreConfirmed`, `RestoreDismissed`,
@@ -2084,11 +2337,23 @@ Intents: `CreateBackupClicked`, `ChooseRestoreFileClicked`,
 
 Effects: `ShareFile(path: String, mimeType: String)`,
 `OpenDocumentPicker(mimeTypes: List<String>)`, `RestartApp`, `NavigateBack`,
-`ShowMessage(text: String)`.
+`ShowMessage(message: BackupMessage)`.
+
+`BackupMessage` is `BACKUP_CREATED`, `BACKUP_FAILED`, `FILE_IS_NOT_A_BACKUP`,
+`BACKUP_FROM_A_NEWER_APP`, `RESTORE_FAILED` or `MANUAL_RESTART_REQUIRED`.
 
 Note: `isCreating` and `isRestoring` are the only justified progress indicators
 in the app; copying a database file is real local work with a visible duration,
 unlike a read.
+
+Copy changes (for the implementation ticket)
+
+- `backup_subtitle`: "Todo vive en este teléfono" -> "Todo lo de este teléfono en un archivo .gema" (matches the wireframe and mockup)
+- `backup_create_hint`: "Se crea un archivo .gema y se abre el menú para compartir." -> "Se crea el archivo y se abre el menú para compartirlo: WhatsApp, Drive, Bluetooth o USB." (matches the wireframe and mockup)
+- `backup_restore_warning`: "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app." -> "Restaurar reemplaza todo lo que hay en este teléfono y reinicia la app. Te preguntamos antes." (matches the wireframe and mockup)
+- `backup_reminder_label`: "RECORDARME CADA" -> "RECORDATORIO" eyebrow, plus a "Cada" label on the `GTextField` itself (matches the wireframe and mockup, which show separate strings)
+- `backup_reminder_days`: "días" -> "días sin respaldar" (matches the wireframe and mockup)
+- New: "Pasado ese tiempo, Inicio muestra el aviso de respaldo." helper line under the reminder field (no string key yet; the line is not rendered today)
 
 ---
 

@@ -2,85 +2,81 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .sblock { display: flex; flex-direction: column; gap: 8px; padding: 10px 16px; border-bottom: 1px solid #DFE4D7; }
-    .sname { font-size: 15px; font-weight: 500; color: #191D17; }
-    .chip { display: flex; align-items: center; justify-content: center; flex: 1 1 0; height: 48px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; font-weight: 700; color: #191D17; }
-    .chipon { border: 2px solid #3F6836; background: #C0EFB0; color: #285020; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden;">
-  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-    </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Debate del aula</span>
-      <span style="font-size: 13px; color: #43483F;">22/06/2026 · II Bimestre</span>
-    </div>
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #43483F;">
-      <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg>
-    </div>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; gap: 4px; padding: 8px 8px 0 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 1px;"><div style="font-size: 18px; font-weight: 600; line-height: 1.2;">Debate del aula</div><div style="font-size: 13px; color: #6E7075;">22 jun · II Bimestre · cada toque se guarda solo</div></div>
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="#17181A" aria-hidden="true"><circle cx="12" cy="5" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="12" cy="19" r="1.8"></circle></svg></div>
   </div>
 
-  <div style="display: flex; align-items: center; gap: 12px; padding: 0 16px 12px 16px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-grow: 1; height: 48px; padding: 0 12px 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-      <span>PPSS 01 · Construye su identidad</span>
-      <svg class="ico" style="flex-shrink: 0;" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
-    </div>
-    <span style="font-size: 14px; font-weight: 700; color: #43483F; flex-shrink: 0;">24/30</span>
+  <div style="padding: 8px 16px 0 16px;">
+    <div style="height: 48px; padding: 0 12px 0 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #C9C9C5; border-radius: 8px;"><div style="display: flex; flex-direction: column; min-width: 0;"><div style="font-size: 11px; color: #6E7075;">Competencia</div><div style="font-size: 15px; font-weight: 500; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">PPSS 01 · Construye su identidad</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="M6 9l6 6 6-6"></path></svg></div>
   </div>
 
-  <div style="display: flex; flex-direction: column; flex-grow: 1; border-top: 1px solid #DFE4D7;">
-    <div class="sblock">
-      <span class="sname">ACOSTA RIVERA, Luz María</span>
+  <div style="margin: 8px 16px 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; background: #F6F6F4; border-radius: 8px;">
+    <div style="font-size: 20px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums;">24 <span style="font-size: 15px; font-weight: 400; color: #6E7075;">de 30 con evidencia</span></div>
+    <div style="font-size: 13px; color: #5C4A12;">6 sin tocar</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; padding: 12px 16px 0 16px; flex-grow: 1; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-top: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">APAZA CONDORI, YESENIA</div>
       <div style="display: flex; gap: 8px;">
-        <div class="chip chipon">AD</div><div class="chip">A</div><div class="chip">B</div><div class="chip">C</div><div class="chip" style="color: #43483F;">—</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; background: #E4EFD9; border-radius: 8px; font-size: 17px; font-weight: 600;">AD</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">A</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">B</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">C</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">—</div>
       </div>
     </div>
-    <div class="sblock">
-      <span class="sname">BAUTISTA QUISPE, José</span>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-top: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">CCAHUANA FLORES, MARÍA</div>
       <div style="display: flex; gap: 8px;">
-        <div class="chip">AD</div><div class="chip">A</div><div class="chip chipon">B</div><div class="chip">C</div><div class="chip" style="color: #43483F;">—</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">AD</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">A</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; background: #E4EFD9; border-radius: 8px; font-size: 17px; font-weight: 600;">B</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">C</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">—</div>
       </div>
     </div>
-    <div class="sblock">
-      <span class="sname">CCAHUANA MAMANI, Rosa</span>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-top: 1px solid #E6E6E3;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;"><div style="font-size: 16px; font-weight: 500;">HUANCA RÍOS, DIEGO</div><div style="font-size: 12px; font-weight: 500; color: #5C4A12;">sin tocar</div></div>
       <div style="display: flex; gap: 8px;">
-        <div class="chip">AD</div><div class="chip">A</div><div class="chip">B</div><div class="chip">C</div><div class="chip chipon">—</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">AD</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">A</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">B</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">C</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px dashed #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">—</div>
       </div>
     </div>
-    <div class="sblock">
-      <span class="sname">DELGADO HUAMÁN, Pedro</span>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-top: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">MAMANI TORRES, LUIS ALBERTO</div>
       <div style="display: flex; gap: 8px;">
-        <div class="chip">AD</div><div class="chip chipon">A</div><div class="chip">B</div><div class="chip">C</div><div class="chip" style="color: #43483F;">—</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">AD</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">A</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">B</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">C</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; background: #EDEDEA; border-radius: 8px; font-size: 17px; font-weight: 600;">—</div>
       </div>
     </div>
-    <div class="sblock" style="background: #FFF8E1;">
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <span class="sname">ESPINOZA VEGA, Ana</span>
-        <span style="font-size: 12px; font-weight: 500; color: #43483F;">sin evidencia</span>
-      </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; border-top: 1px solid #E6E6E3;">
+      <div style="font-size: 16px; font-weight: 500;">QUISPE HUAMÁN, ROSA</div>
       <div style="display: flex; gap: 8px;">
-        <div class="chip">AD</div><div class="chip">A</div><div class="chip">B</div><div class="chip">C</div><div class="chip" style="color: #43483F;">—</div>
-      </div>
-    </div>
-    <div class="sblock" style="border-bottom: none;">
-      <span class="sname">FLORES CANO, Miguel</span>
-      <div style="display: flex; gap: 8px;">
-        <div class="chip">AD</div><div class="chip">A</div><div class="chip chipon">B</div><div class="chip">C</div><div class="chip" style="color: #43483F;">—</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">AD</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 2px solid #3F6836; background: #E4EFD9; border-radius: 8px; font-size: 17px; font-weight: 600;">A</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">B</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">C</div>
+        <div style="flex-grow: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #C9C9C5; border-radius: 8px; font-size: 17px; font-weight: 600;">—</div>
       </div>
     </div>
   </div>
 </div>
-</x-dc>
 </body>
 </html>
