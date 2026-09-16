@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,6 +34,9 @@ import com.emm.gema.core.theme.GemaAccents
 import com.emm.gema.core.theme.GemaShapes
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+
+private val bannerIconTopOffset = 2.dp
+private val bannerDotTopOffset = 7.dp
 
 @Composable
 fun GBanner(
@@ -55,14 +59,19 @@ fun GBanner(
         Row(
             modifier = Modifier.padding(GemaSpacing.medium).fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
         ) {
             GBannerLeading(icon = icon, hasLeadingDot = hasLeadingDot, tone = tone)
             Column(modifier = Modifier.weight(1f)) {
                 GBannerMessage(title = title, text = text)
                 GBannerColumnAction(actionText = actionText, onActionClick = onActionClick, actionStyle = actionStyle)
             }
-            GBannerSideAction(actionText = actionText, onActionClick = onActionClick, actionStyle = actionStyle)
+            GBannerSideAction(
+                actionText = actionText,
+                onActionClick = onActionClick,
+                actionStyle = actionStyle,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
         }
     }
 }
@@ -70,10 +79,15 @@ fun GBanner(
 @Composable
 private fun GBannerLeading(icon: ImageVector?, hasLeadingDot: Boolean, tone: GBannerTone) {
     if (icon != null) {
-        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.padding(top = bannerIconTopOffset).size(20.dp),
+        )
     } else if (hasLeadingDot) {
         Box(
             modifier = Modifier
+                .padding(top = bannerDotTopOffset)
                 .size(GemaSpacing.small)
                 .clip(CircleShape)
                 .background(dotColorOf(tone)),
@@ -95,9 +109,14 @@ private fun GBannerColumnAction(actionText: String?, onActionClick: (() -> Unit)
 }
 
 @Composable
-private fun GBannerSideAction(actionText: String?, onActionClick: (() -> Unit)?, actionStyle: GBannerActionStyle) {
+private fun GBannerSideAction(
+    actionText: String?,
+    onActionClick: (() -> Unit)?,
+    actionStyle: GBannerActionStyle,
+    modifier: Modifier = Modifier,
+) {
     if (actionText != null && onActionClick != null && actionStyle == GBannerActionStyle.LINK) {
-        GBannerLinkAction(text = actionText, onClick = onActionClick)
+        GBannerLinkAction(text = actionText, onClick = onActionClick, modifier = modifier)
     }
 }
 
@@ -112,10 +131,10 @@ private fun GBannerMessage(title: String?, text: String) {
 }
 
 @Composable
-private fun GBannerLinkAction(text: String, onClick: () -> Unit) {
+private fun GBannerLinkAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick),
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
         textDecoration = TextDecoration.Underline,
@@ -210,6 +229,18 @@ private fun GBannerStackedLinkPreview() {
             actionText = "No dicto todas las áreas",
             onActionClick = {},
             actionStyle = GBannerActionStyle.STACKED_LINK,
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun GBannerIconMultilinePreview() {
+    GemaTheme {
+        GBanner(
+            text = "Viene de la plantilla SIAGIE. Si cambias el código, la exportación no lo encontrará. " +
+                "Corrígelo antes de exportar el registro final.",
+            icon = Icons.Filled.Info,
         )
     }
 }

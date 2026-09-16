@@ -754,6 +754,13 @@ unaffected. `actionStyle` picks how the action renders and where it sits:
 dismissal like "Entendido") or `LINK` (an underlined label on the trailing
 edge of the same row as the message, for an affordance like "Respaldar").
 
+The row aligns to the top (`Alignment.Top`), so the leading glyph sits level
+with the first line of the message instead of the row center — this keeps the
+glyph at the top when the message wraps to multiple lines. The icon carries a
+2dp top offset, the dot a 7dp top offset, to optically center each against the
+first line's cap height. The side `LINK` action stays vertically centered on
+the whole row.
+
 Wraps `Surface`, radius `GemaShapes.control` (8dp), no border. Tokens:
 `colorScheme.surfaceContainerLow` (INFO), `colorScheme.errorContainer` /
 `onErrorContainer` text (ERROR), `GemaAccents.warningContainer` /
