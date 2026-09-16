@@ -1801,29 +1801,22 @@ regenerates it from the emulator).
 Entry: Activities. Primary action: *Guardar*.
 
 Registro layout: `GTopBar` "Nueva actividad" or "Editar actividad" with the
-Section as subtitle (new: once `resolvedPeriodLabel` is known the subtitle
-becomes "Sección · Periodo" instead of the Section alone). `name` is a
-`GTextField`; `date` is a `GDateField` followed by a separate `GText` line
-carrying `resolvedPeriodLabel` ("Cae en el III Bimestre."), because
-`GDateField` has no supporting-line parameter of its own beyond its error
-text. While `hasPeriodChangeWarning` is `true` a WARNING `GBanner` sits
-directly under the date and says where the Activity moves and that its
-evidence moves with it (new: today it is a plain error-colored `GText`
-showing the fixed `activity_form_period_change_warning` string, not a
-`GBanner`, and not a message naming the specific Periods or evidence). Any
-non-blank `dateError` renders through `GDateField`'s own `errorText` slot.
+Section as subtitle, becoming "Sección · Periodo" once `resolvedPeriodLabel`
+is known. `name` is a `GTextField`; `date` is a `GDateField` followed by a
+separate `GText` line carrying `resolvedPeriodLabel` ("Cae en el III
+Bimestre."), because `GDateField` has no supporting-line parameter of its own
+beyond its error text. While `periodChangeFromLabel` is non-null a WARNING
+`GBanner` sits directly under the date and names the source and target
+Period, stating the Activity's evidence moves with it. Any non-blank
+`dateError` renders through `GDateField`'s own `errorText` slot.
 "COMPETENCIAS TRABAJADAS" is an eyebrow; each `CompetencyGroup` is its
-`areaName` as a plain `bodySmall` weight-500 label on the screen ground
-(new: today it is a `GGroupHeader` strip, `LABEL_SMALL` on
-`surfaceVariant`, which is not in the Registro palette) followed by
-`GCheckRow`s with the SIAGIE ordinal as prefix. In edit mode
-(`canDelete`) a "ZONA DE RIESGO" eyebrow groups a DESTRUCTIVE `GButton`
-"Eliminar actividad" with one `bodySmall` helper ("Borra también sus
-evidencias. Te preguntamos antes."), the same anatomy as SectionForm (new:
-today the screen renders only a `GDivider` and the DESTRUCTIVE `GButton`;
-neither the "ZONA DE RIESGO" eyebrow nor the helper line exist yet); create
-mode is the same screen without that group. *Guardar* is the `bottomAction`
-PRIMARY `GButton`.
+`areaName` as a plain `bodySmall` weight-500 label (`GTextStyle.BODY_SMALL_EMPHASIS`)
+on the screen ground, followed by `GCheckRow`s with the SIAGIE ordinal as
+prefix. In edit mode (`canDelete`) a "ZONA DE RIESGO" eyebrow groups a
+DESTRUCTIVE `GButton` "Eliminar actividad" with one `bodySmall` helper
+("Borra también sus evidencias. Te preguntamos antes."), the same anatomy as
+SectionForm; create mode is the same screen without that group. *Guardar* is
+the `bottomAction` PRIMARY `GButton`.
 
 ```
 +------------------------------------------+
@@ -1878,7 +1871,7 @@ data class ActivityFormUiState(
     val date: LocalDate? = null,
     val dateError: ActivityFormMessage? = null,
     val resolvedPeriodLabel: String? = null,
-    val hasPeriodChangeWarning: Boolean = false,
+    val periodChangeFromLabel: String? = null,
     val competencyGroups: List<CompetencyGroup> = emptyList(),
     val selectedCompetencyIds: Set<CompetencyId> = emptySet(),
     val isDeleteConfirmVisible: Boolean = false,
@@ -1912,9 +1905,10 @@ Effects: `NavigateToActivityEvidence(activityId: ActivityId)`, `NavigateBack`,
 Notes:
 
 - `resolvedPeriodLabel` comes from the date (US 35); the Period is never picked.
-- `hasPeriodChangeWarning` is `true` while editing when the new date moves the
-  Activity to a different Period; `canSave` and `canDelete` are computed from
-  the rest of the state, not stored fields.
+- `periodChangeFromLabel` holds the Activity's original Period label while
+  editing when the new date moves it to a different Period, and is `null`
+  otherwise (create mode, same Period, or no resolved Period); `canSave` and
+  `canDelete` are computed from the rest of the state, not stored fields.
 - The competency list is restricted to Worked Competencies of the resolved
   Period and active Areas.
 - `ActivityFormMessage` (`dateError` and `ShowMessage`) is `OUTSIDE_PERIODS` or
@@ -1922,9 +1916,9 @@ Notes:
 
 Copy changes (for the implementation ticket)
 
-- New: "ZONA DE RIESGO" eyebrow label above the delete button (no string key yet; the group itself is not rendered today)
-- New: "Borra también sus evidencias. Te preguntamos antes." helper line under *Eliminar actividad* (no string key yet)
-- `activity_form_period_change_warning`: "Esta actividad se moverá a otro periodo." -> "Con esta fecha la actividad pasa del `{fromPeriod}` al `{toPeriod}`. Sus evidencias se mueven con ella." (names the specific Periods and evidence, matches the wireframe and mockup)
+- `activity_form_delete_eyebrow`: "ZONA DE RIESGO" eyebrow label above the delete button
+- `activity_form_delete_helper`: "Borra también sus evidencias. Te preguntamos antes." helper line under *Eliminar actividad*
+- `activity_form_period_change_warning`: "Con esta fecha la actividad pasa del %1$s al %2$s. Sus evidencias se mueven con ella." (names the specific Periods and evidence, matches the wireframe and mockup)
 
 ---
 

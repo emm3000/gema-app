@@ -54,6 +54,7 @@ class ActivityFormViewModel(
     private var section: Section? = null
     private var schoolYear: SchoolYear? = null
     private var originalPeriodId: PeriodId? = null
+    private var originalPeriodLabel: String? = null
 
     init {
         viewModelScope.launch { load() }
@@ -80,6 +81,8 @@ class ActivityFormViewModel(
 
         val activity: Activity? = activityId?.let { getActivity(it) }
         originalPeriodId = activity?.periodId
+        originalPeriodLabel = activity?.date?.let { findPeriodForDate(loadedSchoolYear.id, it) }
+            ?.let { loadedSchoolYear.periodKind.labelFor(it.number) }
         val date: LocalDate = activity?.date ?: LocalDate.now(clock)
 
         _state.value = _state.value.copy(
@@ -106,7 +109,7 @@ class ActivityFormViewModel(
             _state.value = _state.value.copy(
                 dateError = ActivityFormMessage.OUTSIDE_PERIODS,
                 resolvedPeriodLabel = null,
-                hasPeriodChangeWarning = false,
+                periodChangeFromLabel = null,
                 competencyGroups = emptyList(),
                 selectedCompetencyIds = emptySet(),
             )
@@ -119,15 +122,16 @@ class ActivityFormViewModel(
         _state.value = _state.value.copy(
             dateError = null,
             resolvedPeriodLabel = loadedSchoolYear.periodKind.labelFor(period.number),
-            hasPeriodChangeWarning = hasPeriodChanged(period.id),
+            periodChangeFromLabel = periodChangeFromLabel(period.id),
             competencyGroups = competencies.toGroups(),
             selectedCompetencyIds = _state.value.selectedCompetencyIds.filter { it in availableIds }.toSet(),
         )
     }
 
-    private fun hasPeriodChanged(resolvedPeriodId: PeriodId): Boolean {
-        val original: PeriodId = originalPeriodId ?: return false
-        return original != resolvedPeriodId
+    private fun periodChangeFromLabel(resolvedPeriodId: PeriodId): String? {
+        val original: PeriodId = originalPeriodId ?: return null
+        if (original == resolvedPeriodId) return null
+        return originalPeriodLabel
     }
 
     private fun toggleCompetency(competencyId: CompetencyId, isSelected: Boolean) {

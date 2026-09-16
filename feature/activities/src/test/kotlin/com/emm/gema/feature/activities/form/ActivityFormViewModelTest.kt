@@ -102,7 +102,7 @@ class ActivityFormViewModelTest {
     }
 
     @Test
-    fun `changing the date to another period warns and moves the activity`() = runTest {
+    fun `changing the date to another period sets the origin period label`() = runTest {
         workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
         workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
         val existing = Activity(
@@ -120,7 +120,37 @@ class ActivityFormViewModelTest {
 
         val state: ActivityFormUiState = viewModel.state.value
         assertThat(state.resolvedPeriodLabel).isEqualTo("II Bimestre")
-        assertThat(state.hasPeriodChangeWarning).isTrue()
+        assertThat(state.periodChangeFromLabel).isEqualTo("I Bimestre")
+    }
+
+    @Test
+    fun `changing the date back to the original period clears the origin period label`() = runTest {
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        workedCompetencyRepository.setWorked(sectionId, secondPeriodId, Competency.idOf(Area.PPSS, 1), true)
+        val existing = Activity(
+            id = ActivityId("activity-1"),
+            sectionId = sectionId,
+            periodId = firstPeriodId,
+            name = "Debate del aula",
+            date = LocalDate.of(2026, 3, 10),
+            competencyIds = setOf(Competency.idOf(Area.PPSS, 1)),
+        )
+        activityRepository.save(existing)
+
+        val viewModel: ActivityFormViewModel = viewModel(activityId = ActivityId("activity-1"))
+        viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 6, 1)))
+        viewModel.onIntent(ActivityFormUiIntent.DateChanged(LocalDate.of(2026, 3, 10)))
+
+        assertThat(viewModel.state.value.periodChangeFromLabel).isNull()
+    }
+
+    @Test
+    fun `create mode never sets the origin period label`() = runTest {
+        workedCompetencyRepository.setWorked(sectionId, firstPeriodId, Competency.idOf(Area.PPSS, 1), true)
+
+        val state: ActivityFormUiState = viewModel(activityId = null).state.value
+
+        assertThat(state.periodChangeFromLabel).isNull()
     }
 
     @Test
