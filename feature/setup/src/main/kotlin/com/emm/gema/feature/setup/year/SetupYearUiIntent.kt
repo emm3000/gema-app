@@ -24,6 +24,4 @@ sealed interface SetupYearUiIntent {
     data object EditorDismissed : SetupYearUiIntent
 
     data object ContinueClicked : SetupYearUiIntent
-
-    data object BackClicked : SetupYearUiIntent
 }

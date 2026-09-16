@@ -77,7 +77,6 @@ fun GemaNavHost(
         composable(GemaRoutes.SETUP_YEAR) {
             SetupYearRoute(
                 onDraftReady = { navController.navigate(GemaRoutes.SETUP_SECTION) },
-                onBack = { navController.popBackStack() },
             )
         }
         composable(GemaRoutes.SETUP_SECTION) {

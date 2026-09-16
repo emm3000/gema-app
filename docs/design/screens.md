@@ -148,9 +148,14 @@ Intents: `YearLabelChanged(value: String)`, `StartDateChanged(value: LocalDate)`
 `EndDateChanged(value: LocalDate)`, `PeriodKindSelected(kind: PeriodKind)`,
 `PeriodClicked(ordinal: Int)`, `EditorStartDateChanged(value: LocalDate)`,
 `EditorEndDateChanged(value: LocalDate)`, `EditorConfirmed`, `EditorDismissed`,
-`ContinueClicked`, `BackClicked`.
+`ContinueClicked`.
 
-Effects: `NavigateToSetupSection(draft: SchoolYearDraft)`, `NavigateBack`.
+Effects: `NavigateToSetupSection(draft: SchoolYearDraft)`.
+
+Note: no top bar and no in-screen back control — the system back gesture pops
+the nav back stack directly. From a cold start SetupYear is the start
+destination with no back stack to pop; reached from SchoolYears' "Nuevo año"
+it pops back there like any other screen.
 
 Note: nothing is persisted here. The draft travels to step 2 and both are
 written in one transaction, so an abandoned setup leaves no orphan year.

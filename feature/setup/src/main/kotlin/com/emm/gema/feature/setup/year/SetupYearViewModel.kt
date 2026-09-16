@@ -39,7 +39,6 @@ class SetupYearViewModel(clock: Clock) : ViewModel() {
             SetupYearUiIntent.EditorConfirmed -> confirmEditor()
             SetupYearUiIntent.EditorDismissed -> update { it.copy(editor = null) }
             SetupYearUiIntent.ContinueClicked -> continueToSection()
-            SetupYearUiIntent.BackClicked -> emit(SetupYearUiEffect.NavigateBack)
         }
     }
 
