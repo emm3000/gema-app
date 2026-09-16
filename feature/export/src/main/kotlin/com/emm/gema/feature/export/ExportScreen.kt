@@ -135,7 +135,7 @@ private fun UnavailableGrades(onIntent: (ExportUiIntent) -> Unit) {
         tone = GBannerTone.INFO,
         actionText = stringResource(R.string.export_import_template),
         onActionClick = { onIntent(ExportUiIntent.ImportTemplateClicked) },
-        actionStyle = GBannerActionStyle.LINK,
+        actionStyle = GBannerActionStyle.STACKED_LINK,
     )
 }
 
