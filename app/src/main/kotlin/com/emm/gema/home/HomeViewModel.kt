@@ -7,7 +7,6 @@ import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.summarise
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
-import com.emm.gema.core.domain.date.DateNameProvider
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -22,6 +21,8 @@ import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,8 +32,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -44,10 +45,10 @@ class HomeViewModel(
     private val getAttendanceDay: GetAttendanceDayUseCase,
     private val getMissingPeriodLevelCount: GetMissingPeriodLevelCountUseCase,
     private val dateNames: DateNameProvider,
-    private val today: Flow<LocalDate>,
+    today: Flow<LocalDate>,
 ) : ViewModel() {
 
-    private var currentDay: LocalDate? = null
+    private val currentDay: Deferred<StateFlow<LocalDate>> = viewModelScope.async { today.stateIn(viewModelScope) }
 
     private val _state: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -59,9 +60,7 @@ class HomeViewModel(
         viewModelScope.launch {
             getActiveSchoolYear()
                 .flatMapLatest { schoolYear ->
-                    today
-                        .onEach { date -> currentDay = date }
-                        .flatMapLatest { date -> schoolYearState(schoolYear, date) }
+                    currentDay.await().flatMapLatest { date -> schoolYearState(schoolYear, date) }
                 }
                 .collect { schoolYearState -> _state.value = merge(schoolYearState) }
         }
@@ -74,7 +73,9 @@ class HomeViewModel(
         when (intent) {
             is HomeUiIntent.SectionClicked -> emit(HomeUiEffect.NavigateToSectionDetail(intent.id))
             is HomeUiIntent.TakeAttendanceClicked ->
-                currentDay?.let { day -> emit(HomeUiEffect.NavigateToAttendanceDay(intent.id, day)) }
+                viewModelScope.launch {
+                    _effects.send(HomeUiEffect.NavigateToAttendanceDay(intent.id, currentDay.await().value))
+                }
             HomeUiIntent.AddSectionClicked -> withSchoolYear { HomeUiEffect.NavigateToSectionForm(it, null) }
             HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
             HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }

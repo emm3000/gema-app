@@ -49,6 +49,6 @@ class DayTickerTest {
 
         override fun instant(): Instant = instantValue
         override fun getZone(): ZoneId = zoneId
-        override fun withZone(zone: ZoneId): Clock = MutableClock(instantValue, zone)
+        override fun withZone(zone: ZoneId): Clock = error("MutableClock does not support withZone")
     }
 }
