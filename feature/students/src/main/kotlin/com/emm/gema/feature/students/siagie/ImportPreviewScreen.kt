@@ -12,11 +12,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
@@ -28,7 +32,6 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
 import com.emm.gema.core.ui.GFileCard
-import com.emm.gema.core.ui.GGroupHeader
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
@@ -85,18 +88,30 @@ private fun LazyListScope.rejection(rejection: ImportRejection) {
             text = rejection.reason,
             modifier = Modifier.fillMaxWidth(),
             tone = GBannerTone.ERROR,
+            hasLeadingDot = true,
         )
     }
     if (rejection.expected != null) {
-        item { GListItem(title = "Sección seleccionada", trailingText = rejection.expected) }
+        item { GListItem(title = "Sección abierta", trailingText = rejection.expected) }
     }
     if (rejection.found != null) {
-        item { GListItem(title = "Archivo", trailingText = rejection.found) }
+        item {
+            GListItem(
+                title = "Archivo",
+                trailingText = rejection.found,
+                trailingTextColor = MaterialTheme.colorScheme.error,
+                showDivider = false,
+            )
+        }
     }
     item {
-        GBanner(
-            text = "Elige otro archivo o abre la sección correcta.",
-            modifier = Modifier.fillMaxWidth(),
+        GText(
+            text = "Elige otro archivo o abre la sección correcta. No se cambió nada.",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = GemaSpacing.medium),
+            style = GTextStyle.BODY_LARGE,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -148,16 +163,10 @@ private fun ColumnScope.group(
     onIntent: (ImportPreviewUiIntent) -> Unit,
 ) {
     val isExpanded: Boolean = state.expandedGroup == group
-    GGroupHeader(
+    GListItem(
         title = title,
-        count = rows.size,
-        isExpanded = isExpanded,
         onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(group)) },
-        titleStyle = GTextStyle.BODY_LARGE,
-        titleColor = Color.Unspecified,
-        containerColor = MaterialTheme.colorScheme.surface,
-        countInTitle = false,
-        showDivider = true,
+        trailing = { GroupExpandTrailing(count = rows.size, isExpanded = isExpanded) },
     )
     if (isExpanded) {
         GTintedGroupContent {
@@ -182,16 +191,11 @@ private fun ColumnScope.group(
 @Composable
 private fun ColumnScope.withdrawals(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {
     val isExpanded: Boolean = state.expandedGroup == ImportGroup.WITHDRAWN
-    GGroupHeader(
+    GListItem(
         title = "Se propondrán como retirados",
-        count = state.proposedWithdrawals.size,
-        isExpanded = isExpanded,
         onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(ImportGroup.WITHDRAWN)) },
-        titleStyle = GTextStyle.BODY_LARGE,
-        titleColor = Color.Unspecified,
-        containerColor = MaterialTheme.colorScheme.surface,
-        countInTitle = false,
-        showDivider = false,
+        trailing = { GroupExpandTrailing(count = state.proposedWithdrawals.size, isExpanded = isExpanded) },
+        showDivider = isExpanded,
     )
     if (isExpanded) {
         GTintedGroupContent {
@@ -209,6 +213,21 @@ private fun ColumnScope.withdrawals(state: ImportPreviewUiState, onIntent: (Impo
 }
 
 @Composable
+private fun GroupExpandTrailing(count: Int, isExpanded: Boolean) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        GText(text = count.toString(), style = GTextStyle.NUMERAL)
+        Icon(
+            imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
 private fun ImportActions(
     state: ImportPreviewUiState,
     onIntent: (ImportPreviewUiIntent) -> Unit,
@@ -220,19 +239,28 @@ private fun ImportActions(
             .padding(vertical = GemaSpacing.medium),
         horizontalArrangement = Arrangement.spacedBy(GemaSpacing.small),
     ) {
-        GButton(
-            text = "Cancelar",
-            onClick = { onIntent(ImportPreviewUiIntent.CancelClicked) },
-            modifier = Modifier.weight(1f),
-            variant = GButtonVariant.SECONDARY,
-        )
-        GButton(
-            text = "Aplicar",
-            onClick = { onIntent(ImportPreviewUiIntent.ApplyClicked) },
-            modifier = Modifier.weight(1f),
-            enabled = state.canApply,
-            isBusy = state.isApplying,
-        )
+        if (state.rejection != null) {
+            GButton(
+                text = "Volver a alumnos",
+                onClick = { onIntent(ImportPreviewUiIntent.CancelClicked) },
+                modifier = Modifier.weight(1f),
+                variant = GButtonVariant.SECONDARY,
+            )
+        } else {
+            GButton(
+                text = "Cancelar",
+                onClick = { onIntent(ImportPreviewUiIntent.CancelClicked) },
+                modifier = Modifier.weight(1f),
+                variant = GButtonVariant.SECONDARY,
+            )
+            GButton(
+                text = "Aplicar importación",
+                onClick = { onIntent(ImportPreviewUiIntent.ApplyClicked) },
+                modifier = Modifier.weight(2f),
+                enabled = state.canApply,
+                isBusy = state.isApplying,
+            )
+        }
     }
 }
 
