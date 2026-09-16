@@ -27,7 +27,7 @@ precisely because every component must honour it.
 
 ## The set
 
-Forty-seven `G*`-prefixed Kotlin files exist under
+Forty-six `G*`-prefixed Kotlin files exist under
 `core/ui/src/main/kotlin/com/emm/gema/core/ui/` today (counted directly:
 `fd -e kt . core/ui/src/main | rg -c '/G[A-Z]'`). That count includes
 component files and their co-located enums (`GButtonVariant`, `GBannerTone`,
@@ -64,15 +64,14 @@ package instead (`.claude/rules/ui-components.md`, "Decide the scope").
 | `GSearchField` | `BasicTextField` | students | built |
 | `GExtendedFab` | `ExtendedFloatingActionButton` | students, sections, school years, activities | built |
 | `GGroupHeader` | `Surface` + `Text` | students | built |
-| `GYearCard` | `Surface` + `Text` | school years | built |
 | `GBadge` | `Surface` + `Text` | school years | built |
 | `GTableHeaderBand` | `Surface` + `HorizontalDivider` | attendance month | built |
 | `GTableRow` | `Box` + `HorizontalDivider` | attendance month | built |
 | `GMonthPickerDialog` | `AlertDialog` (`GDialog`) + `Surface` month chips | attendance month | built |
 
-(Thirty-one rows above, all built; `GScreen`, `GDialog` and `GBottomSheet`
+(Thirty rows above, all built; `GScreen`, `GDialog` and `GBottomSheet`
 are structural shells rather than widgets, which is why the working widget
-set is twenty-eight. `GTableHeaderBand`/`GTableRow` currently back one
+set is twenty-seven. `GTableHeaderBand`/`GTableRow` currently back one
 screen; the period levels grid drifts on the same shape and is its own
 migration ticket. The remaining `G*` files under `core/ui/src/main` beyond
 this table — `GAttendanceRow`, `GBorderedContainer`, `GCalendarIconButton`,
@@ -213,8 +212,12 @@ fun GButton(
     enabled: Boolean = true,
     isBusy: Boolean = false,
     icon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
 )
 ```
+
+`icon` renders before `text`, `trailingIcon` after it — SchoolYears' TEXT
+"Periodos" button uses `trailingIcon` for its chevron.
 
 Wraps `Button` (primary), `OutlinedButton` (secondary), `Button` with
 `colorScheme.error` (destructive), `TextButton` (text). Tokens:
@@ -395,9 +398,13 @@ Tradeoffs worth stating, because this is the control the app lives on:
 fun GListItem(
     title: String,
     modifier: Modifier = Modifier,
+    titleStyle: GTextStyle = GTextStyle.BODY_LARGE,
     subtitle: String? = null,
+    subtitleColor: Color? = null,
     subtitleStyle: GTextStyle = GTextStyle.BODY_MEDIUM,
     leadingText: String? = null,
+    leadingIcon: ImageVector? = null,
+    titleLeading: (@Composable () -> Unit)? = null,
     titleTrailing: (@Composable () -> Unit)? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
@@ -407,9 +414,11 @@ fun GListItem(
 )
 ```
 
-`titleTrailing` renders right after `title` inside the headline row (symmetric
-with `titleLeading`) — used for a badge that must read beside the label, such
-as SchoolYears' ACTIVO badge.
+`titleLeading` and `titleTrailing` render right before and right after `title`
+inside the headline row — a chip before the label (a period ordinal), a badge
+after it (SchoolYears' ACTIVO). `leadingIcon` is a leading icon alternative to
+`leadingText`. `subtitleColor` overrides the default `onSurfaceVariant` for
+`subtitle`.
 
 Wraps `ListItem` inside a clickable `Surface`. Tokens: `GTextStyle.BODY_LARGE`
 (the `titleStyle` default) for `title`, `gemaTypography.bodyLarge` for
