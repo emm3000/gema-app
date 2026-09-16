@@ -7,6 +7,7 @@ import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.summarise
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
+import com.emm.gema.core.domain.date.DateNameProvider
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
 import com.emm.gema.core.domain.schoolyear.GetActiveSchoolYearUseCase
 import com.emm.gema.core.domain.schoolyear.GetCurrentPeriodUseCase
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -42,10 +44,11 @@ class HomeViewModel(
     private val observeBackupStatus: ObserveBackupStatusUseCase,
     private val getAttendanceDay: GetAttendanceDayUseCase,
     private val getMissingPeriodLevelCount: GetMissingPeriodLevelCountUseCase,
+    private val dateNames: DateNameProvider,
     private val clock: Clock,
 ) : ViewModel() {
 
-    private val today: LocalDate = LocalDate.now(clock)
+    private var today: LocalDate = LocalDate.now(clock)
 
     private val _state: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -56,7 +59,11 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             getActiveSchoolYear()
-                .flatMapLatest { schoolYear -> schoolYearState(schoolYear) }
+                .flatMapLatest { schoolYear ->
+                    dayTicker(clock)
+                        .onEach { date -> today = date }
+                        .flatMapLatest { date -> schoolYearState(schoolYear, date) }
+                }
                 .collect { schoolYearState -> _state.value = merge(schoolYearState) }
         }
         viewModelScope.launch {
@@ -76,7 +83,7 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun schoolYearState(schoolYear: SchoolYear?): Flow<HomeUiState> {
+    private suspend fun schoolYearState(schoolYear: SchoolYear?, today: LocalDate): Flow<HomeUiState> {
         if (schoolYear == null) return flowOf(HomeUiState(isLoading = false))
 
         val currentPeriod: Period? = getCurrentPeriod(schoolYear.id)
@@ -88,14 +95,14 @@ class HomeViewModel(
         return combine(
             getSections(schoolYear.id),
             getStudentCounts(),
-            attendanceSummaries(schoolYear.id),
+            attendanceSummaries(schoolYear.id, today),
             missingLevelCounts(schoolYear.id, currentPeriod),
         ) { sections, studentCounts, summaries, missingLevelCounts ->
             HomeUiState(
                 isLoading = false,
                 schoolYearId = schoolYear.id,
                 schoolYearLabel = schoolYear.label,
-                todayLabel = todayLabelOf(today),
+                todayLabel = todayLabelOf(today, dateNames),
                 currentPeriodLabel = currentPeriodLabel,
                 daysLeftInPeriod = daysLeftInPeriod,
                 currentPeriodEndDate = currentPeriod?.endDate,
@@ -110,7 +117,10 @@ class HomeViewModel(
         }
     }
 
-    private fun attendanceSummaries(schoolYearId: SchoolYearId): Flow<Map<SectionId, AttendanceDaySummary>> =
+    private fun attendanceSummaries(
+        schoolYearId: SchoolYearId,
+        today: LocalDate,
+    ): Flow<Map<SectionId, AttendanceDaySummary>> =
         perSection(schoolYearId) { sectionId: SectionId ->
             getAttendanceDay(sectionId, today).map { entries -> entries.summarise() }
         }

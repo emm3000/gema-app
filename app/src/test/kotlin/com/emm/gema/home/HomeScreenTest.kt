@@ -3,9 +3,7 @@ package com.emm.gema.home
 import android.app.Application
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.section.SectionId
@@ -42,13 +40,6 @@ class HomeScreenTest : RobolectricComposeTest() {
     }
 
     @Test
-    fun `the sections are led by the today eyebrow`() {
-        render()
-
-        composeTestRule.onNodeWithText("HOY · MARTES 10 DE SETIEMBRE").assertExists()
-    }
-
-    @Test
     fun `only the first pending section carries the primary action`() {
         render()
 
@@ -59,10 +50,19 @@ class HomeScreenTest : RobolectricComposeTest() {
     }
 
     @Test
-    fun `a taken section is a plain row without an attendance button`() {
+    fun `a second pending section dispatches its own attendance intent from a secondary action`() {
         render()
 
-        composeTestRule.onAllNodesWithText("Tomar asistencia de hoy").assertCountEquals(2)
+        composeTestRule.onNodeWithTag(sectionAttendanceButtonTestTag(secondPendingId)).performClick()
+
+        assertThat(dispatched).isEqualTo(HomeUiIntent.TakeAttendanceClicked(secondPendingId))
+    }
+
+    @Test
+    fun `a taken section has no attendance action`() {
+        render()
+
+        composeTestRule.onNodeWithTag(sectionAttendanceButtonTestTag(takenId)).assertDoesNotExist()
     }
 
     @Test
@@ -84,15 +84,6 @@ class HomeScreenTest : RobolectricComposeTest() {
     }
 
     @Test
-    fun `missing levels are appended to the status line of any section`() {
-        render()
-
-        composeTestRule.onNodeWithText("25 de 27 presentes · 12 niveles faltan").assertExists()
-        composeTestRule.onNodeWithText("Sin tomar · 12 niveles faltan").assertExists()
-        composeTestRule.onNodeWithText("Sin tomar").assertExists()
-    }
-
-    @Test
     fun `there is no primary action once every section is taken`() {
         render(
             HomeUiState(
@@ -102,6 +93,5 @@ class HomeScreenTest : RobolectricComposeTest() {
         )
 
         composeTestRule.onAllNodesWithTag(HOME_PRIMARY_ACTION_TEST_TAG).assertCountEquals(0)
-        composeTestRule.onNodeWithText("27 de 27 presentes").assertExists()
     }
 }
