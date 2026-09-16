@@ -192,10 +192,10 @@ radius border, no illustration.
 `outline`-bordered, `control`-radius row. Selected segment = fill + weight
 600: present on `primaryContainer`, late on `surfaceContainerHigh`, absent on
 `errorContainer`, justified on `inverseSurface`. The unrecorded row: dashed
-`outline` border, `warningContainer` row tint, trailing "sin marcar" label in
-`GemaAccents.onWarningContainer` text (#163: today's code uses
-`onSurfaceVariant`). Color is always redundant with the letter and the
-weight, never the only signal.
+`outline` border drawn on top of the segments, `surface` (white) fill,
+trailing "sin marcar" label in `GemaAccents.onWarningContainer` text (#163:
+today's code uses `onSurfaceVariant`). Color is always redundant with the
+letter and the weight, never the only signal.
 
 **Attendance summary strip** — `surfaceContainerLow` background, `control`
 (8dp) radius, `numeral` count + `bodyLarge` label, a secondary "sin marcar"
