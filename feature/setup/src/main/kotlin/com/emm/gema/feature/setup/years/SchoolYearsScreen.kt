@@ -1,13 +1,12 @@
 package com.emm.gema.feature.setup.years
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,10 +20,14 @@ import com.emm.gema.core.domain.schoolyear.SchoolYearId
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.theme.numericRangeLabel
+import com.emm.gema.core.ui.GBadge
+import com.emm.gema.core.ui.GButton
+import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GExtendedFab
+import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
+import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
-import com.emm.gema.core.ui.GYearCard
 import com.emm.gema.feature.setup.R
 import com.emm.gema.feature.setup.periodCountPlural
 import java.time.LocalDate
@@ -60,10 +63,13 @@ fun SchoolYearsScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(vertical = GemaSpacing.screenGutter),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
         ) {
-            items(state.years, key = { it.id.value }) { row ->
-                SchoolYearItem(row = row, onIntent = onIntent)
+            itemsIndexed(state.years, key = { _, row -> row.id.value }) { index, row ->
+                SchoolYearItem(
+                    row = row,
+                    onIntent = onIntent,
+                    showDivider = index != state.years.lastIndex,
+                )
             }
         }
     }
@@ -73,6 +79,7 @@ fun SchoolYearsScreen(
 private fun SchoolYearItem(
     row: SchoolYearRow,
     onIntent: (SchoolYearsUiIntent) -> Unit,
+    showDivider: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val periodCountLabel: String = pluralStringResource(
@@ -80,20 +87,33 @@ private fun SchoolYearItem(
         row.periodKind.periodCount,
         row.periodKind.periodCount,
     )
-    GYearCard(
-        label = row.label,
-        subtitle = "${numericRangeLabel(row.startDate, row.endDate)} · $periodCountLabel",
-        sectionCountLabel = pluralStringResource(
-            R.plurals.school_years_section_count,
-            row.sectionCount,
-            row.sectionCount,
-        ),
-        periodsLabel = stringResource(R.string.school_years_periods_label),
-        isActive = row.isActive,
-        badgeText = if (row.isActive) stringResource(R.string.school_years_badge_active) else null,
-        onClick = { onIntent(SchoolYearsUiIntent.YearClicked(row.id)) },
-        onPeriodsClick = { onIntent(SchoolYearsUiIntent.PeriodsClicked(row.id)) },
+    val sectionCountLabel: String = pluralStringResource(
+        R.plurals.school_years_section_count,
+        row.sectionCount,
+        row.sectionCount,
+    )
+    val subtitle: String = "${numericRangeLabel(row.startDate, row.endDate)} · $periodCountLabel\n$sectionCountLabel"
+    GListItem(
+        title = row.label,
         modifier = modifier.fillMaxWidth(),
+        titleStyle = GTextStyle.NUMERAL,
+        titleTrailing = if (row.isActive) {
+            { GBadge(text = stringResource(R.string.school_years_badge_active)) }
+        } else {
+            null
+        },
+        subtitle = subtitle,
+        subtitleStyle = GTextStyle.BODY_LARGE,
+        onClick = { onIntent(SchoolYearsUiIntent.YearClicked(row.id)) },
+        hasChevron = true,
+        showDivider = showDivider,
+        trailing = {
+            GButton(
+                text = stringResource(R.string.school_years_periods_label),
+                onClick = { onIntent(SchoolYearsUiIntent.PeriodsClicked(row.id)) },
+                variant = GButtonVariant.TEXT,
+            )
+        },
     )
 }
 

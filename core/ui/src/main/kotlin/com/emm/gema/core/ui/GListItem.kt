@@ -33,6 +33,7 @@ fun GListItem(
     leadingText: String? = null,
     leadingIcon: ImageVector? = null,
     titleLeading: (@Composable () -> Unit)? = null,
+    titleTrailing: (@Composable () -> Unit)? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
     showDivider: Boolean = true,
@@ -58,6 +59,7 @@ fun GListItem(
                 leadingText = leadingText,
                 leadingIcon = leadingIcon,
                 titleLeading = titleLeading,
+                titleTrailing = titleTrailing,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
                 showDivider = showDivider,
@@ -73,6 +75,7 @@ fun GListItem(
                 leadingText = leadingText,
                 leadingIcon = leadingIcon,
                 titleLeading = titleLeading,
+                titleTrailing = titleTrailing,
                 trailingText = trailingText,
                 hasChevron = hasChevron,
                 showDivider = showDivider,
@@ -90,6 +93,7 @@ private fun GListItemBody(
     leadingText: String?,
     leadingIcon: ImageVector?,
     titleLeading: (@Composable () -> Unit)?,
+    titleTrailing: (@Composable () -> Unit)?,
     trailingText: String?,
     hasChevron: Boolean,
     showDivider: Boolean,
@@ -137,6 +141,7 @@ private fun GListItemBody(
                         style = titleStyle.toTextStyle(),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
+                    titleTrailing?.invoke()
                 }
             },
             supportingContent = subtitleContent,
