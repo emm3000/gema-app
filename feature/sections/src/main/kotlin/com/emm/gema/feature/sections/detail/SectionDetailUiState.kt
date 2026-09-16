@@ -1,7 +1,5 @@
 package com.emm.gema.feature.sections.detail
 
-import java.time.LocalDate
-
 data class SectionDetailUiState(
     val isLoading: Boolean = true,
     val sectionTitle: String = "",
@@ -10,7 +8,6 @@ data class SectionDetailUiState(
     val hasStoredTemplate: Boolean = false,
     val missingPeriodLevelCount: Int = 0,
     val activityCount: Int = 0,
-    val today: LocalDate? = null,
     val todayLabel: String = "",
     val todayAttendanceSummary: String = "",
     val isTodayAttendanceTaken: Boolean = false,

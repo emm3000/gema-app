@@ -764,8 +764,10 @@ false. The daily block has no card, no border, no rounded container — just
 the "HOY · <weekday> <day> de <month>" eyebrow, `todayAttendanceSummary` as
 `bodyLarge` in `GemaAccents.onWarningContainer` while it reads *Sin tomar*
 and `onSurfaceVariant` once taken, then the single PRIMARY `GButton`. The
-five destinations are `GListItem` rows on hairlines (a leading hairline
-above the first row, a closing one below the last, no leading icons) with
+five destinations are `GListItem` rows on full-width hairlines (edge to
+edge, outside the screen gutter so row text lines up with the eyebrow above
+it — a leading hairline above the first row, a closing one below the last,
+no leading icons) with
 `trailingText` for the counts: `studentCount`, `missingPeriodLevelCount` as
 "N faltan" via `GListItem`'s `trailingTextColor` (#216) in
 `onWarningContainer` text when greater than zero, `activityCount`. Both
@@ -806,7 +808,6 @@ data class SectionDetailUiState(
     val studentCount: Int = 0,
     val currentPeriodLabel: String? = null,
     val hasStoredTemplate: Boolean = false,
-    val today: LocalDate? = null,
     val todayLabel: String = "",
     val todayAttendanceSummary: String = "",
     val isTodayAttendanceTaken: Boolean = false,

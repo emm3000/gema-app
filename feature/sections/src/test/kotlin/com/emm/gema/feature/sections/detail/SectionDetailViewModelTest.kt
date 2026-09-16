@@ -29,9 +29,9 @@ import com.emm.gema.core.domain.student.Student
 import com.emm.gema.core.domain.student.StudentCode
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.DateNameProvider
+import com.emm.gema.core.theme.test.FakeDateNameProvider
 import com.emm.gema.feature.sections.FakeActivityRepository
 import com.emm.gema.feature.sections.FakeAttendanceRepository
-import com.emm.gema.feature.sections.FakeDateNameProvider
 import com.emm.gema.feature.sections.FakePeriodLevelRepository
 import com.emm.gema.feature.sections.FakePeriodRepository
 import com.emm.gema.feature.sections.FakeSchoolYearRepository
@@ -120,7 +120,6 @@ class SectionDetailViewModelTest {
         assertThat(state.isLoading).isFalse()
         assertThat(state.sectionTitle).isEqualTo("3ro A")
         assertThat(state.studentCount).isEqualTo(1)
-        assertThat(state.today).isEqualTo(today)
         assertThat(state.todayLabel).isEqualTo("HOY · LUNES 1 DE JUNIO")
     }
 
