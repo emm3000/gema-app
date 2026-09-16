@@ -4,7 +4,7 @@ How the owner runs several Claude Code sessions on this repo in parallel, and wh
 
 ## Roles
 
-- **Owner** opens named peer sessions by hand, one terminal each (e.g. `tokens`, `home`), sets model and effort with `/model`, and gives the go-ahead for each dispatch. Refer to a session with an `@` prefix in chat (`@tokens`) — it disambiguates the session from a feature or ticket of the same name.
+- **Owner** gives the go-ahead for each dispatch and verifies model and effort with `/model` in each pane. Peer sessions are booted by the `/wave` skill (see Launching peers), not by hand. Refer to a session with an `@` prefix in chat (`@tokens`) — it disambiguates the session from a feature or ticket of the same name.
 - **Orchestrator** coordinates: dispatches via `SendMessage`, reviews, merges. It stays thin.
   - Delegate investigation and any artifact-producing work (tickets, specs, surveys, docs) to a subagent with an explicit model.
   - Do inline only routing state (`git status`, `git worktree list`, `gh issue/pr list`, `ListAgents`) and at most 1-2 files to decide. *Why: the owner stopped the orchestrator grepping `build-logic` to write a ticket itself (2026-09-12).*
@@ -35,6 +35,14 @@ Every dispatch to a peer session must include:
 - For any screen-touching ticket, a visual check: install on the session's assigned emulator only, screenshot every changed screen with `adb -s <serial> exec-out screencap -p`, and compare against `docs/design/screens.md`. Then publish the screenshots on a branch named `assets/<N>-visual-check`, with the PR head short SHA in every file name (for example `home-<sha>.png`), and link them in the PR body with `raw.githubusercontent.com` URLs, as PR #152 did. The `gh` CLI and the API cannot attach images to a PR. The assets branch is deleted when the cycle closes. *Why: `SetupYear` drifted from the approved design in #4 and a code-only review never caught it. PRs #173 and #174 then shipped without images, which forced the reviewer to boot its own emulator.*
 - An instruction to keep the slice small and stop and report instead of expanding scope.
 - An instruction to open the PR with `Closes #N`, not merge it, not watch CI, and message the orchestrator the PR URL in 1-2 lines.
+
+## Launching peers
+
+- `/wave <issue numbers>` is the entry point: the orchestrator classifies each ticket, states `@<name> #<n> <model>:<effort>`, runs `scripts/gema-wave`, waits for the peers in `ListAgents` and dispatches. The skill lives in `.claude/skills/wave/SKILL.md`.
+- `scripts/gema-wave name:model:effort [...]` writes `~/.warp/tab_configs/gema-wave.toml` with one pane per peer in a horizontal split and opens it with `open "warp://tab_config/gema-wave"`. A Tab Config opens as a new tab in the active Warp window. Launch Configurations (`warp://launch/`) always open a new window, so they are not used.
+- `scripts/gema-session name model effort` creates the detached worktree `../gema-<name>` from `origin/main` when missing, then runs `claude -n <name> --model <model> --effort <effort> --permission-mode bypassPermissions` inside it. The peer creates its ticket branch with `git switch -c`.
+- Closing a wave: the owner closes the panes; the orchestrator removes the worktrees. To close a pane from a script, kill the `claude` pid and then `kill -HUP` its parent `zsh`, whose parent is the Warp process.
+- *Why: until 2026-09-16 the owner opened every terminal by hand and set name, model, effort and permission mode in four steps per peer.*
 
 ## Isolation: worktrees
 
