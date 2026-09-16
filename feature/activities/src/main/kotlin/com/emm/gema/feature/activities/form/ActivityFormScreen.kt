@@ -20,7 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.section.Grade
-import com.emm.gema.core.domain.section.label
+import com.emm.gema.core.domain.section.sectionTitle
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.GBanner
@@ -41,7 +41,7 @@ import java.time.LocalDate
 @Composable
 private fun activityFormSubtitle(state: ActivityFormUiState): String? {
     val grade: Grade = state.grade ?: return null
-    val sectionTitle = "${grade.label()} ${state.sectionName}"
+    val sectionTitle: String = sectionTitle(grade, state.sectionName)
     return if (state.resolvedPeriodLabel != null) {
         stringResource(R.string.activity_form_subtitle, sectionTitle, state.resolvedPeriodLabel)
     } else {
