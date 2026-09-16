@@ -398,6 +398,7 @@ fun GListItem(
     subtitle: String? = null,
     subtitleStyle: GTextStyle = GTextStyle.BODY_MEDIUM,
     leadingText: String? = null,
+    titleTrailing: (@Composable () -> Unit)? = null,
     trailingText: String? = null,
     hasChevron: Boolean = false,
     showDivider: Boolean = true,
@@ -405,6 +406,10 @@ fun GListItem(
     trailing: (@Composable () -> Unit)? = null,
 )
 ```
+
+`titleTrailing` renders right after `title` inside the headline row (symmetric
+with `titleLeading`) — used for a badge that must read beside the label, such
+as SchoolYears' ACTIVO badge.
 
 Wraps `ListItem` inside a clickable `Surface`. Tokens: `GTextStyle.BODY_LARGE`
 (the `titleStyle` default) for `title`, `gemaTypography.bodyLarge` for

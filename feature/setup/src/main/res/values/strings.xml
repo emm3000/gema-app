@@ -1,6 +1,6 @@
 <resources>
     <string name="school_years_title">Años escolares</string>
-    <string name="school_years_subtitle">Toca un año para activarlo</string>
+    <string name="school_years_subtitle">Toca un año para activarlo. Nada se borra.</string>
     <string name="school_years_badge_active">ACTIVO</string>
     <string name="school_years_periods_label">Periodos</string>
     <string name="school_years_add_year">Nuevo año</string>
