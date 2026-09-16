@@ -38,6 +38,7 @@ name is stored and shown as one uppercase string exactly as it comes from the
 SIAGIE Excel, surnames and given names together — never split into separate
 fields.
 _Avoid_: pupil, kid, learner
+_UI term_: "alumno", matching the shipped `strings.xml`.
 
 **Student Code**:
 The 14-digit code SIAGIE assigns to a Student. Stable across years and schools.
