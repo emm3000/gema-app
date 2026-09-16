@@ -59,7 +59,7 @@ fun ActivityEvidenceScreen(
                     state.periodLabel,
                 ),
                 onBackClick = { onIntent(ActivityEvidenceUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
                 actions = {
                     GIconButton(
                         icon = Icons.Filled.MoreVert,

@@ -56,7 +56,7 @@ fun BackupScreen(
                 title = stringResource(R.string.backup_title),
                 subtitle = stringResource(R.string.backup_subtitle),
                 onBackClick = { onIntent(BackupUiIntent.BackClicked) },
-                showHairline = scrollState.value > 0,
+                isContentScrolled = scrollState.value > 0,
             )
         },
     ) { scaffoldPadding ->

@@ -50,7 +50,7 @@ fun StudentFormScreen(
                 title = if (state.studentId == null) "Nuevo alumno" else "Editar alumno",
                 subtitle = state.sectionTitle.ifBlank { null },
                 onBackClick = { onIntent(StudentFormUiIntent.BackClicked) },
-                showHairline = scrollState.value > 0,
+                isContentScrolled = scrollState.value > 0,
             )
         },
         modifier = modifier,

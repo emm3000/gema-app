@@ -64,7 +64,7 @@ fun AttendanceMonthScreen(
                 title = "Asistencia · ${state.sectionTitle}",
                 subtitle = "Resumen del mes",
                 onBackClick = { onIntent(AttendanceMonthUiIntent.BackClicked) },
-                showHairline = listState.canScrollBackward,
+                isContentScrolled = listState.canScrollBackward,
                 actions = {
                     GIconButton(
                         icon = Icons.Filled.CalendarMonth,

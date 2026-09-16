@@ -47,7 +47,7 @@ fun ExportScreen(
                 title = stringResource(R.string.export_title, state.sectionTitle),
                 subtitle = state.periodLabel,
                 onBackClick = { onIntent(ExportUiIntent.BackClicked) },
-                showHairline = scrollState.value > 0,
+                isContentScrolled = scrollState.value > 0,
             )
         },
     ) { scaffoldPadding ->
