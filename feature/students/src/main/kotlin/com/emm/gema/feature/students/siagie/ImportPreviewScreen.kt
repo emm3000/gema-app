@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -15,12 +16,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.emm.gema.core.domain.student.StudentId
 import com.emm.gema.core.theme.GemaSpacing
@@ -32,12 +35,14 @@ import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
 import com.emm.gema.core.ui.GFileCard
+import com.emm.gema.core.ui.GIcon
 import com.emm.gema.core.ui.GListItem
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTintedGroupContent
 import com.emm.gema.core.ui.GTopBar
+import com.emm.gema.feature.students.R
 
 private const val NOTHING_IS_LOST: String =
     "Nada se borra. Los retirados conservan su asistencia y sus niveles."
@@ -100,7 +105,6 @@ private fun LazyListScope.rejection(rejection: ImportRejection) {
                 title = "Archivo",
                 trailingText = rejection.found,
                 trailingTextColor = MaterialTheme.colorScheme.error,
-                showDivider = false,
             )
         }
     }
@@ -163,8 +167,10 @@ private fun ColumnScope.group(
     onIntent: (ImportPreviewUiIntent) -> Unit,
 ) {
     val isExpanded: Boolean = state.expandedGroup == group
+    val expandedStateDescription: String = expandedStateDescription(isExpanded)
     GListItem(
         title = title,
+        modifier = Modifier.semantics { stateDescription = expandedStateDescription },
         onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(group)) },
         trailing = { GroupExpandTrailing(count = rows.size, isExpanded = isExpanded) },
     )
@@ -174,6 +180,7 @@ private fun ColumnScope.group(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .heightIn(min = GemaSpacing.minimumTouchTarget)
                         .padding(horizontal = GemaSpacing.medium, vertical = GemaSpacing.small),
                 ) {
                     GText(text = row.displayName, style = GTextStyle.BODY_LARGE)
@@ -191,8 +198,10 @@ private fun ColumnScope.group(
 @Composable
 private fun ColumnScope.withdrawals(state: ImportPreviewUiState, onIntent: (ImportPreviewUiIntent) -> Unit) {
     val isExpanded: Boolean = state.expandedGroup == ImportGroup.WITHDRAWN
+    val expandedStateDescription: String = expandedStateDescription(isExpanded)
     GListItem(
         title = "Se propondrán como retirados",
+        modifier = Modifier.semantics { stateDescription = expandedStateDescription },
         onClick = { onIntent(ImportPreviewUiIntent.GroupToggled(ImportGroup.WITHDRAWN)) },
         trailing = { GroupExpandTrailing(count = state.proposedWithdrawals.size, isExpanded = isExpanded) },
         showDivider = isExpanded,
@@ -219,13 +228,14 @@ private fun GroupExpandTrailing(count: Int, isExpanded: Boolean) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GText(text = count.toString(), style = GTextStyle.NUMERAL)
-        Icon(
-            imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        GIcon(icon = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown)
     }
 }
+
+@Composable
+private fun expandedStateDescription(isExpanded: Boolean): String = stringResource(
+    if (isExpanded) R.string.import_preview_group_expanded else R.string.import_preview_group_collapsed,
+)
 
 @Composable
 private fun ImportActions(
