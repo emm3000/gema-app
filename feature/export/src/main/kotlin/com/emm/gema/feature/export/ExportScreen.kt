@@ -15,6 +15,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -162,7 +163,7 @@ private fun BlockedGrades(
 ) {
     TemplateName(state.templateFileName)
     GText(
-        text = stringResource(R.string.export_grades_blocked, gaps.size),
+        text = pluralStringResource(R.plurals.export_grades_blocked, gaps.size, gaps.size),
         style = GTextStyle.BODY_LARGE_EMPHASIS,
         color = GemaAccents.onWarningContainer,
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

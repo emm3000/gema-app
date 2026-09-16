@@ -2,7 +2,10 @@
     <string name="export_title">Entregar · %1$s</string>
     <string name="export_grades_title">NOTAS PARA SIAGIE</string>
     <string name="export_grades_unavailable">Esta sección no tiene una plantilla SIAGIE. Impórtala desde Alumnos para generar las notas.</string>
-    <string name="export_grades_blocked">%1$d conclusiones descriptivas faltan</string>
+    <plurals name="export_grades_blocked">
+        <item quantity="one">%d conclusión descriptiva falta</item>
+        <item quantity="other">%d conclusiones descriptivas faltan</item>
+    </plurals>
     <string name="export_template_mismatch">La plantilla importada no tiene todo lo que hay que llenar: %1$s. Importa la plantilla que SIAGIE generó para esta sección.</string>
     <string name="export_import_template">Importar plantilla</string>
     <string name="export_generate_file">Generar archivo</string>

@@ -166,4 +166,52 @@ class ExportScreenTest : RobolectricComposeTest() {
         composeTestRule.onNodeWithText("BAUTISTA QUISPE, JOSE").assertIsEnabled()
         composeTestRule.onNodeWithText("Generar archivo").assertIsNotEnabled()
     }
+
+    @Test
+    fun `blocked state renders the singular gap count`() {
+        val gap = ExportGapRow(
+            studentId = StudentId("student-1"),
+            studentName = "BAUTISTA QUISPE, JOSE",
+            competencyId = CompetencyId("PPSS-2"),
+            competencyLabel = "Personal Social · 02",
+        )
+        composeTestRule.setContent {
+            GemaTheme {
+                ExportScreen(
+                    state = baseState.copy(gradesExportState = GradesExportUiState.Blocked(listOf(gap))),
+                    onIntent = {},
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("1 conclusión descriptiva falta").assertIsEnabled()
+    }
+
+    @Test
+    fun `blocked state renders the plural gap count`() {
+        val gaps: List<ExportGapRow> = listOf(
+            ExportGapRow(
+                studentId = StudentId("student-1"),
+                studentName = "BAUTISTA QUISPE, JOSE",
+                competencyId = CompetencyId("PPSS-2"),
+                competencyLabel = "Personal Social · 02",
+            ),
+            ExportGapRow(
+                studentId = StudentId("student-2"),
+                studentName = "CCOYLLO MAMANI, ANA",
+                competencyId = CompetencyId("PPSS-3"),
+                competencyLabel = "Personal Social · 03",
+            ),
+        )
+        composeTestRule.setContent {
+            GemaTheme {
+                ExportScreen(
+                    state = baseState.copy(gradesExportState = GradesExportUiState.Blocked(gaps)),
+                    onIntent = {},
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("2 conclusiones descriptivas faltan").assertIsEnabled()
+    }
 }

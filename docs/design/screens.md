@@ -2245,7 +2245,7 @@ cells entirely, so a missing level never blocks the export.
 
 Copy changes (for the implementation ticket)
 
-- `export_grades_blocked`: "Faltan %1$d conclusiones descriptivas" -> "%1$d conclusiones descriptivas faltan" (matches the wireframe and mockup word order)
+- `export_grades_blocked`: is a `<plurals>` resource now, not a `<string>`. `one`: "%d conclusión descriptiva falta". `other`: "%d conclusiones descriptivas faltan" (matches the wireframe and mockup word order)
 - `export_grades_unavailable`: "Esta sección no tiene una plantilla SIAGIE importada. Importa una desde Alumnos, o usa el resumen PDF/CSV." -> "Esta sección no tiene una plantilla SIAGIE. Impórtala desde Alumnos para generar las notas." (matches the export-no-template mockup)
 - `export_attendance_subtitle`: "%1$s · %2$d días" -> "%1$s · %2$d días registrados" (matches the wireframe and mockup)
 - `export_attendance_export`: "Exportar" -> "Exportar el mes" (matches the wireframe and mockup)
