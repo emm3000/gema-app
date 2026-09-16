@@ -20,13 +20,13 @@ import com.emm.gema.core.domain.section.Grade
 import com.emm.gema.core.domain.section.label
 import com.emm.gema.core.theme.GemaSpacing
 import com.emm.gema.core.theme.GemaTheme
+import com.emm.gema.core.ui.GBanner
+import com.emm.gema.core.ui.GBannerTone
 import com.emm.gema.core.ui.GButton
 import com.emm.gema.core.ui.GButtonVariant
 import com.emm.gema.core.ui.GCheckRow
 import com.emm.gema.core.ui.GDateField
 import com.emm.gema.core.ui.GDialog
-import com.emm.gema.core.ui.GDivider
-import com.emm.gema.core.ui.GGroupHeader
 import com.emm.gema.core.ui.GScreen
 import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextField
@@ -121,11 +121,15 @@ fun ActivityFormScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                            if (state.hasPeriodChangeWarning) {
-                                GText(
-                                    text = stringResource(R.string.activity_form_period_change_warning),
-                                    style = GTextStyle.BODY_SMALL,
-                                    color = MaterialTheme.colorScheme.error,
+                            if (state.periodChangeFromLabel != null && state.resolvedPeriodLabel != null) {
+                                GBanner(
+                                    text = stringResource(
+                                        R.string.activity_form_period_change_warning,
+                                        state.periodChangeFromLabel,
+                                        state.resolvedPeriodLabel,
+                                    ),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    tone = GBannerTone.WARNING,
                                 )
                             }
                         }
@@ -134,7 +138,12 @@ fun ActivityFormScreen(
                 }
                 state.competencyGroups.forEach { group ->
                     item {
-                        GGroupHeader(title = group.areaName.uppercase())
+                        GText(
+                            text = group.areaName,
+                            style = GTextStyle.BODY_SMALL_EMPHASIS,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
+                        )
                     }
                     items(group.competencies, key = { it.id.value }) { competency ->
                         GCheckRow(
@@ -148,19 +157,10 @@ fun ActivityFormScreen(
                         )
                     }
                 }
-            }
-            if (state.canDelete) {
-                Column(
-                    modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
-                    verticalArrangement = Arrangement.spacedBy(GemaSpacing.medium),
-                ) {
-                    GDivider(modifier = Modifier.padding(top = GemaSpacing.small))
-                    GButton(
-                        text = "Eliminar actividad",
-                        onClick = { onIntent(ActivityFormUiIntent.DeleteClicked) },
-                        variant = GButtonVariant.DESTRUCTIVE,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                if (state.canDelete) {
+                    item {
+                        DangerZone(onIntent = onIntent)
+                    }
                 }
             }
         }
@@ -181,6 +181,34 @@ fun ActivityFormScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Composable
+private fun DangerZone(onIntent: (ActivityFormUiIntent) -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = GemaSpacing.screenGutter)
+            .padding(top = GemaSpacing.extraLarge, bottom = GemaSpacing.medium),
+        verticalArrangement = Arrangement.spacedBy(GemaSpacing.small),
+    ) {
+        GText(
+            text = stringResource(R.string.activity_form_delete_eyebrow),
+            style = GTextStyle.LABEL_SMALL,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        GButton(
+            text = stringResource(R.string.activity_form_delete_button),
+            onClick = { onIntent(ActivityFormUiIntent.DeleteClicked) },
+            variant = GButtonVariant.DESTRUCTIVE,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        GText(
+            text = stringResource(R.string.activity_form_delete_helper),
+            style = GTextStyle.BODY_SMALL,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

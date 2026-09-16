@@ -14,7 +14,7 @@ data class ActivityFormUiState(
     val date: LocalDate? = null,
     val dateError: ActivityFormMessage? = null,
     val resolvedPeriodLabel: String? = null,
-    val hasPeriodChangeWarning: Boolean = false,
+    val periodChangeFromLabel: String? = null,
     val competencyGroups: List<CompetencyGroup> = emptyList(),
     val selectedCompetencyIds: Set<CompetencyId> = emptySet(),
     val isDeleteConfirmVisible: Boolean = false,
