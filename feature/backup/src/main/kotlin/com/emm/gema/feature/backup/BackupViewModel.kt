@@ -15,6 +15,7 @@ import com.emm.gema.core.domain.backup.RestoreBackupUseCase
 import com.emm.gema.core.domain.backup.RestoreResult
 import com.emm.gema.core.domain.backup.SetReminderThresholdUseCase
 import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +35,7 @@ class BackupViewModel(
     private val restoreBackup: RestoreBackupUseCase,
     private val setReminderThreshold: SetReminderThresholdUseCase,
     private val getSchoolYears: GetSchoolYearsUseCase,
+    private val getStudentCounts: GetStudentCountsUseCase,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -116,6 +118,7 @@ class BackupViewModel(
                 uri = uri,
                 fileName = fileName,
                 currentSchoolYearCount = getSchoolYears().first().size,
+                currentStudentCount = getStudentCounts().first().values.sum(),
             ),
         )
     }

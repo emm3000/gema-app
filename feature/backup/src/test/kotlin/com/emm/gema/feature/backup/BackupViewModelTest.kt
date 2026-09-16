@@ -11,6 +11,8 @@ import com.emm.gema.core.domain.schoolyear.GetSchoolYearsUseCase
 import com.emm.gema.core.domain.schoolyear.PeriodKind
 import com.emm.gema.core.domain.schoolyear.SchoolYear
 import com.emm.gema.core.domain.schoolyear.SchoolYearId
+import com.emm.gema.core.domain.section.SectionId
+import com.emm.gema.core.domain.student.GetStudentCountsUseCase
 import com.google.common.truth.Truth.assertThat
 import java.time.Clock
 import java.time.Instant
@@ -39,6 +41,9 @@ class BackupViewModelTest {
             endDate = LocalDate.of(2026, 12, 18),
             periodKind = PeriodKind.BIMESTER,
         ),
+    )
+    private val students = FakeStudentRepository(
+        mapOf(SectionId("section-1") to 34, SectionId("section-2") to 23),
     )
 
     @Test
@@ -76,6 +81,7 @@ class BackupViewModelTest {
         val confirmation: RestoreConfirmation? = viewModel.state.value.restoreConfirmation
         assertThat(confirmation?.fileName).isEqualTo("gema-20260910-1432.gema")
         assertThat(confirmation?.currentSchoolYearCount).isEqualTo(1)
+        assertThat(confirmation?.currentStudentCount).isEqualTo(57)
         assertThat(store.replacedDatabase).isFalse()
     }
 
@@ -185,6 +191,7 @@ class BackupViewModelTest {
             restoreBackup = RestoreBackupUseCase(documents, store, validate),
             setReminderThreshold = SetReminderThresholdUseCase(settings),
             getSchoolYears = GetSchoolYearsUseCase(schoolYears),
+            getStudentCounts = GetStudentCountsUseCase(students),
             clock = clock,
         )
     }

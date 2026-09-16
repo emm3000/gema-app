@@ -1,7 +1,5 @@
 package com.emm.gema.feature.backup
 
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import com.emm.gema.core.theme.GemaTheme
 import com.emm.gema.core.ui.test.RobolectricComposeTest
@@ -23,11 +21,12 @@ class BackupScreenTest : RobolectricComposeTest() {
     }
 
     @Test
-    fun `restore confirm dialog states the loss cannot be undone`() {
+    fun `restore confirm dialog announces the restart is not an error`() {
         val confirmation = RestoreConfirmation(
             uri = "content://backup.gema",
             fileName = "backup.gema",
             currentSchoolYearCount = 1,
+            currentStudentCount = 57,
         )
 
         composeTestRule.setContent {
@@ -36,6 +35,7 @@ class BackupScreenTest : RobolectricComposeTest() {
             }
         }
 
-        composeTestRule.onAllNodesWithText("No se puede deshacer.", substring = true).assertCountEquals(2)
+        composeTestRule.onNodeWithText("La app se reinicia al terminar. No es un error.").assertExists()
+        composeTestRule.onNodeWithText("57", substring = true).assertExists()
     }
 }
