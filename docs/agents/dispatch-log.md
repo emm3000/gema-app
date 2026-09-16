@@ -26,3 +26,5 @@ Last 20 PRs, oldest first. Model:effort is what actually ran, which may differ f
 |---|---|---|---|---|---|
 | #274 | #265 | 3 | sonnet:medium | MERGE | minor doc nit fixed before merge |
 | #275 | #255 | 4 | sonnet:medium | FIX FIRST | checklist: 3 glyph-banner screenshots missing |
+| #279 | #254 | 1 | sonnet:low | MERGE | |
+| #280 | #268 | 3 | sonnet:medium | MERGE | |
