@@ -77,7 +77,7 @@ class ExportScreenTest : RobolectricComposeTest() {
 
     @Test
     fun `import template link sends ImportTemplateClicked`() {
-        val intents = mutableListOf<ExportUiIntent>()
+        val intents: MutableList<ExportUiIntent> = mutableListOf()
         composeTestRule.setContent {
             GemaTheme {
                 ExportScreen(
@@ -94,7 +94,7 @@ class ExportScreenTest : RobolectricComposeTest() {
 
     @Test
     fun `back button sends BackClicked`() {
-        val intents = mutableListOf<ExportUiIntent>()
+        val intents: MutableList<ExportUiIntent> = mutableListOf()
         composeTestRule.setContent {
             GemaTheme {
                 ExportScreen(state = baseState, onIntent = { intents += it })
