@@ -34,7 +34,6 @@ object GemaSpacing {
     val evidenceChipHeight: Dp = 26.dp
     val buttonIconSize: Dp = 20.dp
     val eyebrowGap: Dp = 20.dp
-    val compactGap: Dp = 12.dp
     val compactLineHeight: Dp = 40.dp
 }
 

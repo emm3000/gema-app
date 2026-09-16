@@ -32,7 +32,6 @@ import com.emm.gema.core.ui.GText
 import com.emm.gema.core.ui.GTextStyle
 import com.emm.gema.core.ui.GTopBar
 import com.emm.gema.feature.sections.R
-import java.time.LocalDate
 
 @Composable
 fun SectionDetailScreen(
@@ -68,13 +67,16 @@ fun SectionDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = GemaSpacing.screenGutter),
+                .padding(padding),
         ) {
             if (state.hasStoredTemplate) {
-                TemplateLoadedLine()
+                TemplateLoadedLine(modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter))
             }
-            AttendanceStatusBlock(state = state, onIntent = onIntent)
+            AttendanceStatusBlock(
+                state = state,
+                onIntent = onIntent,
+                modifier = Modifier.padding(horizontal = GemaSpacing.screenGutter),
+            )
             HubList(state = state, onIntent = onIntent)
         }
     }
@@ -123,7 +125,7 @@ private fun AttendanceStatusBlock(
         )
         Column(
             modifier = Modifier.padding(bottom = GemaSpacing.large),
-            verticalArrangement = Arrangement.spacedBy(GemaSpacing.compactGap),
+            verticalArrangement = Arrangement.spacedBy(GemaSpacing.rowGap),
         ) {
             GText(
                 text = state.todayAttendanceSummary,
@@ -208,7 +210,6 @@ private fun SectionDetailScreenPreview() {
                 hasStoredTemplate = true,
                 missingPeriodLevelCount = 12,
                 activityCount = 5,
-                today = LocalDate.of(2026, 9, 10),
                 todayLabel = "HOY · MARTES 10 DE SETIEMBRE",
                 todayAttendanceSummary = "Sin tomar",
             ),

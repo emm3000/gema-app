@@ -1,5 +1,6 @@
 package com.emm.gema.core.theme
 
+import com.emm.gema.core.theme.test.FakeDateNameProvider
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate
 import org.junit.Test

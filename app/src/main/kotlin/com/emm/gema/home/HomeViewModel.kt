@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.emm.gema.core.domain.attendance.AttendanceDaySummary
 import com.emm.gema.core.domain.attendance.GetAttendanceDayUseCase
 import com.emm.gema.core.domain.attendance.summarise
-import com.emm.gema.core.theme.DateNameProvider
-import com.emm.gema.core.theme.todayLabelOf
 import com.emm.gema.core.domain.backup.BackupStatus
 import com.emm.gema.core.domain.backup.ObserveBackupStatusUseCase
 import com.emm.gema.core.domain.evaluation.GetMissingPeriodLevelCountUseCase
@@ -21,6 +19,8 @@ import com.emm.gema.core.domain.section.Section
 import com.emm.gema.core.domain.section.SectionId
 import com.emm.gema.core.domain.section.title
 import com.emm.gema.core.domain.student.GetStudentCountsUseCase
+import com.emm.gema.core.theme.DateNameProvider
+import com.emm.gema.core.theme.todayLabelOf
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.Deferred
