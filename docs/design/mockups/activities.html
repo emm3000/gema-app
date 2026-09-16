@@ -2,75 +2,35 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; color: #17181A; background: #FFFFFF; }
+    a { color: #3F6836; } a:hover { color: #285020; }
+  </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; color: #191D17; -webkit-font-smoothing: antialiased; }
-    a { color: #3F6836; } a:hover { color: #285020; }
-    .ico { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .arow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #DFE4D7; }
-    .adate { display: flex; align-items: center; justify-content: center; padding: 3px 8px; border-radius: 8px; background: #ECEFE5; font-size: 13px; font-weight: 700; color: #285020; flex-shrink: 0; }
-  </style>
-</helmet>
-<div style="width: 360px; height: 780px; background: #F8FBF1; display: flex; flex-direction: column; overflow: hidden; position: relative;">
-  <div style="display: flex; align-items: center; height: 64px; padding: 0 8px; gap: 4px;">
-    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #191D17;">
-      <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-    </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-      <span style="font-size: 18px; font-weight: 500; color: #191D17;">Actividades · 3ro A</span>
-      <span style="font-size: 13px; color: #43483F;">Las más nuevas primero</span>
-    </div>
+<div style="width: 360px; height: 800px; box-sizing: border-box; position: relative; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column;">
+  <div style="display: flex; align-items: center; gap: 4px; padding: 8px 16px 0 4px;">
+    <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1; gap: 1px;"><div style="font-size: 18px; font-weight: 600; line-height: 1.2;">Actividades · 3ro A</div><div style="font-size: 13px; color: #6E7075;">Más recientes primero</div></div>
   </div>
 
-  <div style="display: flex; padding: 0 16px 12px 16px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-grow: 1; height: 48px; padding: 0 12px 0 16px; border: 1px solid #73796E; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #191D17;">
-      <span>II Bimestre</span>
-      <svg class="ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
-    </div>
+  <div style="padding: 8px 16px 12px 16px;">
+    <div style="height: 48px; padding: 0 12px 0 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #C9C9C5; border-radius: 8px;"><div style="display: flex; flex-direction: column;"><div style="font-size: 11px; color: #6E7075;">Periodo</div><div style="font-size: 15px; font-weight: 500; line-height: 1.2;">II Bimestre</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div>
   </div>
 
-  <div style="display: flex; flex-direction: column; flex-grow: 1; border-top: 1px solid #DFE4D7;">
-    <div class="arow">
-      <div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span class="adate">05/07</span>
-          <span style="font-size: 15px; font-weight: 500; color: #191D17;">Ficha de convivencia</span>
-        </div>
-        <span style="font-size: 13px; color: #43483F;">PPSS 02 · 24 de 30 con evidencia</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="arow">
-      <div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span class="adate">22/06</span>
-          <span style="font-size: 15px; font-weight: 500; color: #191D17;">Debate del aula</span>
-        </div>
-        <span style="font-size: 13px; color: #285020;">PPSS 01, PPSS 02 · 30 de 30 con evidencia</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
-    <div class="arow">
-      <div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span class="adate">10/06</span>
-          <span style="font-size: 15px; font-weight: 500; color: #191D17;">Lectura en grupo</span>
-        </div>
-        <span style="font-size: 13px; color: #43483F;">COMU 01 · 18 de 30 con evidencia</span>
-      </div>
-      <svg class="ico" style="width: 20px; height: 20px; color: #73796E;" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
-    </div>
+  <div style="display: flex; flex-direction: column; padding: 0 16px;">
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 44px; font-size: 13px; color: #6E7075; flex-shrink: 0;">5 jul</div><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Ficha de convivencia</div><div style="font-size: 13px; line-height: 1.45; color: #5C4A12;">PPSS 02 · 24 de 30 con evidencia</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 44px; font-size: 13px; color: #6E7075; flex-shrink: 0;">22 jun</div><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Debate del aula</div><div style="font-size: 13px; line-height: 1.45; color: #6E7075;">PPSS 01, PPSS 02 · 30 de 30</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 44px; font-size: 13px; color: #6E7075; flex-shrink: 0;">10 jun</div><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Lectura en grupo</div><div style="font-size: 13px; line-height: 1.45; color: #5C4A12;">COMU 01 · 18 de 30 con evidencia</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 0; border-top: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 44px; font-size: 13px; color: #6E7075; flex-shrink: 0;">29 may</div><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Mi historia familiar</div><div style="font-size: 13px; line-height: 1.45; color: #6E7075;">PPSS 01 · 30 de 30</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 0; border-top: 1px solid #E6E6E3; border-bottom: 1px solid #E6E6E3; box-sizing: border-box;"><div style="width: 44px; font-size: 13px; color: #6E7075; flex-shrink: 0;">20 may</div><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1;"><div style="font-size: 16px; font-weight: 500; line-height: 1.3;">Normas del aula</div><div style="font-size: 13px; line-height: 1.45; color: #6E7075;">PPSS 02 · 30 de 30</div></div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E7075" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
   </div>
 
-  <div style="position: absolute; right: 16px; bottom: 24px; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 20px 0 16px; background: #C0EFB0; color: #285020; border-radius: 16px; font-size: 15px; font-weight: 500;">
-    <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+  <div style="position: absolute; right: 16px; bottom: 24px; height: 52px; padding: 0 18px 0 14px; display: flex; align-items: center; gap: 8px; background: #17181A; color: #FFFFFF; border-radius: 8px; font-size: 15px; font-weight: 500; box-shadow: 0 6px 18px rgba(23,24,26,0.18);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
     <span>Nueva actividad</span>
   </div>
 </div>
-</x-dc>
 </body>
 </html>

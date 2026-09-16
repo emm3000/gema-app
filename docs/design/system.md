@@ -12,6 +12,7 @@ Canvases:
 - Screens (Home, Attendance day, Period levels, Level sheet): https://claude.ai/code/artifact/e3d89b45-16c4-4e88-9fd5-5d32a1db61f3
 - Screens, setup and sections (SetupYear, SetupSection, SchoolYears, Periods, SectionForm, SectionAreas, SectionDetail): https://claude.ai/code/artifact/58f15a63-a023-4536-8527-8c62513dd666
 - Screens, students and gates (Students, StudentForm, ImportPreview, AttendanceMonth, WorkedCompetencies): https://claude.ai/code/artifact/1ce1c08a-7920-431b-8810-bfa93209749f
+- Screens, activities, export and backup (Activities, ActivityForm, ActivityEvidence, Export, Backup): https://claude.ai/code/artifact/76373cb0-db81-419d-960c-9abfaf10c6f2
 
 ## Principles
 
