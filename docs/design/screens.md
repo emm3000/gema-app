@@ -279,7 +279,7 @@ space.
 
 ```
 +------------------------------------------+
-|  Gema  2026                    [dl]  [=] |
+|  Gema  2026              [dl]  [i]  [=]  |
 +------------------------------------------+
 |  II Bimestre - faltan 24 dias             |
 |                                          |
@@ -354,19 +354,22 @@ than zero — and `colorScheme.onSurfaceVariant` otherwise.
 
 Intents: `SectionClicked(id: SectionId)`, `TakeAttendanceClicked(id: SectionId)`,
 `AddSectionClicked`, `SchoolYearSwitcherClicked`, `OutOfPeriodClicked`,
-`BackupReminderClicked`.
+`BackupReminderClicked`, `AboutClicked`.
 
 Effects: `NavigateToSectionDetail(sectionId: SectionId)`,
 `NavigateToAttendanceDay(sectionId: SectionId, date: LocalDate)`,
 `NavigateToSectionForm(schoolYearId: SchoolYearId, sectionId: SectionId?)`,
 `NavigateToSchoolYears`, `NavigateToPeriods(schoolYearId: SchoolYearId)`,
-`NavigateToBackup`.
+`NavigateToBackup`, `NavigateToAbout`.
 
-Note: the top bar carries two actions, both reusing existing intents rather
-than adding new destinations. `[dl]` (download) opens `Backup` through
-`BackupReminderClicked` / `NavigateToBackup` — the same target as the
-backup banner's own link. `[=]` (overflow) opens a one-item menu, "Cambiar
-de año escolar", through `SchoolYearSwitcherClicked` / `NavigateToSchoolYears`.
+Note: the top bar carries three actions, the first two reusing existing
+intents rather than adding new destinations. `[dl]` (download) opens
+`Backup` through `BackupReminderClicked` / `NavigateToBackup` — the same
+target as the backup banner's own link. `[i]` (info) opens `About` in one
+tap through `AboutClicked` / `NavigateToAbout` — a dedicated button rather
+than an overflow item, so a Play reviewer reaches the disclaimer without a
+second tap (#292). `[=]` (overflow) opens a one-item menu, "Cambiar de año
+escolar", through `SchoolYearSwitcherClicked` / `NavigateToSchoolYears`.
 
 Note: `currentPeriodLabel` is null when today falls outside every Period
 (holidays, or a year whose dates were mistyped). The banner then reads

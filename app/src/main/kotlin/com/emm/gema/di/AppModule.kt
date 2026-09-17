@@ -1,5 +1,8 @@
 package com.emm.gema.di
 
+import com.emm.gema.about.AboutViewModel
+import com.emm.gema.about.AndroidAppVersionProvider
+import com.emm.gema.about.AppVersionProvider
 import com.emm.gema.core.database.GemaDatabase
 import com.emm.gema.core.database.GemaDb
 import com.emm.gema.core.database.UuidIdGenerator
@@ -115,9 +118,6 @@ import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.core.siagie.XlsxMonthlyAttendanceWriter
 import com.emm.gema.core.siagie.XlsxSiagieGradesWriter
 import com.emm.gema.core.siagie.XlsxSiagieRosterReader
-import com.emm.gema.about.AboutViewModel
-import com.emm.gema.about.AndroidAppVersionProvider
-import com.emm.gema.about.AppVersionProvider
 import com.emm.gema.core.theme.DateNameProvider
 import com.emm.gema.evaluation.CacheDirSummaryDocuments
 import com.emm.gema.evaluation.PdfDocumentPeriodLevelSummaryRenderer
