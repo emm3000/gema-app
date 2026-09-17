@@ -1,12 +1,14 @@
 package com.emm.gema.about
 
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -18,12 +20,14 @@ fun AboutRoute(
     viewModel: AboutViewModel = koinViewModel(),
 ) {
     val state: State<AboutUiState> = viewModel.state.collectAsStateWithLifecycle()
-    val uriHandler: UriHandler = LocalUriHandler.current
+    val context: Context = LocalContext.current
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
-                is AboutUiEffect.OpenUrl -> uriHandler.openUrlSafely(effect.url)
+                is AboutUiEffect.OpenUrl -> openUrlOrIgnore {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(effect.url)))
+                }
                 AboutUiEffect.NavigateBack -> onNavigateBack()
             }
         }
@@ -32,9 +36,9 @@ fun AboutRoute(
     AboutScreen(state = state.value, onIntent = viewModel::onIntent, modifier = modifier)
 }
 
-private fun UriHandler.openUrlSafely(url: String) {
+internal fun openUrlOrIgnore(open: () -> Unit) {
     try {
-        openUri(url)
+        open()
     } catch (expected: ActivityNotFoundException) {
         return
     }

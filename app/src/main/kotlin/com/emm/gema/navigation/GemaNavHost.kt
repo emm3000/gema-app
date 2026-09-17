@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.emm.gema.about.AboutRoute
 import com.emm.gema.core.domain.activity.ActivityId
 import com.emm.gema.core.domain.curriculum.CompetencyId
 import com.emm.gema.core.domain.schoolyear.PeriodId
@@ -24,7 +25,6 @@ import com.emm.gema.feature.activities.form.ActivityFormRoute
 import com.emm.gema.feature.activities.list.ActivitiesRoute
 import com.emm.gema.feature.attendance.day.AttendanceDayRoute
 import com.emm.gema.feature.attendance.month.AttendanceMonthRoute
-import com.emm.gema.about.AboutRoute
 import com.emm.gema.feature.backup.BackupRoute
 import com.emm.gema.feature.evaluation.levels.PeriodLevelsRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
