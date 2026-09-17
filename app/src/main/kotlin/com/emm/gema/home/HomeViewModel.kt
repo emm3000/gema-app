@@ -82,6 +82,7 @@ class HomeViewModel(
             HomeUiIntent.SchoolYearSwitcherClicked -> emit(HomeUiEffect.NavigateToSchoolYears)
             HomeUiIntent.OutOfPeriodClicked -> withSchoolYear { HomeUiEffect.NavigateToPeriods(it) }
             HomeUiIntent.BackupReminderClicked -> emit(HomeUiEffect.NavigateToBackup)
+            HomeUiIntent.AboutClicked -> emit(HomeUiEffect.NavigateToAbout)
         }
     }
 

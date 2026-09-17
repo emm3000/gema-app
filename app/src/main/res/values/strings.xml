@@ -12,6 +12,20 @@
     <string name="home_review_periods">Revisar periodos</string>
     <string name="home_backup_reminder_never">Todavía no respaldaste tus datos</string>
     <string name="home_backup_reminder_action">Respaldar ahora</string>
+    <string name="home_about_action">Acerca de</string>
+
+    <string name="about_title">Acerca de</string>
+    <string name="about_disclaimer_heading">Aviso</string>
+    <string name="about_disclaimer_body">Gema es una aplicación independiente. No pertenece, no representa ni está afiliada al Ministerio de Educación del Perú (MINEDU), a SIAGIE ni a ninguna otra entidad del gobierno.</string>
+    <string name="about_source_cneb_title">Currículo Nacional (CNEB)</string>
+    <string name="about_source_cneb_destination">Abre el PDF oficial en minedu.gob.pe</string>
+    <string name="about_source_primary_curriculum_title">Programa Curricular de Primaria</string>
+    <string name="about_source_primary_curriculum_destination">Abre el PDF oficial en minedu.gob.pe</string>
+    <string name="about_source_siagie_title">SIAGIE</string>
+    <string name="about_source_siagie_destination">Abre siagie.minedu.gob.pe</string>
+    <string name="about_source_minedu_title">Ministerio de Educación (MINEDU)</string>
+    <string name="about_source_minedu_destination">Abre gob.pe/minedu</string>
+    <string name="about_version">Versión %1$s</string>
 
     <plurals name="home_section_students">
         <item quantity="one">%d alumno</item>

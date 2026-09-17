@@ -15,4 +15,6 @@ sealed interface HomeUiIntent {
     data object OutOfPeriodClicked : HomeUiIntent
 
     data object BackupReminderClicked : HomeUiIntent
+
+    data object AboutClicked : HomeUiIntent
 }

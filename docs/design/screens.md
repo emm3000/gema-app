@@ -2395,6 +2395,80 @@ Copy changes (for the implementation ticket)
 
 ---
 
+## 22. About
+
+No mockup: shipped directly from the ticket (#292), a Play Console
+Misleading Claims rejection for "Missing Source Link for Government
+Information".
+
+Entry: Home top bar, a dedicated `GIconButton` ("Acerca de", `Icons.Filled.Info`)
+next to the backup icon button and the overflow menu — one tap, not buried
+in the overflow menu, so a Play reviewer reaches it without hunting.
+
+Layout: `GTopBar` "Acerca de" with a back arrow. The body is a scrolling
+`Column`. First, an INFO `GBanner` whose `message` slot carries the
+disclaimer as two `GText` nodes — "Aviso" marked `Modifier.semantics { heading() }`
+followed by the body sentence — so TalkBack reads a heading then its text,
+the same pattern `feature/backup`'s section eyebrows use. The disclaimer
+wording is the exact `Aviso:` paragraph from `docs/play/listing.md`. Then
+four `GListItem` rows, one per official source, each with a title, a
+subtitle stating where the link goes (e.g. "Abre el PDF oficial en
+minedu.gob.pe") and `hasChevron = true`; tapping one sends
+`SourceLinkClicked(source)`. Last, a `LABEL_SMALL` line with the installed
+`versionName` so a reviewer can tell which build they are looking at.
+
+```
++------------------------------------------+
+|  <   Acerca de                           |
++------------------------------------------+
+|  +--------------------------------------+|
+|  | Aviso                                ||
+|  | Gema es una aplicación independiente.||
+|  | No pertenece, no representa ni está  ||
+|  | afiliada al Ministerio de Educación  ||
+|  | del Perú (MINEDU), a SIAGIE ni a     ||
+|  | ninguna otra entidad del gobierno.   ||
+|  +--------------------------------------+|
+|  Currículo Nacional (CNEB)             > |
+|  Abre el PDF oficial en minedu.gob.pe    |
+|  ----------------------------------------|
+|  Programa Curricular de Primaria       > |
+|  Abre el PDF oficial en minedu.gob.pe    |
+|  ----------------------------------------|
+|  SIAGIE                                > |
+|  Abre siagie.minedu.gob.pe               |
+|  ----------------------------------------|
+|  Ministerio de Educación (MINEDU)      > |
+|  Abre gob.pe/minedu                      |
+|                                           |
+|  Versión 1.0                             |
++------------------------------------------+
+```
+
+```kotlin
+data class AboutUiState(val version: String = "")
+
+enum class AboutSource(val url: String) {
+    CNEB("https://www.minedu.gob.pe/curriculo/pdf/curriculo-nacional-2016.pdf"),
+    PRIMARY_CURRICULUM("https://www.minedu.gob.pe/curriculo/pdf/programa-nivel-primaria-ebr.pdf"),
+    SIAGIE("https://siagie.minedu.gob.pe/inicio/"),
+    MINEDU("https://www.gob.pe/minedu"),
+}
+```
+
+Intents: `SourceLinkClicked(source: AboutSource)`, `BackClicked`.
+
+Effects: `OpenUrl(url: String)`, `NavigateBack`.
+
+`AboutViewModel` takes one collaborator, `AppVersionProvider` — the same
+narrow-interface pattern as `DateNameProvider`, so the ViewModel stays a JVM
+unit test (`FakeAppVersionProvider`) instead of touching `PackageManager`.
+`AboutRoute` opens `OpenUrl` through `LocalUriHandler`, catching
+`ActivityNotFoundException` so a device with no browser does not crash —
+this app ships no HTTP client and `LocalUriHandler` does not add one.
+
+---
+
 ## Open design questions for the product owner
 
 1. **Spanish period vocabulary.** Are the Periods labelled "I Bimestre" /
