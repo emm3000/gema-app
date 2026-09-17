@@ -231,6 +231,17 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `tapping about opens the about screen`() = runTest {
+        val viewModel: HomeViewModel = homeAt(schoolYear.startDate)
+
+        viewModel.effects.test {
+            viewModel.onIntent(HomeUiIntent.AboutClicked)
+
+            assertThat(awaitItem()).isEqualTo(HomeUiEffect.NavigateToAbout)
+        }
+    }
+
+    @Test
     fun `home leads with today's weekday, day and month`() {
         assertThat(homeAt(LocalDate.of(2026, 9, 10)).state.value.todayLabel)
             .isEqualTo("HOY · JUEVES 10 DE SETIEMBRE")

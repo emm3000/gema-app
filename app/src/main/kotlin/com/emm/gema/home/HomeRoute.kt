@@ -19,6 +19,7 @@ fun HomeRoute(
     onSchoolYears: () -> Unit,
     onPeriods: (SchoolYearId) -> Unit,
     onNavigateToBackup: () -> Unit,
+    onNavigateToAbout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -33,6 +34,7 @@ fun HomeRoute(
                 HomeUiEffect.NavigateToSchoolYears -> onSchoolYears()
                 is HomeUiEffect.NavigateToPeriods -> onPeriods(effect.schoolYearId)
                 HomeUiEffect.NavigateToBackup -> onNavigateToBackup()
+                HomeUiEffect.NavigateToAbout -> onNavigateToAbout()
             }
         }
     }

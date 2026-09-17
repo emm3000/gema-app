@@ -24,6 +24,7 @@ import com.emm.gema.feature.activities.form.ActivityFormRoute
 import com.emm.gema.feature.activities.list.ActivitiesRoute
 import com.emm.gema.feature.attendance.day.AttendanceDayRoute
 import com.emm.gema.feature.attendance.month.AttendanceMonthRoute
+import com.emm.gema.about.AboutRoute
 import com.emm.gema.feature.backup.BackupRoute
 import com.emm.gema.feature.evaluation.levels.PeriodLevelsRoute
 import com.emm.gema.feature.evaluation.worked.WorkedCompetenciesRoute
@@ -69,10 +70,14 @@ fun GemaNavHost(
                 onSchoolYears = { navController.navigate(GemaRoutes.SCHOOL_YEARS) },
                 onPeriods = { navController.navigate(GemaRoutes.periodsOf(it)) },
                 onNavigateToBackup = { navController.navigate(GemaRoutes.BACKUP) },
+                onNavigateToAbout = { navController.navigate(GemaRoutes.ABOUT) },
             )
         }
         composable(GemaRoutes.BACKUP) {
             BackupRoute(onNavigateBack = { navController.popBackStack() })
+        }
+        composable(GemaRoutes.ABOUT) {
+            AboutRoute(onNavigateBack = { navController.popBackStack() })
         }
         composable(GemaRoutes.SETUP_YEAR) {
             SetupYearRoute(

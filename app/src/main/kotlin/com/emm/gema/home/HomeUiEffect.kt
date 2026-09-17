@@ -17,4 +17,6 @@ sealed interface HomeUiEffect {
     data class NavigateToPeriods(val schoolYearId: SchoolYearId) : HomeUiEffect
 
     data object NavigateToBackup : HomeUiEffect
+
+    data object NavigateToAbout : HomeUiEffect
 }

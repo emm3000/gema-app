@@ -115,6 +115,9 @@ import com.emm.gema.core.domain.student.WithdrawStudentUseCase
 import com.emm.gema.core.siagie.XlsxMonthlyAttendanceWriter
 import com.emm.gema.core.siagie.XlsxSiagieGradesWriter
 import com.emm.gema.core.siagie.XlsxSiagieRosterReader
+import com.emm.gema.about.AboutViewModel
+import com.emm.gema.about.AndroidAppVersionProvider
+import com.emm.gema.about.AppVersionProvider
 import com.emm.gema.core.theme.DateNameProvider
 import com.emm.gema.evaluation.CacheDirSummaryDocuments
 import com.emm.gema.evaluation.PdfDocumentPeriodLevelSummaryRenderer
@@ -234,8 +237,10 @@ val appModule: Module = module {
     factory<SetReminderThresholdUseCase> { SetReminderThresholdUseCase(get()) }
 
     single<DateNameProvider> { AndroidDateNameProvider(androidContext().resources) }
+    single<AppVersionProvider> { AndroidAppVersionProvider(androidContext()) }
 
     viewModel { StartDestinationViewModel(get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get(), get(), dayTicker(get())) }
     viewModelOf(::BackupViewModel)
+    viewModelOf(::AboutViewModel)
 }

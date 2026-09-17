@@ -13,6 +13,7 @@ import java.time.YearMonth
 object GemaRoutes {
     const val HOME: String = "home"
     const val BACKUP: String = "backup"
+    const val ABOUT: String = "about"
     const val SETUP_YEAR: String = "setup/year"
     const val SETUP_SECTION: String = "setup/section"
     const val SCHOOL_YEARS: String = "school-years"
