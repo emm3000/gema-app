@@ -105,16 +105,17 @@ Las competencias y la escala provienen de publicaciones del MINEDU:
   https://www.minedu.gob.pe/curriculo/pdf/curriculo-nacional-2016.pdf
 - Programa Curricular de Primaria:
   https://www.minedu.gob.pe/curriculo/pdf/programa-nivel-primaria-ebr.pdf
-- SIAGIE: https://siagie.minedu.gob.pe
+- SIAGIE: https://siagie.minedu.gob.pe/inicio/
 - MINEDU: https://www.gob.pe/minedu
 ```
 
-Character count: 3841/4000.
+Character count: 3849/4000.
 
 The opening notice and the "Fuentes oficiales" section answer the Play
 Misleading Claims rejection of 2026-09-14 ("Missing Source Link for
 Government Information"). Keep both whenever the description changes, and
-check that every URL still loads before submitting.
+check that every URL still loads before submitting. Use each URL in its final
+form, without a redirect.
 
 ## Screenshots
 
