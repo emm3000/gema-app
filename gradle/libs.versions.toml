@@ -1,5 +1,5 @@
 [versions]
-gemaVersionCode = "1"
+gemaVersionCode = "2"
 gemaVersionName = "1.0"
 agp = "9.4.0"
 kotlin = "2.4.20"
