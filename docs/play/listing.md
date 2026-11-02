@@ -20,10 +20,10 @@ field.
 ## Short description (max 80 characters)
 
 ```
-Asistencia y logros CNEB sin internet, basado en la plantilla Excel de SIAGIE.
+Asistencia y logros CNEB sin internet, basados en la plantilla Excel de SIAGIE.
 ```
 
-Character count: 78/80.
+Character count: 79/80.
 
 ## Full description (max 4000 characters)
 
@@ -80,8 +80,8 @@ Pensada para el aula peruana
   (CNEB), nunca calificaciones numéricas ni promedios.
 - Vocabulario y estructura de periodos (bimestres o trimestres) igual a los
   que usa tu institución educativa.
-- Basado en la estructura de las plantillas Excel de SIAGIE, conservando
-  el nombre y la estructura del archivo original.
+- Basada en las plantillas Excel de SIAGIE, conservando el nombre y la
+  estructura del archivo original.
 - Interfaz completamente en español.
 
 Privacidad primero

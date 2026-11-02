@@ -2092,13 +2092,20 @@ one `bodyLarge` line and two SECONDARY buttons, PDF and CSV, side by side
 (new: the descriptive line under "Resumen para imprimir" is not rendered
 today; the card holds only the title and the two buttons).
 `activeExport` sets `isBusy` on the running button and disables the rest.
-The share note stays as the `bodySmall` footer.
+The share note stays as the `bodySmall` footer. An INFO `GBanner` sits above
+the three groups and states that the SIAGIE files follow the reference
+structure of their template and must be reviewed before uploading
+(`export_reference_notice`, always visible, no action).
 
 ```
 +------------------------------------------+
 |  <   Entregar · 3ro A                    |
 |      II Bimestre                         |
 +------------------------------------------+
+|  (i) Los archivos para SIAGIE siguen la  |
+|  estructura de referencia de su          |
+|  plantilla. Revísalos antes de subirlos. |
+|                                          |
 |  NOTAS PARA SIAGIE                       |
 |  [f] 3 Primaria EBR.xlsx                 |
 |  2 conclusiones descriptivas faltan      |
