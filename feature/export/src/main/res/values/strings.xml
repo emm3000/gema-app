@@ -1,6 +1,6 @@
 <resources>
     <string name="export_title">Entregar · %1$s</string>
-    <string name="export_reference_notice">El archivo sigue la estructura de referencia de la plantilla SIAGIE. Revísalo antes de subirlo a SIAGIE.</string>
+    <string name="export_reference_notice">Los archivos para SIAGIE siguen la estructura de referencia de su plantilla. Revísalos antes de subirlos.</string>
     <string name="export_grades_title">NOTAS PARA SIAGIE</string>
     <string name="export_grades_unavailable">Esta sección no tiene una plantilla SIAGIE. Impórtala desde Alumnos para generar las notas.</string>
     <plurals name="export_grades_blocked">
