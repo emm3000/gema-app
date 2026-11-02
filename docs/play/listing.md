@@ -20,10 +20,10 @@ field.
 ## Short description (max 80 characters)
 
 ```
-Registro de asistencia y logros CNEB sin internet, exporta a SIAGIE.
+Asistencia y logros CNEB sin internet, basado en la plantilla Excel de SIAGIE.
 ```
 
-Character count: 68/80.
+Character count: 78/80.
 
 ## Full description (max 4000 characters)
 
@@ -67,9 +67,9 @@ Funciones principales
 - Nivel de periodo: al cerrar el periodo, tú decides el nivel de logro de
   cada estudiante por competencia, con la evidencia registrada a la vista;
   Gema nunca calcula ni sugiere una nota.
-- Exportación a SIAGIE: al cerrar el periodo, Gema completa la misma
-  plantilla Excel que importaste, lista para subir a SIAGIE, sin volver a
-  digitar nada.
+- Exportación basada en la plantilla SIAGIE: al cerrar el periodo, Gema
+  completa la plantilla Excel que importaste, siguiendo la estructura de
+  los instructivos oficiales. Revisa el archivo antes de subirlo a SIAGIE.
 - Respaldo y restauración: crea un archivo de respaldo con todo tu año
   escolar y compártelo por WhatsApp, Bluetooth o USB; restáuralo en otro
   equipo si cambias de celular.
@@ -80,8 +80,8 @@ Pensada para el aula peruana
   (CNEB), nunca calificaciones numéricas ni promedios.
 - Vocabulario y estructura de periodos (bimestres o trimestres) igual a los
   que usa tu institución educativa.
-- Compatible con las plantillas Excel que exige SIAGIE, conservando el
-  nombre y la estructura del archivo original.
+- Basado en la estructura de las plantillas Excel de SIAGIE, conservando
+  el nombre y la estructura del archivo original.
 - Interfaz completamente en español.
 
 Privacidad primero

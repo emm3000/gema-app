@@ -71,6 +71,10 @@ fun ExportScreen(
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(GemaSpacing.large),
         ) {
+            GBanner(
+                text = stringResource(R.string.export_reference_notice),
+                tone = GBannerTone.INFO,
+            )
             GradesGroup(state = state, onIntent = onIntent)
             AttendanceGroup(state = state, onIntent = onIntent)
             SummaryGroup(state = state, onIntent = onIntent)
